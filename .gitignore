@@ -1,4 +1,3 @@
-
 .DS_Store
 master/.idea/.name
 master/.idea/compiler.xml
@@ -13,3 +12,9 @@ master/Santorini/.idea/vcs.xml
 master/Santorini/.idea/workspace.xml
 master/Santorini/Santorini.iml
 master/.idea/.gitignore
+!.gitignore
+!README.md
+!pom.xml
+!resources/
+!src/
+!javadoc/
