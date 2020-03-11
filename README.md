@@ -1,1 +1,13 @@
-# ing-sw-2020-secreti-tresoldi-usuelli
+# Prova finale Ingegneria del Software 2020
+Implementation of the board game called Santorini edited by Cranio Creations through Java.
+![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
+
+## Authors
+- Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
+- Fabio Tresoldi (matr. 886622)     :   @Fabio-Tresoldi
+- Mirko Usuelli (matr. 888170)      :   @mirkousuelli
+
+## Professors/Tutors
+- Prof. Giampaolo Cugola
+- Emanuele Del Sozzo        :     @emanueledelsozzo
+- Alberto Parravicini       :     @AlbertoParravicini
