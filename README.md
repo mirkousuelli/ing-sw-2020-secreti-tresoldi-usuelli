@@ -1,6 +1,6 @@
 # Prova finale Ingegneria del Software 2020
 Implementation of the board game called Santorini edited by Cranio Creations through Java.
-![Santorini board game](https://www.ilnanoborbone.it/wp-content/uploads/2016/03/Santorini_2016.jpg){:height="250" width="250"}
+![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
 
 ## Authors
 - Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
