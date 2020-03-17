@@ -21,6 +21,6 @@ public class Deck {
     private void deleteCard(Card pickedCard) {
         /*
          *
-        *  */
+         * */
     }
 }
