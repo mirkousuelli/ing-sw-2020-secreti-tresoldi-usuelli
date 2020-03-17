@@ -1,0 +1,5 @@
+package it.polimi.ingsw.model.cards;
+
+public enum God {
+    APOLLO, ARTHEMIS, ATHENA, ATLAS, DEMETER, HEPHAESTUS, MINOTAUR, PAN, PROMETHEUS, CHRONUS, ZEUS, TRITON, PERSEPHONE, POSEIDON
+}
