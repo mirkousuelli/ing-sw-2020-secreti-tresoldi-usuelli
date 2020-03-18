@@ -51,5 +51,7 @@ public class Player {
         return card;
     }
 
-    public void setCard(Card card) { this.card = card; }
+    public void setCard(Card card) {
+        this.card = card;
+    }
 }

@@ -1,14 +1,6 @@
 package it.polimi.ingsw.model.state;
 
-public abstract class gameState{
-    /*
-     *
-     */
+public abstract class GameState {
 
-    public abstract boolean gameEngine(Game game){
-        /*
-         *
-         */
-        return true;
-    }
+    public abstract boolean gameEngine(Game game);
 }

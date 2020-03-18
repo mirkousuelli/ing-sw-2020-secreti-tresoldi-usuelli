@@ -1,36 +1,40 @@
 package it.polimi.ingsw.model.state;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.state.GameState;
-import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.map.Board;
 
-
-
-public class Game{
-    private Player currentPlayer;
+public class Game {
     public final Deck deck;
     public final Board board;
-    public final GameState gameState;
+    private Player currentPlayer;
+    private GameState state;
 
-    public game (int numberOfPlayers, String[] Nicknames){
+    public Game (int numberOfPlayers, String[] Nicknames) {
         /*
         *
          */
+        deck = null;
+        board = null;
+        state = null;
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public void setState(GameState state){
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
         this.state = state;
     }
 
-    public boolean gameEngine(){
+    public boolean gameEngine() {
         /*
          *
          */
         return true;
-    };
+    }
 }
