@@ -19,3 +19,4 @@ master/.idea/.gitignore
 !src/
 !javadoc/
 master/.idea/workspace.xml
+master/.idea/uiDesigner.xml
