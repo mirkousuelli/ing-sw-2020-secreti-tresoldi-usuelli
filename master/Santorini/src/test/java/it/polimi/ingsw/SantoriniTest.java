@@ -1,13 +1,13 @@
 package it.polimi.ingsw;
 
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.junit.jupiter.api.*;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
+public class SantoriniTest
 {
     /**
      * Rigorous Test :-)
@@ -15,6 +15,6 @@ public class AppTest
     @Test
     public void shouldAnswerWithTrue()
     {
-        assertTrue( true );
+        Assert.assertTrue(true);
     }
 }
