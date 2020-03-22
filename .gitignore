@@ -22,3 +22,7 @@ master/.idea/workspace.xml
 master/.idea/uiDesigner.xml
 .idea
 master/.idea
+master/Santorini/.idea
+master/Santorini/lib
+master/Santorini/target
+master/Santorini/pom.xml
