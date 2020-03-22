@@ -20,3 +20,5 @@ master/.idea/.gitignore
 !javadoc/
 master/.idea/workspace.xml
 master/.idea/uiDesigner.xml
+.idea
+master/.idea
