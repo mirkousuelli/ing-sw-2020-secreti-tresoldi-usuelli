@@ -23,7 +23,7 @@ public abstract class Pawn implements Cell {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    Pawn (Player player, Block currCell) {
+    public Pawn (Player player, Block currCell) {
         /* @constructor
          * it constructs a pawn linking the owner (player) and is current position within the board
          */

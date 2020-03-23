@@ -22,7 +22,7 @@ public class Board {
     private Cell[][] map;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
-    Board() {
+    public Board() {
         /* @constructor
          * it builds up cell-by-cell the whole map.
          */

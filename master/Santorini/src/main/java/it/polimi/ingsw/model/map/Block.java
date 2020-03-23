@@ -23,7 +23,7 @@ public class Block implements Cell {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    Block(int x, int y) {
+    public Block(int x, int y) {
         /* @constructor
          * it initialize the proper cell with its coordinates and set as default GROUND as level
          */
