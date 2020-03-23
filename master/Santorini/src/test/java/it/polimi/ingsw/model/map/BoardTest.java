@@ -10,19 +10,37 @@
 
 package it.polimi.ingsw.model.map;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
 
     @Test
+    void initTest() {
+        /* test for correct grill initialization
+         */
+        Board tester = new Board();
+
+        // checking the correct initialization
+        for (int i = 0; i < tester.getLength(); i++) {
+            for (int j = 0; j < tester.getLength(); j++) {
+                //checking for the x
+                assertEquals(i, tester.getCell(i, j).getX());
+
+                //checking for the y
+                assertEquals(j, tester.getCell(i, j).getY());
+
+                //checking for the level
+                assertEquals(Level.GROUND, tester.getCell(i, j).getLevel());
+            }
+        }
+    }
+
+    @Test
     void getAroundTest() {
+        /* test for correct around cells list usage
+         */
         Board tester = new Board();
         List<Cell> around;
 
@@ -31,7 +49,6 @@ class BoardTest {
 
             // i check each cell surroundings
             for (Cell cell : tester.getRow(i)) {
-
                 // getting around cells
                 around = tester.getAround(cell);
 
@@ -59,14 +76,17 @@ class BoardTest {
 
     @Test
     void cleanTest() {
+        /* test for correct map reset
+         */
         Board tester = new Board();
 
+        // function to test
         tester.clean();
 
         for (int i = 0; i < tester.getLength(); i++) {
             for (Cell cell : tester.getRow(i)) {
                 // checking if every cells now are free and at ground level
-                assertTrue(!cell.isBusy() && cell.getLevel() == Level.GROUND);
+                assertTrue(cell.isFree() && cell.getLevel() == Level.GROUND);
             }
         }
     }

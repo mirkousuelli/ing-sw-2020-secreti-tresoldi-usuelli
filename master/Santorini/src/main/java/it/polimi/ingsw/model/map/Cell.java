@@ -25,12 +25,12 @@ public interface Cell {
     void setX(int newX);
     void setY(int newY);
     void setLevel(Level newLevel);
-    void setBusy();
-    void setFree();
 
-    /* FUNCTION -------------------------------------------------------------------------------------------------------- */
+    /* PREDICATE ------------------------------------------------------------------------------------------------------- */
     boolean isWalkable();
     boolean isComplete();
-    boolean isBusy();
+    boolean isFree();
+
+    /* FUNCTION -------------------------------------------------------------------------------------------------------- */
     void clean();
 }

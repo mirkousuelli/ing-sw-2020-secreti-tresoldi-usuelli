@@ -18,12 +18,12 @@ public abstract class Pawn implements Cell {
      * different from a tower block can behave inside the board.
      */
 
-    protected Cell currCell; // current position in the grill
+    protected Block currCell; // current position in the grill
     protected Player player; // pawn owner who can manage it
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    Pawn (Player player, Cell currCell) {
+    Pawn (Player player, Block currCell) {
         /* @constructor
          * it constructs a pawn linking the owner (player) and is current position within the board
          */
@@ -89,7 +89,7 @@ public abstract class Pawn implements Cell {
         this.currCell.setY(newY);
     }
 
-    public void setLocation(Cell newCell) {
+    public void setLocation(Block newCell) {
         /* @setter
          * it sets the current position
          */
@@ -108,23 +108,9 @@ public abstract class Pawn implements Cell {
         /* @setter
          * it sets the level
          */
-        this.currCell.setLevel(newLevel);
-    }
-
-    @Override
-    public void setBusy() {
-        /* @setter
-         * it sets that the current cell is busy
-         */
-        this.currCell.setBusy();
-    }
-
-    @Override
-    public void setFree() {
-        /* @setter
-         * it sets that the current cell is free
-         */
-        this.currCell.setFree();
+        if (newLevel != Level.DOME) {
+            this.currCell.setLevel(newLevel);
+        }
     }
 
     /* ABSTRACT_METHOD ------------------------------------------------------------------------------------------------- */
@@ -154,11 +140,11 @@ public abstract class Pawn implements Cell {
     }
 
     @Override
-    public boolean isBusy() {
+    public boolean isFree() {
         /* @predicate
          * it asks if the current cell is complete
          */
-        return this.currCell.isBusy();
+        return this.currCell.isFree();
     }
 
     @Override
@@ -167,5 +153,6 @@ public abstract class Pawn implements Cell {
          * it cleans off the current cell to its starting state
          */
         this.currCell.clean();
+        this.currCell = null;
     }
 }

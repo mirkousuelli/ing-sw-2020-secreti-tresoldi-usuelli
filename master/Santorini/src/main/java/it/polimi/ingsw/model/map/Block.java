@@ -19,7 +19,6 @@ public class Block implements Cell {
     private Level prevLevel;
     private int x;
     private int y;
-    private boolean busy;
     private Pawn pawn;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
@@ -30,7 +29,7 @@ public class Block implements Cell {
          */
         this.x = x;
         this.y = y;
-        this.busy = false;
+        this.pawn = null;
         this.prevLevel = Level.GROUND;
         this.currLevel = Level.GROUND;
     }
@@ -107,22 +106,6 @@ public class Block implements Cell {
         this.prevLevel = oldLevel;
     }
 
-    @Override
-    public void setBusy() {
-        /* @setter
-         * it means that there is a pawn on it
-         */
-        this.busy = true;
-    }
-
-    @Override
-    public void setFree() {
-        /* @setter
-         * it means the cell is free without any pawn on it
-         */
-        this.busy = false;
-    }
-
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
     @Override
@@ -130,15 +113,15 @@ public class Block implements Cell {
         /* @predicate
          * it is always walkable unless the current level is a dome.
          */
-        return ((this.getLevel() != Level.DOME) && !(this.busy));
+        return ((this.getLevel() != Level.DOME) && (this.pawn == null));
     }
 
     @Override
-    public boolean isBusy() {
+    public boolean isFree() {
         /* @predicate
-         * ask if it is busy
+         * ask if it is free
          */
-        return this.busy;
+        return this.pawn == null;
     }
 
     @Override
@@ -154,18 +137,24 @@ public class Block implements Cell {
         /* @function
          * clean off the cell to its starting state
          */
+        this.currLevel = Level.GROUND;
+        this.prevLevel = Level.GROUND;
+
     }
 
     public void addPawn(Pawn newPawn) {
         /* @function
          * adding a link to the pawn on it
          */
-        this.pawn = newPawn;
+        if (this.isWalkable()) {
+            this.pawn = newPawn;
+        }
     }
 
     public void removePawn() {
         /* @function
          * remove the pawn from it
          */
+        this.pawn = null;
     }
 }

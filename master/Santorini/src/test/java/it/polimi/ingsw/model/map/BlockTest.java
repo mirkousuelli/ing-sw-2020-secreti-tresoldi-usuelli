@@ -10,111 +10,78 @@
 
 package it.polimi.ingsw.model.map;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import it.polimi.ingsw.model.Player;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockTest {
+    private final int TEST_X = 0;
+    private final int TEST_Y = 0;
 
     @Test
-    void isWalkable() {
-    }
+    void levelStressTest() {
+        /* test that forces building up and down exceeding level limits
+         */
+        Block block = new Block(TEST_X, TEST_Y);
 
-    @Test
-    void isBusy() {
-    }
+        // i initialize a reverse array to be populated during the first iteration
+        // (i think i cannot import libraries which includes reverse function
+        // applied to an array w/o asking to a tutor)
+        Level[] reverse = new Level[Level.values().length];
+        int i = Level.values().length - 1;
 
-    @Test
-    void isComplete() {
-    }
+        // 1st iteration for building up correctly
+        for (Level level : Level.values()) {
+            assertSame(block.getLevel(), level);
+            block.setLevel(block.getLevel().buildUp());
 
-    @BeforeEach
-    void setUp() {
-    }
+            // preparing 2nd array reversed
+            reverse[i--] = level;
+        }
 
-    @AfterEach
-    void tearDown() {
-    }
+        // limit case of superior border repeated twice
+        assertSame(block.getLevel().buildUp(), Level.DOME);
 
-    @Test
-    void testIsWalkable() {
-    }
+        // 2nd iteration for building down correctly
+        for (Level level : reverse) {
+            assertSame(block.getLevel(), level);
+            block.setLevel(block.getLevel().buildDown());
+        }
 
-    @Test
-    void testIsBusy() {
-    }
-
-    @Test
-    void testIsComplete() {
-    }
-
-    @Test
-    void getX() {
-    }
-
-    @Test
-    void getY() {
+        // limit case of inferior border repeated twice
+        assertSame(block.getLevel().buildDown(), Level.GROUND);
     }
 
     @Test
-    void getLevel() {
+    void cleanTest() {
+        /* test which check atomic cleaning
+         */
+        Block block = new Block(TEST_X, TEST_Y);
+
+        // check current level reset
+        assertEquals(Level.GROUND, block.getLevel());
+        // check previous level reset
+        assertEquals(Level.GROUND, block.getPreviousLevel());
+        //check that cell i free
+        assertTrue(block.isFree());
     }
 
     @Test
-    void getPreviousLevel() {
+    void pawnPresenceTest() {
+        /* test for correct assumption of add/remove a pawn on the block
+         */
+        Block block = new Block(TEST_X, TEST_Y);
+
+        // check if it is free and walkable
+        assertTrue(block.isWalkable());
+        // adding a pawn on it
+        block.addPawn(new Worker(new Player("id"), block));
+        // checking that now it is not possible anymore
+        assertFalse(block.isWalkable());
+        // removing previous pawn
+        block.removePawn();
+        // checking that now it is possible to walk on it because it is free
+        assertTrue(block.isWalkable());
     }
 
-    @Test
-    void getPawn() {
-    }
-
-    @Test
-    void setX() {
-    }
-
-    @Test
-    void setY() {
-    }
-
-    @Test
-    void setLevel() {
-    }
-
-    @Test
-    void setPreviousLevel() {
-    }
-
-    @Test
-    void setBusy() {
-    }
-
-    @Test
-    void setFree() {
-    }
-
-    @Test
-    void testIsWalkable1() {
-    }
-
-    @Test
-    void testIsBusy1() {
-    }
-
-    @Test
-    void testIsComplete1() {
-    }
-
-    @Test
-    void clean() {
-    }
-
-    @Test
-    void addPawn() {
-    }
-
-    @Test
-    void removePawn() {
-    }
 }

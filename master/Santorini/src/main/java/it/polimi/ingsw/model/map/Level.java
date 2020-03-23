@@ -63,4 +63,22 @@ public enum Level {
          */
         return values()[ordinal() - 1];
     }
+
+    @Override
+    public String toString() {
+        switch (this) {
+            case GROUND:
+                return "0";
+            case BOTTOM:
+                return "1";
+            case MIDDLE:
+                return "2";
+            case TOP:
+                return "3";
+            case DOME:
+                return "X";
+            default:
+                return null;
+        }
+    }
 }

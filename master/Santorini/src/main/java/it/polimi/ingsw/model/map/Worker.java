@@ -23,7 +23,7 @@ public class Worker extends Pawn {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    Worker(Player player, Cell pos) {
+    Worker(Player player, Block pos) {
         /* @constructor
          * it re-call its super class Pawn
          */
