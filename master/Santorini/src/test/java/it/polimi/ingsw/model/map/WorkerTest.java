@@ -52,25 +52,23 @@ class WorkerTest {
          */
 
         Board board = new Board();
-        Block origin;
-        Worker tester;
+        Block origin = (Block) board.getCell(TEST[CENTER], TEST[CENTER]);
+        Worker tester = new Worker(new Player("id"), origin);
 
         for (Integer test_x : TEST) {
             for (Integer test_y : TEST) {
                 // creating the starting cell
                 origin = (Block) board.getCell(test_x, test_y);
                 // creating the testing worker
-                tester = new Worker(new Player("id"), origin);
+                tester.setLocation(origin);
 
                 // initializing test
                 assertSame(tester.getLocation(), origin); // right location
-                assertSame(tester.getPreviousLocation(), origin); // right previous location
                 assertSame(tester, origin.getPawn()); // right pawn on block
 
                 // self move to the same place test
                 assertFalse(tester.moveTo(origin)); // self move
                 assertSame(tester.getLocation(), origin); // right location
-                assertSame(tester.getPreviousLocation(), origin); // right previous location
                 assertSame(tester, origin.getPawn()); // right pawn on block
 
                 // testing each direction around the current block (either center or corner or side condition)

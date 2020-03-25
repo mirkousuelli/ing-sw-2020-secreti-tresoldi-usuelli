@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.cards.gods;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.gods.exceptions.CannotMoveUpException;
 import it.polimi.ingsw.model.map.Block;
@@ -19,7 +21,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

@@ -94,6 +94,7 @@ public abstract class Pawn implements Cell {
         /* @setter
          * it sets the current position
          */
+        this.currCell.removePawn();
         this.currCell = newCell;
         this.currCell.addPawn(this);
     }

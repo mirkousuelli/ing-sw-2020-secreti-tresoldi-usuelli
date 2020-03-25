@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.cards.gods;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
@@ -21,7 +23,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AthenaTest {
