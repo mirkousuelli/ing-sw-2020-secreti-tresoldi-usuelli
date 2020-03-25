@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.CannotMoveUpException;
 import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
@@ -33,6 +34,7 @@ public class Prometheus extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.PROMETHEUS, Effect.MOVE);
     }
 
@@ -41,6 +43,9 @@ public class Prometheus extends Card {
         /*@function
          * it implements Prometheus' power
          */
+
+        if (getOwner().getCurrentWorker().getPreviousBuild() != null &&
+                getOwner().getCurrentWorker().getPreviousBuild().getLevel().toInt() - cell.getLevel().toInt() > 0) throw new CannotMoveUpException("You are moving up!");
 
         getOwner().addCannotMoveUpMalus();
         getOwner().build(cell);

@@ -64,7 +64,7 @@ class TritonTest {
     @Order(1)
     void testTriton() throws Exception {
         /*@function
-         * it controls if usePower functions
+         * it controls if usePower functions in the right way
          */
 
         Cell cell;

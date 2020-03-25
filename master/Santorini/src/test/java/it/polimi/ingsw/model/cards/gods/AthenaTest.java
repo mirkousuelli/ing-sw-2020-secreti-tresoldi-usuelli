@@ -15,14 +15,13 @@ import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AthenaTest {
@@ -70,7 +69,7 @@ class AthenaTest {
     @Test
     void testAthena() throws Exception {
         /*@function
-         * it controls if usePower functions
+         * it controls if usePower functions in the right way
          */
 
         player1.getCard().usePower(opponents);

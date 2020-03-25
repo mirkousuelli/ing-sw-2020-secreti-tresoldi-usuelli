@@ -15,6 +15,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
+import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
 import it.polimi.ingsw.model.map.Worker;
@@ -35,6 +36,7 @@ public class Poseidon extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.POSEIDON, Effect.YOUR_TURN);
     }
 
@@ -43,25 +45,28 @@ public class Poseidon extends Card {
         /*@function
          * it implements Poseidon's power
          */
+
         if (cell == null) throw new NullPointerException("cell is null!");
 
-        List<Worker> unmovedWorkers = getOwner().getWorker()
+        /*List<Worker> unmovedWorkers = getOwner().getWorker()
                                                 .stream()
                                                 .filter(worker -> !worker.equals(getOwner().getCurrentWorker()))
                                                 .collect(Collectors.toList());
 
-        /*for (Worker worker: unmovedWorkers) {
-            if (!worker.getLocation().getLevel().equals(Level.GROUND))
-                unmovedWorkers.remove(worker);
-        }
-
-        if (unmovedWorkers == null) throw new NullPointerException("No unmoved worker on ground level!");
-
-        for (Worker worker: unmovedWorkers) worker.build(cell);*/
-
         if (!unmovedWorkers.get(0).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
 
-        unmovedWorkers.get(0).build(cell);
+        unmovedWorkers.get(0).build(cell);*/
+
+        if (getOwner().getWorker().get(0).equals(getOwner().getCurrentWorker())){
+            if (!getOwner().getWorker().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
+            System.out.println(getOwner().getWorker().get(1).build(cell));
+            System.out.println(getOwner().getWorker().get(1).getX() + ", " + getOwner().getWorker().get(1).getY());
+            for (Cell c: ((Block) cell).getAround()) System.out.println(c.getX() + ", " + c.getY());
+        }
+        else{
+            if (!getOwner().getWorker().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
+            getOwner().getWorker().get(0).build(cell);
+        }
     }
 
     @Override

@@ -38,14 +38,12 @@ public class Hephaestus extends Card {
     }
 
     @Override
-    public void usePower(Cell cell) throws Exception /*TopLevelTowerException*/ {
+    public void usePower(Cell cell) throws UnusedPowerException {
         /*@function
-         * it implements Hephaestus' power
+         * Unused
          */
 
-        if (getOwner().getCurrentWorker().getPreviousBuild().getLevel().equals(Level.TOP)) throw new TopLevelTowerException("Cannot build a dome!");
-
-        getOwner().build(getOwner().getCurrentWorker().getPreviousBuild());
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
@@ -58,11 +56,16 @@ public class Hephaestus extends Card {
     }
 
     @Override
-    public boolean usePower() throws UnusedPowerException {
+    public boolean usePower() throws Exception /*TopLevelTowerException*/ {
         /*@function
-         * Unused
+         * it implements Hephaestus' power
          */
 
-        throw new UnusedPowerException("Wrong power!");
+        if (getOwner().getCurrentWorker().getPreviousBuild().getLevel().equals(Level.TOP))
+            throw new TopLevelTowerException("Cannot build a dome!");
+
+        getOwner().build(getOwner().getCurrentWorker().getPreviousBuild());
+
+        return true;
     }
 }

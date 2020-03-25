@@ -62,7 +62,7 @@ class AtlasTest {
     @Test
     void testAtlas() throws Exception {
         /*@function
-         * it controls if usePower functions
+         * it controls if usePower functions in the right way
          */
 
         player1.getCard().usePower(empty);

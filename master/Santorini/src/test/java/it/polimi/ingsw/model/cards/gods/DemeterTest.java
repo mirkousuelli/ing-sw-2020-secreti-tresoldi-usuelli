@@ -17,7 +17,6 @@ import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,13 +59,10 @@ class DemeterTest {
     }
 
     @Test
-    @Order(1)
     void testDemeter() throws Exception {
         /*@function
-         * it controls if usePower functions
+         * it controls if usePower functions in the right way
          */
-
-        assertEquals(player1.getCurrentWorker().getPreviousBuild(), empty);
 
         player1.getCard().usePower(emptySx);
 
@@ -74,7 +70,6 @@ class DemeterTest {
     }
 
     @Test
-    @Order(2)
     void testSameCell() {
         /*@function
          * it controls if usePower throws an InitialSpaceException when the selected cell is the cell where the
@@ -82,6 +77,6 @@ class DemeterTest {
          */
 
         assertThrows(InitialSpaceException.class,
-                ()->{player1.getCard().usePower(emptySx);} );
+                ()->{player1.getCard().usePower(empty);} );
     }
 }
