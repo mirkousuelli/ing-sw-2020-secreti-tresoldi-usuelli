@@ -14,6 +14,8 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.NotPerimCellException;
+import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -35,26 +37,36 @@ public class Triton extends Card {
     }
 
     @Override
-    public boolean usePower(Cell cell) {
+    public void usePower(Cell cell) throws Exception /*NullPointerException, NotPerimCellException*/ {
         /*@function
          * it implements Triton's power
          */
-        return true;
+
+        if (cell == null) throw new NullPointerException("cell is null!");
+        if (!isPerim(cell)) throw new NotPerimCellException("cell is not perim!");
+
+        getOwner().move(cell);
     }
 
     @Override
-    public boolean usePower(List<Player> opponents) {
+    public void usePower(List<Player> opponents) throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
-    public boolean usePower() {
+    public boolean usePower() throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
+    }
+
+    public boolean isPerim(Cell cell) {
+        return cell.getX() == 0 || cell.getY() == 0 || cell.getX() == 4 ||cell.getY() == 4;
     }
 }

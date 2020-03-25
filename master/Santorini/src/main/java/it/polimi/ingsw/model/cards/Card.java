@@ -12,6 +12,7 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.map.Cell;
+import it.polimi.ingsw.model.map.Worker;
 
 import java.util.List;
 
@@ -46,9 +47,9 @@ public abstract class Card {
         this.owner = owner;
     }
 
-    public abstract boolean usePower(Cell cell);
+    public abstract void usePower(Cell cell) throws Exception;
 
-    public abstract boolean usePower(List<Player> opponents);
+    public abstract void usePower(List<Player> opponents) throws Exception;
 
-    public abstract boolean usePower();
+    public abstract boolean usePower() throws Exception;
 }

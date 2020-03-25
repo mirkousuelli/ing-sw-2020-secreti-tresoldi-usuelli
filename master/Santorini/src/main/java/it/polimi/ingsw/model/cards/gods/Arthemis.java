@@ -14,6 +14,10 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.InitialSpaceException;
+import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
+import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
+import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -35,26 +39,32 @@ public class Arthemis extends Card {
     }
 
     @Override
-    public boolean usePower(Cell cell) {
+    public void usePower(Cell cell) throws Exception /*InitialSpaceException, OccupiedCellException, CompleteTowerException, TooHighException, FarCellException*/ {
         /*@function
          * it implements Arthemis' power
          */
-        return true;
+
+        if (cell.equals(getOwner().getCurrentWorker().getPreviousLocation())) throw new InitialSpaceException("Previous cell!");
+        if (!cell.isFree()) throw new OccupiedCellException("Occupied cell!");
+
+        getOwner().move(cell);
     }
 
     @Override
-    public boolean usePower(List<Player> opponents) {
+    public void usePower(List<Player> opponents) throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
-    public boolean usePower() {
+    public boolean usePower() throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 }

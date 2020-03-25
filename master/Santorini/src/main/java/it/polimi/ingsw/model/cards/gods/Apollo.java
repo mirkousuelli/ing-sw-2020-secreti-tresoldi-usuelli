@@ -14,6 +14,10 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.EmptyCellException;
+import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
+import it.polimi.ingsw.model.cards.gods.exceptions.WrongWorkerException;
+import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -35,26 +39,35 @@ public class Apollo extends Card {
     }
 
     @Override
-    public boolean usePower(Cell cell) {
+    public void usePower(Cell cell) throws Exception/*EmptyCellException, WrongWorkerException*/ {
         /*@function
          * it implements Apollo's power
          */
-        return true;
+        Block temp;
+
+        if (cell.isFree()) throw new EmptyCellException("Empty cell!");
+        if ((((Block) cell).getPawn()).getPlayer().equals(getOwner())) throw new WrongWorkerException("Not an opponent worker");
+
+        temp = (Block) getOwner().getCurrentWorker().getLocation();
+        getOwner().getCurrentWorker().setLocation((Block) cell);
+        (((Block) cell).getPawn()).setLocation(temp);
     }
 
     @Override
-    public boolean usePower(List<Player> opponents) {
+    public void usePower(List<Player> opponents) throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
-    public boolean usePower() {
+    public boolean usePower() throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 }

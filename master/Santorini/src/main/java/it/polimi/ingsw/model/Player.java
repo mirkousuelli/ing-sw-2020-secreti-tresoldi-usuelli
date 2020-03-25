@@ -11,8 +11,13 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
+import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     /*@class
@@ -20,7 +25,7 @@ public class Player {
      */
 
     public final String nickName;
-    public final Worker[] worker;
+    public final List<Worker> worker;
     private Card card;
     private Worker currentWorker;
     private boolean mustMoveUp;
@@ -30,22 +35,43 @@ public class Player {
         /*@constructor
          * it sets the name of the player and creates its 2 workers
          */
+
         this.nickName = nickName;
-        worker = new Worker[2];
+        worker = new ArrayList<>(2);
+        card = null;
+        currentWorker = null;
+        mustMoveUp = false;
+        cannotMoveUp = false;
     }
 
-    public boolean move(Cell cell) {
+    public void move(Cell cell) throws Exception {
         /*@function
-         * it moves the current worker to the designated cell
+         * wrapper of worker.moveTo(Cell)
          */
-        return true;
+
+        currentWorker.moveTo(cell);
     }
 
-    public boolean build(Cell cell) {
+    public void build(Cell cell) throws Exception {
         /*@function
-         * it builds a block on the designated cell
+         * wrapper of worker.build(Cell)
          */
-        return true;
+
+        currentWorker.build(cell);
+    }
+
+    public void initializeWorkerPosition(int id, Block position) {
+        /*@function
+         * it sets the initial position of the current worker
+         */
+        worker.add(new Worker(this, position));
+    }
+
+    public List<Worker> getWorker() {
+        /*@getter
+         * it returns player's workers
+         */
+        return worker;
     }
 
     public void addMustMoveUpMalus() {

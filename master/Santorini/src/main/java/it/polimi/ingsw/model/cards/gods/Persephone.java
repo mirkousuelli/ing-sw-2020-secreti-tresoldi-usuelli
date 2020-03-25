@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -35,26 +36,31 @@ public class Persephone extends Card {
     }
 
     @Override
-    public boolean usePower(Cell cell) {
+    public void usePower(Cell cell) throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
-    public boolean usePower(List<Player> opponents) {
+    public void usePower(List<Player> opponents) throws Exception/*NullPointerException*/ {
         /*@function
          * it implements Persephone's power
          */
-        return true;
+
+        if (opponents == null) throw new NullPointerException("Opponents is null");
+
+        for (Player p : opponents) p.addMustMoveUpMalus();
     }
 
     @Override
-    public boolean usePower() {
+    public boolean usePower() throws UnusedPowerException  {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 }
