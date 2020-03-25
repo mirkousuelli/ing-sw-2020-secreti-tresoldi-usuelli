@@ -14,8 +14,8 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.gods.exceptions.InitialSpaceException;
-import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
+import it.polimi.ingsw.model.exceptions.cards.InitialCellException;
+import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class Demeter extends Card {
          * it implements Demeter's power
          */
 
-        if (getOwner().getCurrentWorker().getPreviousBuild().equals(cell)) throw new InitialSpaceException("It is the same cell!");
+        if (getOwner().getCurrentWorker().getPreviousBuild().equals(cell)) throw new InitialCellException("It is the same cell!");
 
         getOwner().build(cell);
     }

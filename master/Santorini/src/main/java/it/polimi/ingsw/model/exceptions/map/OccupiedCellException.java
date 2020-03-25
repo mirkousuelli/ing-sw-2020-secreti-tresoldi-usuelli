@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.cards.gods.exceptions;
+package it.polimi.ingsw.model.exceptions.map;
 
 public class OccupiedCellException extends Exception {
 

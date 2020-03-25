@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.cards.gods.exceptions;
+package it.polimi.ingsw.model.exceptions.cards;
 
 public class UnusedPowerException extends Exception {
 

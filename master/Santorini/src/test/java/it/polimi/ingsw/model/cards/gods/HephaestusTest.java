@@ -11,17 +11,13 @@
 package it.polimi.ingsw.model.cards.gods;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.gods.exceptions.TopLevelTowerException;
-import it.polimi.ingsw.model.cards.gods.exceptions.WrongCellException;
+import it.polimi.ingsw.model.exceptions.cards.TopLevelTowerException;
+import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,12 +48,12 @@ class HephaestusTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
 
-        worker1Player1.addPawn(player1.getWorker().get(0));
+        worker1Player1.addPawn(player1.getWorkers().get(0));
 
         player1.setCard(new Hephaestus());
         player1.getCard().setOwner(player1);
 
-        player1.setCurrentWorker(player1.getWorker().get(0));
+        player1.setCurrentWorker(player1.getWorkers().get(0));
 
         player1.build(topLevelTower);
         player1.build(topLevelTower);

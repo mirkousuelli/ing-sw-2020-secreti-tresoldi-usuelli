@@ -14,9 +14,9 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.gods.exceptions.EmptyCellException;
-import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
-import it.polimi.ingsw.model.cards.gods.exceptions.WrongWorkerException;
+import it.polimi.ingsw.model.exceptions.cards.EmptyCellException;
+import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
+import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 

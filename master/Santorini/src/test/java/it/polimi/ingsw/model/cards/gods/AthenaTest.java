@@ -13,7 +13,6 @@ package it.polimi.ingsw.model.cards.gods;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
@@ -53,17 +52,17 @@ class AthenaTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player2.initializeWorkerPosition(1, worker1Player2);
 
-        worker1Player1.addPawn(player1.getWorker().get(0));
-        worker1Player2.addPawn(player2.getWorker().get(0));
+        worker1Player1.addPawn(player1.getWorkers().get(0));
+        worker1Player2.addPawn(player2.getWorkers().get(0));
 
         player1.setCard(new Athena());
         player1.getCard().setOwner(player1);
 
-        player1.setCurrentWorker(player1.getWorker().get(0));
+        player1.setCurrentWorker(player1.getWorkers().get(0));
         player1.build(w1P1Dx);
         player1.move(w1P1Dx);
 
-        player2.setCurrentWorker(player2.getWorker().get(0));
+        player2.setCurrentWorker(player2.getWorkers().get(0));
         opponents.add(player2);
     }
 

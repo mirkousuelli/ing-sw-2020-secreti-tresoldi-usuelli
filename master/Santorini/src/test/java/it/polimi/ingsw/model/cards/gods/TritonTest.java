@@ -13,7 +13,7 @@ package it.polimi.ingsw.model.cards.gods;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.gods.exceptions.NotPerimCellException;
+import it.polimi.ingsw.model.exceptions.cards.NotPerimCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Cell;
@@ -52,12 +52,12 @@ class TritonTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
 
-        worker1Player1.addPawn(player1.getWorker().get(0));
+        worker1Player1.addPawn(player1.getWorkers().get(0));
 
         player1.setCard(new Triton());
         player1.getCard().setOwner(player1);
 
-        player1.setCurrentWorker(player1.getWorker().get(0));
+        player1.setCurrentWorker(player1.getWorkers().get(0));
 
         player1.move(worker1Player1);
     }

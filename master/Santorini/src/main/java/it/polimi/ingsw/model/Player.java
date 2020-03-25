@@ -11,7 +11,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
@@ -67,7 +66,7 @@ public class Player {
         worker.add(new Worker(this, position));
     }
 
-    public List<Worker> getWorker() {
+    public List<Worker> getWorkers() {
         /*@getter
          * it returns player's workers
          */

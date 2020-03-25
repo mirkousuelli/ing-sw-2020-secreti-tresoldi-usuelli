@@ -14,10 +14,9 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.gods.exceptions.InitialSpaceException;
-import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
-import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
-import it.polimi.ingsw.model.map.Block;
+import it.polimi.ingsw.model.exceptions.cards.InitialCellException;
+import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
+import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class Arthemis extends Card {
          * it implements Arthemis' power
          */
 
-        if (cell.equals(getOwner().getCurrentWorker().getPreviousLocation())) throw new InitialSpaceException("Previous cell!");
+        if (cell.equals(getOwner().getCurrentWorker().getPreviousLocation())) throw new InitialCellException("Previous cell!");
         if (!cell.isFree()) throw new OccupiedCellException("Occupied cell!");
 
         getOwner().move(cell);

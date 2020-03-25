@@ -13,8 +13,8 @@ package it.polimi.ingsw.model.cards.gods;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.gods.exceptions.EmptyCellException;
-import it.polimi.ingsw.model.cards.gods.exceptions.WrongWorkerException;
+import it.polimi.ingsw.model.exceptions.cards.EmptyCellException;
+import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
@@ -56,14 +56,14 @@ class ApolloTest {
         player1.initializeWorkerPosition(2, worker2Player1);
         player2.initializeWorkerPosition(1, worker1Player2);
 
-        worker1Player1.addPawn(player1.getWorker().get(0));
-        worker2Player1.addPawn(player1.getWorker().get(1));
-        worker1Player2.addPawn(player2.getWorker().get(0));
+        worker1Player1.addPawn(player1.getWorkers().get(0));
+        worker2Player1.addPawn(player1.getWorkers().get(1));
+        worker1Player2.addPawn(player2.getWorkers().get(0));
 
         player1.setCard(new Apollo());
         player1.getCard().setOwner(player1);
 
-        player1.setCurrentWorker(player1.getWorker().get(0));
+        player1.setCurrentWorker(player1.getWorkers().get(0));
     }
 
     @Test
@@ -76,11 +76,11 @@ class ApolloTest {
 
         // it controls whether the swap happened or not
         assertEquals(player1.getCurrentWorker().getLocation(), worker1Player2);
-        assertEquals(player2.getWorker().get(0).getLocation(), worker1Player1);
+        assertEquals(player2.getWorkers().get(0).getLocation(), worker1Player1);
 
         // it controls whether the method modified happened or not
         assertEquals(player1.getCurrentWorker().getPreviousLocation(), worker1Player1);
-        assertEquals(player2.getWorker().get(0).getPreviousLocation(), worker1Player2);
+        assertEquals(player2.getWorkers().get(0).getPreviousLocation(), worker1Player2);
     }
 
     @Test
