@@ -22,7 +22,7 @@ class BlockTest {
     void levelStressTest() {
         /* test that forces building up and down exceeding level limits
          */
-        Block block = new Block(TEST_X, TEST_Y);
+        Block block = new Block(TEST_X, TEST_Y, new Board());
 
         // i initialize a reverse array to be populated during the first iteration
         // (i think i cannot import libraries which includes reverse function
@@ -56,7 +56,7 @@ class BlockTest {
     void cleanTest() {
         /* test which check atomic cleaning
          */
-        Block block = new Block(TEST_X, TEST_Y);
+        Block block = new Block(TEST_X, TEST_Y, new Board());
 
         // check current level reset
         assertEquals(Level.GROUND, block.getLevel());
@@ -70,7 +70,7 @@ class BlockTest {
     void pawnPresenceTest() {
         /* test for correct assumption of add/remove a pawn on the block
          */
-        Block block = new Block(TEST_X, TEST_Y);
+        Block block = new Block(TEST_X, TEST_Y, new Board());
 
         // check if it is free and walkable
         assertTrue(block.isWalkable());

@@ -29,6 +29,7 @@ public abstract class Pawn implements Cell {
          */
         this.player = player;
         this.currCell = currCell;
+        this.currCell.addPawn(this);
     }
 
     /* GETTER ---------------------------------------------------------------------------------------------------------- */
@@ -94,6 +95,7 @@ public abstract class Pawn implements Cell {
          * it sets the current position
          */
         this.currCell = newCell;
+        this.currCell.addPawn(this);
     }
 
     public void setPlayer(Player newPlayer) {

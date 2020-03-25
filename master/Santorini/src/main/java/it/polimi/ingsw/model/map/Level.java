@@ -66,6 +66,9 @@ public enum Level {
 
     @Override
     public String toString() {
+        /*
+         *
+         */
         switch (this) {
             case GROUND:
                 return "0";
@@ -77,6 +80,26 @@ public enum Level {
                 return "3";
             case DOME:
                 return "X";
+            default:
+                return null;
+        }
+    }
+
+    public Integer toInt() {
+        /*
+         *
+         */
+        switch (this) {
+            case GROUND:
+                return 0;
+            case BOTTOM:
+                return 1;
+            case MIDDLE:
+                return 2;
+            case TOP:
+                return 3;
+            case DOME:
+                return 4;
             default:
                 return null;
         }

@@ -59,13 +59,12 @@ class BoardTest {
                 for (Cell next : around) {
                     // checking that all cells around are distant of 1 unit for x or for y, or
                     // in case the current cell is a border one if around have null
-                    assertTrue(next == null ||
-                            ((cell.getX() == next.getX() - 1 || cell.getX() == next.getX() + 1) &&
-                            (cell.getY() == next.getY() - 1 || cell.getY() == next.getY() + 1 )));
+                    assertTrue(((cell.getX() == next.getX() - 1 || cell.getX() == next.getX() + 1 || cell.getX() == next.getX()) &&
+                            (cell.getY() == next.getY() - 1 || cell.getY() == next.getY() + 1 || cell.getY() == next.getY())));
 
                     // analysing if around cells are different from one another (except for null)
                     for (Cell other : around) {
-                        if ((next != other) && (next != null)) {
+                        if (next != other) {
                             assertNotEquals(next, other);
                         }
                     }

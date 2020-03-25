@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.map;
 
+import java.util.List;
+
 public class Block implements Cell {
     /* @class
      * it represents the concrete object described by the cell
@@ -19,17 +21,19 @@ public class Block implements Cell {
     private Level prevLevel;
     private int x;
     private int y;
+    private Board board;
     private Pawn pawn;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Block(int x, int y) {
+    public Block(int x, int y, Board board) {
         /* @constructor
          * it initialize the proper cell with its coordinates and set as default GROUND as level
          */
         this.x = x;
         this.y = y;
         this.pawn = null;
+        this.board = board;
         this.prevLevel = Level.GROUND;
         this.currLevel = Level.GROUND;
     }
@@ -72,6 +76,14 @@ public class Block implements Cell {
          * it gives back the eventual pawn on it
          */
         return this.pawn;
+    }
+
+    public List<Cell> getAround() {
+        /* @getter
+         * it implements without arguments getAround() defined in Board.class,
+         * based on the current cell invoking it
+         */
+        return this.board.getAround(this);
     }
 
     /* SETTER ---------------------------------------------------------------------------------------------------------- */

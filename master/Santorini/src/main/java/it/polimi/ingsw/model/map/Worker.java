@@ -12,22 +12,27 @@ package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
 
+import java.util.List;
+
 public class Worker extends Pawn {
     /* @class
      * it represents the pawn 'worker' which can be moved to one cell distance from its current location (default),
      * and then build around one block up to the selected cell (except for its new position).
      */
 
-    private Cell prevCell;
-    private Cell prevBuild;
+    private Block prevCell;
+    private Block prevBuild;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
     public Worker(Player player, Block pos) {
         /* @constructor
-         * it re-call its super class Pawn
+         * it re-calls its super class Pawn
          */
         super(player, pos);
+        this.prevCell = pos;
+        this.prevBuild = null;
+        this.currCell.addPawn(this);
     }
 
     /* GETTER  --------------------------------------------------------------------------------------------------------- */
@@ -46,20 +51,79 @@ public class Worker extends Pawn {
         return prevBuild;
     }
 
+    public List<Cell> getPossibleMoves() {
+        /* @getter
+         * it considers malus attributes in player and modify possible around cells
+         */
+        List<Cell> toReturn = this.currCell.getAround();
+
+        // checking for around cell higher than allowed
+        for (Cell around : this.currCell.getAround()) {
+            // if it is busy or complete or higher than allowed
+            if (!around.isWalkable() || this.currCell.getLevel().toInt() + 1 < around.getLevel().toInt()) {
+                // then remove it from the list
+                toReturn.remove(around);
+            }
+        }
+
+        // cannot move up malus active
+        if (this.player.isCannotMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() < around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+            // if everything is removed then i will return null
+        }
+
+        // must move up malus active
+        if (this.player.isMustMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() > around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+
+            // in case i removed everything i reset around
+            if (toReturn == null) {
+                toReturn = this.currCell.getAround();
+            }
+        }
+
+        // in case no malus has been active : normal getAround()
+        // in case both malus are active : normal getAround()
+        return toReturn;
+    }
+
+    public List<Cell> getPossibleBuilds() {
+        /* @getter
+         * it gets possible cell where to build
+         */
+
+        // in this case, since no gods have consequence on it, it doesn't change
+        return this.currCell.getAround();
+    }
+
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
 
     public void setPreviousLocation(Cell prevCell) {
         /* @setter
          * it sets previous worker's location
          */
-        this.prevCell = prevCell;
+        this.prevCell = (Block) prevCell;
     }
 
     public void setPreviousBuild(Cell prevBuild) {
         /* @setter
          * it sets the previous block built
          */
-        this.prevBuild = prevBuild;
+        this.prevBuild = (Block) prevBuild;
     }
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
@@ -68,23 +132,53 @@ public class Worker extends Pawn {
         /* @function
          * it makes worker moving to another cell going through an operation of undecorate-decorate
          */
-        return true;
+
+        // if it is not a dome, free and it is contained within possible choices
+        if (newCell.isWalkable() && this.getPossibleMoves().contains(newCell)) {
+            // removing pawn from the current cell
+            this.currCell.removePawn();
+
+            // updating previous cell with the old current cell
+            this.prevCell = this.currCell;
+
+            // updating current cell with the new cell just moved on
+            this.currCell = (Block) newCell;
+
+            // adding new pawn on the current new cell
+            this.currCell.addPawn(this);
+
+            // returning everything correct
+            return true;
+        }
+
+        // try again
+        return false;
     }
 
-    public boolean buildUp(Cell cellToBuildUp) {
+    public boolean build(Cell cellToBuildUp) {
         /* @function
          * it builds around except for its current location (by default), unless a god change this rule
          */
-        currCell.setLevel(currCell.getLevel().buildUp());
-        return true;
-    }
 
-    public boolean buildDown(Cell cellToBuildDown) {
-        /* @function
-         * it decrease current cell level selected
-         */
-        currCell.setLevel(currCell.getLevel().buildDown());
-        return true;
+        Block toBuild = (Block) cellToBuildUp;
+
+        // if it is not a dome, free and it is contained within possible choices
+        if (toBuild.isWalkable() && this.getPossibleBuilds().contains(toBuild)) {
+            // storing previous level
+            toBuild.setPreviousLevel(toBuild.getLevel());
+
+            // then build it up
+            toBuild.setLevel(toBuild.getLevel().buildUp());
+
+            // updating last building
+            this.setPreviousBuild(toBuild);
+
+            // returning everything correct
+            return true;
+        }
+
+        // try again
+        return false;
     }
 
     /* PAWN_ABSTRACT_METHODS ------------------------------------------------------------------------------------------- */

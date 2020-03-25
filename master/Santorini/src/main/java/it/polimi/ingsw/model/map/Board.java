@@ -13,7 +13,7 @@ package it.polimi.ingsw.model.map;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board implements Cloneable{
     /* @class
      * it holds 25 cells in a 5x5 map
      */
@@ -31,7 +31,7 @@ public class Board {
 
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
-                this.map[i][j] = new Block(i, j);
+                this.map[i][j] = new Block(i, j, this);
             }
         }
     }
@@ -123,11 +123,9 @@ public class Board {
             // for all y around checks
             for (Integer yAround : yCheck) {
                 // i avoid the current cell control (x + 0, y + 0)
-                if (xAround != 0 && yAround != 0) {
+                if (!(xAround.equals(0) && yAround.equals(0))) {
                     // look for border condition adding null obj in case
-                    if (x + xAround < 0 || x + xAround == this.DIM || y + yAround < 0 || y + yAround == this.DIM) {
-                        around.add(null);
-                    } else { // otherwise i add the proper cell around it
+                    if (!(x + xAround < 0 || x + xAround == this.DIM || y + yAround < 0 || y + yAround == this.DIM)) {
                         around.add(this.getCell(x + xAround, y + yAround));
                     }
                 }
@@ -151,5 +149,10 @@ public class Board {
                 cell.clean();
             }
         }
+    }
+
+    @Override
+    public Board clone() throws CloneNotSupportedException {
+        return (Board) super.clone();
     }
 }
