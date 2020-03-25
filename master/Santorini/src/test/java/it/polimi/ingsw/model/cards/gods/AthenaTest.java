@@ -36,6 +36,10 @@ class AthenaTest {
 
     @BeforeAll
     static void init() throws Exception {
+        /*@function
+         * it sets the objects used in the tests
+         */
+
         player1 = new Player("Pl1");
         player2 = new Player("Pl2");
         board = new Board();
@@ -65,6 +69,10 @@ class AthenaTest {
 
     @Test
     void testAthena() throws Exception {
+        /*@function
+         * it controls if usePower functions
+         */
+
         player1.getCard().usePower(opponents);
         assertTrue(player2.isCannotMoveUpActive());
 

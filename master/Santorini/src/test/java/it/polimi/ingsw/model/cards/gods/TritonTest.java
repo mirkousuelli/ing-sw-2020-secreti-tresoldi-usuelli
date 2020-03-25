@@ -14,9 +14,8 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.gods.exceptions.NotPerimCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
-
 import it.polimi.ingsw.model.map.Cell;
-import org.junit.Before;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -38,6 +37,10 @@ class TritonTest {
 
     @BeforeAll
     static void init() throws Exception {
+        /*@function
+         * it sets the objects used in the tests
+         */
+
         player1 = new Player("Pl1");
         board = new Board();
 
@@ -60,6 +63,10 @@ class TritonTest {
     @Test
     @Order(1)
     void testTriton() throws Exception {
+        /*@function
+         * it controls if usePower functions
+         */
+
         Cell cell;
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j <5; j++) {
@@ -72,7 +79,7 @@ class TritonTest {
 
     @Test
     @Order(2)
-    void notPerim() throws Exception {
+    void testNotPerimCell() throws Exception {
         /*@function
          * it controls if usePower throws a NotPerimCellException when a worker tries to move with Triton's power on
          * a non perimeter cell

@@ -14,9 +14,8 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.gods.exceptions.InitialSpaceException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
-
 import it.polimi.ingsw.model.map.Level;
-import org.junit.Before;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -37,6 +36,10 @@ class DemeterTest {
 
     @BeforeAll
     static void init() throws Exception {
+        /*@function
+         * it sets the objects used in the tests
+         */
+
         player1 = new Player("Pl1");
         board = new Board();
 
@@ -58,7 +61,11 @@ class DemeterTest {
 
     @Test
     @Order(1)
-    void right() throws Exception {
+    void testDemeter() throws Exception {
+        /*@function
+         * it controls if usePower functions
+         */
+
         assertEquals(player1.getCurrentWorker().getPreviousBuild(), empty);
 
         player1.getCard().usePower(emptySx);
@@ -68,11 +75,12 @@ class DemeterTest {
 
     @Test
     @Order(2)
-    void sameSpace() {
+    void testSameCell() {
         /*@function
          * it controls if usePower throws an InitialSpaceException when the selected cell is the cell where the
          * current worker was before moving
          */
+
         assertThrows(InitialSpaceException.class,
                 ()->{player1.getCard().usePower(emptySx);} );
     }

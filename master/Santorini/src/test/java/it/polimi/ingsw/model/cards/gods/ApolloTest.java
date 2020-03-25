@@ -16,8 +16,6 @@ import it.polimi.ingsw.model.cards.gods.exceptions.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
-import it.polimi.ingsw.model.map.Cell;
-import it.polimi.ingsw.model.map.Worker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +38,7 @@ class ApolloTest {
     @BeforeAll
     static void init() {
         /*@function
-         * it controls if
+         * it sets the objects used in the tests
          */
 
         player1 = new Player("Pl1");
@@ -67,9 +65,9 @@ class ApolloTest {
     }
 
     @Test
-    void testRight() throws Exception{
+    void testApollo() throws Exception{
         /*@function
-         * it controls if
+         * it controls if usePower functions
          */
 
         player1.getCard().usePower(worker1Player2);
@@ -84,7 +82,7 @@ class ApolloTest {
     }
 
     @Test
-    void testWrong() {
+    void testWrongWorker() {
         /*@function
          * it controls if usePower throws a WrongWorkerException when cell contains a worker of the current player
          */
@@ -94,7 +92,7 @@ class ApolloTest {
     }
 
     @Test
-    void testEmpty() {
+    void testEmptyCell() {
         /*@function
          * it controls if usePower throws an EmptyCellException when cell does not contains a worker
          */

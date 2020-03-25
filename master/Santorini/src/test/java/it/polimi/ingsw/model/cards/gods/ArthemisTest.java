@@ -37,6 +37,10 @@ class ArthemisTest {
 
     @BeforeAll
     static void init() throws Exception {
+        /*@function
+         * it sets the objects used in the tests
+         */
+
         player1 = new Player("Pl1");
         player2 = new Player("Pl2");
         board = new Board();
@@ -61,7 +65,11 @@ class ArthemisTest {
 
     @Test
     @Order(1)
-    void testRight() throws Exception {
+    void testArthemis() throws Exception {
+        /*@function
+         * it controls if usePower functions
+         */
+
         player1.getCard().usePower(emptySx);
 
         assertEquals(empty, player1.getCurrentWorker().getPreviousLocation());
@@ -82,7 +90,7 @@ class ArthemisTest {
 
     @Test
     @Order(3)
-    void testOccupied() {
+    void testOccupiedCell() {
         /*@function
          * it controls if usePower throws an OccupiedCellException when the selected cell is occupied by an other worker
          */

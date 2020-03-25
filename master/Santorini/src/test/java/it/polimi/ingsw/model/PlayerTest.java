@@ -10,67 +10,29 @@
 
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import it.polimi.ingsw.model.map.Block;
+import it.polimi.ingsw.model.map.Board;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
 
-    @BeforeEach
-    void setUp() {
+    //@Test
+    void testInitializeWorkerPosition() {
+        Player Player1Test = new Player("Pl1");
+        Player Player2Test = new Player("Pl2");
+        Board boardTest = new Board();
+
+
+        Player1Test.initializeWorkerPosition(1, (Block) boardTest.getCell(0, 0));
+        Player1Test.initializeWorkerPosition(2, (Block) boardTest.getCell(5, 0));
+
+        Player2Test.initializeWorkerPosition(1, (Block) boardTest.getCell(3, 2));
+        Player2Test.initializeWorkerPosition(2, (Block) boardTest.getCell(4, 0));
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void move() {
-    }
-
-    @Test
-    void build() {
-    }
-
-    @Test
-    void addMustMoveUpMalus() {
-    }
-
-    @Test
-    void removeMustMoveUpMalus() {
-    }
-
-    @Test
-    void addCannotMoveUpMalus() {
-    }
-
-    @Test
-    void removeCannotMoveUpMalus() {
-    }
-
-    @Test
-    void getCurrentWorker() {
-    }
-
-    @Test
-    void setCurrentWorker() {
-    }
-
-    @Test
-    void getCard() {
-    }
-
-    @Test
-    void setCard() {
-    }
-
-    @Test
-    void isMustMoveUpActive() {
-    }
-
-    @Test
-    void isCannotMoveUpActive() {
+    //@Test
+    void testBuild() {
     }
 }

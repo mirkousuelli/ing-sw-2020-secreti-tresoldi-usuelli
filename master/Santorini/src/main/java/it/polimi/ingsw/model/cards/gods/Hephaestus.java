@@ -14,7 +14,10 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.gods.exceptions.TopLevelTowerException;
+import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
+import it.polimi.ingsw.model.map.Level;
 
 import java.util.List;
 
@@ -35,26 +38,31 @@ public class Hephaestus extends Card {
     }
 
     @Override
-    public boolean usePower(Cell cell) {
+    public void usePower(Cell cell) throws Exception /*TopLevelTowerException*/ {
         /*@function
          * it implements Hephaestus' power
          */
-        return true;
+
+        if (getOwner().getCurrentWorker().getPreviousBuild().getLevel().equals(Level.TOP)) throw new TopLevelTowerException("Cannot build a dome!");
+
+        getOwner().build(getOwner().getCurrentWorker().getPreviousBuild());
     }
 
     @Override
-    public boolean usePower(List<Player> opponents) {
+    public void usePower(List<Player> opponents) throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
-    public boolean usePower() {
+    public boolean usePower() throws UnusedPowerException {
         /*@function
          * Unused
          */
-        return true;
+
+        throw new UnusedPowerException("Wrong power!");
     }
 }

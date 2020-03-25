@@ -8,15 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void popCard() {
+    //@Test
+    void testPopCard() {
     }
 }

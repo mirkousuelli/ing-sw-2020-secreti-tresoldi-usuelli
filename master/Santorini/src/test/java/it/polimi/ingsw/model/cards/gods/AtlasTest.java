@@ -15,7 +15,6 @@ import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +35,10 @@ class AtlasTest {
 
     @BeforeAll
     static void init() {
+        /*@function
+         * it sets the objects used in the tests
+         */
+
         player1 = new Player("Pl1");
         player2 = new Player("Pl2");
         board = new Board();
@@ -57,12 +60,16 @@ class AtlasTest {
     }
 
     @Test
-    void right() throws Exception {
+    void testAtlas() throws Exception {
+        /*@function
+         * it controls if usePower functions
+         */
+
         player1.getCard().usePower(empty);
     }
 
     @Test
-    void occupied() {
+    void testOccupiedCell() {
         /*@function
          * it controls if usePower throws an OccupiedCellException when the selected cell is occupied by an other worker
          */
