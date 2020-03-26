@@ -34,6 +34,7 @@ public class Hephaestus extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.HEPHAESTUS, Effect.BUILD);
     }
 

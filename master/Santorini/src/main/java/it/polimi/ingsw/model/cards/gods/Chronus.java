@@ -32,6 +32,7 @@ public class Chronus extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.CHRONUS, Effect.WIN_CONDITION);
     }
 

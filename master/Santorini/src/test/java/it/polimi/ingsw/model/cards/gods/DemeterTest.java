@@ -18,44 +18,11 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 
-import org.junit.jupiter.api.BeforeAll;
-
 /*Power:
  *  Your Worker may build one additional time, but not on the same space
  */
 
 class DemeterTest {
-    static final int worker1Player1X = 0, worker1Player1Y = 0;
-    static final int emptyX = 1, emptyY = 1;
-
-    static Player player1;
-    static Board board;
-    static Block worker1Player1, empty, emptySx;
-
-    @BeforeAll
-    static void init() throws Exception {
-        /*@function
-         * it sets the objects used in the tests
-         */
-
-        player1 = new Player("Pl1");
-        board = new Board();
-
-        worker1Player1 = (Block) board.getCell(worker1Player1X, worker1Player1Y);
-        empty = (Block) board.getCell(emptyX, emptyY);
-        emptySx = (Block) board.getCell(emptyX - 1, emptyY);
-
-        player1.initializeWorkerPosition(1, worker1Player1);
-
-        worker1Player1.addPawn(player1.getWorkers().get(0));
-
-        player1.setCard(new Demeter());
-        player1.getCard().setOwner(player1);
-
-        player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        player1.build(empty);
-    }
 
     @Test
     void testDemeter() throws Exception {
@@ -63,17 +30,55 @@ class DemeterTest {
          * it controls if usePower functions in the right way
          */
 
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty = (Block) board.getCell(1, 1);
+        Block emptySx = (Block) board.getCell(0, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+
+
+        player1.setCard(new Demeter());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+        player1.build(empty);
+
+
+
+
+
         player1.getCard().usePower(emptySx);
 
         assertEquals(Level.BOTTOM, emptySx.getLevel());
     }
 
     @Test
-    void testSameCell() {
+    void testSameCell() throws Exception {
         /*@function
          * it controls if usePower throws an InitialSpaceException when the selected cell is the cell where the
          * current worker was before moving
          */
+
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty = (Block) board.getCell(1, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+
+
+        player1.setCard(new Demeter());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+        player1.build(empty);
+
+
+
 
         assertThrows(InitialCellException.class,
                 ()->{player1.getCard().usePower(empty);} );

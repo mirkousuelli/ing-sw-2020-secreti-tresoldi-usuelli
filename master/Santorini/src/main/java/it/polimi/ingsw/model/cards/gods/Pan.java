@@ -32,6 +32,7 @@ public class Pan extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.PAN, Effect.WIN_CONDITION);
     }
 

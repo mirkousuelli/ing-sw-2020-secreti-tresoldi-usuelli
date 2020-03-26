@@ -22,16 +22,22 @@ public class Game {
     public final Deck deck;
     public final Board board;
     private Player currentPlayer;
+   // private Player nextPlayer;
     private GameState state;
-
+    public final int numberOfPlayers;
+    public int numPlayerRemaining;
+    public String[] Nicknames;
 
     public Game(int numberOfPlayers, String[] Nicknames) {
         /* @constructor
          * it is used to create a new game, initialising its state to start
          */
+        this.Nicknames = Nicknames;
+        this.numberOfPlayers = numberOfPlayers;
         deck = null;
         board = null;
         state = null;
+        numPlayerRemaining = numberOfPlayers;
     }
 
     public Board getBoard() {

@@ -35,6 +35,7 @@ public class Apollo extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.APOLLO, Effect.MOVE);
     }
 
@@ -43,8 +44,10 @@ public class Apollo extends Card {
         /*@function
          * it implements Apollo's power
          */
+
         Block temp;
 
+        if (cell == null) throw new NullPointerException("Cell is null!");
         if (cell.isFree()) throw new EmptyCellException("Empty cell!");
         if ((((Block) cell).getPawn()).getPlayer().equals(getOwner())) throw new WrongWorkerException("Not an opponent worker");
 

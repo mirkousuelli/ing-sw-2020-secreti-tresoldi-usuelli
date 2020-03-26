@@ -19,41 +19,30 @@ import it.polimi.ingsw.model.map.Board;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+/*Power:
+ *  If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn
+ */
 
 class AthenaTest {
-    static final int worker1Player1X = 0, worker1Player1Y = 0;
-    static final int worker1Player2X = 2, worker1Player2Y = 2;
 
-    static Player player1, player2;
-    static Board board;
-    static Block worker1Player1, worker1Player2, w1P1Dx, w1P2Sx;
-    static List<Player> opponents;
-
-    @BeforeAll
-    static void init() throws Exception {
+    @Test
+    void testAthena() throws Exception {
         /*@function
-         * it sets the objects used in the tests
+         * it controls if usePower functions in the right way
          */
 
-        player1 = new Player("Pl1");
-        player2 = new Player("Pl2");
-        board = new Board();
-        opponents = new ArrayList<>();
+        Player player1 = new Player("Pl1");
+        Player player2 = new Player("Pl2");
+        Board board = new Board();
+        List<Player> opponents = new ArrayList<>();
 
-        worker1Player1 = (Block) board.getCell(worker1Player1X, worker1Player1Y);
-        worker1Player2 = (Block) board.getCell(worker1Player2X, worker1Player2Y);
-        w1P1Dx = (Block) board.getCell(worker1Player1X, worker1Player1Y + 1);
-        w1P2Sx = (Block) board.getCell(worker1Player2X + 1, worker1Player2Y);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker1Player2 = (Block) board.getCell(2, 2);
+        Block w1P1Dx = (Block) board.getCell(0, 1);
+        Block w1P2Sx = (Block) board.getCell(3, 2);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player2.initializeWorkerPosition(1, worker1Player2);
-
-        worker1Player1.addPawn(player1.getWorkers().get(0));
-        worker1Player2.addPawn(player2.getWorkers().get(0));
 
         player1.setCard(new Athena());
         player1.getCard().setOwner(player1);
@@ -64,19 +53,16 @@ class AthenaTest {
 
         player2.setCurrentWorker(player2.getWorkers().get(0));
         opponents.add(player2);
-    }
 
-    @Test
-    void testAthena() throws Exception {
-        /*@function
-         * it controls if usePower functions in the right way
-         */
+
+
 
         player1.getCard().usePower(opponents);
         assertTrue(player2.isCannotMoveUpActive());
 
         player2.build(w1P2Sx);
         player2.move(w1P2Sx);
+
         assertEquals(worker1Player2, player2.getCurrentWorker().getLocation());
         //assertThrows(OccupiedCellException.class,
          //       ()->{player2.move(w1P2Sx);} );

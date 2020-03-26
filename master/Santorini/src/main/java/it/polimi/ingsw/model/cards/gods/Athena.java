@@ -32,6 +32,7 @@ public class Athena extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.ATHENA, Effect.OPPONENT_TURN);
     }
 

@@ -33,6 +33,7 @@ public class Demeter extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.DEMETER, Effect.BUILD);
     }
 
@@ -42,6 +43,7 @@ public class Demeter extends Card {
          * it implements Demeter's power
          */
 
+        if (cell == null) throw new NullPointerException("Cell is null!");
         if (getOwner().getCurrentWorker().getPreviousBuild().equals(cell)) throw new InitialCellException("It is the same cell!");
 
         getOwner().build(cell);

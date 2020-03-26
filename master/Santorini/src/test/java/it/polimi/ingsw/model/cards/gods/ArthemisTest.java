@@ -18,56 +18,35 @@ import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-
 /*Power:
  *  Your Worker may move one additional time, but not back to its initial space
  */
 
 class ArthemisTest {
-    static final int worker1Player1X = 0, worker1Player1Y = 0;
-    static final int worker1Player2X = 0, worker1Player2Y = 2;
-    static final int emptyX = 1, emptyY = 1;
 
-    static Player player1, player2;
-    static Board board;
-    static Block worker1Player1, worker1Player2, empty, emptySx;
-
-    @BeforeAll
-    static void init() throws Exception {
+    @Test
+    void testArthemis() throws Exception {
         /*@function
-         * it sets the objects used in the tests
+         * it controls if usePower functions in the right way
          */
 
-        player1 = new Player("Pl1");
-        player2 = new Player("Pl2");
-        board = new Board();
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
 
-        worker1Player1 = (Block) board.getCell(worker1Player1X, worker1Player1Y);
-        worker1Player2 = (Block) board.getCell(worker1Player2X, worker1Player2Y);
-        empty = (Block) board.getCell(emptyX, emptyY);
-        emptySx = (Block) board.getCell(emptyX + 1, emptyY);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty = (Block) board.getCell(1, 1);
+        Block emptySx = (Block) board.getCell(2, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
-        player2.initializeWorkerPosition(1, worker1Player2);
-
-        worker1Player1.addPawn(player1.getWorkers().get(0));
-        worker1Player2.addPawn(player2.getWorkers().get(0));
 
         player1.setCard(new Arthemis());
         player1.getCard().setOwner(player1);
 
         player1.setCurrentWorker(player1.getWorkers().get(0));
         player1.move(empty);
-    }
 
-    @Test
-    @Order(1)
-    void testArthemis() throws Exception {
-        /*@function
-         * it controls if usePower functions in the right way
-         */
+
+
 
         player1.getCard().usePower(emptySx);
 
@@ -76,23 +55,57 @@ class ArthemisTest {
     }
 
     @Test
-    @Order(2)
-    void testInitialCell() {
+    void testInitialCell() throws Exception {
         /*@function
          * it controls if usePower throws an InitialSpaceException when the selected cell is the cell where the
          * current worker was before moving
          */
 
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty = (Block) board.getCell(1, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+
+        player1.setCard(new Arthemis());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+        player1.move(empty);
+
+
+
+
         assertThrows(InitialCellException.class,
-                ()->{player1.getCard().usePower(empty);} );
+                ()->{player1.getCard().usePower(worker1Player1);} );
     }
 
     @Test
-    @Order(3)
-    void testOccupiedCell() {
+    void testOccupiedCell() throws Exception {
         /*@function
          * it controls if usePower throws an OccupiedCellException when the selected cell is occupied by an other worker
          */
+
+        Player player1 = new Player("Pl1");
+        Player player2 = new Player("Pl2");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker1Player2 = (Block) board.getCell(0, 1);
+
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player2.initializeWorkerPosition(1, worker1Player2);
+
+        player1.setCard(new Arthemis());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+
+
 
         assertThrows(OccupiedCellException.class,
                 ()->{player1.getCard().usePower(worker1Player2);} );
