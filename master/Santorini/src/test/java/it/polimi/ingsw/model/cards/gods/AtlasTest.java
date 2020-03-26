@@ -78,4 +78,9 @@ class AtlasTest {
         assertThrows(OccupiedCellException.class,
                 ()->{player1.getCard().usePower(worker1Player2);} );
     }
+
+    @Test
+    void testDomeAlready() {
+
+    }
 }

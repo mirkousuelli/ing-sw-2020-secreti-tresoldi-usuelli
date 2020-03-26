@@ -14,16 +14,15 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.gods.exceptions.CompleteTowerException;
-import it.polimi.ingsw.model.cards.gods.exceptions.OccupiedCellException;
-import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
-import it.polimi.ingsw.model.cards.gods.exceptions.WrongWorkerException;
+import it.polimi.ingsw.model.exceptions.cards.CompleteTowerException;
+import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
+import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
+import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
 import it.polimi.ingsw.model.map.Worker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /*Power:
@@ -98,6 +97,7 @@ public class Minotaur extends Card {
             if (c.getX() == x && c.getY() == y)
                 return c;
         }
+
 
         return null;
     }

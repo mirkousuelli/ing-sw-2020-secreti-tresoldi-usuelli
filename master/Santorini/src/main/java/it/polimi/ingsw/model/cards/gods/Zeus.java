@@ -14,8 +14,8 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.gods.exceptions.TopLevelTowerException;
-import it.polimi.ingsw.model.cards.gods.exceptions.UnusedPowerException;
+import it.polimi.ingsw.model.exceptions.cards.TopLevelTowerException;
+import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
@@ -51,15 +51,22 @@ public class Zeus extends Card {
         switch (temp.getLevel()) {
             case GROUND:
                 temp.setLevel(Level.BOTTOM);
+                temp.setPreviousLevel(Level.GROUND);
                 break;
+
             case BOTTOM:
                 temp.setLevel(Level.MIDDLE);
+                temp.setPreviousLevel(Level.BOTTOM);
                 break;
+
             case MIDDLE:
                 temp.setLevel(Level.TOP);
+                temp.setPreviousLevel(Level.MIDDLE);
                 break;
+
             case TOP:
                 throw new TopLevelTowerException("Cannot build a dome!");
+                
             case DOME:
                 throw new TopLevelTowerException("Null!");
         }

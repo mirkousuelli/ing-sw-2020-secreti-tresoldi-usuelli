@@ -11,18 +11,15 @@
 package it.polimi.ingsw.model.cards.gods;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.gods.exceptions.NotPerimCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
-
 import it.polimi.ingsw.model.map.Level;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
-
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*Power:
  *  If your unmoved Worker is on the ground level, it may build up to three times
@@ -55,13 +52,13 @@ class PoseidonTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
 
-        worker1Player1.addPawn(player1.getWorker().get(0));
-        worker2Player1.addPawn(player1.getWorker().get(1));
+        worker1Player1.addPawn(player1.getWorkers().get(0));
+        worker2Player1.addPawn(player1.getWorkers().get(1));
 
         player1.setCard(new Poseidon());
         player1.getCard().setOwner(player1);
 
-        player1.setCurrentWorker(player1.getWorker().get(0));
+        player1.setCurrentWorker(player1.getWorkers().get(0));
     }
 
     @Test
@@ -70,9 +67,6 @@ class PoseidonTest {
         /*@function
          * it controls if usePower functions in the right way
          */
-
-        assertEquals(Level.GROUND, worker1Player1.getLevel());
-        assertEquals(Level.GROUND, worker2Player1.getLevel());
 
         player1.getCard().usePower(empty1);
         player1.getCard().usePower(empty2);
@@ -107,10 +101,7 @@ class PoseidonTest {
          * unmoved worker is not on a ground level cell
          */
 
-        player1.getWorker().get(1).moveTo(empty2);
-        assertEquals(empty2, player1.getWorker().get(1).getLocation());
-        assertEquals(empty2.getLevel(), player1.getWorker().get(1).getLocation().getLevel());
-        assertEquals(Level.BOTTOM, player1.getWorker().get(1).getLocation().getLevel());
+        player1.getWorkers().get(1).moveTo(empty2);
 
         assertThrows(NullPointerException.class,
                 ()->{player1.getCard().usePower(empty1);} );

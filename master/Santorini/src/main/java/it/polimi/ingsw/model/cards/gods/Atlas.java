@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.exceptions.cards.CompleteTowerException;
 import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
@@ -44,6 +45,7 @@ public class Atlas extends Card {
          */
 
         if (!cell.isFree()) throw new OccupiedCellException("Occupied cell!");
+        if (cell.getLevel().equals(Level.DOME)) throw new CompleteTowerException("There is already a dome!");
 
         cell.setLevel(Level.DOME);
     }
