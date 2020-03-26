@@ -11,6 +11,8 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
+import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
@@ -59,10 +61,14 @@ public class Player {
         currentWorker.build(cell);
     }
 
-    public void initializeWorkerPosition(int id, Block position) {
+    public void initializeWorkerPosition(int id, Block position) throws Exception/*,OccupiedCellException, WrongWorkerException*/ {
         /*@function
          * it sets the initial position of the current worker
          */
+
+        if (!position.isFree()) throw new OccupiedCellException("Selected cell is occupied!");
+        if (id != 1 && id != 2) throw new WrongWorkerException("It must be 1 or 2!");
+
         worker.add(new Worker(this, position));
     }
 
@@ -70,6 +76,7 @@ public class Player {
         /*@getter
          * it returns player's workers
          */
+
         return worker;
     }
 

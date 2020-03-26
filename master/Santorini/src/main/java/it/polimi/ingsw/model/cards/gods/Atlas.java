@@ -35,6 +35,7 @@ public class Atlas extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.ATLAS, Effect.BUILD);
     }
 
@@ -44,6 +45,7 @@ public class Atlas extends Card {
          * it implements Atlas' power
          */
 
+        if (cell == null) throw new NullPointerException("Cell is null!");
         if (!cell.isFree()) throw new OccupiedCellException("Occupied cell!");
         if (cell.getLevel().equals(Level.DOME)) throw new CompleteTowerException("There is already a dome!");
 

@@ -45,36 +45,28 @@ public class Poseidon extends Card {
          * it implements Poseidon's power
          */
 
-        if (cell == null) throw new NullPointerException("cell is null!");
+        if (cell == null) throw new NullPointerException("Cell is null!");
 
-        List<Worker> unmovedWorkers = getOwner().getWorkers()
+        /*List<Worker> unmovedWorkers = getOwner().getWorkers()
                                                 .stream()
                                                 .filter(worker -> !worker.equals(getOwner().getCurrentWorker()))
                                                 .collect(Collectors.toList());
 
         if (!unmovedWorkers.get(0).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
 
-        unmovedWorkers.get(0).build(cell);
+        unmovedWorkers.get(0).build(cell);*/
 
-
-        /*if (getOwner().getWorkers().get(0).equals(getOwner().getCurrentWorker())){
-            if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
+        if (getOwner().getWorkers().get(0).equals(getOwner().getCurrentWorker())) {
+            if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND))
+                throw new NullPointerException("No unmoved worker on ground level!");
             getOwner().getWorkers().get(1).build(cell);
-
-        if (getOwner().getWorkers().get(0).equals(getOwner().getCurrentWorker())){
-            if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
-            System.out.println(getOwner().getWorkers().get(1).build(cell));
-            System.out.println(getOwner().getWorkers().get(1).getX() + ", " + getOwner().getWorkers().get(1).getY());
-            for (Cell c: ((Block) cell).getAround()) System.out.println(c.getX() + ", " + c.getY());
-
         }
-        else{
-            if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
+        else {
+            if (!getOwner().getWorkers().get(0).getLocation().getLevel().equals(Level.GROUND))
+                throw new NullPointerException("No unmoved worker on ground level!");
             getOwner().getWorkers().get(0).build(cell);
-
-        }*/
-
         }
+    }
 
     @Override
     public void usePower(List<Player> opponents) throws UnusedPowerException {

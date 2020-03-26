@@ -35,6 +35,7 @@ public class Zeus extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.ZEUS, Effect.BUILD);
     }
 
@@ -43,12 +44,12 @@ public class Zeus extends Card {
         /*@function
          * It implements Zeus' power
          */
+
         Block temp = (Block) getOwner().getCurrentWorker().getLocation();
 
-        //if (temp.getLevel().equals(Level.TOP)) throw new TopLevelTowerException("Cannot build a dome!");
-        //if (temp.getLevel().equals(Level.DOME)) throw new TopLevelTowerException("Null!");
+        if (cell == null) throw new NullPointerException("Cell is null!");
 
-        switch (temp.getLevel()) {
+        switch (temp.getLevel()) { //TO-DO parse() in Level
             case GROUND:
                 temp.setLevel(Level.BOTTOM);
                 temp.setPreviousLevel(Level.GROUND);

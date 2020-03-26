@@ -32,6 +32,7 @@ public class Persephone extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.PERSEPHONE, Effect.OPPONENT_TURN);
     }
 

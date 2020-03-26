@@ -15,8 +15,6 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,47 +24,31 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 class PoseidonTest {
-    static final int worker1Player1X = 0, worker1Player1Y = 0;
-    static final int worker2Player1X = 3, worker2Player1Y = 3;
-    static final int empty1X = 4, empty1Y = 3;
-    static final int empty2X = 4, empty2Y = 4;
 
-    static Player player1;
-    static Board board;
-    static Block worker1Player1, worker2Player1, empty1, empty2;
-
-    @BeforeAll
-    static void init() {
+    @Test
+    void TestPoseidon() throws Exception {
         /*@function
-         * it sets the objects used in the tests
+         * it controls if usePower functions in the right way
          */
 
-        player1 = new Player("Pl1");
-        board = new Board();
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
 
-        worker1Player1 = (Block) board.getCell(worker1Player1X, worker1Player1Y);
-        worker2Player1 = (Block) board.getCell(worker2Player1X, worker2Player1Y);
-        empty1 = (Block) board.getCell(empty1X, empty1Y);
-        empty2 = (Block) board.getCell(empty2X, empty2Y);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker2Player1 = (Block) board.getCell(3, 3);
+        Block empty1 = (Block) board.getCell(4, 3);
+        Block empty2 = (Block) board.getCell(4, 4);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
-
-        worker1Player1.addPawn(player1.getWorkers().get(0));
-        worker2Player1.addPawn(player1.getWorkers().get(1));
 
         player1.setCard(new Poseidon());
         player1.getCard().setOwner(player1);
 
         player1.setCurrentWorker(player1.getWorkers().get(0));
-    }
 
-    @Test
-    @Order(1)
-    void TestPoseidon() throws Exception {
-        /*@function
-         * it controls if usePower functions in the right way
-         */
+
+
 
         player1.getCard().usePower(empty1);
         player1.getCard().usePower(empty2);
@@ -78,38 +60,66 @@ class PoseidonTest {
 
     // it must be done in Game
     //@Test
-    //@Order(2)
     void testMoreThanThree() throws Exception {
         /*@function
          * it controls if usePower throws an Exception when a player tries to build more than three times with its
          * unmoved ground level worker
          */
 
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty1 = (Block) board.getCell(4, 3);
+        Block empty2 = (Block) board.getCell(4, 4);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+
+        player1.setCard(new Poseidon());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+
+
+
+
         player1.getCard().usePower(empty1);
         player1.getCard().usePower(empty2);
         player1.getCard().usePower(empty1);
-
         assertThrows(NullPointerException.class,
                 ()->{player1.getCard().usePower(empty2);} );
     }
 
     @Test
-    @Order(2)
-    void testNotOnGroundLevel() {
+    void testNotOnGroundLevel() throws Exception {
         /*@function
          * it controls if usePower throws an Exception when a player tries to use Poseidon's power even though its
          * unmoved worker is not on a ground level cell
          */
 
-        player1.getWorkers().get(1).moveTo(empty2);
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker2Player1 = (Block) board.getCell(1, 1);
+        Block empty = (Block) board.getCell(1, 0);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player1.initializeWorkerPosition(2, worker2Player1);
+
+        player1.setCard(new Poseidon());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+        player1.build(empty);
+        player1.getWorkers().get(1).moveTo(empty);
 
 
-        assertEquals(empty2, player1.getWorkers().get(1).getLocation());
-        assertEquals(empty2.getLevel(), player1.getWorkers().get(1).getLocation().getLevel());
-        assertEquals(Level.BOTTOM, player1.getWorkers().get(1).getLocation().getLevel());
+
 
 
         assertThrows(NullPointerException.class,
-                ()->{player1.getCard().usePower(empty1);} );
+                ()->{player1.getCard().usePower(empty);} );
     }
 }

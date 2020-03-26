@@ -33,6 +33,7 @@ public class Triton extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.TRITON, Effect.MOVE);
     }
 

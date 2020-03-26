@@ -10,80 +10,75 @@
 
 package it.polimi.ingsw.model.cards.gods;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.exceptions.cards.TopLevelTowerException;
-import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
-
-import org.junit.jupiter.api.BeforeAll;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*Power
  *  Your Worker may build one additional block (not dome) on top of your first block
  */
 
 class HephaestusTest {
-    static final int worker1Player1X = 0, worker1Player1Y = 0;
-    static final int topLevelTowerX = 0, topLevelTowerY = 1;
-    static final int emptyX = 1, emptyY = 1;
-    static final int otherX = 1, otherY = 0;
 
-    static Player player1;
-    static Board board;
-    static Block worker1Player1, empty, topLevelTower, other;
+    @Test
+    void testHephaestus() throws Exception {
+        /*@function
+         * it controls if usePower functions in the right way
+         */
 
-    @BeforeAll
-    static void init() throws Exception {
-        player1 = new Player("Pl1");
-        board = new Board();
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
 
-        worker1Player1 = (Block) board.getCell(worker1Player1X, worker1Player1Y);
-        empty = (Block) board.getCell(emptyX, emptyY);
-        topLevelTower = (Block) board.getCell(topLevelTowerX, topLevelTowerY);
-        other = (Block) board.getCell(otherX, otherY);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block empty = (Block) board.getCell(1, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
-
-        worker1Player1.addPawn(player1.getWorkers().get(0));
 
         player1.setCard(new Hephaestus());
         player1.getCard().setOwner(player1);
 
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        player1.build(topLevelTower);
-        player1.build(topLevelTower);
-        player1.build(topLevelTower);
-    }
-
-    //@Test
-    //@Order(2)
-    void right() throws Exception {
         player1.build(empty);
-        player1.getCard().usePower(empty);
+
+
+
+
+        player1.getCard().usePower();
 
         assertEquals(Level.MIDDLE, player1.getCurrentWorker().getPreviousBuild().getLevel());
     }
 
-    //@Test
-    //@Order(1)
-    void dome() {
+    @Test
+    void testBuildDome() throws Exception {
         /*@function
          * it controls if usePower throws a TopLevelTowerException when a player is trying to build a dome on the
          * selected cell
          */
-        assertThrows(TopLevelTowerException.class,
-                ()->{player1.getCard().usePower(topLevelTower);} );
-    }
 
-    //@Test
-    //non può se non uso cell
-    void differentCell() throws Exception {
-        assertThrows(WrongCellException.class,
-                ()->{player1.getCard().usePower(other);} );
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block topLevelTower = (Block) board.getCell(0, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+
+        player1.setCard(new Hephaestus());
+        player1.getCard().setOwner(player1);
+
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+        player1.build(topLevelTower);
+        player1.build(topLevelTower);
+        player1.build(topLevelTower);
+
+
+
+
+        assertThrows(TopLevelTowerException.class,
+                ()->{player1.getCard().usePower();} );
     }
 }

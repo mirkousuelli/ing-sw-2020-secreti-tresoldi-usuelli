@@ -34,6 +34,7 @@ public class Arthemis extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.ARTHEMIS, Effect.MOVE);
     }
 
@@ -43,6 +44,7 @@ public class Arthemis extends Card {
          * it implements Arthemis' power
          */
 
+        if (cell == null) throw new NullPointerException("Cell is null!");
         if (cell.equals(getOwner().getCurrentWorker().getPreviousLocation())) throw new InitialCellException("Previous cell!");
         if (!cell.isFree()) throw new OccupiedCellException("Occupied cell!");
 

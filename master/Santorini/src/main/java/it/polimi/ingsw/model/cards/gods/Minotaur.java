@@ -14,8 +14,9 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.exceptions.cards.OutOfBorderException;
 import it.polimi.ingsw.model.exceptions.cards.CompleteTowerException;
-import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
+import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
 import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
@@ -39,30 +40,38 @@ public class Minotaur extends Card {
         /*@constructor
          * it calls the constructor of the superclass
          */
+
         super(God.MINOTAUR, Effect.MOVE);
     }
 
     @Override
-    public void usePower(Cell cell) throws NullPointerException, WrongWorkerException, OccupiedCellException, CompleteTowerException {
+    public void usePower(Cell cell) throws Exception/*,NullPointerException, WrongWorkerException, OccupiedCellException, CompleteTowerException, WrongCellException*/ {
         /*@function
          * it implements Minotaur's power
          */
-        if (cell == null) throw new NullPointerException("cell is null!");
+
+        if (cell == null) throw new NullPointerException("Cell is null!");
 
         Cell newPos = find(cell);
 
-        if (newPos == null) throw new NullPointerException("It's the same worker!");
-        if (!newPos.isFree()) throw new OccupiedCellException("Cell is occupied!");
+        //if (newPos.equals(cell)) throw new WrongWorkerException("It's the same worker!");
+        if (newPos == null) throw new OutOfBorderException("Cannot push a worker out of the board!");
+        if (!newPos.isFree()) throw new WrongCellException("Wrong cell!");
         if (newPos.getLevel().equals(Level.DOME)) throw new CompleteTowerException("Cannot Move onto a dome!");
-        if (((Block) newPos).getPawn().getPlayer().equals(getOwner())) throw new WrongWorkerException("It's your worker! The other one...");
+        if (((Block) cell).getPawn().getPlayer().equals(getOwner())) throw new WrongWorkerException("It's your worker! You can't...");
 
         //swap
         ((Worker) ((Block) cell).getPawn()).moveTo(newPos);
+        getOwner().getCurrentWorker().setPreviousLocation(getOwner().getCurrentWorker().getLocation());
         getOwner().getCurrentWorker().setLocation((Block) cell);
         ((Block) cell).addPawn(getOwner().getCurrentWorker());
     }
 
     private Cell find(Cell cell) {
+        /*@function
+         * it identifies the direction in which the opponent's worker will be forced to move
+         */
+
         List<Cell> adjacency = ((Block) cell).getAround();
         Cell currCell = getOwner().getCurrentWorker().getLocation();
 
@@ -89,10 +98,20 @@ public class Minotaur extends Card {
                 return findCell(adjacency, cell.getX() , cell.getY() - 1);
         }
 
+        /*for (Cell c : adjacency) {
+            if ((c.getX() - cell.getX()) == (c.getY() - cell.getY())) return findCell(adjacency, cell.getX() + 1, cell.getY() + 1);
+            if ((c.getX() - cell.getX() == 0) && (c.getY() - cell.getY() != 0)) return findCell(adjacency, cell.getX(), cell.getY() + 1);
+            if ((c.getX() - cell.getX() != 0) && (c.getY() - cell.getY() == 0)) return findCell(adjacency, cell.getX() + 1, cell.getY());
+        }*/
+
         return null;
     }
 
     private Cell findCell(List<Cell> list, int x, int y) {
+        /*@function
+         * it identifies the new cell of the opponent's worker
+         */
+
         for (Cell c: list){
             if (c.getX() == x && c.getY() == y)
                 return c;

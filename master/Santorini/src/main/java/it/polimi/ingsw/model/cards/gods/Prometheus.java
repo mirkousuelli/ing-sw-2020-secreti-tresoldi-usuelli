@@ -14,7 +14,6 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.exceptions.map.CannotMoveUpException;
 import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.map.Cell;
 
@@ -38,13 +37,12 @@ public class Prometheus extends Card {
     }
 
     @Override
-    public void usePower(Cell cell) throws Exception /*OccupiedCellException*/ {
+    public void usePower(Cell cell) throws Exception /*NullPointerException*/ {
         /*@function
          * it implements Prometheus' power
          */
 
-        if (getOwner().getCurrentWorker().getPreviousBuild() != null &&
-                getOwner().getCurrentWorker().getPreviousBuild().getLevel().toInt() - cell.getLevel().toInt() > 0) throw new CannotMoveUpException("You are moving up!");
+        if (cell == null) throw new NullPointerException("Cell is null!");
 
         getOwner().addCannotMoveUpMalus();
         getOwner().build(cell);
