@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.model.state.states;
 
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
@@ -18,16 +19,33 @@ public class Victory implements GameState {
      * it represents the state where a player wins
      */
 
+    public Game game;
+
     public Victory(Game game){
         /* @constructor
          * it shows the player that won and ends the game
          */
+
+        this.game = game;
+
+        Player winner = game.getCurrentPlayer();
+
+        endGame(game);
+
+        //Start a new game
+        game.setState(new Start(game));
     }
 
     public void endGame(Game game) {
         /* @function
-         * it is used after a player won, in order to end the current game
+         * it shows the player that won and ends the current game
          */
+
+        // once there is a winner, it prints the name of the winner
+        System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
+
+        // it cleans the whole board ( + probably needs to reset everything else)
+        game.board.clean();
     }
 
     public void gameEngine(Game game) {
