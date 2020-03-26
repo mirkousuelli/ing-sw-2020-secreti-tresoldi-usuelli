@@ -11,6 +11,9 @@
 package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.exceptions.map.*;
+
+import java.util.Arrays;
 
 public abstract class Pawn implements Cell {
     /* @abstractClass
@@ -23,10 +26,15 @@ public abstract class Pawn implements Cell {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Pawn (Player player, Block currCell) {
+    public Pawn (Player player, Block currCell) throws NullPointerException, PawnPositioningException {
         /* @constructor
          * it constructs a pawn linking the owner (player) and is current position within the board
          */
+
+        if (player == null || currCell == null) {
+            throw new NullPointerException();
+        }
+
         this.player = player;
         this.currCell = currCell;
         this.currCell.addPawn(this);
@@ -75,45 +83,72 @@ public abstract class Pawn implements Cell {
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
 
     @Override
-    public void setX(int newX) {
+    public void setX(int newX) throws NotValidCellException {
         /* @setter
          * it sets the column
          */
+
+        if (newX < 0 || newX >= 5) {
+            throw new NotValidCellException("Not valid X value!");
+        }
+
         this.currCell.setX(newX);
     }
 
     @Override
-    public void setY(int newY) {
+    public void setY(int newY) throws NotValidCellException {
         /* @setter
          * it sets the row
          */
+
+        if (newY < 0 || newY >= 5) {
+            throw new NotValidCellException("Not valid X value!");
+        }
+
         this.currCell.setY(newY);
     }
 
-    public void setLocation(Block newCell) {
+    public void setLocation(Block newCell) throws NullPointerException, PawnPositioningException {
         /* @setter
          * it sets the current position
          */
+
+        if (newCell == null) {
+            throw new NullPointerException();
+        }
+
         this.currCell.removePawn();
         this.currCell = newCell;
         this.currCell.addPawn(this);
     }
 
-    public void setPlayer(Player newPlayer) {
+    public void setPlayer(Player newPlayer) throws NullPointerException {
         /* @setter
          * it sets the pawn owner
          */
+
+        if (newPlayer == null) {
+            throw new NullPointerException();
+        }
+
         this.player = newPlayer;
     }
 
     @Override
-    public void setLevel(Level newLevel) {
+    public void setLevel(Level newLevel) throws NullPointerException, NotValidLevelException {
         /* @setter
          * it sets the level
          */
-        if (newLevel != Level.DOME) {
-            this.currCell.setLevel(newLevel);
+
+        if (newLevel == null) {
+            throw new NullPointerException();
         }
+
+        if (!Arrays.asList(Level.values()).contains(newLevel)) {
+            throw new NotValidLevelException("Invalid level inserted!");
+        }
+
+        this.currCell.setLevel(newLevel);
     }
 
     /* ABSTRACT_METHOD ------------------------------------------------------------------------------------------------- */

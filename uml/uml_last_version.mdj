@@ -9784,8 +9784,8 @@
 							"tail": {
 								"$ref": "AAAAAAFw236a/psZMZk="
 							},
-							"lineStyle": 1,
-							"points": "3341:1433;3338:1519"
+							"lineStyle": 2,
+							"points": "3341:1432;3341:1520"
 						},
 						{
 							"_type": "UMLClassView",
@@ -17359,7 +17359,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFw4Gd0m00SzlM="
 									},
-									"name": "Cell cell"
+									"name": "Cell cell",
+									"type": ""
 								},
 								{
 									"_type": "UMLParameter",
