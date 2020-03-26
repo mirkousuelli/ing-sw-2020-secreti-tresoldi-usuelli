@@ -20,9 +20,6 @@ import it.polimi.ingsw.model.map.Board;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /*Power:
  *  Your Worker may move one additional time, but not back to its initial space

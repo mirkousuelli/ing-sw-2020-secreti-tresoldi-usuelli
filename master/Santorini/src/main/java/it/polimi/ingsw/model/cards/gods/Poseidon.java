@@ -15,7 +15,6 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Effect;
 import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
-import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
 import it.polimi.ingsw.model.map.Worker;
@@ -57,15 +56,25 @@ public class Poseidon extends Card {
 
         unmovedWorkers.get(0).build(cell);
 
+
         /*if (getOwner().getWorkers().get(0).equals(getOwner().getCurrentWorker())){
             if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
             getOwner().getWorkers().get(1).build(cell);
+
+        if (getOwner().getWorkers().get(0).equals(getOwner().getCurrentWorker())){
+            if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
+            System.out.println(getOwner().getWorkers().get(1).build(cell));
+            System.out.println(getOwner().getWorkers().get(1).getX() + ", " + getOwner().getWorkers().get(1).getY());
+            for (Cell c: ((Block) cell).getAround()) System.out.println(c.getX() + ", " + c.getY());
+
         }
         else{
             if (!getOwner().getWorkers().get(1).getLocation().getLevel().equals(Level.GROUND)) throw new NullPointerException("No unmoved worker on ground level!");
             getOwner().getWorkers().get(0).build(cell);
+
         }*/
-    }
+
+        }
 
     @Override
     public void usePower(List<Player> opponents) throws UnusedPowerException {

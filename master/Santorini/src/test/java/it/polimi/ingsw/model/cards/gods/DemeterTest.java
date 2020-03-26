@@ -19,9 +19,6 @@ import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /*Power:
  *  Your Worker may build one additional time, but not on the same space

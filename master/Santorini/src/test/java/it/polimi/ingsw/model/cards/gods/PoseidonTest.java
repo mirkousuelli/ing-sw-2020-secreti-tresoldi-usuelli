@@ -103,6 +103,12 @@ class PoseidonTest {
 
         player1.getWorkers().get(1).moveTo(empty2);
 
+
+        assertEquals(empty2, player1.getWorkers().get(1).getLocation());
+        assertEquals(empty2.getLevel(), player1.getWorkers().get(1).getLocation().getLevel());
+        assertEquals(Level.BOTTOM, player1.getWorkers().get(1).getLocation().getLevel());
+
+
         assertThrows(NullPointerException.class,
                 ()->{player1.getCard().usePower(empty1);} );
     }

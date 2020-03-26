@@ -19,9 +19,6 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /*Power:
  *  Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated
