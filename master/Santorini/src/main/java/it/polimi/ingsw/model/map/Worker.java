@@ -146,13 +146,18 @@ public class Worker extends Pawn {
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
-    public boolean moveTo(Cell newCell) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NullPointerException, PawnPositioningException, NotValidCellException, MapDimensionException {
+    public boolean moveTo(Cell newCell) throws OccupiedCellException, OutOfAroundException, NullPointerException, PawnPositioningException, NotValidCellException, MapDimensionException {
         /* @function
          * it makes worker moving to another cell going through an operation of undecorate-decorate
          */
 
         if (newCell == null) {
             throw new NullPointerException();
+        }
+
+        if (newCell.equals(this.currCell)) {
+            // self moving
+            return true;
         }
 
         // if it is not a dome, free and it is contained within possible choices
@@ -179,7 +184,7 @@ public class Worker extends Pawn {
         }
 
         if (newCell.isComplete()) {
-            throw new CannotMoveUpException("Selected cell is complete!");
+            throw new OutOfAroundException("Selected cell is complete!");
         }
 
         if (!this.getPossibleMoves().contains(newCell)) {
@@ -190,7 +195,7 @@ public class Worker extends Pawn {
         return false;
     }
 
-    public boolean build(Cell cellToBuildUp) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NotValidCellException, NotValidLevelException, MapDimensionException {
+    public boolean build(Cell cellToBuildUp) throws OccupiedCellException, OutOfAroundException, NotValidCellException, NotValidLevelException, MapDimensionException {
         /* @function
          * it builds around except for its current location (by default), unless a god change this rule
          */
@@ -220,7 +225,7 @@ public class Worker extends Pawn {
         }
 
         if (toBuild.isComplete()) {
-            throw new CannotMoveUpException("Selected cell is complete!");
+            throw new OutOfAroundException("Selected cell is complete!");
         }
 
         if (!this.getPossibleBuilds().contains(toBuild)) {

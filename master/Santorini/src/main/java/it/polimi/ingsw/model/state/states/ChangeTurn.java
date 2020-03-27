@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.state.states;
 
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
@@ -20,7 +22,7 @@ public class ChangeTurn implements GameState {
 
     public Game game;
 
-    public ChangeTurn(Game game) {
+    public ChangeTurn(Game game) throws NotValidCellException, MapDimensionException {
         /* @constructor
          * it changes the turn and the new player has to move one of his worker
          */

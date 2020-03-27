@@ -11,6 +11,8 @@
 package it.polimi.ingsw.model.state.states;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
@@ -21,7 +23,7 @@ public class Victory implements GameState {
 
     public Game game;
 
-    public Victory(Game game){
+    public Victory(Game game) throws NotValidCellException, MapDimensionException {
         /* @constructor
          * it shows the player that won and ends the game
          */
@@ -36,7 +38,7 @@ public class Victory implements GameState {
         game.setState(new Start(game));
     }
 
-    public void endGame(Game game) {
+    public void endGame(Game game) throws NotValidCellException, MapDimensionException {
         /* @function
          * it shows the player that won and ends the current game
          */

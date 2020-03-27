@@ -11,6 +11,9 @@
 package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
+import it.polimi.ingsw.model.exceptions.map.NotValidLevelException;
+import it.polimi.ingsw.model.exceptions.map.PawnPositioningException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +22,7 @@ class BlockTest {
     private final int TEST_Y = 0;
 
     @Test
-    void levelStressTest() {
+    void levelStressTest() throws NotValidLevelException, NotValidCellException {
         /* test that forces building up and down exceeding level limits
          */
         Block block = new Block(TEST_X, TEST_Y, new Board());
@@ -53,7 +56,7 @@ class BlockTest {
     }
 
     @Test
-    void cleanTest() {
+    void cleanTest() throws NotValidCellException {
         /* test which check atomic cleaning
          */
         Block block = new Block(TEST_X, TEST_Y, new Board());
@@ -67,7 +70,7 @@ class BlockTest {
     }
 
     @Test
-    void pawnPresenceTest() {
+    void pawnPresenceTest() throws PawnPositioningException, NotValidCellException {
         /* test for correct assumption of add/remove a pawn on the block
          */
         Block block = new Block(TEST_X, TEST_Y, new Board());
