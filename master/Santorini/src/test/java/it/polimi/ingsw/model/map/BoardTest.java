@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.map;
 
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardTest {
 
     @Test
-    void initTest() {
+    void initTest() throws NotValidCellException {
         /* test for correct grill initialization
          */
         Board tester = new Board();
@@ -38,7 +40,7 @@ class BoardTest {
     }
 
     @Test
-    void getAroundTest() {
+    void getAroundTest() throws NotValidCellException, MapDimensionException {
         /* test for correct around cells list usage
          */
         Board tester = new Board();
@@ -74,7 +76,7 @@ class BoardTest {
     }
 
     @Test
-    void cleanTest() {
+    void cleanTest() throws NotValidCellException, MapDimensionException {
         /* test for correct map reset
          */
         Board tester = new Board();

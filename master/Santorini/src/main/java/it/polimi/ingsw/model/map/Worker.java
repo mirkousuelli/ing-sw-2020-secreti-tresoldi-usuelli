@@ -26,7 +26,7 @@ public class Worker extends Pawn {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Worker(Player player, Block pos) throws NullPointerException {
+    public Worker(Player player, Block pos) throws NullPointerException, PawnPositioningException {
         /* @constructor
          * it re-calls its super class Pawn
          */
@@ -51,7 +51,7 @@ public class Worker extends Pawn {
         return prevBuild;
     }
 
-    public List<Cell> getPossibleMoves() {
+    public List<Cell> getPossibleMoves() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it considers malus attributes in player and modify possible around cells
          */
@@ -101,7 +101,7 @@ public class Worker extends Pawn {
         return toReturn;
     }
 
-    public List<Cell> getPossibleBuilds() {
+    public List<Cell> getPossibleBuilds() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it gets possible cell where to build
          */
@@ -146,7 +146,7 @@ public class Worker extends Pawn {
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
-    public boolean moveTo(Cell newCell) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NullPointerException {
+    public boolean moveTo(Cell newCell) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NullPointerException, PawnPositioningException, NotValidCellException, MapDimensionException {
         /* @function
          * it makes worker moving to another cell going through an operation of undecorate-decorate
          */
@@ -190,7 +190,7 @@ public class Worker extends Pawn {
         return false;
     }
 
-    public boolean build(Cell cellToBuildUp) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NotValidCellException {
+    public boolean build(Cell cellToBuildUp) throws CannotMoveUpException, OccupiedCellException, OutOfAroundException, NotValidCellException, NotValidLevelException, MapDimensionException {
         /* @function
          * it builds around except for its current location (by default), unless a god change this rule
          */

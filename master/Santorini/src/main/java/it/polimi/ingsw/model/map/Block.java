@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.model.map;
 
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
 import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.exceptions.map.NotValidLevelException;
 import it.polimi.ingsw.model.exceptions.map.PawnPositioningException;
@@ -92,7 +93,7 @@ public class Block implements Cell {
         return this.pawn;
     }
 
-    public List<Cell> getAround() {
+    public List<Cell> getAround() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it implements without arguments getAround() defined in Board.class,
          * based on the current cell invoking it
