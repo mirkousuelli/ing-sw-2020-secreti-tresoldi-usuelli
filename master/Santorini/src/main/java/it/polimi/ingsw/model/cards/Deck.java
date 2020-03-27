@@ -34,7 +34,8 @@ public class Deck {
         cards.add(new Arthemis());
         cards.add(new Athena());
         cards.add(new Atlas());
-        cards.add(new Chronus());
+        //cards.add(new Chronus());
+        cards.add(new Hestia());
         cards.add(new Demeter());
         cards.add(new Hephaestus());
         cards.add(new Minotaur());
@@ -46,7 +47,7 @@ public class Deck {
         cards.add(new Zeus());
     }
 
-    public Card popCard() {
+    public Card popRandomCard() {
         /*@function
          * it picks a card from the deck
          */
@@ -57,6 +58,25 @@ public class Deck {
         if (cards.size() != 0) {
             pickedCard= cards.get(randomIndex.nextInt(cards.size()));
             cards.remove(pickedCard);
+        }
+
+        return pickedCard;
+    }
+
+    public Card popCard(God god) {
+        /*@function
+         * it picks the selected card from the deck
+         */
+
+        Card pickedCard = null;
+
+        if (cards.size() != 0) {
+            for (Card card : cards) {
+                if (card.god.equals(god)){
+                    pickedCard = card;
+                    cards.remove(pickedCard);
+                }
+            }
         }
 
         return pickedCard;

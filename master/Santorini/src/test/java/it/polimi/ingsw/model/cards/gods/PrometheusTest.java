@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.model.cards.gods;
 
+import it.polimi.ingsw.model.exceptions.map.OutOfAroundException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
@@ -33,7 +34,8 @@ class PrometheusTest {
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block empty1 = (Block) board.getCell(1, 0);
-        Block tower = (Block) board.getCell(1, 1);
+        Block empty2 = (Block) board.getCell(1, 1);
+        Block tower = (Block) board.getCell(1, 2);
 
         player1.initializeWorkerPosition(1, worker1Player1);
 
@@ -47,7 +49,7 @@ class PrometheusTest {
 
 
         player1.getCard().usePower(empty1);
-        player1.move(worker1Player1);
+        player1.move(empty2);
         player1.build(tower);
 
         assertTrue(player1.isCannotMoveUpActive());
@@ -76,8 +78,7 @@ class PrometheusTest {
 
 
         player1.getCard().usePower(empty);
-        //assertThrows(CannotMoveUpException.class,
-        //        ()->{player1.move(empty);} );
-        assertFalse(player1.getCurrentWorker().moveTo(empty));
+        assertThrows(OutOfAroundException.class,
+                ()->{player1.move(empty);} );
     }
 }

@@ -16,7 +16,6 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.exceptions.cards.NotPerimCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
-import it.polimi.ingsw.model.map.Cell;
 
 /*Power:
  *Each time your Worker moves into a perimeter space, it may immediately move again
@@ -32,9 +31,9 @@ class TritonTest {
 
         Player player1 = new Player("Pl1");
         Board board = new Board();
-        Cell cell;
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block notPerim = (Block) board.getCell(3, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
 
@@ -46,13 +45,13 @@ class TritonTest {
 
 
 
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j <5; j++) {
-                cell = board.getCell(i, j);
-                if (cell.getX() == 0 || cell.getY() == 0 || cell.getX() == 4 || cell.getY() == 4)
-                    player1.getCard().usePower(cell);
-            }
-        }
+        for (int i = 0; i < 5; i++)
+            player1.getCard().usePower(board.getCell(i, 0));
+
+        assertThrows(NotPerimCellException.class,
+                ()->{player1.getCard().usePower(notPerim);} );
+
+
     }
 
     @Test

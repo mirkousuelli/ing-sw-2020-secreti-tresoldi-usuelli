@@ -45,29 +45,30 @@ public class Minotaur extends Card {
     }
 
     @Override
-    public void usePower(Cell cell) throws Exception/*,NullPointerException, WrongWorkerException, OccupiedCellException, CompleteTowerException, WrongCellException*/ {
+    public void usePower(Cell opponentWorkerCell) throws Exception/*,NullPointerException, WrongWorkerException, OccupiedCellException, CompleteTowerException, WrongCellException*/ {
         /*@function
          * it implements Minotaur's power
          */
 
-        if (cell == null) throw new NullPointerException("Cell is null!");
+        if (opponentWorkerCell == null) throw new NullPointerException("Cell is null!");
 
-        Cell newPos = find(cell);
+        Block newPos = (Block) find(opponentWorkerCell);
+        Worker opponentWorker = ((Worker) ((Block) opponentWorkerCell).getPawn());
+        Worker minotaur = getOwner().getCurrentWorker();
 
-        //if (newPos.equals(cell)) throw new WrongWorkerException("It's the same worker!");
         if (newPos == null) throw new OutOfBorderException("Cannot push a worker out of the board!");
         if (!newPos.isFree()) throw new WrongCellException("Wrong cell!");
         if (newPos.getLevel().equals(Level.DOME)) throw new CompleteTowerException("Cannot Move onto a dome!");
-        if (((Block) cell).getPawn().getPlayer().equals(getOwner())) throw new WrongWorkerException("It's your worker! You can't...");
+        if (((Block) opponentWorkerCell).getPawn().getPlayer().equals(getOwner())) throw new WrongWorkerException("It's your worker! You can't...");
 
         //swap
-        ((Worker) ((Block) cell).getPawn()).moveTo(newPos);
-        getOwner().getCurrentWorker().setPreviousLocation(getOwner().getCurrentWorker().getLocation());
-        getOwner().getCurrentWorker().setLocation((Block) cell);
-        ((Block) cell).addPawn(getOwner().getCurrentWorker());
+        opponentWorker.moveTo(newPos);
+
+        minotaur.setPreviousLocation(minotaur.getLocation());
+        minotaur.setLocation((Block) opponentWorkerCell);
     }
 
-    private Cell find(Cell cell) {
+    private Cell find(Cell cell) throws Exception {
         /*@function
          * it identifies the direction in which the opponent's worker will be forced to move
          */
@@ -97,12 +98,6 @@ public class Minotaur extends Card {
             else if (currCell.getY() > cell.getY())
                 return findCell(adjacency, cell.getX() , cell.getY() - 1);
         }
-
-        /*for (Cell c : adjacency) {
-            if ((c.getX() - cell.getX()) == (c.getY() - cell.getY())) return findCell(adjacency, cell.getX() + 1, cell.getY() + 1);
-            if ((c.getX() - cell.getX() == 0) && (c.getY() - cell.getY() != 0)) return findCell(adjacency, cell.getX(), cell.getY() + 1);
-            if ((c.getX() - cell.getX() != 0) && (c.getY() - cell.getY() == 0)) return findCell(adjacency, cell.getX() + 1, cell.getY());
-        }*/
 
         return null;
     }

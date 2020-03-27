@@ -45,13 +45,13 @@ class ZeusTest {
 
 
 
-        player1.getCard().usePower(worker1Player1);
+        player1.getCard().usePower();
         assertEquals(Level.BOTTOM, player1.getCurrentWorker().getLocation().getLevel());
 
-        player1.getCard().usePower(worker1Player1);
+        player1.getCard().usePower();
         assertEquals(Level.MIDDLE, player1.getCurrentWorker().getLocation().getLevel());
 
-        player1.getCard().usePower(worker1Player1);
+        player1.getCard().usePower();
         assertEquals(Level.TOP, player1.getCurrentWorker().getLocation().getLevel());
     }
 
@@ -73,14 +73,14 @@ class ZeusTest {
         player1.getCard().setOwner(player1);
 
         player1.setCurrentWorker(player1.getWorkers().get(0));;
-        player1.getCard().usePower(worker1Player1);
-        player1.getCard().usePower(worker1Player1);
-        player1.getCard().usePower(worker1Player1);
+        player1.getCard().usePower();
+        player1.getCard().usePower();
+        player1.getCard().usePower();
 
 
 
 
         assertThrows(TopLevelTowerException.class,
-                ()->{player1.getCard().usePower(worker1Player1);} );
+                ()->{player1.getCard().usePower();} );
     }
 }

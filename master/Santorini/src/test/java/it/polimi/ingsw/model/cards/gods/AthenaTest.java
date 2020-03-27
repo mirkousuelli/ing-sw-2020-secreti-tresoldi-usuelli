@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.model.cards.gods;
 
+import it.polimi.ingsw.model.exceptions.map.OutOfAroundException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.model.Player;
@@ -61,10 +62,7 @@ class AthenaTest {
         assertTrue(player2.isCannotMoveUpActive());
 
         player2.build(w1P2Sx);
-        player2.move(w1P2Sx);
-
-        assertEquals(worker1Player2, player2.getCurrentWorker().getLocation());
-        //assertThrows(OccupiedCellException.class,
-         //       ()->{player2.move(w1P2Sx);} );
+        assertThrows(OutOfAroundException.class,
+               ()->{player2.move(w1P2Sx);} );
     }
 }

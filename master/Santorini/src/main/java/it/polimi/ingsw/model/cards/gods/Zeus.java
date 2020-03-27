@@ -40,37 +40,12 @@ public class Zeus extends Card {
     }
 
     @Override
-    public void usePower(Cell cell) throws TopLevelTowerException {
+    public void usePower(Cell cell) throws UnusedPowerException {
         /*@function
-         * It implements Zeus' power
+         * Unused
          */
 
-        Block temp = (Block) getOwner().getCurrentWorker().getLocation();
-
-        if (cell == null) throw new NullPointerException("Cell is null!");
-
-        switch (temp.getLevel()) { //TO-DO parse() in Level
-            case GROUND:
-                temp.setLevel(Level.BOTTOM);
-                temp.setPreviousLevel(Level.GROUND);
-                break;
-
-            case BOTTOM:
-                temp.setLevel(Level.MIDDLE);
-                temp.setPreviousLevel(Level.BOTTOM);
-                break;
-
-            case MIDDLE:
-                temp.setLevel(Level.TOP);
-                temp.setPreviousLevel(Level.MIDDLE);
-                break;
-
-            case TOP:
-                throw new TopLevelTowerException("Cannot build a dome!");
-                
-            case DOME:
-                throw new TopLevelTowerException("Null!");
-        }
+        throw new UnusedPowerException("Wrong power!");
     }
 
     @Override
@@ -83,11 +58,17 @@ public class Zeus extends Card {
     }
 
     @Override
-    public boolean usePower() throws UnusedPowerException {
+    public boolean usePower() throws Exception {
         /*@function
-         * Unused
+         * It implements Zeus' power
          */
 
-        throw new UnusedPowerException("Wrong power!");
+        Block temp = (Block) getOwner().getCurrentWorker().getLocation();
+
+        if (temp.getLevel().equals(Level.TOP)) throw new TopLevelTowerException("Cannot build a dome!");
+
+        temp.setLevel(temp.getLevel().parseInt(temp.getLevel().toInt() + 1));
+
+        return true;
     }
 }
