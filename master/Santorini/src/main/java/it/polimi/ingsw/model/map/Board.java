@@ -10,8 +10,10 @@
 
 package it.polimi.ingsw.model.map;
 
-import java.util.ArrayList;
-import java.util.List;
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
+
+import java.util.*;
 
 public class Board implements Cloneable{
     /* @class
@@ -19,10 +21,10 @@ public class Board implements Cloneable{
      */
 
     public final int DIM = 5;
-    private Cell[][] map;
+    public Cell[][] map;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
-    public Board() {
+    public Board() throws NotValidCellException {
         /* @constructor
          * it builds up cell-by-cell the whole map.
          */
@@ -38,10 +40,14 @@ public class Board implements Cloneable{
 
     /* GETTER ---------------------------------------------------------------------------------------------------------- */
 
-    public Cell getCell(int x, int y) {
+    public Cell getCell(int x, int y) throws NotValidCellException{
         /* @getter
          * it gets a specific cell in return through xy coordinates
          */
+
+        if ((x < 0 || x >= 5) && (y < 0 || y >= 5)) {
+            throw new NotValidCellException("Invalid cell coordinates inserted!");
+        }
 
         return this.map[x][y];
     }
@@ -54,10 +60,14 @@ public class Board implements Cloneable{
         return this.DIM;
     }
 
-    public List<Cell> getRow(int row) {
+    public List<Cell> getRow(int row) throws NotValidCellException, MapDimensionException {
         /* @getter
-         *
+         * it gets the full row selected as a list
          */
+
+        if (row < 0 || row >= 5) {
+            throw new MapDimensionException("Invalid row coordinates inserted!");
+        }
 
         List<Cell> rowList = new ArrayList<Cell>();
 
@@ -69,10 +79,14 @@ public class Board implements Cloneable{
         return rowList;
     }
 
-    public List<Cell> getColumn(int col) {
+    public List<Cell> getColumn(int col) throws NotValidCellException, MapDimensionException {
         /* @getter
-         *
+         * it gets the full column selected as a list
          */
+
+        if (col < 0 || col >= 5) {
+            throw new MapDimensionException("Invalid column index inserted!");
+        }
 
         List<Cell> colList = new ArrayList<Cell>();
 
@@ -86,7 +100,7 @@ public class Board implements Cloneable{
 
     /* FUNCTION ----------------------------------------------------------------------------------------------------- */
 
-    public List<Cell> getAround(Cell cell) {
+    public List<Cell> getAround(Cell cell) throws NullPointerException, NotValidCellException, MapDimensionException {
         /* @function
          * it returns 8 cells next to the current one passed as parameter
          * --------------------------------------------------------------------
@@ -96,6 +110,25 @@ public class Board implements Cloneable{
          * @return
          *          (ArrayList<Cell>) : 8 cells around the base passed
          */
+
+        if (cell == null) {
+            throw new NullPointerException();
+        }
+
+        /* ------- EXISTENCE CONTROL ------- */
+        boolean notExists = true;
+        int i;
+
+        i = 0;
+        while (i < this.DIM && notExists) {
+            notExists = Objects.equals(this.getRow(i), cell);
+            i++;
+        }
+
+        if (notExists) {
+            throw new NotValidCellException("Cell selected doesn't belong to the current board! (even if its domain could be correct)");
+        }
+        /* ---------------------------------- */
 
         // creating the array to pass in return
         List<Cell> around = new ArrayList<Cell>();
@@ -135,7 +168,7 @@ public class Board implements Cloneable{
         return around;
     }
 
-    public void clean() {
+    public void clean() throws NotValidCellException, MapDimensionException {
         /* @function
          * it cleans off the entire map setting GROUND as default level and
          * removing eventual pawns
@@ -153,6 +186,19 @@ public class Board implements Cloneable{
 
     @Override
     public Board clone() throws CloneNotSupportedException {
-        return (Board) super.clone();
+        Board cloned;
+
+        try {
+            cloned = (Board) super.clone();
+
+            for (int i = 0; i < this.DIM; i++) {
+                cloned.map[i] = this.getRow(i).toArray(new Cell[0]);
+            }
+        } catch (CloneNotSupportedException | NotValidCellException | MapDimensionException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+
+        return cloned;
     }
 }

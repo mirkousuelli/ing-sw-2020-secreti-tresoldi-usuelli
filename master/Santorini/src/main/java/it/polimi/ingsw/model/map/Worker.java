@@ -11,6 +11,7 @@
 package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.exceptions.map.*;
 
 import java.util.List;
 
@@ -25,14 +26,13 @@ public class Worker extends Pawn {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Worker(Player player, Block pos) {
+    public Worker(Player player, Block pos) throws NullPointerException, PawnPositioningException {
         /* @constructor
          * it re-calls its super class Pawn
          */
         super(player, pos);
         this.prevCell = pos;
         this.prevBuild = null;
-        this.currCell.addPawn(this);
     }
 
     /* GETTER  --------------------------------------------------------------------------------------------------------- */
@@ -51,7 +51,7 @@ public class Worker extends Pawn {
         return prevBuild;
     }
 
-    public List<Cell> getPossibleMoves() {
+    public List<Cell> getPossibleMoves() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it considers malus attributes in player and modify possible around cells
          */
@@ -101,7 +101,7 @@ public class Worker extends Pawn {
         return toReturn;
     }
 
-    public List<Cell> getPossibleBuilds() {
+    public List<Cell> getPossibleBuilds() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it gets possible cell where to build
          */
@@ -112,26 +112,53 @@ public class Worker extends Pawn {
 
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
 
-    public void setPreviousLocation(Cell prevCell) {
+    public void setPreviousLocation(Cell prevCell) throws NotValidCellException, NullPointerException {
         /* @setter
          * it sets previous worker's location
          */
+
+        if (prevCell == null) {
+            throw new NullPointerException();
+        }
+
+        if ((prevCell.getX() >= 5 || prevCell.getX() < 0) && (prevCell.getY() >= 5 || prevCell.getY() < 0)) {
+            throw new NotValidCellException("Coordinates out of domain!");
+        }
+
         this.prevCell = (Block) prevCell;
     }
 
-    public void setPreviousBuild(Cell prevBuild) {
+    public void setPreviousBuild(Cell prevBuild) throws NotValidCellException, NullPointerException {
         /* @setter
          * it sets the previous block built
          */
+
+        if (prevCell == null) {
+            throw new NullPointerException();
+        }
+
+        if ((prevBuild.getX() >= 5 || prevBuild.getX() < 0) && (prevBuild.getY() >= 5 || prevBuild.getY() < 0)) {
+            throw new NotValidCellException("Coordinates out of domain!");
+        }
+
         this.prevBuild = (Block) prevBuild;
     }
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
-    public boolean moveTo(Cell newCell) {
+    public boolean moveTo(Cell newCell) throws OccupiedCellException, OutOfAroundException, NullPointerException, PawnPositioningException, NotValidCellException, MapDimensionException {
         /* @function
          * it makes worker moving to another cell going through an operation of undecorate-decorate
          */
+
+        if (newCell == null) {
+            throw new NullPointerException();
+        }
+
+        if (newCell.equals(this.currCell)) {
+            // self moving
+            return true;
+        }
 
         // if it is not a dome, free and it is contained within possible choices
         if (newCell.isWalkable() && this.getPossibleMoves().contains(newCell)) {
@@ -149,16 +176,32 @@ public class Worker extends Pawn {
 
             // returning everything correct
             return true;
+
+        }
+
+        if (!newCell.isFree()){
+            throw new OccupiedCellException("Selected cell is busy!");
+        }
+
+        if (newCell.isComplete()) {
+            throw new OutOfAroundException("Selected cell is complete!");
+        }
+
+        if (!this.getPossibleMoves().contains(newCell)) {
+            throw new OutOfAroundException("You selected a cell not around your worker!");
         }
 
         // try again
         return false;
     }
 
-    public boolean build(Cell cellToBuildUp) {
+    public boolean build(Cell cellToBuildUp) throws OccupiedCellException, OutOfAroundException, NotValidCellException, NotValidLevelException, MapDimensionException {
         /* @function
          * it builds around except for its current location (by default), unless a god change this rule
          */
+        if (cellToBuildUp == null) {
+            throw new NullPointerException();
+        }
 
         Block toBuild = (Block) cellToBuildUp;
 
@@ -175,6 +218,18 @@ public class Worker extends Pawn {
 
             // returning everything correct
             return true;
+        }
+
+        if (!toBuild.isFree()){
+            throw new OccupiedCellException("Selected cell is busy!");
+        }
+
+        if (toBuild.isComplete()) {
+            throw new OutOfAroundException("Selected cell is complete!");
+        }
+
+        if (!this.getPossibleBuilds().contains(toBuild)) {
+            throw new OutOfAroundException("You selected a cell not around your worker!");
         }
 
         // try again

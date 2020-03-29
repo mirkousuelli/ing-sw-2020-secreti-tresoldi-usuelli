@@ -10,12 +10,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeckTest {
 
     @Test
-    void testDeck() {
+    void testPopRandomCard() {
+        /*@function
+         * it picks random cards
+         */
         Deck deck = new Deck();
         List<Card> cards = new ArrayList<>();
 
         do {
-            cards.add(deck.popCard());
+            cards.add(deck.popRandomCard());
         }while (cards.size() < 14);
 
         for (int i = 0; i < cards.size(); i++) {
@@ -25,6 +28,6 @@ class DeckTest {
             }
         }
 
-        assertTrue(deck.popCard() == null);
+        assertTrue(deck.popRandomCard() == null);
     }
 }

@@ -10,6 +10,8 @@
 
 package it.polimi.ingsw.model.state.states;
 
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
@@ -22,7 +24,7 @@ public class Build implements GameState {
     public Game game;
     public Cell cellToBuildUp;
 
-    public Build(Game game) {
+    public Build(Game game) throws NotValidCellException, MapDimensionException {
         /* @constructor
          * it allows a player to build on a certain cell with a specific worker
          */

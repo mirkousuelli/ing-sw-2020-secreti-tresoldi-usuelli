@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,7 +16,7 @@ class PlayerTest {
     static Block worker1Player1, worker2Player1;
 
     @BeforeAll
-    static void init() {
+    static void init() throws NotValidCellException {
         /*@function
          * it sets the objects used in the tests
          */

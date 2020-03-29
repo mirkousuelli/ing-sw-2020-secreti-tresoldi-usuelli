@@ -91,7 +91,6 @@ class PoseidonTest {
                 ()->{player1.getCard().usePower(empty2);} );
     }
 
-    void testNotOnGroundLevel() {
     @Test
     void testNotOnGroundLevel() throws Exception {
         /*@function

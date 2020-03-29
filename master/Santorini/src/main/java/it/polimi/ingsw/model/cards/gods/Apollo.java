@@ -19,6 +19,7 @@ import it.polimi.ingsw.model.exceptions.cards.UnusedPowerException;
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
+import it.polimi.ingsw.model.map.Worker;
 
 import java.util.List;
 
@@ -40,20 +41,27 @@ public class Apollo extends Card {
     }
 
     @Override
-    public void usePower(Cell cell) throws Exception/*EmptyCellException, WrongWorkerException*/ {
+    public void usePower(Cell opponentWorkerCell) throws Exception/*EmptyCellException, WrongWorkerException*/ {
         /*@function
          * it implements Apollo's power
          */
 
-        Block temp;
+        Worker apollo = getOwner().getCurrentWorker();
+        Worker opponentWorker = ((Worker) ((Block) opponentWorkerCell).getPawn());
+        Block temp = (Block) apollo.getLocation();
 
-        if (cell == null) throw new NullPointerException("Cell is null!");
-        if (cell.isFree()) throw new EmptyCellException("Empty cell!");
-        if ((((Block) cell).getPawn()).getPlayer().equals(getOwner())) throw new WrongWorkerException("Not an opponent worker");
+        if (opponentWorkerCell == null) throw new NullPointerException("Cell is null!");
+        if (opponentWorkerCell.isFree()) throw new EmptyCellException("Empty cell!");
+        if (opponentWorker.getPlayer().equals(getOwner())) throw new WrongWorkerException("Not an opponent worker");
 
-        temp = (Block) getOwner().getCurrentWorker().getLocation();
-        getOwner().getCurrentWorker().setLocation((Block) cell);
-        (((Block) cell).getPawn()).setLocation(temp);
+        //swap
+        apollo.setPreviousLocation(apollo.getLocation());
+        opponentWorker.setPreviousLocation(opponentWorkerCell);
+
+        ((Block) apollo.getLocation()).removePawn();
+        opponentWorker.setLocation(temp);
+        apollo.setLocation((Block) opponentWorkerCell);
+
     }
 
     @Override

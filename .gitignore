@@ -21,6 +21,7 @@ master/.idea/.gitignore
 master/.idea/workspace.xml
 master/.idea/uiDesigner.xml
 .idea
+.idea/.gitignore
 master/.idea
 master/Santorini/.idea
 master/Santorini/lib

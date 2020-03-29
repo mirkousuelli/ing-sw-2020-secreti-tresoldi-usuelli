@@ -10,6 +10,12 @@
 
 package it.polimi.ingsw.model.map;
 
+import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
+import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
+import it.polimi.ingsw.model.exceptions.map.NotValidLevelException;
+import it.polimi.ingsw.model.exceptions.map.PawnPositioningException;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class Block implements Cell {
@@ -26,10 +32,19 @@ public class Block implements Cell {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Block(int x, int y, Board board) {
+    public Block(int x, int y, Board board) throws NullPointerException, NotValidCellException {
         /* @constructor
          * it initialize the proper cell with its coordinates and set as default GROUND as level
          */
+
+        if (board == null) {
+            throw new NullPointerException();
+        }
+
+        if ((x < 0 || x >= 5) && (y < 0 || y >= 5)) {
+            throw new NotValidCellException("Invalid block coordinates inserted!");
+        }
+
         this.x = x;
         this.y = y;
         this.pawn = null;
@@ -78,7 +93,7 @@ public class Block implements Cell {
         return this.pawn;
     }
 
-    public List<Cell> getAround() {
+    public List<Cell> getAround() throws NotValidCellException, MapDimensionException {
         /* @getter
          * it implements without arguments getAround() defined in Board.class,
          * based on the current cell invoking it
@@ -88,33 +103,61 @@ public class Block implements Cell {
 
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
     @Override
-    public void setX(int newX) {
+    public void setX(int newX) throws NotValidCellException{
         /* @setter
          * it sets the column
          */
+
+        if (newX < 0 || newX >= 5) {
+            throw new NotValidCellException("Invalid block coordinates inserted!");
+        }
+
         this.x = newX;
     }
 
     @Override
-    public void setY(int newY) {
+    public void setY(int newY) throws NotValidCellException {
         /* @setter
          * it sets the row
          */
+
+        if (newY < 0 || newY >= 5) {
+            throw new NotValidCellException("Invalid block coordinates inserted!");
+        }
+
         this.y = newY;
     }
 
     @Override
-    public void setLevel(Level newLevel) {
+    public void setLevel(Level newLevel) throws NullPointerException, NotValidLevelException {
         /* @setter
          * it sets the level
          */
+
+        if (newLevel == null) {
+            throw new NullPointerException();
+        }
+
+        if (!Arrays.asList(Level.values()).contains(newLevel)) {
+            throw new NotValidLevelException("Invalid level inserted!");
+        }
+
         this.currLevel = newLevel;
     }
 
-    public void setPreviousLevel(Level oldLevel) {
+    public void setPreviousLevel(Level oldLevel) throws NullPointerException, NotValidLevelException {
         /* @setter
          * it sets the previous level
          */
+
+        if (oldLevel == null) {
+            throw new NullPointerException();
+        }
+
+        if (!Arrays.asList(Level.values()).contains(oldLevel)) {
+            throw new NotValidLevelException("Invalid level inserted!");
+        }
+
         this.prevLevel = oldLevel;
     }
 
@@ -151,15 +194,31 @@ public class Block implements Cell {
          */
         this.currLevel = Level.GROUND;
         this.prevLevel = Level.GROUND;
-
+        this.removePawn();
     }
 
-    public void addPawn(Pawn newPawn) {
+    public void addPawn(Pawn newPawn) throws NullPointerException, PawnPositioningException {
         /* @function
          * adding a link to the pawn on it
          */
+
+        if (newPawn == null) {
+            throw new NullPointerException();
+        }
+
         if (this.isWalkable()) {
+            // setting
             this.pawn = newPawn;
+        } else {
+
+            // exceptions
+            if (!this.isFree()) {
+                throw new PawnPositioningException("Pawn cannot be moved in the selected block because it is busy!");
+            }
+
+            if (this.isComplete()) {
+                throw new PawnPositioningException("Pawn cannot be moved in the selected block because it is completed!");
+            }
         }
     }
 
