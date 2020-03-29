@@ -29,22 +29,21 @@ public class Victory implements GameState {
         this.game = game;
 
         Player winner = game.getCurrentPlayer();
-
         endGame(game);
 
-        //Start a new game
-        game.setState(new Start(game));
+        //Start a new game (if the players want to)
+        // game.setState(new Start(game));
     }
 
-    public void endGame(Game game) {
+    private void endGame(Game game) {
         /* @function
          * it shows the player that won and ends the current game
          */
 
-        // once there is a winner, it prints the name of the winner
-        System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
+        // once there is a winner, it shows the name of the winner
+       // System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
 
-        // it cleans the whole board ( + probably needs to reset everything else)
+        // it cleans the whole board ( + probably needs to reset everything else?)
         game.board.clean();
     }
 

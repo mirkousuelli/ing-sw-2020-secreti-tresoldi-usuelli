@@ -11,7 +11,6 @@
 package it.polimi.ingsw.model.state.states;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.map.Worker;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
@@ -21,7 +20,6 @@ public class ChooseWorker implements GameState {
      */
 
     public Game game;
-    public static Player curPlayer;
 
     public ChooseWorker(Game game) {
         /* @constructor
@@ -30,29 +28,21 @@ public class ChooseWorker implements GameState {
 
         this.game = game;
 
-        // if the current player chooses a worker that can move, the game goes to Move state
-        game.setState(new Move(game));
-
-        // otherwise he is told  to choose another worker
-        game.setState(new ChooseWorker(game));
-
-        // SE IL CURPLAYER NON HA MOSSE DISPONIBILI, VIENE ELIMINATO DAL GIOCO E VADO IN DEFEAT
-        game.setState(new Defeat(game));
-
+        // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
+        if(cannotMove(game.getCurrentPlayer()))
+            game.setState(new Defeat(game));
+        else {
+            // the player has to pick a worker and the game goes to Move state
+            // + ACTUAL PICK OF THE WORKER
+            game.setState(new Move(game));
+        }
     }
 
     private boolean cannotMove(Player currentPlayer) {
-        /*
+        /* @predicate
          * it checks if the current player cannot move any of his workers
          */
         return false;
-    }
-
-    private boolean isWorkerMovable(Worker worker) {
-        /* @predicate
-         * it checks if the chosen worker can be moved, otherwise the player is told to try and pick the other worker
-         */
-        return true;
     }
 
     public void gameEngine(Game game) {

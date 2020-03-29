@@ -10,7 +10,7 @@
 
 package it.polimi.ingsw.model.state.states;
 
-import it.polimi.ingsw.model.map.Worker;
+import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
@@ -20,8 +20,7 @@ public class Build implements GameState {
      */
 
     public Game game;
-
-    boolean buildSuccessful = false;
+    public Cell cellToBuildUp;
 
     public Build(Game game) {
         /* @constructor
@@ -30,28 +29,24 @@ public class Build implements GameState {
 
         this.game = game;
 
-        // If the build is succesful, then the game proceed to change the turn
-        game.setState(new ChangeTurn(game));
+        // it shows the possible cells where the worker can build and then allows him to build on one of them
+        game.getCurrentPlayer().getCurrentWorker().getPossibleBuilds();
+        game.getCurrentPlayer().getCurrentWorker().build(cellToBuildUp);
 
-        // if the build isn't succesfull, the worker has to build again
-        game.setState(new Build(game));
+        // if the build is successful, then the game proceed to change the turn
+        if(isBuildSuccessful(game))
+            game.setState(new ChangeTurn(game));
+        else
+        // if the build isn't successful, the worker has to build again
+            game.setState(new Build(game));
 
     }
 
-
-
-    // maybe this isn't necessary (or goes into worker)
-    private void noAllowedBuilds() {
-        /* @function
-         * if the player cannot build with any of his workers, he automatically loses
+    private boolean isBuildSuccessful(Game game) {
+        /* @predicate
+         * it tells if a player picked a cell where he can actually build
          */
-    }
-
-    private boolean cannotBuildWithWorker(Worker worker) {
-        /* @function
-         * if the player cannot build with the selected worker he is told so and can choose to move the other worker in order to build with him
-         */
-        // boolean cantBuild = false;
+        // boolean buildSuccessful = false;
 
         return false;
     }

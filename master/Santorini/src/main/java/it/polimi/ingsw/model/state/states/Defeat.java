@@ -20,7 +20,6 @@ public class Defeat implements GameState {
      */
 
     public Game game;
-    public Player currentPlayer;
 
     public Defeat(Game game) {
         /* @constructor
@@ -29,12 +28,12 @@ public class Defeat implements GameState {
 
         this.game = game;
 
-        //the current player is eliminated
-        currentPlayer = game.getCurrentPlayer();
-        removePlayer(currentPlayer);
+        //the current player is eliminated with his workers
+        removePlayer(game.getCurrentPlayer());
+        removeWorkers(game.getCurrentPlayer());
         game.numPlayerRemaining--;
 
-        // the game switches to ChangeTurn state
+        // the game switches to ChangeTurn state (or maybe we could change here the current player and then go directly to ChooseWorker)
         game.setState(new ChangeTurn(game));
 
     }
@@ -45,9 +44,9 @@ public class Defeat implements GameState {
          */
     }
 
-    private void removeWorker(Game game) {
+    private void removeWorkers(Player currentPlayer) {
         /* @function
-         * it eliminates a worker that is chosen as target from God powers that can do this
+         * it removes the workers of a player that lost
          */
     }
 

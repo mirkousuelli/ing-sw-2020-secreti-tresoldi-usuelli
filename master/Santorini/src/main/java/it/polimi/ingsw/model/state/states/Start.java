@@ -9,7 +9,6 @@
  */
 
 package it.polimi.ingsw.model.state.states;
-
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.state.Game;
@@ -23,6 +22,11 @@ public class Start implements GameState {
     public Game game;
     public Player Challenger;
     public Player Starter;
+    /*
+    Player p1 = new Player(game.Nicknames[0]);
+    Player p2 = new Player(game.Nicknames[1]);
+    Player p3 = new Player(game.Nicknames[2]);
+    */
 
     public Start(Game game) {
         /* @constructor
@@ -31,41 +35,44 @@ public class Start implements GameState {
 
         this.game = game;
 
-        Player challenger = PickChallenger(/* list of nicknames (or list of players) */);
-        Deck deck= game.getDeck();
-        distributeCard();
-        Starter = chooseStarter(challenger);
+        // initialisation of the game
+        Player challenger = PickChallenger(game);
+        Deck deck = game.getDeck();
+        distributeCard(game);
+        Starter = chooseStarter(game);
 
-        // After the inizialisation of the game, it goes to ChooseWorker state
+        // it sets the current player to the Starter (the one chosen by the Challenger)
+        game.setCurrentPlayer(Starter);
+
+        // After the initialisation of the game, it goes to ChooseWorker state
         game.setState(new ChooseWorker(game));
 
     }
 
-    private String PickChallenger(String[] Nicknames) {
+    private Player PickChallenger(Game game) {
         /* @function
          * it selects who is the Challenger (randomly or by picking him)
          */
 
        // Challenger = new Random().nextString(Nicknames.length);
 
-        return Challenger.nickName;
+        return Challenger;
     }
 
-    private Deck pickCards() {
+    private void pickCards(Game game) {
         /* @function
          * the Challenger must choose the cards (based on the number of players) between which every player has to choose his own
          */
-        return null;
     }
 
     // maybe we should add the possibility for every player to pick the card he wants (between the chosen one)
-    private void distributeCard() {
+    private void distributeCard(Game game) {
         /* @function
          * every player chooses a card between the card picked by the Challenger
          */
     }
 
-    private Player chooseStarter(Player Challenger) {
+    private Player chooseStarter(Game game) {
         /* @function
          * the Challenger decides who starts first
          */

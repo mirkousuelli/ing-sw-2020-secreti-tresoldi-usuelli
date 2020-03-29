@@ -13,6 +13,7 @@ package it.polimi.ingsw.model.state;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.map.Board;
+import it.polimi.ingsw.model.state.states.Start;
 
 public class Game {
     /* @class
@@ -21,8 +22,7 @@ public class Game {
 
     public final Deck deck;
     public final Board board;
-    private Player currentPlayer;
-   // private Player nextPlayer;
+    public Player currentPlayer;
     private GameState state;
     public final int numberOfPlayers;
     public int numPlayerRemaining;
@@ -32,12 +32,22 @@ public class Game {
         /* @constructor
          * it is used to create a new game, initialising its state to start
          */
+
         this.Nicknames = Nicknames;
         this.numberOfPlayers = numberOfPlayers;
+/*
+        Player p1 = new Player(Nicknames[0]);
+        Player p2 = new Player(Nicknames[1]);
+        if(numberOfPlayers == 3) {
+            Player p3 = new Player(Nicknames[2]);
+        }
+*/
         deck = null;
         board = null;
-        state = null;
+        // state = null;
         numPlayerRemaining = numberOfPlayers;
+
+        setState(new Start(this));
     }
 
     public Board getBoard() {
