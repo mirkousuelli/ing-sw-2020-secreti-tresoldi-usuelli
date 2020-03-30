@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT cards (god*)>
+    <!ELEMENT god (name, description, power+)>
+            <!ATTLIST god
+                id ID #REQUIRED
+            >
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT description (#PCDATA)>
+
+        <!ELEMENT power (worker, workerpos, effect, timing, constraints, (move | build | malus | win))>
+            <!ELEMENT worker EMPTY>
+                    <!ATTLIST worker 
+                        who (default | unmoved) "default">
+
+            <!ELEMENT workerpos EMPTY>
+                    <!ATTLIST workerpos 
+                        where (default | ground | middle | top) "default">
+
+            <!ELEMENT effect EMPTY>
+                    <!ATTLIST effect 
+                        what (build | move | win | malus) #REQUIRED>
+
+            <!ELEMENT timing EMPTY>
+                    <!ATTLIST timing 
+                        when (additional | startturn | endturn | default) "default">
+
+            <!ELEMENT constraints (numadd?)>
+                    <!ATTLIST constraints
+                        samecell (true | false) "false"
+                        notsamecell (true |false) "false"
+                        perimcell (true | false) "false"
+                        notperimcell (true | false) "false"
+                        underitself (true | false) "false"
+                    >
+                <!ELEMENT numadd (#PCDATA)>
+
+            <!ELEMENT move EMPTY>
+                    <!ATTLIST move 
+                        type (swap | push | default) "default"
+                    >
+
+            <!ELEMENT build EMPTY>
+                    <!ATTLIST move 
+                        type (dome | notdome | default) "default"
+                    >
+
+            <!ELEMENT malus (numturns?, directions)>
+                    <!ATTLIST malus
+                        type (build | move) #REQUIRED
+                        permanent (true | false) "false"
+                        personal (true | false) "false"
+                    >
+                <!ELEMENT numturns (#PCDATA)>
+                <!ELEMENT directions 
+                    (north?,
+                    northeast?,
+                    east?,
+                    southeast?,
+                    south?,
+                    southwest?,
+                    west?,
+                    northwest?,
+                    up?,
+                    down?)
+                >
+                    <!ELEMENT north EMPTY>
+                    <!ELEMENT northeast EMPTY>
+                    <!ELEMENT east EMPTY>
+                    <!ELEMENT southeast EMPTY>
+                    <!ELEMENT south EMPTY>
+                    <!ELEMENT southwest EMPTY>
+                    <!ELEMENT west EMPTY>
+                    <!ELEMENT northwest EMPTY>
+                    <!ELEMENT up EMPTY>
+                    <!ELEMENT down EMPTY>
