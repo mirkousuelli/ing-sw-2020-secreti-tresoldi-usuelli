@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.cards.gods.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,22 +27,6 @@ public class Deck {
          */
 
         cards = new ArrayList<>();
-
-        cards.add(new Apollo());
-        cards.add(new Arthemis());
-        cards.add(new Athena());
-        cards.add(new Atlas());
-        //cards.add(new Chronus());
-        cards.add(new Hestia());
-        cards.add(new Demeter());
-        cards.add(new Hephaestus());
-        cards.add(new Minotaur());
-        cards.add(new Pan());
-        cards.add(new Persephone());
-        cards.add(new Poseidon());
-        cards.add(new Prometheus());
-        cards.add(new Triton());
-        cards.add(new Zeus());
     }
 
     public Card popRandomCard() {
@@ -63,10 +45,10 @@ public class Deck {
         return pickedCard;
     }
 
-    public Card popCard(God god) {
+    /*public Card popCard(God god) {
         /*@function
          * it picks the selected card from the deck
-         */
+         *
 
         Card pickedCard = null;
 
@@ -80,5 +62,5 @@ public class Deck {
         }
 
         return pickedCard;
-    }
+    }*/
 }

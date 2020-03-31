@@ -107,7 +107,7 @@ public enum Level {
         }
     }
 
-    public Level parseInt(int level) throws NotValidLevelException {
+    public static Level parseInt(int level) throws NotValidLevelException {
         /* @function
          * it returns the correspondent level enum from an integer input
          */

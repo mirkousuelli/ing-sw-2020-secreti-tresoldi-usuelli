@@ -11,26 +11,38 @@
 package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.map.Cell;
-import it.polimi.ingsw.model.map.Worker;
+import it.polimi.ingsw.model.cards.powers.Power;
 
-import java.util.List;
-
-public abstract class Card {
+public class Card {
     /*@class
-     * it describes the abstract object Card
+     * it describes the player's card
      */
 
-    public final God god;
-    public final Effect effect;
-    protected Player owner;
+    private String name;
+    private Power power;
+    private Player owner;
 
-    public Card(God god, Effect effect) {
+    public Card() {
         /*@constructor
          * it sets the attributes describing the card
          */
-        this.god = god;
-        this.effect = effect;
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Power getPower() {
+        return power;
+    }
+
+    public void setPower(Power power) {
+        this.power = power;
     }
 
     public Player getOwner() {
@@ -46,10 +58,4 @@ public abstract class Card {
          */
         this.owner = owner;
     }
-
-    public abstract void usePower(Cell cell) throws Exception;
-
-    public abstract void usePower(List<Player> opponents) throws Exception;
-
-    public abstract boolean usePower() throws Exception;
 }

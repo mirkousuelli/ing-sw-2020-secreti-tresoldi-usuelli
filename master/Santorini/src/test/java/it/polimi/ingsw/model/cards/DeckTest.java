@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
 
-    @Test
+    //@Test
     void testPopRandomCard() {
         /*@function
          * it picks random cards

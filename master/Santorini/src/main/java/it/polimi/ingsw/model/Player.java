@@ -11,6 +11,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
@@ -29,8 +30,7 @@ public class Player {
     public final List<Worker> worker;
     private Card card;
     private Worker currentWorker;
-    private boolean mustMoveUp;
-    private boolean cannotMoveUp;
+    private List<MalusPlayer> malusList;
 
     public Player(String nickName) {
         /*@constructor
@@ -41,8 +41,7 @@ public class Player {
         worker = new ArrayList<>(2);
         card = null;
         currentWorker = null;
-        mustMoveUp = false;
-        cannotMoveUp = false;
+        malusList = new ArrayList<>();
     }
 
     public void move(Cell cell) throws Exception {
@@ -80,34 +79,6 @@ public class Player {
         return worker;
     }
 
-    public void addMustMoveUpMalus() {
-        /*@function
-         * it adds mustMoveUp malus
-         */
-        mustMoveUp = true;
-    }
-
-    public void removeMustMoveUpMalus() {
-        /*@function
-         * it removes mustMoveUp malus
-         */
-        mustMoveUp = false;
-    }
-
-    public void addCannotMoveUpMalus() {
-        /*@function
-         * it adds cannotMoveUp malus
-         */
-        cannotMoveUp = true;
-    }
-
-    public void removeCannotMoveUpMalus() {
-        /*@function
-         * it removes cannotMoveUp malus
-         */
-        cannotMoveUp = false;
-    }
-
     public Worker getCurrentWorker() {
         /*@getter
          * it gets the current worker
@@ -136,17 +107,22 @@ public class Player {
         this.card = card;
     }
 
-    public boolean isMustMoveUpActive() {
-        /*@predicate
-         * it asks if mustMoveUp malus is active
-         */
-        return mustMoveUp;
+    public void addMalus(MalusPlayer malusPlayer) {
+        //if (!malusList.contains(malusPlayer))
+            malusList.add(malusPlayer);
     }
 
-    public boolean isCannotMoveUpActive() {
-        /*@predicate
-         * it asks if cannotMoveUp malus is active
-         */
-        return cannotMoveUp;
+    public List<MalusPlayer> getMalusList() {
+        List<MalusPlayer> ret = new ArrayList<>();
+        ret.addAll(malusList);
+
+        return ret;
+    }
+
+    public void removeMalus() {
+        for (MalusPlayer m : malusList) {
+            if (!m.isPermanent() && m.getNumberOfTurns() == 0)
+                malusList.remove(m);
+        }
     }
 }
