@@ -10,6 +10,10 @@
 
 package it.polimi.ingsw.model.cards;
 
+import it.polimi.ingsw.model.cards.xml.ParserXML;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,13 +24,15 @@ public class Deck {
      */
 
     private List<Card> cards;
+    private ParserXML parser;
 
-    public Deck() {
+    public Deck() throws ParserConfigurationException, SAXException {
         /*@constructor
          * it creates a list of the 14 chosen cards
          */
 
         cards = new ArrayList<>();
+        parser = new ParserXML(this);
     }
 
     public Card popRandomCard() {
@@ -43,6 +49,18 @@ public class Deck {
         }
 
         return pickedCard;
+    }
+
+    public void addCard(Card newCard) {
+        this.cards.add(newCard);
+    }
+
+    private void fetchCard(God god) {
+        parser.parseCard(god);
+    }
+
+    private void fetchDeck() {
+        parser.parseDeck();
     }
 
     /*public Card popCard(God god) {
