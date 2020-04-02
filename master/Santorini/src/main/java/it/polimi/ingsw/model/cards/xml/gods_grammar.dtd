@@ -9,22 +9,31 @@
         <!ELEMENT description (#PCDATA)>
 
         <!ELEMENT power (worker, workerpos, effect, timing, constraints, (move | build | malus | win))>
+            <!-- who -->
             <!ELEMENT worker EMPTY>
                     <!ATTLIST worker 
-                        who (default | unmoved) "default">
+                        who (default | unmoved) "default"
+                    >
 
+            <!-- where -->
             <!ELEMENT workerpos EMPTY>
                     <!ATTLIST workerpos 
-                        where (default | ground | middle | top) "default">
+                        where (default | ground | middle | top) "default"
+                    >
 
+            <!-- what -->
             <!ELEMENT effect EMPTY>
                     <!ATTLIST effect 
-                        what (build | move | win | malus) #REQUIRED>
+                        what (build | move | win | malus) #REQUIRED
+                    >
 
+            <!-- when -->
             <!ELEMENT timing EMPTY>
                     <!ATTLIST timing 
-                        when (additional | startturn | endturn | default) "default">
+                        when (additional | startturn | endturn | default) "default"
+                    >
 
+            <!-- why -->
             <!ELEMENT constraints (numadd?)>
                     <!ATTLIST constraints
                         samecell (true | false) "false"
@@ -35,13 +44,15 @@
                     >
                 <!ELEMENT numadd (#PCDATA)>
 
+            <!-- how -->
+
             <!ELEMENT move EMPTY>
                     <!ATTLIST move 
                         type (swap | push | default) "default"
                     >
 
             <!ELEMENT build EMPTY>
-                    <!ATTLIST move 
+                    <!ATTLIST build
                         type (dome | notdome | default) "default"
                     >
 
@@ -52,25 +63,21 @@
                         personal (true | false) "false"
                     >
                 <!ELEMENT numturns (#PCDATA)>
-                <!ELEMENT directions 
-                    (north?,
-                    northeast?,
-                    east?,
-                    southeast?,
-                    south?,
-                    southwest?,
-                    west?,
-                    northwest?,
-                    up?,
-                    down?)
-                >
-                    <!ELEMENT north EMPTY>
-                    <!ELEMENT northeast EMPTY>
-                    <!ELEMENT east EMPTY>
-                    <!ELEMENT southeast EMPTY>
-                    <!ELEMENT south EMPTY>
-                    <!ELEMENT southwest EMPTY>
-                    <!ELEMENT west EMPTY>
-                    <!ELEMENT northwest EMPTY>
-                    <!ELEMENT up EMPTY>
-                    <!ELEMENT down EMPTY>
+                <!ELEMENT directions EMPTY>
+                    <!ATTLIST directions
+                            north (true | false) "false"
+                            northeast (true | false) "false"
+                            east (true | false) "false"
+                            southeast (true | false) "false"
+                            south (true | false) "false"
+                            southwest (true | false) "false"
+                            west (true | false) "false"
+                            northwest (true | false) "false"
+                            up (true | false) "false"
+                            down (true | false) "false"
+                    >
+
+                <!ELEMENT win EMPTY>
+                    <!ATTLIST win
+                            type (downfromtwo | fivetower)
+                    >

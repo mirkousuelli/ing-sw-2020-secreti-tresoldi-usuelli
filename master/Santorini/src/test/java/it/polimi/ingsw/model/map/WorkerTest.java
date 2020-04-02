@@ -11,7 +11,6 @@
 package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.exceptions.map.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ class WorkerTest {
     /* MOVE_TEST ------------------------------------------------------------------------------------------------------- */
 
     @Test
-    void movingBaseTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, OutOfAroundException {
+    void movingBaseTest() {
         /* we need basically to check 3 conditions :
 
          * (1) CENTER BLOCK : 8 cell around
@@ -91,7 +90,7 @@ class WorkerTest {
     }
 
     @Test
-    void movingNotAroundTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, OutOfAroundException {
+    void movingNotAroundTest()  {
         /* test that deny moving in an extra cell from around ones
          */
         Board board = new Board();
@@ -100,9 +99,7 @@ class WorkerTest {
         Block notAround = (Block) board.getCell(NOT_AROUND_X, NOT_AROUND_Y);
 
         // error move test
-        assertThrows(OutOfAroundException.class, () -> {
-            tester.moveTo(notAround); // going in a wrong block not around
-        } );
+        assertFalse(tester.moveTo(notAround)); // going in a wrong block not around
         assertNotSame(tester.getLocation(), notAround); // didn't go in the wrong block
         assertNull(notAround.getPawn()); // the pawn is not on the wrong block..
         assertSame(tester.getLocation(), origin); // location is correct
@@ -110,7 +107,7 @@ class WorkerTest {
     }
 
     @Test
-    void movingLevelTest() throws NotValidCellException, PawnPositioningException, NotValidLevelException, MapDimensionException, OccupiedCellException, OutOfAroundException {
+    void movingLevelTest() {
         /* test that check different level moves scenarios:
          * (1) test of moving up of 1 level
          * (2) test of moving up for more than 1 level
@@ -151,9 +148,7 @@ class WorkerTest {
 
                     } else {
                         // trying to move..
-                        assertThrows(OutOfAroundException.class, () -> {
-                            tester.moveTo(next);
-                        } );
+                        assertFalse(tester.moveTo(next));
                     }
 
                     // resetting levels
@@ -161,13 +156,7 @@ class WorkerTest {
                     next.setLevel(Level.GROUND);
 
                     // ensuring that we are still in the origin cell
-                    //try {
-                        tester.moveTo(origin);
-                    /*} catch (OccupiedCellException e) {
-                        assertThrows(OccupiedCellException.class, () -> {
-                            tester.moveTo(origin);
-                        } );
-                    };*/
+                    tester.moveTo(origin);
                     assertSame(tester.getLocation(), origin);
                     assertSame(tester, origin.getPawn());
                     assertNull(next.getPawn());
@@ -177,7 +166,7 @@ class WorkerTest {
     }
 
     @Test
-    void movingToBusyCellTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, OutOfAroundException {
+    void movingToBusyCellTest() {
         /* test of moving to a busy cell
          */
         Board board = new Board();
@@ -187,9 +176,7 @@ class WorkerTest {
         Worker enemy = new Worker(new Player("id"), next);
 
         // trying to move to a busy cell
-        assertThrows(OccupiedCellException.class, () -> {
-            tester.moveTo(next);
-        } );
+        tester.moveTo(next);
         assertNotSame(tester.getLocation(), next); // didn't go in the wrong block
         assertSame(enemy, next.getPawn()); // the pawn is not on the wrong block..
         assertSame(tester.getLocation(), origin); // location is correct
@@ -199,7 +186,7 @@ class WorkerTest {
     /* BUILD_TEST ------------------------------------------------------------------------------------------------------ */
 
     @Test
-    void buildingBaseTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, NotValidLevelException, OutOfAroundException {
+    void buildingBaseTest() {
         /* we need basically to check 3 conditions :
 
          * (1) CENTER BLOCK : 8 cell around
@@ -221,9 +208,7 @@ class WorkerTest {
 
         // self move to the same place test
         Block finalOrigin = origin;
-        assertThrows(OccupiedCellException.class, () -> {
-            tester.build(finalOrigin); // self build
-        } );
+        tester.build(finalOrigin); // self build
         assertNull(tester.getPreviousBuild()); // no previous build
         assertSame(tester.getLevel(), Level.GROUND); // level didn't change
         assertSame(tester, origin.getPawn()); // pawn still in the same block
@@ -262,7 +247,7 @@ class WorkerTest {
     }
 
     @Test
-    void buildingNotAroundTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, NotValidLevelException, OutOfAroundException {
+    void buildingNotAroundTest() {
         /* test that deny moving in an extra cell from around ones
          */
         Board board = new Board();
@@ -271,9 +256,7 @@ class WorkerTest {
         Block notAround = (Block) board.getCell(NOT_AROUND_X, NOT_AROUND_Y);
 
         // try to build not around
-        assertThrows(OutOfAroundException.class, () -> {
-            assertFalse(tester.build(notAround));
-        } );
+        assertFalse(tester.build(notAround));
 
         // it didn't build anything
         assertNull(tester.getPreviousBuild());
@@ -284,7 +267,7 @@ class WorkerTest {
     }
 
     @Test
-    void buildingLevelTest() throws NotValidCellException, PawnPositioningException, NotValidLevelException, MapDimensionException, OccupiedCellException, OutOfAroundException {
+    void buildingLevelTest() {
         /* test that check different level moves scenarios
          */
         Board board = new Board();
@@ -321,9 +304,7 @@ class WorkerTest {
                     backup = next.getLevel();
 
                     // it doesn't have to build
-                    assertThrows(OutOfAroundException.class, () -> {
-                        assertFalse(tester.build(next));
-                    } );
+                    assertFalse(tester.build(next));
 
                     // look if that cell remained as before
                     assertEquals(next.getLevel(), backup);
@@ -342,7 +323,7 @@ class WorkerTest {
     }
 
     @Test
-    void buildingToBusyCellTest() throws NotValidCellException, PawnPositioningException, MapDimensionException, OccupiedCellException, NotValidLevelException, OutOfAroundException {
+    void buildingToBusyCellTest() {
         /* test of moving to a busy cell
          */
         Board board = new Board();
@@ -352,9 +333,7 @@ class WorkerTest {
         Worker enemy = new Worker(new Player("id"), next);
 
         // trying to move to a busy cell
-        assertThrows(OccupiedCellException.class, () -> {
-            tester.build(next); // self build
-        } );
+        assertFalse(tester.build(next)); // self build
         assertNotSame(tester.getPreviousBuild(), next); // it didn't build the busy block
 
         // enemy check

@@ -19,6 +19,7 @@ public class Card {
      */
 
     private String name;
+    private String description;
     private Power power;
     private Player owner;
 
@@ -35,6 +36,14 @@ public class Card {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.name = description;
     }
 
     public Power getPower() {

@@ -10,9 +10,6 @@
 
 package it.polimi.ingsw.model.map;
 
-import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
-import it.polimi.ingsw.model.exceptions.map.NotValidLevelException;
-
 public interface Cell {
     /* @abstractClass
      * it represents the abstract object which composes the board game and which is developed
@@ -25,9 +22,9 @@ public interface Cell {
     Level getLevel();
 
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
-    void setX(int newX) throws NotValidCellException;
-    void setY(int newY) throws NotValidCellException;
-    void setLevel(Level newLevel) throws NullPointerException, NotValidLevelException;
+    void setX(int newX);
+    void setY(int newY);
+    void setLevel(Level newLevel);
 
     /* PREDICATE ------------------------------------------------------------------------------------------------------- */
     boolean isWalkable();
