@@ -44,7 +44,7 @@ public class Player {
         malusList = new ArrayList<>();
     }
 
-    public void move(Cell cell) throws Exception {
+    public boolean move(Cell cell) {
         /*@function
          * wrapper of worker.moveTo(Cell)
          */
@@ -52,7 +52,7 @@ public class Player {
         currentWorker.moveTo(cell);
     }
 
-    public void build(Cell cell) throws Exception {
+    public boolean build(Cell cell) {
         /*@function
          * wrapper of worker.build(Cell)
          */
@@ -60,15 +60,17 @@ public class Player {
         currentWorker.build(cell);
     }
 
-    public void initializeWorkerPosition(int id, Block position) throws Exception/*,OccupiedCellException, WrongWorkerException*/ {
+    public boolean initializeWorkerPosition(int id, Block position) {
         /*@function
          * it sets the initial position of the current worker
          */
 
-        if (!position.isFree()) throw new OccupiedCellException("Selected cell is occupied!");
-        if (id != 1 && id != 2) throw new WrongWorkerException("It must be 1 or 2!");
+        if (!position.isFree()) return false;
+        if (id != 1 && id != 2) return false;
 
         worker.add(new Worker(this, position));
+
+        return true;
     }
 
     public List<Worker> getWorkers() {

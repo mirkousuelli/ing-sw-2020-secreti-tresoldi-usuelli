@@ -12,10 +12,6 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
-import it.polimi.ingsw.model.exceptions.cards.CompleteTowerException;
-import it.polimi.ingsw.model.exceptions.cards.TopLevelTowerException;
-import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
-import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
@@ -27,44 +23,46 @@ public class BuildPower extends ActivePower {
     }
 
     @Override
-    protected void useActivePower(Cell cellToBuild) throws Exception {
-        if (constraints.isSameCell()) {
-            if (!cellToBuild.equals(workerToUse.getPreviousBuild()))
-                throw new WrongCellException("Not same cell!");
-        }
-
-        if (constraints.isNotSameCell()) {
-            if (cellToBuild.equals(workerToUse.getPreviousBuild()))
-                throw new WrongCellException("Same cell!");
-        }
-
-        //basic
-        if (cellToBuild.isComplete()) throw new CompleteTowerException("There is already a dome!");
+    protected boolean useActivePower(Cell cellToBuild) {
+        if (constraints.isSameCell() && !cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
+        if (constraints.isNotSameCell() && cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
+        //if (constraints.isUnderItself() && !cellToBuild.equals(workerToUse.getLocation())) return false;
+        if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
 
         //verify allowed move
         if (allowedBlock.equals(BlockType.DOME)) {
-            if (!cellToBuild.isFree()) throw new OccupiedCellException("Cell is occupied!");
+            //if (!cellToBuild.isFree()) return false;
 
-            ((Block) cellToBuild).setPreviousLevel(cellToBuild.getLevel());
+            /*((Block) cellToBuild).setPreviousLevel(cellToBuild.getLevel());
             workerToUse.setPreviousBuild(cellToBuild);
-            cellToBuild.setLevel(Level.DOME);
+            cellToBuild.setLevel(Level.DOME);*/
 
+            return build(cellToBuild, 4);
         }
         else if (allowedBlock.equals(BlockType.NOT_DOME)) {
-            if (!cellToBuild.equals(workerToUse.getLocation()) && constraints.isUnderItself()) throw new WrongCellException("Can build only under itself");
-            if (cellToBuild.getLevel().equals(Level.TOP)) throw new TopLevelTowerException("Cannot build a dome!");
+            //if (constraints.isUnderItself() && !cellToBuild.equals(workerToUse.getLocation())) return false;
+            if (cellToBuild.getLevel().equals(Level.TOP)) return false;
 
             //card.getOwner().build(cellToBuild);
-            ((Block) cellToBuild).removePawn();
+            /*((Block) cellToBuild).removePawn();
             ((Block) cellToBuild).setPreviousLevel(cellToBuild.getLevel());
             workerToUse.setPreviousBuild(cellToBuild);
             cellToBuild.setLevel(Level.parseInt(cellToBuild.getLevel().toInt() + 1));
-            ((Block) cellToBuild).addPawn(workerToUse);
+            ((Block) cellToBuild).addPawn(workerToUse);*/
+
+            return build(cellToBuild, cellToBuild.getLevel().toInt() + 1);
         }
         else
-            card.getOwner().build(cellToBuild);
+            return card.getOwner().build(cellToBuild);
+    }
 
+    private boolean build(Cell cellToBuild, int level) {
+        ((Block) cellToBuild).removePawn();
+        ((Block) cellToBuild).setPreviousLevel(cellToBuild.getLevel());
+        workerToUse.setPreviousBuild(cellToBuild);
+        cellToBuild.setLevel(Level.parseInt(level));
+        ((Block) cellToBuild).addPawn(workerToUse);
 
-        constraints.setNumberOfAdditional(constraints.getNumberOfAdditional() - 1);
+        return true;
     }
 }
