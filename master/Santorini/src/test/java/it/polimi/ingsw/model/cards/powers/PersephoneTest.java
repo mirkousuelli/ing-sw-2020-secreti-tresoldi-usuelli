@@ -19,13 +19,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PersephoneTest {
+    /* Power:
+     *   If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.
+     */
 
     @Test
-    void testPersephone() throws Exception {
-        /*Power:
-         *  If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.
-         */
-
+    void testPersephone() {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         MalusPower power1;

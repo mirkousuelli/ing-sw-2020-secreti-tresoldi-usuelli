@@ -13,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HephaestusTest {
+    /* Power:
+     *   Your Worker may build one additional block (not dome) on top of your first block
+     */
 
     @Test
-    void testHephaestus() throws Exception {
-        /*Power:
-         *  Your Worker may build one additional block (not dome) on top of your first block
-         */
-
+    void testHephaestus() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;

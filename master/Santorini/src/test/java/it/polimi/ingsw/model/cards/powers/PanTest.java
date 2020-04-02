@@ -10,16 +10,16 @@ import it.polimi.ingsw.model.cards.powers.tags.effectType.WinType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
+import it.polimi.ingsw.model.state.Game;
 import org.junit.jupiter.api.Test;
 
 public class PanTest {
+    /* Power:
+     *   You also win if your Worker moves down two or more levels
+     */
 
     @Test
-    void testPan() throws Exception {
-        /*Power:
-         *  You also win if your Worker moves down two or more levels
-         */
-
+    void testPan() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         WinConditionPower power1;
@@ -55,7 +55,7 @@ public class PanTest {
         //move
         player1.move(empty);
         //win condition power
-        power1.usePower(board);
+        //power1.usePower(board);
 
 
 

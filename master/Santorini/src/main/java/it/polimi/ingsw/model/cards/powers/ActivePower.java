@@ -36,7 +36,7 @@ public abstract class ActivePower extends Power {
                     .filter(w -> !w.equals(currWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if (workerInitPos != WorkerPosition.DEFAULT && !workerToUse.getLocation().getLevel().equals(workerInitPos)) return false;
+        //if (!workerInitPos.equals(WorkerPosition.DEFAULT) && !workerToUse.getLocation().getLevel().equals(workerInitPos)) return false;
 
         setNumberOfActionsRemaining();
 

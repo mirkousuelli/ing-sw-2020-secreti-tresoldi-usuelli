@@ -12,13 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ApolloTest {
+    /* Power:
+     *   Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated
+     */
 
     @Test
-    void testApollo() throws Exception {
-        /*Power:
-         *  Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated
-         */
-
+    void testApollo() {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();

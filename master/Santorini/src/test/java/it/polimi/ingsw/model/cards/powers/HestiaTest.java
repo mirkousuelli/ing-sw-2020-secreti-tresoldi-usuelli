@@ -13,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HestiaTest {
+    /* Power:
+     *   Your Worker may build one additional time, but this cannot be on a perimeter space
+     */
 
     @Test
-    void testHestia() throws Exception {
-        /* Power:
-         *   Your Worker may build one additional time, but this cannot be on a perimeter space
-         */
-
+    void testHestia() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;

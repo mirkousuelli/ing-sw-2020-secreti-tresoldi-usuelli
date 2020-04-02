@@ -12,14 +12,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinotaurTest {
+    /* Power:
+     *   Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight
+     *   backwards to an unoccupied space at any level
+     */
 
     @Test
-    void testMinotaur() throws Exception {
-        /* Power:
-         *   Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight
-         *   backwards to an unoccupied space at any level
-         */
-
+    void testMinotaur() {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();

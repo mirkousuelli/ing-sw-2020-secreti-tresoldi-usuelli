@@ -12,13 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArthemisTest {
+    /* Power:
+     *   Your Worker may move one additional time, but not back to its initial space
+     */
 
     @Test
-    void testArthemis() throws Exception {
-        /*Power:
-         *  Your Worker may move one additional time, but not back to its initial space
-         */
-
+    void testArthemis() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         MovePower power1;

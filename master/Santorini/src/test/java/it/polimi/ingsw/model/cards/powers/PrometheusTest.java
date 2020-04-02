@@ -18,13 +18,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PrometheusTest {
+    /* Power:
+     *   If your Worker does not move up, it may build both before and after moving
+     */
 
     @Test
-    void testPrometheus() throws Exception {
-        /*Power:
-         *  If your Worker does not move up, it may build both before and after moving
-         */
-
+    void testPrometheus() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;
@@ -48,7 +47,7 @@ public class PrometheusTest {
         power1.setTiming(Timing.START_TURN);
         power1.getConstraints().setNumberOfAdditional(1);
         power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
+        power1.getConstraints().setNotSameCell(false);
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
@@ -61,11 +60,11 @@ public class PrometheusTest {
         power1.malus.setPersonal(true);
 
         //build with power
-        power1.usePower(emptyBuild);
+        assertTrue(power1.usePower(emptyBuild));
         //move
-        player1.move(emptyMove);
+        assertTrue(player1.move(emptyMove));
         //build
-        player1.build(emptyBuild);
+        assertTrue(player1.build(emptyBuild));
 
 
 
@@ -77,9 +76,5 @@ public class PrometheusTest {
         assertEquals(emptyMove, player1.getCurrentWorker().getLocation());
         assertEquals(player1.getMalusList().get(0).getMalusType(), MalusType.MOVE);
         assertEquals(player1.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
-
-
-        //assertThrows(WrongCellException.class,
-        //        () -> {player1.getCard().getPower().usePower(empty);} );
     }
 }

@@ -13,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DemeterTest {
+    /* Power:
+     *   Your Worker may build one additional time, but not on the same space
+     */
 
     @Test
-    void testDemeter() throws Exception {
-        /*Power:
-         *  Your Worker may build one additional time, but not on the same space
-         */
-
+    void testDemeter() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;

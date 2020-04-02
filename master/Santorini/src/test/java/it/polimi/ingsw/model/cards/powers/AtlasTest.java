@@ -13,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AtlasTest {
+    /* Power:
+     *   Your Worker may build a dome at any level
+     */
 
     @Test
-    void testAtlas() throws Exception {
-        /*Power:
-         *  Your Worker may build a dome at any level
-         */
-
+    void testAtlas() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;

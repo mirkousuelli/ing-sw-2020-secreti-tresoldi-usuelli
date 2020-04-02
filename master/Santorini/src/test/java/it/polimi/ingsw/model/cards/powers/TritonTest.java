@@ -12,13 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TritonTest {
+    /* Power:
+     *   Each time your Worker moves into a perimeter space, it may immediately move again
+     */
 
     @Test
-    void testTriton() throws Exception {
-        /* Power:
-         *   Each time your Worker moves into a perimeter space, it may immediately move again
-         */
-
+    void testTriton() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         MovePower power1;
@@ -56,8 +55,8 @@ public class TritonTest {
 
 
 
-        assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
-        assertEquals(worker1Player1, player1.getWorkers().get(0).getLocation());
-        assertEquals(emptyPower2, player1.getWorkers().get(0).getPreviousLocation());
+        assertEquals(emptyPower2.getPawn(), player1.getWorkers().get(0));
+        assertEquals(emptyPower2, player1.getWorkers().get(0).getLocation());
+        assertEquals(emptyPower1, player1.getWorkers().get(0).getPreviousLocation());
     }
 }

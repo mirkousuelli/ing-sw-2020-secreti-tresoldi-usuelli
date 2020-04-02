@@ -33,21 +33,10 @@ public class MovePower extends ActivePower {
         Block newPos;
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
-        //verify allowed move
         if (allowedMove.equals(MovementType.SWAP)) {
             newPos = (Block) workerToUse.getLocation();
 
             return move(cellToMove, opponentWorker, newPos);
-
-            //swap
-            /*workerToUse.setPreviousLocation(workerToUse.getLocation());
-            opponentWorker.setPreviousLocation(cellToMove);
-
-            ((Block) workerToUse.getLocation()).removePawn();
-            opponentWorker.setLocation(temp);
-            workerToUse.setLocation((Block) cellToMove);
-            ((Block) opponentWorker.getLocation()).addPawn(opponentWorker);*/
-
         }
         else if (allowedMove.equals(MovementType.PUSH)) {
             newPos = (Block) find(cellToMove);
@@ -57,21 +46,9 @@ public class MovePower extends ActivePower {
             if (newPos.getLevel().equals(Level.DOME)) return false;
 
             return move(cellToMove, opponentWorker, newPos);
-
-            //push
-            /*opponentWorker.moveTo(newPos); //wrong
-
-            workerToUse.setPreviousLocation(workerToUse.getLocation());
-            workerToUse.setLocation((Block) cellToMove);*/
         }
         else {
-            //if (!cellToMove.isFree()) return false;
-            //if (cellToMove.getLevel().toInt() > workerToUse.getLocation().getLevel().toInt() + 1) return false;
-
             return card.getOwner().move(cellToMove);
-            /*workerToUse.setPreviousLocation(workerToUse.getLocation());
-            ((Block) (workerToUse.getLocation())).removePawn();
-            workerToUse.setLocation((Block) cellToMove);*/
         }
     }
 

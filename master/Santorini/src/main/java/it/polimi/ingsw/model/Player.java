@@ -12,7 +12,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.MalusPlayer;
-import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
@@ -48,7 +47,7 @@ public class Player {
          * wrapper of worker.moveTo(Cell)
          */
 
-        currentWorker.moveTo(cell);
+        return currentWorker.moveTo(cell);
     }
 
     public boolean build(Cell cell) {
@@ -56,7 +55,7 @@ public class Player {
          * wrapper of worker.build(Cell)
          */
 
-        currentWorker.build(cell);
+        return currentWorker.build(cell);
     }
 
     public boolean initializeWorkerPosition(int id, Block position) {

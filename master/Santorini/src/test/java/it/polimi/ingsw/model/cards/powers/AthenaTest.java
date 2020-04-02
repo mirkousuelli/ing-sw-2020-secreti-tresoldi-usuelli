@@ -19,13 +19,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AthenaTest {
+    /* Power:
+     *   If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn
+     */
 
     @Test
-    void testAthena() throws Exception {
-        /* Power:
-         *   If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn
-         */
-
+    void testAthena() {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();

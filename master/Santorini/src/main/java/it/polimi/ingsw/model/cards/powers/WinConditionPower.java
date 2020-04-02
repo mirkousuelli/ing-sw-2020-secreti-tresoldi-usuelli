@@ -12,6 +12,7 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.map.Board;
+import it.polimi.ingsw.model.state.Game;
 
 public class WinConditionPower extends Power {
 
@@ -19,11 +20,13 @@ public class WinConditionPower extends Power {
         super(card);
     }
 
-    public boolean usePower(Board board) {
+    public boolean usePower(Game game) {
         switch (allowedWin) {
             case FIVETOWER:
-            case DOWNTOFROMTWO:
                 return true;
+            case DOWNTOFROMTWO:
+                return game.getCurrentPlayer().getCurrentWorker().getPreviousLocation().getLevel().toInt() -
+                       game.getCurrentPlayer().getCurrentWorker().getLocation().getLevel().toInt() >= 2;
             default:
                 return false;
         }

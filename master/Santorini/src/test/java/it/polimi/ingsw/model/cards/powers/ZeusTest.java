@@ -13,13 +13,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ZeusTest {
+    /* Power:
+     *   Your Worker may build a block under itself
+     */
 
     @Test
-    void testZeus() throws Exception {
-        /* Power:
-         *   Your Worker may build a block under itself
-         */
-
+    void testZeus() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;
