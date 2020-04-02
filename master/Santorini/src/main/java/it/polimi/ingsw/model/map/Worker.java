@@ -50,6 +50,23 @@ public class Worker extends Pawn {
         return prevBuild;
     }
 
+    public List<Cell> getSpecialMoves() {
+        /* @function
+         * returns all special moves that can be activated by some gods where
+         * around cell are busy from other players' workers
+         */
+
+        List<Cell> toReturn = this.currCell.getAround();
+
+        for (Cell around : this.currCell.getAround()) {
+            // if it is busy or complete or higher than allowed
+            if (around.isFree()) {
+                // then remove it from the list
+                toReturn.remove(around);
+            }
+        }
+    }
+
     public List<Cell> getPossibleMoves() {
         /* @getter
          * it considers malus attributes in player and modify possible around cells
