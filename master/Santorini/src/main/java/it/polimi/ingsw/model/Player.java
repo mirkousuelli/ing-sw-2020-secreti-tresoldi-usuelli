@@ -13,7 +13,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.map.Block;
-import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
 
 import java.util.ArrayList;
@@ -42,22 +41,6 @@ public class Player {
         malusList = new ArrayList<>();
     }
 
-    public boolean move(Cell cell) {
-        /*@function
-         * wrapper of worker.moveTo(Cell)
-         */
-
-        return currentWorker.moveTo(cell);
-    }
-
-    public boolean build(Cell cell) {
-        /*@function
-         * wrapper of worker.build(Cell)
-         */
-
-        return currentWorker.build(cell);
-    }
-
     public boolean initializeWorkerPosition(int id, Block position) {
         /*@function
          * it sets the initial position of the current worker
@@ -76,7 +59,7 @@ public class Player {
          * it returns player's workers
          */
 
-        return worker;
+        return new ArrayList<>(worker);
     }
 
     public Worker getCurrentWorker() {
@@ -108,21 +91,19 @@ public class Player {
     }
 
     public void addMalus(MalusPlayer malusPlayer) {
-        //if (!malusList.contains(malusPlayer))
+        MalusPlayer found = malusList.stream()
+                .filter(m -> m.equals(malusPlayer))
+                .reduce(null, (m1, m2) -> m1 != null ? m1 : m2);
+
+        if (found == null)
             malusList.add(malusPlayer);
     }
 
     public List<MalusPlayer> getMalusList() {
-        List<MalusPlayer> ret = new ArrayList<>();
-        ret.addAll(malusList);
-
-        return ret;
+        return new ArrayList<>(malusList);
     }
 
     public void removeMalus() {
-        for (MalusPlayer m : malusList) {
-            if (!m.isPermanent() && m.getNumberOfTurns() == 0)
-                malusList.remove(m);
-        }
+        malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == 0);
     }
 }

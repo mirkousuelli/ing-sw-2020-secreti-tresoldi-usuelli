@@ -30,6 +30,6 @@ class DeckTest {
             }
         }
 
-        assertTrue(deck.popRandomCard() == null);
+        assertNull(deck.popRandomCard());
     }
 }

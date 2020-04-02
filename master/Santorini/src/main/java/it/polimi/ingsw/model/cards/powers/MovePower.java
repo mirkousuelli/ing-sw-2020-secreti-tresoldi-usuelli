@@ -10,7 +10,7 @@
 
 package it.polimi.ingsw.model.cards.powers;
 
-import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
@@ -21,12 +21,12 @@ import java.util.List;
 
 public class MovePower extends ActivePower {
 
-    public MovePower(Card card) {
-        super(card);
+    public MovePower(/*Card card*/) {
+        super(/*card*/);
     }
 
     @Override
-    protected boolean useActivePower(Cell cellToMove) {
+    protected boolean useActivePower(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
         if (constraints.isSameCell() && !cellToMove.equals(workerToUse.getPreviousLocation())) return false;
         if (constraints.isNotSameCell() && cellToMove.equals(workerToUse.getPreviousLocation())) return false;
 
@@ -36,26 +36,33 @@ public class MovePower extends ActivePower {
         if (allowedMove.equals(MovementType.SWAP)) {
             newPos = (Block) workerToUse.getLocation();
 
-            return move(cellToMove, opponentWorker, newPos);
+            return move(currentPlayer, cellToMove, opponentWorker, newPos);
         }
         else if (allowedMove.equals(MovementType.PUSH)) {
-            newPos = (Block) find(cellToMove);
+            newPos = (Block) find(currentPlayer, cellToMove, adjacency);
 
             if (newPos == null) return false;
             if (!newPos.isFree()) return false;
             if (newPos.getLevel().equals(Level.DOME)) return false;
 
-            return move(cellToMove, opponentWorker, newPos);
+            return move(currentPlayer, cellToMove, opponentWorker, newPos);
         }
         else {
-            return card.getOwner().move(cellToMove);
+            if (!cellToMove.isFree()) return false;
+            if (cellToMove.getLevel().toInt() - workerToUse.getLocation().getLevel().toInt() >= 2) return false;
+
+            workerToUse.setPreviousLocation(workerToUse.getLocation());
+            ((Block) workerToUse.getLocation()).removePawn();
+            workerToUse.setLocation((Block) cellToMove);
+
+            return true;
         }
     }
 
-    private boolean move(Cell cellToMove, Worker opponentWorker, Block newPos) {
+    private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block newPos) {
         if (cellToMove.isFree()) return false;
         if (opponentWorker == null) return false;
-        if (opponentWorker.getPlayer().equals(card.getOwner())) return false;
+        if (opponentWorker.getPlayer().equals(currentPlayer)) return false;
 
         workerToUse.setPreviousLocation(workerToUse.getLocation());
         opponentWorker.setPreviousLocation(cellToMove);
@@ -68,13 +75,12 @@ public class MovePower extends ActivePower {
         return true;
     }
 
-    private Cell find(Cell cell) {
+    private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {
         /*@function
          * it identifies the direction in which the opponent's worker will be forced to move
          */
 
-        List<Cell> adjacency = ((Block) cell).getAround();
-        Cell currCell = card.getOwner().getCurrentWorker().getLocation();
+        Cell currCell = currentPlayer.getCurrentWorker().getLocation();
 
         if (currCell.getX() < cell.getX()) {
             if (currCell.getY() < cell.getY())

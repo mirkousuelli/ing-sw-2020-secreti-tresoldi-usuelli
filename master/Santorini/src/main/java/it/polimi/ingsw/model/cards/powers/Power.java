@@ -33,11 +33,11 @@ public class Power {
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
 
-    protected Card card;
+    //protected Card card;
 
 
-    public Power(Card card) {
-        this.card = card;
+    public Power() {
+        //this.card = card;
         constraints = new Constraint();
         malus = new Malus();
     }
@@ -114,11 +114,15 @@ public class Power {
         this.allowedWin = allowedWin;
     }
 
+    public Malus getMalus() {
+        return malus;
+    }
+
     public void setNumberOfActionsRemaining() {
         numberOfActionsRemaining = constraints.getNumberOfAdditional();
     }
 
-    public Card getCard() {
+    /*public Card getCard() {
         return card;
-    }
+    }*/
 }

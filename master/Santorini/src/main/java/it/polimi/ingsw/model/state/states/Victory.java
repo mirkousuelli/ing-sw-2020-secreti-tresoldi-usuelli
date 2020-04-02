@@ -21,7 +21,7 @@ public class Victory implements GameState {
 
     public Game game;
 
-    public Victory(Game game) throws NotValidCellException, MapDimensionException {
+    public Victory(Game game) {
         /* @constructor
          * it shows the player that won and ends the game
          */
@@ -35,7 +35,7 @@ public class Victory implements GameState {
         // game.setState(new Start(game));
     }
 
-    private void endGame(Game game) throws NotValidCellException, MapDimensionException {
+    private void endGame(Game game) {
         /* @function
          * it shows the player that won and ends the current game
          */

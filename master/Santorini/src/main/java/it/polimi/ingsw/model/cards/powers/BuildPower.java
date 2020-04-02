@@ -10,21 +10,23 @@
 
 package it.polimi.ingsw.model.cards.powers;
 
-import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
 import it.polimi.ingsw.model.map.Worker;
 
+import java.util.List;
+
 public class BuildPower extends ActivePower {
 
-    public BuildPower(Card card) {
-        super(card);
+    public BuildPower() {
+        super();
     }
 
     @Override
-    protected boolean useActivePower(Cell cellToBuild) {
+    protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
         if (constraints.isSameCell() && !cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
         if (constraints.isNotSameCell() && cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;

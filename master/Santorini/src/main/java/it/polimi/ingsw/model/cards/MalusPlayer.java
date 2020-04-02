@@ -62,7 +62,8 @@ public class MalusPlayer {
     }
 
     public List<MalusLevel> getDirection() {
-        return direction;
+
+        return new ArrayList<>(direction);
     }
 
     public void addDirectionElement(MalusLevel malusDirectionElement) {

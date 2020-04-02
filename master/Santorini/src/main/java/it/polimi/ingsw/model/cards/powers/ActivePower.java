@@ -10,10 +10,9 @@
 
 package it.polimi.ingsw.model.cards.powers;
 
-import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
@@ -22,18 +21,18 @@ import java.util.List;
 
 public abstract class ActivePower extends Power {
 
-    public ActivePower(Card card) {
-        super(card);
+    public ActivePower(/*Card card*/) {
+        super(/*card*/);
     }
 
-    private boolean preamble(Cell cellToUse) {
-        Worker currWorker = card.getOwner().getCurrentWorker();
+    private boolean preamble(Player currentPlayer, Cell cellToUse) {
+        Worker currentWorker = currentPlayer.getCurrentWorker();
 
         if (workerType.equals(WorkerType.DEFAULT))
-            workerToUse = currWorker;
+            workerToUse = currentWorker;
         else
-            workerToUse = card.getOwner().getWorkers().stream()
-                    .filter(w -> !w.equals(currWorker))
+            workerToUse = currentPlayer.getWorkers().stream()
+                    .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
         //if (!workerInitPos.equals(WorkerPosition.DEFAULT) && !workerToUse.getLocation().getLevel().equals(workerInitPos)) return false;
@@ -44,12 +43,12 @@ public abstract class ActivePower extends Power {
         return verifyConstraints(cellToUse);
     }
 
-    private void addPersonalMalus() {
+    private void addPersonalMalus(Player currentPlayer) {
         MalusPlayer malusPlayer;
 
         if (malus != null) {
             malusPlayer = new MalusPlayer(malus);
-            card.getOwner().addMalus(malusPlayer);
+            currentPlayer.addMalus(malusPlayer);
         }
     }
 
@@ -74,18 +73,18 @@ public abstract class ActivePower extends Power {
         return true;
     }
 
-    public boolean usePower(Cell cellToUse) {
-        if(!preamble(cellToUse)) return false;
+    public boolean usePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency) {
+        if(!preamble(currentPlayer, cellToUse)) return false;
 
-        if(!useActivePower(cellToUse)) return false;
+        if(!useActivePower(currentPlayer, cellToUse, adjacency)) return false;
 
         numberOfActionsRemaining--;
-        addPersonalMalus();
+        addPersonalMalus(currentPlayer);
 
         return true;
     }
 
-    protected abstract boolean useActivePower(Cell cellToUse);
+    protected abstract boolean useActivePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency);
 
     private boolean isPerim(Cell cellToUse) {
         return (cellToUse.getX() == 0 || cellToUse.getY() == 0 || cellToUse.getX() == 4 || cellToUse.getY() == 4);

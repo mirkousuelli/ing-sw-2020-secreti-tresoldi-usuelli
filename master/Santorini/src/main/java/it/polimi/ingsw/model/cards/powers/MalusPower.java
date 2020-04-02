@@ -11,15 +11,14 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.MalusPlayer;
 
 import java.util.List;
 
 public class MalusPower extends Power {
 
-    public MalusPower(Card card) {
-        super(card);
+    public MalusPower(/*Card card*/) {
+        super(/*card*/);
     }
 
     public void usePower(List<Player> opponents) {

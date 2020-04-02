@@ -10,14 +10,12 @@
 
 package it.polimi.ingsw.model.cards.powers;
 
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.state.Game;
 
 public class WinConditionPower extends Power {
 
-    public WinConditionPower(Card card) {
-        super(card);
+    public WinConditionPower(/*Card card*/) {
+        super(/*card*/);
     }
 
     public boolean usePower(Game game) {

@@ -21,7 +21,7 @@ public class ChangeTurn implements GameState {
 
     public Game game;
 
-    public ChangeTurn(Game game) throws NotValidCellException, MapDimensionException {
+    public ChangeTurn(Game game) {
         /* @constructor
          * it changes the turn and the new player has to move one of his worker
          */

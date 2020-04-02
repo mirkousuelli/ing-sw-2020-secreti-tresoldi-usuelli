@@ -10,7 +10,6 @@
 
 package it.polimi.ingsw.model.cards;
 
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.powers.Power;
 
 public class Card {
@@ -21,7 +20,6 @@ public class Card {
     private String name;
     private String description;
     private Power power;
-    private Player owner;
 
     public Card() {
         /*@constructor
@@ -52,19 +50,5 @@ public class Card {
 
     public void setPower(Power power) {
         this.power = power;
-    }
-
-    public Player getOwner() {
-        /*@getter
-         * it gets the owner of the card
-         */
-        return owner;
-    }
-
-    public void setOwner(Player owner) {
-        /*@setter
-         * it sets the owner of the card
-         */
-        this.owner = owner;
     }
 }
