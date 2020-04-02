@@ -15,12 +15,6 @@ import java.util.Arrays;
 
 public class HandlerDTD extends DefaultHandler {
 
-    private final String WHO = "WORKER";
-    private final String WHERE = "WORKERPOS";
-    private final String WHAT = "EFFECT";
-    private final String WHEN = "TIMING";
-    private final String WHY = "CONSTRAINTS";
-
     private Deck deck;
     private God god;
     private Card newCard;

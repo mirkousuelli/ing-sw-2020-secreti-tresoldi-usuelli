@@ -13,7 +13,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
-import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;

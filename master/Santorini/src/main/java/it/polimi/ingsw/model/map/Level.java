@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.model.map;
 
-import it.polimi.ingsw.model.exceptions.map.NotValidLevelException;
-
 public enum Level {
     /* @enum
      * it standardize level layers for a better reading.
@@ -107,14 +105,10 @@ public enum Level {
         }
     }
 
-    public static Level parseInt(int level) throws NotValidLevelException {
+    public static Level parseInt(int level) {
         /* @function
          * it returns the correspondent level enum from an integer input
          */
-
-        if (level < 0 || level > 4) {
-            throw new NotValidLevelException("Invalid integer level value inserted!");
-        }
 
         switch (level) {
             case 0:

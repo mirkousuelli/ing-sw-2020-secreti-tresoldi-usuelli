@@ -16,8 +16,6 @@ import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
 import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
-import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
-import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;

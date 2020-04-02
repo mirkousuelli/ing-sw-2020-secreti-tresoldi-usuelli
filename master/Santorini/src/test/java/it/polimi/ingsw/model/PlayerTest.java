@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.exceptions.cards.WrongWorkerException;
-import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import org.junit.jupiter.api.BeforeAll;

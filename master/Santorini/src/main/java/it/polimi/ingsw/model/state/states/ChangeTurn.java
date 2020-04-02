@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.model.state.states;
 
-import it.polimi.ingsw.model.exceptions.map.MapDimensionException;
-import it.polimi.ingsw.model.exceptions.map.NotValidCellException;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;

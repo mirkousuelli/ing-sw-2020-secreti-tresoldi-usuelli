@@ -15,7 +15,6 @@ import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.exceptions.cards.CompleteTowerException;
 import it.polimi.ingsw.model.exceptions.cards.TopLevelTowerException;
 import it.polimi.ingsw.model.exceptions.cards.WrongCellException;
-import it.polimi.ingsw.model.exceptions.map.OccupiedCellException;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Level;
