@@ -48,10 +48,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -95,10 +92,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
 
@@ -142,10 +136,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
 
@@ -195,10 +186,7 @@ public class DemeterTest {
         completeTower.setLevel(Level.DOME);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, completeTower, board.getAround(completeTower)));
 
@@ -241,10 +229,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, notAdjacent, board.getAround(notAdjacent)));
 

@@ -21,10 +21,12 @@ public class MalusPower extends Power {
         super();
     }
 
-    public void usePower(List<Player> opponents) {
+    public boolean usePower(List<Player> opponents) {
         MalusPlayer malusPlayer = new MalusPlayer(malus);
 
         for (Player opponent : opponents)
             opponent.addMalus(malusPlayer);
+
+        return true;
     }
 }

@@ -18,7 +18,7 @@ public class PanTest {
      *   You also win if your Worker moves down two or more levels
      */
 
-    //@Test
+    @Test
     void testPan() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
@@ -49,15 +49,10 @@ public class PanTest {
         power1.setAllowedMove(MovementType.DEFAULT);
         power1.setAllowedWin(WinType.DOWNTOFROMTWO);
 
-        //build
         worker1Player1.setLevel(Level.MIDDLE);
         //move
-        //player1.move(empty);
+        board.move(player1.getCurrentWorker(), empty);
         //win condition power
-        //power1.usePower(board);
-
-
-
-        //assertSame(game.getState(), new Victory(game));
+        //assertTrue(power1.usePower(board));
     }
 }

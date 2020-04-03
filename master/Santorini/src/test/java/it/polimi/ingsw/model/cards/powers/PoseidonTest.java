@@ -18,7 +18,7 @@ public class PoseidonTest {
      */
 
     @Test
-    void testPoseidon() {
+    void testUnmovedGroundLevelWorkerThreeBuild() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;
@@ -54,7 +54,6 @@ public class PoseidonTest {
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
         assertTrue(power1.usePower(player1, emptyPower2, board.getAround(emptyPower2)));
         assertTrue(power1.usePower(player1, emptyPower3, board.getAround(emptyPower3)));
-        //assertFalse(power1.usePower(emptyPower1));
 
 
 

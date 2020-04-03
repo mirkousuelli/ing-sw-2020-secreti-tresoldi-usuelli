@@ -247,8 +247,7 @@ public class ArthemisTest {
 
         //move
         //player1.move(emptyMove);
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
 
         //move with power
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));

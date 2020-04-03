@@ -47,10 +47,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(empty);
-        empty.setPreviousLevel(empty.getLevel());
-        empty.setLevel(Level.parseInt(empty.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), empty);
         //build with power
         assertTrue(power1.usePower(player1, empty, board.getAround(empty)));
 
@@ -93,10 +90,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -143,10 +137,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
@@ -193,10 +184,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);
 
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 

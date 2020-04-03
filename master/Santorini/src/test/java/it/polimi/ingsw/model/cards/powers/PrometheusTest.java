@@ -23,7 +23,7 @@ public class PrometheusTest {
      */
 
     @Test
-    void testPrometheus() {
+    void testAdditionalBuild() {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         BuildPower power1;
@@ -61,14 +61,9 @@ public class PrometheusTest {
         //build with power
         assertTrue(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
         //move
-        //assertTrue(player1.move(emptyMove));
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
         //build
-        //board.build(player1.getCurrentWorker(), emptyBuild);
-        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
-        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
-        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
+        board.build(player1.getCurrentWorker(), emptyBuild);
 
 
 
@@ -80,5 +75,196 @@ public class PrometheusTest {
         assertEquals(emptyMove, player1.getCurrentWorker().getLocation());
         assertEquals(player1.getMalusList().get(0).getMalusType(), MalusType.MOVE);
         assertEquals(player1.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+    }
+
+    //@Test TO-DO control malus in getPossibleMoves
+    void testMoveUp() {
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+        BuildPower power1;
+
+        player1.setCard(new Card());
+        power1 = new BuildPower();
+        player1.getCard().setPower(power1);
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block emptyMove = (Block) board.getCell(1, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+        //Prometheus
+        power1.setWorkerType(WorkerType.DEFAULT);
+        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
+        power1.setEffect(Effect.BUILD);
+        power1.setTiming(Timing.START_TURN);
+        power1.getConstraints().setNumberOfAdditional(1);
+        power1.getConstraints().setNotPerimCell(false);
+        power1.getConstraints().setNotSameCell(false);
+        power1.getConstraints().setPerimCell(false);
+        power1.getConstraints().setSameCell(false);
+        power1.getConstraints().setUnderItself(false);
+        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedMove(MovementType.DEFAULT);
+        power1.malus.setMalusType(MalusType.MOVE);
+        power1.malus.setPermanent(false);
+        power1.malus.setNumberOfTurns(1);
+        power1.malus.addDirectionElement(MalusLevel.UP);
+        power1.malus.setPersonal(true);
+
+        //build with power
+        assertTrue(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
+        //move
+        assertFalse(board.move(player1.getCurrentWorker(), emptyMove));
+
+
+
+
+        assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
+        assertEquals(player1.getMalusList().get(0).getMalusType(), MalusType.MOVE);
+        assertEquals(player1.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+    }
+
+    @Test
+    void testNotAdjacentCell() {
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+        BuildPower power1;
+
+        player1.setCard(new Card());
+        power1 = new BuildPower();
+        player1.getCard().setPower(power1);
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block notAdjacentCell = (Block) board.getCell(2, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+        //Prometheus
+        power1.setWorkerType(WorkerType.DEFAULT);
+        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
+        power1.setEffect(Effect.BUILD);
+        power1.setTiming(Timing.START_TURN);
+        power1.getConstraints().setNumberOfAdditional(1);
+        power1.getConstraints().setNotPerimCell(false);
+        power1.getConstraints().setNotSameCell(false);
+        power1.getConstraints().setPerimCell(false);
+        power1.getConstraints().setSameCell(false);
+        power1.getConstraints().setUnderItself(false);
+        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedMove(MovementType.DEFAULT);
+        power1.malus.setMalusType(MalusType.MOVE);
+        power1.malus.setPermanent(false);
+        power1.malus.setNumberOfTurns(1);
+        power1.malus.addDirectionElement(MalusLevel.UP);
+        power1.malus.setPersonal(true);
+
+        //build with power
+        assertFalse(power1.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));
+
+
+
+
+        assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
+        assertEquals(0, player1.getMalusList().size());
+    }
+
+    @Test
+    void testOccupiedCell() {
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+        BuildPower power1;
+
+        player1.setCard(new Card());
+        power1 = new BuildPower();
+        player1.getCard().setPower(power1);
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block occupiedCell = (Block) board.getCell(1, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player1.initializeWorkerPosition(2, occupiedCell);
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+        //Prometheus
+        power1.setWorkerType(WorkerType.DEFAULT);
+        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
+        power1.setEffect(Effect.BUILD);
+        power1.setTiming(Timing.START_TURN);
+        power1.getConstraints().setNumberOfAdditional(1);
+        power1.getConstraints().setNotPerimCell(false);
+        power1.getConstraints().setNotSameCell(false);
+        power1.getConstraints().setPerimCell(false);
+        power1.getConstraints().setSameCell(false);
+        power1.getConstraints().setUnderItself(false);
+        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedMove(MovementType.DEFAULT);
+        power1.malus.setMalusType(MalusType.MOVE);
+        power1.malus.setPermanent(false);
+        power1.malus.setNumberOfTurns(1);
+        power1.malus.addDirectionElement(MalusLevel.UP);
+        power1.malus.setPersonal(true);
+
+        //build with power
+        assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
+
+
+
+
+        assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
+        assertEquals(0, player1.getMalusList().size());
+    }
+
+    @Test
+    void testCompleteTowerCell() {
+        Player player1 = new Player("Pl1");
+        Board board = new Board();
+        BuildPower power1;
+
+        player1.setCard(new Card());
+        power1 = new BuildPower();
+        player1.getCard().setPower(power1);
+
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block completeTower = (Block) board.getCell(1, 1);
+
+        player1.initializeWorkerPosition(1, worker1Player1);
+        player1.setCurrentWorker(player1.getWorkers().get(0));
+
+        //Prometheus
+        power1.setWorkerType(WorkerType.DEFAULT);
+        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
+        power1.setEffect(Effect.BUILD);
+        power1.setTiming(Timing.START_TURN);
+        power1.getConstraints().setNumberOfAdditional(1);
+        power1.getConstraints().setNotPerimCell(false);
+        power1.getConstraints().setNotSameCell(false);
+        power1.getConstraints().setPerimCell(false);
+        power1.getConstraints().setSameCell(false);
+        power1.getConstraints().setUnderItself(false);
+        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedMove(MovementType.DEFAULT);
+        power1.malus.setMalusType(MalusType.MOVE);
+        power1.malus.setPermanent(false);
+        power1.malus.setNumberOfTurns(1);
+        power1.malus.addDirectionElement(MalusLevel.UP);
+        power1.malus.setPersonal(true);
+
+        completeTower.setPreviousLevel(Level.TOP);
+        completeTower.setLevel(Level.DOME);
+
+        //build with power
+        assertFalse(power1.usePower(player1, completeTower, board.getAround(completeTower)));
+
+
+
+
+        assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
+        assertEquals(0, player1.getMalusList().size());
     }
 }

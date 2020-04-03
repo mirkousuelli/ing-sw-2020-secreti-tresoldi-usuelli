@@ -24,7 +24,7 @@ public class AthenaTest {
      */
 
     //@Test
-    void testAthena() {
+    void testCannotMoveUpMalus() {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
@@ -37,6 +37,7 @@ public class AthenaTest {
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker1Player2 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(0, 1);
+        Block cannotMoveUpCell = (Block) board.getCell(2, 2);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
@@ -63,14 +64,21 @@ public class AthenaTest {
         power1.malus.addDirectionElement(MalusLevel.UP);
         power1.malus.setPersonal(false);
 
+        //player1
         //build
-        //player1.build(emptyBuild);
+        board.build(player1.getCurrentWorker(), emptyBuild);
         //move
-        //player1.move(emptyBuild);
+        board.move(player1.getCurrentWorker(), emptyBuild);
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
-        power1.usePower(opponents);
+        assertTrue(power1.usePower(opponents));
+
+        //player2
+        //build
+        board.build(player2.getCurrentWorker(), cannotMoveUpCell);
+        //move
+        assertFalse(board.move(player2.getCurrentWorker(), cannotMoveUpCell));
 
 
 
@@ -80,6 +88,10 @@ public class AthenaTest {
         assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(emptyBuild, player1.getCurrentWorker().getLocation());
+        assertEquals(Level.BOTTOM, cannotMoveUpCell.getLevel());
+        assertEquals(Level.GROUND, cannotMoveUpCell.getPreviousLevel());
+        assertEquals(cannotMoveUpCell, player2.getCurrentWorker().getPreviousBuild());
+        assertEquals(worker1Player2, player1.getCurrentWorker().getLocation());
         assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
         assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
     }
