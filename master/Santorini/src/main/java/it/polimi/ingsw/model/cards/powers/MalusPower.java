@@ -17,8 +17,8 @@ import java.util.List;
 
 public class MalusPower extends Power {
 
-    public MalusPower(/*Card card*/) {
-        super(/*card*/);
+    public MalusPower() {
+        super();
     }
 
     public void usePower(List<Player> opponents) {

@@ -21,8 +21,8 @@ import java.util.List;
 
 public class MovePower extends ActivePower {
 
-    public MovePower(/*Card card*/) {
-        super(/*card*/);
+    public MovePower() {
+        super();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MovePower extends ActivePower {
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
         if (allowedMove.equals(MovementType.SWAP)) {
-            newPos = (Block) workerToUse.getLocation();
+            newPos = workerToUse.getLocation();
 
             return move(currentPlayer, cellToMove, opponentWorker, newPos);
         }
@@ -52,7 +52,7 @@ public class MovePower extends ActivePower {
             if (cellToMove.getLevel().toInt() - workerToUse.getLocation().getLevel().toInt() >= 2) return false;
 
             workerToUse.setPreviousLocation(workerToUse.getLocation());
-            ((Block) workerToUse.getLocation()).removePawn();
+            workerToUse.getLocation().removePawn();
             workerToUse.setLocation((Block) cellToMove);
 
             return true;
@@ -67,10 +67,10 @@ public class MovePower extends ActivePower {
         workerToUse.setPreviousLocation(workerToUse.getLocation());
         opponentWorker.setPreviousLocation(cellToMove);
 
-        ((Block) workerToUse.getLocation()).removePawn();
+        workerToUse.getLocation().removePawn();
         opponentWorker.setLocation(newPos);
         workerToUse.setLocation((Block) cellToMove);
-        ((Block) opponentWorker.getLocation()).addPawn(opponentWorker);
+        opponentWorker.getLocation().addPawn(opponentWorker);
 
         return true;
     }

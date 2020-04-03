@@ -29,9 +29,8 @@ public class PrometheusTest {
         BuildPower power1;
 
         player1.setCard(new Card());
-        power1 = new BuildPower(player1.getCard());
+        power1 = new BuildPower();
         player1.getCard().setPower(power1);
-        player1.getCard().setOwner(player1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -60,11 +59,16 @@ public class PrometheusTest {
         power1.malus.setPersonal(true);
 
         //build with power
-        assertTrue(power1.usePower(emptyBuild));
+        assertTrue(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
         //move
-        assertTrue(player1.move(emptyMove));
+        //assertTrue(player1.move(emptyMove));
+        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
+        player1.getCurrentWorker().setLocation(emptyMove);
         //build
-        assertTrue(player1.build(emptyBuild));
+        //board.build(player1.getCurrentWorker(), emptyBuild);
+        player1.getCurrentWorker().setPreviousBuild(emptyBuild);
+        emptyBuild.setPreviousLevel(emptyBuild.getLevel());
+        emptyBuild.setLevel(Level.parseInt(emptyBuild.getLevel().toInt() + 1));
 
 
 

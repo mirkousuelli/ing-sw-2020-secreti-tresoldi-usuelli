@@ -30,9 +30,8 @@ public class PersephoneTest {
         MalusPower power1;
 
         player1.setCard(new Card());
-        power1 = new MalusPower(player1.getCard());
+        power1 = new MalusPower();
         player1.getCard().setPower(power1);
-        player1.getCard().setOwner(player1);
 
         //Persephone
         power1.setWorkerType(WorkerType.DEFAULT);
@@ -66,9 +65,5 @@ public class PersephoneTest {
         assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
         assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.DOWN);
         assertEquals(player2.getMalusList().get(0).getDirection().get(1), MalusLevel.SAME);
-
-
-        //assertThrows(WrongCellException.class,
-        //        () -> {player1.getCard().getPower().usePower(empty);} );
     }
 }
