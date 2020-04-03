@@ -66,8 +66,8 @@ public abstract class ActivePower extends Power {
             if (!workerToUse.getLocation().equals(cellToUse))  return false;
         }
         else {
-            List<Cell> around = ((Block) workerToUse.getLocation()).getAround();
-            if (!(around.contains(cellToUse))) return false;
+            //List<Cell> around = ((Block) workerToUse.getLocation()).getAround();
+            //if (!(around.contains(cellToUse))) return false;
         }
 
         return true;

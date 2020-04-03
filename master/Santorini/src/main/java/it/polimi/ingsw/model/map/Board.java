@@ -30,7 +30,7 @@ public class Board implements Cloneable{
 
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
-                this.map[i][j] = new Block(i, j, this);
+                this.map[i][j] = new Block(i, j);
             }
         }
     }
@@ -42,11 +42,11 @@ public class Board implements Cloneable{
          * it gets a specific cell in return through xy coordinates
          */
 
-        /*if ((x < 0 || x >= 5) && (y < 0 || y >= 5)) {
-            throw new NotValidCellException("Invalid cell coordinates inserted!");
-        }*/
+        if ((x >= 0 && x < 5) && (y >= 0 && y < 5)) {
+            return this.map[x][y];
+        }
 
-        return this.map[x][y];
+        return null;
     }
 
     public int getLength() {
@@ -62,18 +62,18 @@ public class Board implements Cloneable{
          * it gets the full row selected as a list
          */
 
-        /*if (row < 0 || row >= 5) {
-            throw new MapDimensionException("Invalid row coordinates inserted!");
-        }*/
+        if (row >= 0 && row < 5) {
+            List<Cell> rowList = new ArrayList<Cell>();
 
-        List<Cell> rowList = new ArrayList<Cell>();
+            for (int i = 0; i < this.DIM; i++) {
+                // adding each cell of the same row
+                rowList.add(this.getCell(row, i));
+            }
 
-        for (int i = 0; i < this.DIM; i++) {
-            // adding each cell of the same row
-            rowList.add(this.getCell(row, i));
+            return rowList;
         }
 
-        return rowList;
+        return null;
     }
 
     public List<Cell> getColumn(int col) {
@@ -81,18 +81,18 @@ public class Board implements Cloneable{
          * it gets the full column selected as a list
          */
 
-        /*if (col < 0 || col >= 5) {
-            throw new MapDimensionException("Invalid column index inserted!");
-        }*/
+        if (col >= 0 && col < 5) {
+            List<Cell> colList = new ArrayList<Cell>();
 
-        List<Cell> colList = new ArrayList<Cell>();
+            for (int i = 0; i < this.DIM; i++) {
+                // adding each cell of the same column
+                colList.add(this.getCell(i, col));
+            }
 
-        for (int i = 0; i < this.DIM; i++) {
-            // adding each cell of the same column
-            colList.add(this.getCell(i, col));
+            return colList;
         }
 
-        return colList;
+        return null;
     }
 
     /* FUNCTION ----------------------------------------------------------------------------------------------------- */
@@ -108,12 +108,8 @@ public class Board implements Cloneable{
          *          (ArrayList<Cell>) : 8 cells around the base passed
          */
 
-        /*if (cell == null) {
-            throw new NullPointerException();
-        }*/
-
         /* ------- EXISTENCE CONTROL ------- */
-        /*boolean notExists = true;
+        boolean notExists = true;
         int i;
 
         i = 0;
@@ -122,47 +118,174 @@ public class Board implements Cloneable{
             i++;
         }
 
-        if (notExists) {
-            throw new NotValidCellException("Cell selected doesn't belong to the current board! (even if its domain could be correct)");
-        }*/
-        /* ---------------------------------- */
+        if (!notExists) {
+            // creating the array to pass in return
+            List<Cell> around = new ArrayList<Cell>();
 
-        // creating the array to pass in return
-        List<Cell> around = new ArrayList<Cell>();
+            // creating a set of x around parameters to sum in iteration
+            List<Integer> xCheck = new ArrayList<Integer>() {{
+                add(1);
+                add(0);
+                add(-1);
+            }};
 
-        // creating a set of x around parameters to sum in iteration
-        List<Integer> xCheck = new ArrayList<Integer>() {{
-            add(1);
-            add(0);
-            add(-1);
-        }};
+            // creating a set of y around parameters to sum in iteration
+            List<Integer> yCheck = new ArrayList<Integer>() {{
+                add(1);
+                add(0);
+                add(-1);
+            }};
 
-        // creating a set of y around parameters to sum in iteration
-        List<Integer> yCheck = new ArrayList<Integer>() {{
-            add(1);
-            add(0);
-            add(-1);
-        }};
+            // calling x and y just once
+            int x = cell.getX();
+            int y = cell.getY();
 
-        // calling x and y just once
-        int x = cell.getX();
-        int y = cell.getY();
-
-        // for all x around checks
-        for (Integer xAround : xCheck) {
-            // for all y around checks
-            for (Integer yAround : yCheck) {
-                // i avoid the current cell control (x + 0, y + 0)
-                if (!(xAround.equals(0) && yAround.equals(0))) {
-                    // look for border condition adding null obj in case
-                    if (!(x + xAround < 0 || x + xAround == this.DIM || y + yAround < 0 || y + yAround == this.DIM)) {
-                        around.add(this.getCell(x + xAround, y + yAround));
+            // for all x around checks
+            for (Integer xAround : xCheck) {
+                // for all y around checks
+                for (Integer yAround : yCheck) {
+                    // i avoid the current cell control (x + 0, y + 0)
+                    if (!(xAround.equals(0) && yAround.equals(0))) {
+                        // look for border condition adding null obj in case
+                        if (!(x + xAround < 0 || x + xAround == this.DIM || y + yAround < 0 || y + yAround == this.DIM)) {
+                            around.add(this.getCell(x + xAround, y + yAround));
+                        }
                     }
                 }
             }
+
+            return around;
         }
 
-        return around;
+        return null;
+    }
+
+    public List<Cell> getSpecialMoves(Cell cell) {
+        /* @function
+         * returns all special moves that can be activated by some gods where
+         * around cell are busy from other players' workers
+         */
+
+        List<Cell> toReturn = getAround(cell);
+
+        for (Cell around : getAround(cell)) {
+            // if it is busy or complete or higher than allowed
+            if (around.isFree()) {
+                // then remove it from the list
+                toReturn.remove(around);
+            }
+        }
+
+        return toReturn;
+    }
+
+    public List<Cell> getPossibleMoves(Cell cell) {
+        /* @getter
+         * it considers malus attributes in player and modify possible around cells
+         */
+        List<Cell> toReturn = getAround(cell);
+
+        // checking for around cell higher than allowed
+        for (Cell around : getAround(cell)) {
+            // if it is busy or complete or higher than allowed
+            if (!around.isWalkable() || cell.getLevel().toInt() + 1 < around.getLevel().toInt()) {
+                // then remove it from the list
+                toReturn.remove(around);
+            }
+        }
+
+        // cannot move up malus active
+        /*if (this.player.isCannotMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() < around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+            // if everything is removed then i will return null
+        }
+
+        // must move up malus active
+        if (this.player.isMustMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() > around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+
+            // in case i removed everything i reset around
+            if (toReturn == null) {
+                toReturn = this.currCell.getAround();
+            }
+        }*/
+
+        // in case no malus has been active : normal getAround()
+        // in case both malus are active : normal getAround()
+        return toReturn;
+    }
+
+    public List<Cell> getPossibleBuilds(Cell cell) {
+        /* @getter
+         * it gets possible cell where to build
+         */
+
+        // in this case, since no gods have consequence on it, it doesn't change
+        return getAround(cell);
+    }
+
+    public boolean move(Worker worker, Cell newCell) {
+        /* @function
+         * it makes worker moving to another cell going through an operation of undecorate-decorate
+         */
+
+        // if it is not a dome, free and it is contained within possible choices
+        if (newCell.isWalkable() && this.getPossibleMoves(worker.getLocation()).contains(newCell)) {
+            // removing pawn from the current cell
+            worker.getLocation().removePawn();
+
+            // updating previous cell with the old current cell
+            worker.setPreviousLocation((worker.getLocation()));
+
+            // updating current cell with the new cell just moved on
+            worker.setLocation((Block) newCell);
+
+            // returning everything correct
+            return true;
+        }
+
+        // try again
+        return false;
+    }
+
+    public boolean build(Worker worker, Cell cellToBuildUp) {
+        /* @function
+         * it builds around except for its current location (by default), unless a god change this rule
+         */
+
+        Block toBuild = (Block) cellToBuildUp;
+
+        // if it is not a dome, free and it is contained within possible choices
+        if (toBuild.isWalkable() && this.getPossibleBuilds(worker.getLocation()).contains(toBuild)) {
+            // storing previous level
+            toBuild.setPreviousLevel(toBuild.getLevel());
+
+            // then build it up
+            toBuild.setLevel(toBuild.getLevel().buildUp());
+
+            // updating last building
+            worker.setPreviousBuild(toBuild);
+
+            // returning everything correct
+            return true;
+        }
+
+        // try again
+        return false;
     }
 
     public void clean() {
@@ -182,19 +305,12 @@ public class Board implements Cloneable{
     }
 
     @Override
-    public Board clone() throws CloneNotSupportedException {
-        Board cloned;
+    public Board clone() {
+        Board cloned = new Board();
 
-        //try {
-            cloned = (Board) super.clone();
-
-            for (int i = 0; i < this.DIM; i++) {
-                cloned.map[i] = this.getRow(i).toArray(new Cell[0]);
-            }
-        /*} catch (CloneNotSupportedException | NotValidCellException | MapDimensionException e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }*/
+        for (int i = 0; i < this.DIM; i++) {
+            cloned.map[i] = this.getRow(i).toArray(new Cell[0]);
+        }
 
         return cloned;
     }

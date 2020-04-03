@@ -66,6 +66,7 @@ public class Player {
         /*@getter
          * it gets the current worker
          */
+
         return currentWorker;
     }
 
@@ -73,6 +74,7 @@ public class Player {
         /*@setter
          * it sets the current worker to the designated one
          */
+
         this.currentWorker = currentWorker;
     }
 
@@ -80,6 +82,7 @@ public class Player {
         /*@getter
          * it gets the player's card
          */
+
         return card;
     }
 
@@ -87,6 +90,7 @@ public class Player {
         /*@setter
          * it sets the player's card
          */
+
         this.card = card;
     }
 

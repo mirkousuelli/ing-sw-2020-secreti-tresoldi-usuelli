@@ -56,28 +56,16 @@
                         type (dome | notdome | default) "default"
                     >
 
-            <!ELEMENT malus (numturns?, directions)>
+            <!ELEMENT malus (numturns?)>
                     <!ATTLIST malus
                         type (build | move) #REQUIRED
                         permanent (true | false) "false"
                         personal (true | false) "false"
+                        direction (up | down | same | default) "default"
                     >
                 <!ELEMENT numturns (#PCDATA)>
-                <!ELEMENT directions EMPTY>
-                    <!ATTLIST directions
-                            north (true | false) "false"
-                            northeast (true | false) "false"
-                            east (true | false) "false"
-                            southeast (true | false) "false"
-                            south (true | false) "false"
-                            southwest (true | false) "false"
-                            west (true | false) "false"
-                            northwest (true | false) "false"
-                            up (true | false) "false"
-                            down (true | false) "false"
-                    >
 
-                <!ELEMENT win EMPTY>
-                    <!ATTLIST win
-                            type (downfromtwo | fivetower)
-                    >
+            <!ELEMENT win EMPTY>
+                <!ATTLIST win
+                        type (downfromtwo | fivetower)
+                >

@@ -11,6 +11,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.Collections;
+import java.util.List;
+
 public class ParserXML {
     private final String XMLFILE = "gods.xml";
 
@@ -24,20 +27,12 @@ public class ParserXML {
         this.handler = new HandlerDTD(deck);
     }
 
-    public void parseCard(God god) {
+    public void parseCards(List<God> gods) {
         try{
-            this.handler.setGod(god);
+            //Collections.sort(gods, (a, b) -> a.getType().compareTo(b.getType()));
+            Collections.sort(gods);
+            this.handler.setGods(gods);
             this.parser.parse(this.XMLFILE, handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void parseDeck() {
-        try{
-            for (God god : God.values()) {
-                this.parseCard(god);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

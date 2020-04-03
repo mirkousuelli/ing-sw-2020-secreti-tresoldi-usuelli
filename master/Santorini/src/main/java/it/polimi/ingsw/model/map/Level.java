@@ -23,6 +23,7 @@ public enum Level {
              * when the current obj (who invokes this method) is immediately overridden for having an inferior limit
              * returning "this" without further indexing complications.
              */
+
             return this;
         };
     },
@@ -44,6 +45,7 @@ public enum Level {
              * when the current obj (who invokes this method) is immediately overridden for having a superior limit
              * returning "this" without further indexing complications.
              */
+
             return this;
         };
     };
@@ -54,6 +56,7 @@ public enum Level {
         /* @function
          * it increases of one level the building
          */
+
         return values()[ordinal() + 1];
     };
 
@@ -61,6 +64,7 @@ public enum Level {
         /* @function
          * it reduces of one level the building
          */
+
         return values()[ordinal() - 1];
     }
 
@@ -69,6 +73,7 @@ public enum Level {
         /* @function
          * it prints what string corresponds to each level
          */
+
         switch (this) {
             case GROUND:
                 return "0";

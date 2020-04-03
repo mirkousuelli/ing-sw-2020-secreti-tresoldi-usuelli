@@ -30,10 +30,6 @@ public abstract class Pawn implements Cell {
          * it constructs a pawn linking the owner (player) and is current position within the board
          */
 
-        /*if (player == null || currCell == null) {
-            throw new NullPointerException();
-        }*/
-
         this.player = player;
         this.currCell = currCell;
         this.currCell.addPawn(this);
@@ -46,6 +42,7 @@ public abstract class Pawn implements Cell {
         /* @getter
          * it gets column
          */
+
         return this.currCell.getX();
     }
 
@@ -54,13 +51,15 @@ public abstract class Pawn implements Cell {
         /* @getter
          * it gets row
          */
+
         return this.currCell.getY();
     }
 
-    public Cell getLocation() {
+    public Block getLocation() {
         /* @getter
          * it gets the current position
          */
+
         return this.currCell;
     }
 
@@ -68,6 +67,7 @@ public abstract class Pawn implements Cell {
         /* @getter
          * it gets the pawn owner
          */
+
         return this.player;
     }
 
@@ -76,6 +76,7 @@ public abstract class Pawn implements Cell {
         /* @getter
          * it gets the level
          */
+
         return this.currCell.getLevel();
     }
 
@@ -87,11 +88,9 @@ public abstract class Pawn implements Cell {
          * it sets the column
          */
 
-        /*if (newX < 0 || newX >= 5) {
-            throw new NotValidCellException("Not valid X value!");
-        }*/
-
-        this.currCell.setX(newX);
+        if (newX >= 0 && newX < 5) {
+            this.currCell.setX(newX);
+        }
     }
 
     @Override
@@ -100,21 +99,15 @@ public abstract class Pawn implements Cell {
          * it sets the row
          */
 
-        /*if (newY < 0 || newY >= 5) {
-            throw new NotValidCellException("Not valid X value!");
-        }*/
-
-        this.currCell.setY(newY);
+        if (newY >= 0 && newY < 5) {
+            this.currCell.setY(newY);
+        }
     }
 
     public void setLocation(Block newCell) {
         /* @setter
          * it sets the current position
          */
-
-        /*if (newCell == null) {
-            throw new NullPointerException();
-        }*/
 
         this.currCell.removePawn();
         this.currCell = newCell;
@@ -126,10 +119,6 @@ public abstract class Pawn implements Cell {
          * it sets the pawn owner
          */
 
-        /*if (newPlayer == null) {
-            throw new NullPointerException();
-        }*/
-
         this.player = newPlayer;
     }
 
@@ -139,15 +128,9 @@ public abstract class Pawn implements Cell {
          * it sets the level
          */
 
-        /*if (newLevel == null) {
-            throw new NullPointerException();
+        if (Arrays.asList(Level.values()).contains(newLevel)) {
+            this.currCell.setLevel(newLevel);
         }
-
-        if (!Arrays.asList(Level.values()).contains(newLevel)) {
-            throw new NotValidLevelException("Invalid level inserted!");
-        }*/
-
-        this.currCell.setLevel(newLevel);
     }
 
     /* ABSTRACT_METHOD ------------------------------------------------------------------------------------------------- */
@@ -165,6 +148,7 @@ public abstract class Pawn implements Cell {
         /* @predicate
          * it imposes that nothing can walk on a pawn
          */
+
         return this.currCell.isWalkable();
     }
 
@@ -173,6 +157,7 @@ public abstract class Pawn implements Cell {
         /* @predicate
          * it asks if the current cell is complete
          */
+
         return this.currCell.isComplete();
     }
 
@@ -181,6 +166,7 @@ public abstract class Pawn implements Cell {
         /* @predicate
          * it asks if the current cell is complete
          */
+
         return this.currCell.isFree();
     }
 
@@ -189,6 +175,7 @@ public abstract class Pawn implements Cell {
         /* @function
          * it cleans off the current cell to its starting state
          */
+
         this.currCell.clean();
         this.currCell = null;
     }
