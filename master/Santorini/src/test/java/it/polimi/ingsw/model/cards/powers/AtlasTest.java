@@ -54,7 +54,7 @@ class AtlasTest {
 
         assertEquals(Level.DOME, empty.getLevel());
         assertEquals(Level.GROUND, empty.getPreviousLevel());
-        assertEquals(empty, player1.getCurrentWorker().getPreviousBuild());*/
+        assertEquals(empty, player1.getCurrentWorker().getPreviousBuild());
     }
 
     @Test

@@ -14,8 +14,8 @@ import it.polimi.ingsw.model.state.Game;
 
 public class WinConditionPower extends Power {
 
-    public WinConditionPower(/*Card card*/) {
-        super(/*card*/);
+    public WinConditionPower() {
+        super();
     }
 
     public boolean usePower(Game game) {

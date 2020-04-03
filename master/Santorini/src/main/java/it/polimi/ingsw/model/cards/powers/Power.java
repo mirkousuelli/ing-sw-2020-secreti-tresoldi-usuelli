@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.model.cards.powers;
 
-import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
@@ -34,11 +32,8 @@ public class Power {
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
 
-    //protected Card card;
-
 
     public Power() {
-        //this.card = card;
         constraints = new Constraint();
         malus = new Malus();
     }
@@ -122,8 +117,4 @@ public class Power {
     public void setNumberOfActionsRemaining() {
         numberOfActionsRemaining = constraints.getNumberOfAdditional();
     }
-
-    /*public Card getCard() {
-        return card;
-    }*/
 }
