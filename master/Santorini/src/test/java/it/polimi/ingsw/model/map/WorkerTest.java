@@ -65,21 +65,21 @@ class WorkerTest {
                 assertSame(tester, origin.getPawn()); // right pawn on block
 
                 // self move to the same place test
-                tester.moveTo(origin);
+                board.move(tester, origin);
                 assertSame(tester.getLocation(), origin); // right location
                 assertSame(tester, origin.getPawn()); // right pawn on block
 
                 // testing each direction around the current block (either center or corner or side condition)
-                for (Cell around : tester.getPossibleMoves()) {
+                for (Cell around : board.getPossibleMoves(tester.getLocation())) {
                     // each direction around
-                    assertTrue(tester.moveTo(around)); // move around one direction at once
+                    assertTrue(board.move(tester, around)); // move around one direction at once
                     assertSame(tester.getLocation(), around); // right current location
                     assertSame(tester.getPreviousLocation(), origin); // right previous location
                     assertSame(tester, ((Block) around).getPawn()); // right pawn on it
                     assertNull(origin.getPawn()); // right missing pawn on previous block
 
                     // coming back to the origin
-                    tester.moveTo(origin); // move back
+                    board.move(tester, origin); // move back
                     assertSame(tester.getLocation(), origin); // right current location
                     assertSame(tester.getPreviousLocation(), around); // right previous location
                     assertSame(tester, origin.getPawn()); // right pawn on it
@@ -99,7 +99,7 @@ class WorkerTest {
         Block notAround = (Block) board.getCell(NOT_AROUND_X, NOT_AROUND_Y);
 
         // error move test
-        assertFalse(tester.moveTo(notAround)); // going in a wrong block not around
+        assertFalse(board.move(tester, notAround)); // going in a wrong block not around
         assertNotSame(tester.getLocation(), notAround); // didn't go in the wrong block
         assertNull(notAround.getPawn()); // the pawn is not on the wrong block..
         assertSame(tester.getLocation(), origin); // location is correct
@@ -138,7 +138,7 @@ class WorkerTest {
                     // if next cell is higher than one level compared to the origin, then..
                     if ((nextLevel.toInt() <= currLevel.toInt() + 1) && !next.isComplete()) {
                         // moving up/down to...
-                        assertTrue(tester.moveTo(next));
+                        assertTrue(board.move(tester, next));
 
                         // checking if move worked fine
                         assertSame(tester.getLocation(), next);
@@ -148,7 +148,7 @@ class WorkerTest {
 
                     } else {
                         // trying to move..
-                        assertFalse(tester.moveTo(next));
+                        assertFalse(board.move(tester, next));
                     }
 
                     // resetting levels
@@ -156,7 +156,7 @@ class WorkerTest {
                     next.setLevel(Level.GROUND);
 
                     // ensuring that we are still in the origin cell
-                    tester.moveTo(origin);
+                    board.move(tester, origin);
                     assertSame(tester.getLocation(), origin);
                     assertSame(tester, origin.getPawn());
                     assertNull(next.getPawn());
@@ -176,7 +176,7 @@ class WorkerTest {
         Worker enemy = new Worker(new Player("id"), next);
 
         // trying to move to a busy cell
-        tester.moveTo(next);
+        board.move(tester, next);
         assertNotSame(tester.getLocation(), next); // didn't go in the wrong block
         assertSame(enemy, next.getPawn()); // the pawn is not on the wrong block..
         assertSame(tester.getLocation(), origin); // location is correct
@@ -208,7 +208,7 @@ class WorkerTest {
 
         // self move to the same place test
         Block finalOrigin = origin;
-        tester.build(finalOrigin); // self build
+        board.build(tester, finalOrigin); // self build
         assertNull(tester.getPreviousBuild()); // no previous build
         assertSame(tester.getLevel(), Level.GROUND); // level didn't change
         assertSame(tester, origin.getPawn()); // pawn still in the same block
@@ -221,12 +221,12 @@ class WorkerTest {
                 tester.setLocation(origin);
 
                 // testing each direction around the current block (either center or corner or side condition)
-                for (Cell around : tester.getPossibleBuilds()) {
+                for (Cell around : board.getPossibleBuilds(tester.getLocation())) {
                     // check if i start from the ground
                     assertSame(around.getLevel(), Level.GROUND);
 
                     // increase level
-                    assertTrue(tester.build(around));
+                    assertTrue(board.build(tester, around));
 
                     // look if what i built has been saved
                     assertSame(tester.getPreviousBuild(), around);
@@ -256,7 +256,7 @@ class WorkerTest {
         Block notAround = (Block) board.getCell(NOT_AROUND_X, NOT_AROUND_Y);
 
         // try to build not around
-        assertFalse(tester.build(notAround));
+        assertFalse(board.build(tester, notAround));
 
         // it didn't build anything
         assertNull(tester.getPreviousBuild());
@@ -295,7 +295,7 @@ class WorkerTest {
                 // if next block is not complete
                 if (!next.isComplete()) {
                     // build it up
-                    assertTrue(tester.build(next));
+                    assertTrue(board.build(tester, next));
 
                     // look if it increased
                     assertEquals((int) next.getLevel().toInt(), next.getPreviousLevel().toInt() + 1);
@@ -304,7 +304,7 @@ class WorkerTest {
                     backup = next.getLevel();
 
                     // it doesn't have to build
-                    assertFalse(tester.build(next));
+                    assertFalse(board.build(tester, next));
 
                     // look if that cell remained as before
                     assertEquals(next.getLevel(), backup);
@@ -333,7 +333,7 @@ class WorkerTest {
         Worker enemy = new Worker(new Player("id"), next);
 
         // trying to move to a busy cell
-        assertFalse(tester.build(next)); // self build
+        assertFalse(board.build(tester, next)); // self build
         assertNotSame(tester.getPreviousBuild(), next); // it didn't build the busy block
 
         // enemy check

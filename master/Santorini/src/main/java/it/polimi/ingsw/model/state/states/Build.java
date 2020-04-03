@@ -33,6 +33,9 @@ public class Build implements GameState {
         game.getCurrentPlayer().getCurrentWorker().getPossibleBuilds();
         game.getCurrentPlayer().getCurrentWorker().build(cellToBuildUp);
 
+        //RIKY SONO MIRKO, HO SCRITTO QUESTO SOLO PER TESTING, TE L'HO COMMENTATO
+        // this.game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
+
         // if the build is successful, then the game proceed to change the turn
         if(isBuildSuccessful(game))
             game.setState(new ChangeTurn(game));

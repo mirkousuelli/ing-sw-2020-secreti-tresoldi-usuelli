@@ -14,9 +14,7 @@ import it.polimi.ingsw.model.cards.xml.ParserXML;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Deck {
     /*@class
@@ -33,6 +31,15 @@ public class Deck {
 
         cards = new ArrayList<>();
         parser = new ParserXML(this);
+        test();
+    }
+
+    public void test() {
+        List<God> gods = new ArrayList<God>();
+        gods.add(God.APOLLO);
+        gods.add(God.ZEUS);
+
+        fetchCards(gods);
     }
 
     public Card popRandomCard() {
@@ -56,11 +63,15 @@ public class Deck {
     }
 
     private void fetchCard(God god) {
-        parser.parseCard(god);
+        parser.parseCards(Collections.singletonList(god));
+    }
+
+    public void fetchCards(List<God> gods) {
+        parser.parseCards(gods);
     }
 
     private void fetchDeck() {
-        parser.parseDeck();
+        parser.parseCards(Arrays.asList(God.values()));
     }
 
     /*public Card popCard(God god) {

@@ -11,6 +11,7 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.MalusPlayer;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;

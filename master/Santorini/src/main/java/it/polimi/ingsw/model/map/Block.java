@@ -11,7 +11,6 @@
 package it.polimi.ingsw.model.map;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Block implements Cell {
     /* @class
@@ -22,30 +21,22 @@ public class Block implements Cell {
     private Level prevLevel;
     private int x;
     private int y;
-    private Board board;
     private Pawn pawn;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Block(int x, int y, Board board) {
+    public Block(int x, int y) {
         /* @constructor
          * it initialize the proper cell with its coordinates and set as default GROUND as level
          */
 
-        /*if (board == null) {
-            throw new NullPointerException();
+        if ((x >= 0 && x < 5) && (y >= 0 && y < 5)) {
+            this.x = x;
+            this.y = y;
+            this.pawn = null;
+            this.prevLevel = Level.GROUND;
+            this.currLevel = Level.GROUND;
         }
-
-        if ((x < 0 || x >= 5) && (y < 0 || y >= 5)) {
-            throw new NotValidCellException("Invalid block coordinates inserted!");
-        }*/
-
-        this.x = x;
-        this.y = y;
-        this.pawn = null;
-        this.board = board;
-        this.prevLevel = Level.GROUND;
-        this.currLevel = Level.GROUND;
     }
 
     /* GETTER ---------------------------------------------------------------------------------------------------------- */
@@ -55,6 +46,7 @@ public class Block implements Cell {
         /* @getter
          * it gets which column
          */
+
         return this.x;
     }
 
@@ -63,6 +55,7 @@ public class Block implements Cell {
         /* @getter
          * it gets which row
          */
+
         return this.y;
     }
 
@@ -71,6 +64,7 @@ public class Block implements Cell {
         /* @getter
          * it gets the current level
          */
+
         return this.currLevel;
     }
 
@@ -78,6 +72,7 @@ public class Block implements Cell {
         /* @getter
          * it gets the previous level state of the cell (useful for Atlas)
          */
+
         return this.prevLevel;
     }
 
@@ -85,15 +80,8 @@ public class Block implements Cell {
         /* @getter
          * it gives back the eventual pawn on it
          */
-        return this.pawn;
-    }
 
-    public List<Cell> getAround() {
-        /* @getter
-         * it implements without arguments getAround() defined in Board.class,
-         * based on the current cell invoking it
-         */
-        return this.board.getAround(this);
+        return this.pawn;
     }
 
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
@@ -103,11 +91,9 @@ public class Block implements Cell {
          * it sets the column
          */
 
-        /*if (newX < 0 || newX >= 5) {
-            throw new NotValidCellException("Invalid block coordinates inserted!");
-        }*/
-
-        this.x = newX;
+        if (newX >= 0 && newX < 5) {
+            this.x = newX;
+        }
     }
 
     @Override
@@ -116,11 +102,9 @@ public class Block implements Cell {
          * it sets the row
          */
 
-        /*if (newY < 0 || newY >= 5) {
-            throw new NotValidCellException("Invalid block coordinates inserted!");
-        }*/
-
-        this.y = newY;
+        if (newY >= 0 && newY < 5) {
+            this.y = newY;
+        }
     }
 
     @Override
@@ -129,15 +113,9 @@ public class Block implements Cell {
          * it sets the level
          */
 
-        /*if (newLevel == null) {
-            throw new NullPointerException();
+        if (Arrays.asList(Level.values()).contains(newLevel)) {
+            this.currLevel = newLevel;
         }
-
-        if (!Arrays.asList(Level.values()).contains(newLevel)) {
-            throw new NotValidLevelException("Invalid level inserted!");
-        }*/
-
-        this.currLevel = newLevel;
     }
 
     public void setPreviousLevel(Level oldLevel) {
@@ -145,15 +123,9 @@ public class Block implements Cell {
          * it sets the previous level
          */
 
-        /*if (oldLevel == null) {
-            throw new NullPointerException();
+        if (Arrays.asList(Level.values()).contains(oldLevel)) {
+            this.prevLevel = oldLevel;
         }
-
-        if (!Arrays.asList(Level.values()).contains(oldLevel)) {
-            throw new NotValidLevelException("Invalid level inserted!");
-        }*/
-
-        this.prevLevel = oldLevel;
     }
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
@@ -163,6 +135,7 @@ public class Block implements Cell {
         /* @predicate
          * it is always walkable unless the current level is a dome.
          */
+
         return ((this.getLevel() != Level.DOME) && (this.pawn == null));
     }
 
@@ -171,6 +144,7 @@ public class Block implements Cell {
         /* @predicate
          * ask if it is free
          */
+
         return this.pawn == null;
     }
 
@@ -179,6 +153,7 @@ public class Block implements Cell {
         /* @predicate
          * ask if it is complete
          */
+
         return this.getLevel() == Level.DOME;
     }
 
@@ -187,6 +162,7 @@ public class Block implements Cell {
         /* @function
          * clean off the cell to its starting state
          */
+
         this.currLevel = Level.GROUND;
         this.prevLevel = Level.GROUND;
         this.removePawn();
@@ -197,30 +173,17 @@ public class Block implements Cell {
          * adding a link to the pawn on it
          */
 
-        /*if (newPawn == null) {
-            throw new NullPointerException();
-        }*/
-
         if (this.isWalkable()) {
             // setting
             this.pawn = newPawn;
-        } /*else {
-
-            // exceptions
-            if (!this.isFree()) {
-                throw new PawnPositioningException("Pawn cannot be moved in the selected block because it is busy!");
-            }
-
-            if (this.isComplete()) {
-                throw new PawnPositioningException("Pawn cannot be moved in the selected block because it is completed!");
-            }
-        }*/
+        }
     }
 
     public void removePawn() {
         /* @function
          * remove the pawn from it
          */
+
         this.pawn = null;
     }
 }
