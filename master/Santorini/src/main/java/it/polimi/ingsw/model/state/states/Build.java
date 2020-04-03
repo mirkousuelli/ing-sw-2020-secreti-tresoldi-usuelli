@@ -14,13 +14,17 @@ import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.state.Game;
 import it.polimi.ingsw.model.state.GameState;
 
+import java.util.List;
+
 public class Build implements GameState {
     /* @abstractClass
      * it represents the state where a player must (or can, in case of some God powers) build a block with his worker
      */
 
     public Game game;
-    public Cell cellToBuildUp;
+    private Cell currentCell;
+    private Cell cellToBuildUp;
+    List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(currentCell);
 
     public Build(Game game) {
         /* @constructor
@@ -28,21 +32,18 @@ public class Build implements GameState {
          */
 
         this.game = game;
-
         // it shows the possible cells where the worker can build and then allows him to build on one of them
-        game.getCurrentPlayer().getCurrentWorker().getPossibleBuilds();
-        game.getCurrentPlayer().getCurrentWorker().build(cellToBuildUp);
+        // System.out.println(possibleBuilds);
+        game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
 
-        //RIKY SONO MIRKO, HO SCRITTO QUESTO SOLO PER TESTING, TE L'HO COMMENTATO
         // this.game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
 
-        // if the build is successful, then the game proceed to change the turn
+        // if the player builds on a possible cell, then the game proceed to change the turn
         if(isBuildSuccessful(game))
             game.setState(new ChangeTurn(game));
         else
-        // if the build isn't successful, the worker has to build again
+        // if the player selects a cell where he cannot build,he has to build again
             game.setState(new Build(game));
-
     }
 
     private boolean isBuildSuccessful(Game game) {

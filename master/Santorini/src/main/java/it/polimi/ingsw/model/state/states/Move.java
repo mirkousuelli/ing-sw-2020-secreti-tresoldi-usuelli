@@ -23,8 +23,9 @@ public class Move implements GameState {
      */
 
     public Game game;
-    private Cell Cell;
-    List<Cell> possibleMoves = game.getCurrentPlayer().getCurrentWorker().getPossibleMoves();
+    private Cell currentCell;
+    private Cell cellToMoveTo;
+    List<Cell> possibleMoves = game.getBoard().getPossibleMoves(currentCell);
 
     public Move(Game game) {
         /* @constructor
@@ -39,8 +40,8 @@ public class Move implements GameState {
             game.setState(new ChooseWorker(game));
         } else { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
            // System.out.println(possibleMoves);
-            game.getCurrentPlayer().getCurrentWorker().moveTo(Cell);
-            // if the worker is moved to a third level (from a second), the player that moved wins
+            game.getBoard().move(game.getCurrentPlayer().getCurrentWorker(),cellToMoveTo);
+            // if the worker is moved to a third level (from a second one), the player that moved wins
             // ...
             if (reachedThirdLevel(game))
                 game.setState(new Victory(game));
