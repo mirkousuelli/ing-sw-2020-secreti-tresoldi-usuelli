@@ -32,4 +32,32 @@ class DeckTest {
 
         assertNull(deck.popRandomCard());
     }
+
+    @Test
+    void fetchCardTest() throws ParserConfigurationException, SAXException {
+        Deck deck = new Deck();
+
+        God god = God.APOLLO;
+
+        deck.fetchCard(god);
+    }
+
+    @Test
+    void fetchCardsTest() throws ParserConfigurationException, SAXException {
+        Deck deck = new Deck();
+        List<God> gods = new ArrayList<>();
+
+        gods.add(God.APOLLO);
+        gods.add(God.HESTIA);
+        gods.add(God.ZEUS);
+
+        deck.fetchCards(gods);
+    }
+
+    @Test
+    void fetchDeckTest() throws ParserConfigurationException, SAXException {
+        Deck deck = new Deck();
+
+        deck.fetchDeck();
+    }
 }

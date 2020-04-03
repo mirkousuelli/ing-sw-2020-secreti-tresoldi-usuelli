@@ -29,18 +29,22 @@ public class Deck {
          * it creates a list of the 14 chosen cards
          */
 
-        cards = new ArrayList<>();
         parser = new ParserXML(this);
-        test();
+        cards = new ArrayList<>();
+
+        /*for (Card card : cards) {
+            card = new Card();
+        }*/
+        //test();
     }
 
-    public void test() {
+    /*public void test() {
         List<God> gods = new ArrayList<God>();
         gods.add(God.APOLLO);
         gods.add(God.ZEUS);
 
         fetchCards(gods);
-    }
+    }*/
 
     public Card popRandomCard() {
         /*@function
@@ -62,7 +66,7 @@ public class Deck {
         this.cards.add(newCard);
     }
 
-    private void fetchCard(God god) {
+    public void fetchCard(God god) {
         parser.parseCards(Collections.singletonList(god));
     }
 
@@ -70,7 +74,7 @@ public class Deck {
         parser.parseCards(gods);
     }
 
-    private void fetchDeck() {
+    public void fetchDeck() {
         parser.parseCards(Arrays.asList(God.values()));
     }
 

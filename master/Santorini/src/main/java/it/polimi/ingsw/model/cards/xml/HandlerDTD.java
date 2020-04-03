@@ -7,6 +7,11 @@ import it.polimi.ingsw.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
+import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
+import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
+import it.polimi.ingsw.model.cards.powers.tags.effectType.WinType;
+import it.polimi.ingsw.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.model.cards.powers.tags.malus.MalusType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -18,6 +23,7 @@ public class HandlerDTD extends DefaultHandler {
     private Deck deck;
     private List<God> godsList;
     private God currGod;
+    private God readGod;
     private Card currCard;
     private int index;
 
@@ -26,6 +32,7 @@ public class HandlerDTD extends DefaultHandler {
     private boolean description;
     private boolean numadd;
     private boolean numturns;
+    private boolean closeReading;
 
     public HandlerDTD(Deck deck) {
         super();
@@ -51,12 +58,17 @@ public class HandlerDTD extends DefaultHandler {
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
 
-        if (attributes.getValue("name").equalsIgnoreCase(this.currGod.toString())) {
+        if (qName.equalsIgnoreCase("GOD")) {
 
-            currCard = new Card();
-            this.read = true;
+            readGod = God.parseString(attributes.getValue("id"));
 
+            if (attributes.getValue("id").equalsIgnoreCase(this.currGod.toString())) {
+                currCard = new Card();
+                this.read = true;
+            }
         } else if (read) {
+
+            qName = qName.toUpperCase();
 
             switch (qName) {
                 case "NAME":
@@ -96,18 +108,33 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "MOVE":
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("type")));
+                    this.currCard.getPower().setAllowedMove(MovementType.parseString(attributes.getValue("type")));
                     break;
 
                 case "BUILD":
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("type")));
+                    this.currCard.getPower().setAllowedBlock(BlockType.parseString(attributes.getValue("type")));
                     break;
 
                 case "MALUS":
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("type")));
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("permanent")));
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("personal")));
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("direction")));
+                    this.currCard.getPower().getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower().getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
+                    this.currCard.getPower().getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    break;
+
+                case "UP":
+                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.UP);
+                    break;
+
+                case "DOWN":
+                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.DOWN);
+                    break;
+
+                case "SAME":
+                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.SAME);
+                    break;
+
+                case "DEFAULT":
+                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.DEFAULT);
                     break;
 
                 case "NUMTURNS":
@@ -115,7 +142,7 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "WIN":
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("type")));
+                    this.currCard.getPower().setAllowedWin(WinType.parseString(attributes.getValue("type")));
                     break;
 
                 default:
@@ -127,10 +154,12 @@ public class HandlerDTD extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (qName.equalsIgnoreCase("GOD")) {
+        if (qName.equalsIgnoreCase("GOD") && readGod.equals(currGod)) {
             this.deck.addCard(currCard);
             index += 1;
-            this.currGod = this.godsList.get(index);
+            if (index < godsList.size()) {
+                this.currGod = this.godsList.get(index);
+            }
             this.read = false;
         }
     }
@@ -143,19 +172,13 @@ public class HandlerDTD extends DefaultHandler {
         if (name) {
             currCard.setName(str);
             name  = false;
-        }
-
-        if (description) {
+        } else if (description) {
             currCard.setDescription(str);
             description = false;
-        }
-
-        if (numadd) {
+        } else if (numadd) {
             this.currCard.getPower().getConstraints().setNumberOfAdditional(Integer.parseInt(str));
             numadd = false;
-        }
-
-        if (numturns) {
+        } else if (numturns) {
             //this,currCard.getPower().malus.setNumberOfTurns(Integer.parseInt(str));
             numturns = false;
         }

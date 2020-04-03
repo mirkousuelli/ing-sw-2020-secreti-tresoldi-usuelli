@@ -56,16 +56,21 @@
                         type (dome | notdome | default) "default"
                     >
 
-            <!ELEMENT malus (numturns?)>
+            <!ELEMENT malus (directions?, numturns?)>
                     <!ATTLIST malus
                         type (build | move) #REQUIRED
                         permanent (true | false) "false"
                         personal (true | false) "false"
-                        direction (up | down | same | default) "default"
+                        directions (up | down | same | default) "default"
                     >
+                <!ELEMENT directions (up?, down?, same?, default?)>
+                    <!ELEMENT up EMPTY>
+                    <!ELEMENT down EMPTY>
+                    <!ELEMENT same EMPTY>
+                    <!ELEMENT default EMPTY>
                 <!ELEMENT numturns (#PCDATA)>
 
             <!ELEMENT win EMPTY>
                 <!ATTLIST win
-                        type (downfromtwo | fivetower)
+                        type (downfromtwo | fivetower | default) "default"
                 >
