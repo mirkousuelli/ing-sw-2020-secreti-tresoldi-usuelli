@@ -22,19 +22,21 @@ public class Power {
     protected WorkerPosition workerInitPos;
     protected Effect effect;
     protected Timing timing;
-    protected Constraint constraints;
+    protected Constraints constraints;
     protected BlockType allowedBlock;
     protected MovementType allowedMove;
     protected WinType allowedWin;
     protected Malus malus;
+    protected Malus personalMalus;
 
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
 
 
     public Power() {
-        constraints = new Constraint();
+        constraints = new Constraints();
         malus = new Malus();
+        personalMalus = new Malus();
     }
 
     public WorkerType getWorkerType() {
@@ -69,11 +71,11 @@ public class Power {
         this.timing = timing;
     }
 
-    public Constraint getConstraints() {
+    public Constraints getConstraints() {
         return constraints;
     }
 
-    public void setConstraints(Constraint constraints) {
+    public void setConstraints(Constraints constraints) {
         this.constraints = constraints;
     }
 
@@ -105,7 +107,15 @@ public class Power {
         return malus;
     }
 
+    public Malus getPersonalMalus() {
+        return personalMalus;
+    }
+
     public void setNumberOfActionsRemaining() {
         numberOfActionsRemaining = constraints.getNumberOfAdditional();
+    }
+
+    public boolean usePower() {
+        return false;
     }
 }

@@ -2,12 +2,17 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,15 +22,18 @@ class ApolloTest {
      */
 
     @Test
-    void testCorrectSwap() {
+    void testCorrectSwap() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.APOLLO);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker1Player2 = (Block) board.getCell(1, 1);
@@ -35,7 +43,7 @@ class ApolloTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Apollo
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -45,7 +53,7 @@ class ApolloTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.SWAP);
+        power1.setAllowedMove(MovementType.SWAP);*/
 
         //swap
         assertTrue(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
@@ -64,14 +72,17 @@ class ApolloTest {
     }
 
     @Test
-    void testSamePlayerWorkerSwap() {
+    void testSamePlayerWorkerSwap() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.APOLLO);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker2Player1 = (Block) board.getCell(1, 1);
@@ -81,7 +92,7 @@ class ApolloTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Apollo
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -91,7 +102,7 @@ class ApolloTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.SWAP);
+        power1.setAllowedMove(MovementType.SWAP);*/
 
         //swap same player worker
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));
@@ -110,14 +121,17 @@ class ApolloTest {
     }
 
     @Test
-    void testEmptyCellSwap() {
+    void testEmptyCellSwap() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.APOLLO);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block empty = (Block) board.getCell(0, 1);
@@ -126,7 +140,7 @@ class ApolloTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Apollo
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -136,7 +150,7 @@ class ApolloTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.SWAP);
+        power1.setAllowedMove(MovementType.SWAP);*/
 
         //swap same player worker
         assertFalse(power1.usePower(player1, empty, board.getAround(empty)));
@@ -151,15 +165,18 @@ class ApolloTest {
     }
 
     @Test
-    void testNotAdjacentSwap() {
+    void testNotAdjacentSwap() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.APOLLO);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker1Player2 = (Block) board.getCell(2, 2);
@@ -169,7 +186,7 @@ class ApolloTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Apollo
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -179,7 +196,7 @@ class ApolloTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.SWAP);
+        power1.setAllowedMove(MovementType.SWAP);*/
 
         //swap
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));

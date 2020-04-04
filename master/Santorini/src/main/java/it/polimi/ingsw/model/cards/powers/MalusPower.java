@@ -11,7 +11,7 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.MalusPlayer;
+import it.polimi.ingsw.model.cards.powers.tags.Malus;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class MalusPower extends Power {
     }
 
     public boolean usePower(List<Player> opponents) {
-        MalusPlayer malusPlayer = new MalusPlayer(malus);
+        Malus malusPlayer = new Malus(malus);
 
         for (Player opponent : opponents)
             opponent.addMalus(malusPlayer);

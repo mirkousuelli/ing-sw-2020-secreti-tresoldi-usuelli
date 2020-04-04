@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
@@ -9,6 +11,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,14 +23,17 @@ public class ArthemisTest {
      */
 
     @Test
-    void testAdditionalDifferentCellMove() {
+    void testAdditionalDifferentCellMove() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.ARTHEMIS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -63,14 +71,17 @@ public class ArthemisTest {
     }
 
     @Test
-    void testAdditionalSameCellMove() {
+    void testAdditionalSameCellMove() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.ARTHEMIS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -107,14 +118,17 @@ public class ArthemisTest {
     }
 
     @Test
-    void testAdditionalMoreThanOneLevelMove() {
+    void testAdditionalMoreThanOneLevelMove() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.ARTHEMIS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -158,14 +172,17 @@ public class ArthemisTest {
     }
 
     @Test
-    void testAdditionalDomeMove() {
+    void testAdditionalDomeMove() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.ARTHEMIS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -215,14 +232,17 @@ public class ArthemisTest {
     }
 
     @Test
-    void testOccupiedCell() {
+    void testOccupiedCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.ARTHEMIS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);

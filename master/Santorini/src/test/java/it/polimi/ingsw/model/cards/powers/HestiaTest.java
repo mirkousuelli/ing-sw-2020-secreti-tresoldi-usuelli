@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
@@ -9,6 +11,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,14 +23,17 @@ public class HestiaTest {
      */
 
     @Test
-    void testCorrectAdditionalNotPerimBuild() {
+    void testCorrectAdditionalNotPerimBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HESTIA);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -35,7 +43,7 @@ public class HestiaTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Hestia
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -45,7 +53,7 @@ public class HestiaTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -63,14 +71,17 @@ public class HestiaTest {
     }
 
     @Test
-    void testAdditionalPerimBuild() {
+    void testAdditionalPerimBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HESTIA);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -80,7 +91,7 @@ public class HestiaTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Hestia
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -90,7 +101,7 @@ public class HestiaTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -108,15 +119,18 @@ public class HestiaTest {
     }
 
     @Test
-    void testAdditionalOccupiedCellBuild() {
+    void testAdditionalOccupiedCellBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HESTIA);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -127,7 +141,7 @@ public class HestiaTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Hestia
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -137,7 +151,7 @@ public class HestiaTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -157,14 +171,17 @@ public class HestiaTest {
     }
 
     @Test
-    void testAdditionalNotAdjacentBuild() {
+    void testAdditionalNotAdjacentBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HESTIA);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -174,7 +191,7 @@ public class HestiaTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Hestia
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -184,7 +201,7 @@ public class HestiaTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);
+        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);

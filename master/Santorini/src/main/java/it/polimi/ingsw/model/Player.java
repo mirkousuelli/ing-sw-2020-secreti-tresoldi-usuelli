@@ -11,7 +11,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cards.Card;
-import it.polimi.ingsw.model.cards.MalusPlayer;
+import it.polimi.ingsw.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Worker;
 
@@ -27,7 +27,7 @@ public class Player {
     public final List<Worker> worker;
     private Card card;
     private Worker currentWorker;
-    private List<MalusPlayer> malusList;
+    private List<Malus> malusList;
 
     public Player(String nickName) {
         /*@constructor
@@ -94,8 +94,8 @@ public class Player {
         this.card = card;
     }
 
-    public void addMalus(MalusPlayer malusPlayer) {
-        MalusPlayer found = malusList.stream()
+    public void addMalus(Malus malusPlayer) {
+        Malus found = malusList.stream()
                 .filter(m -> m.equals(malusPlayer))
                 .reduce(null, (m1, m2) -> m1 != null ? m1 : m2);
 
@@ -103,7 +103,7 @@ public class Player {
             malusList.add(malusPlayer);
     }
 
-    public List<MalusPlayer> getMalusList() {
+    public List<Malus> getMalusList() {
         return new ArrayList<>(malusList);
     }
 

@@ -1,15 +1,20 @@
 package it.polimi.ingsw.model.cards.powers.tags;
 
-import it.polimi.ingsw.model.cards.MalusPlayer;
+import it.polimi.ingsw.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.model.cards.powers.tags.malus.MalusType;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Malus extends MalusPlayer {
+public class Malus {
 
-    private boolean personal; // se il malus è su di te o sugli altri
+    private MalusType malusType;
+    private boolean permanent;
+    private int numberOfTurns;
+    private List<MalusLevel> direction;
 
     public Malus() {
-        super();
+        direction = new ArrayList<>();
     }
 
     public Malus(Malus malus) {
@@ -17,16 +22,41 @@ public class Malus extends MalusPlayer {
 
         malusType = malus.getMalusType();
         permanent = malus.isPermanent();
-        personal = malus.isPersonal();
         numberOfTurns = malus.numberOfTurns;
         direction.addAll(malus.direction);
     }
 
-    public boolean isPersonal() {
-        return personal;
+    public MalusType getMalusType() {
+        return malusType;
     }
 
-    public void setPersonal(boolean personal) {
-        this.personal = personal;
+    public void setMalusType(MalusType malusType) {
+        this.malusType = malusType;
     }
+
+    public boolean isPermanent() {
+        return permanent;
+    }
+
+    public void setPermanent(boolean permanent) {
+        this.permanent = permanent;
+    }
+
+    public int getNumberOfTurns() {
+        return numberOfTurns;
+    }
+
+    public void setNumberOfTurns(int numberOfTurns) {
+        this.numberOfTurns = numberOfTurns;
+    }
+
+    public List<MalusLevel> getDirection() {
+
+        return new ArrayList<>(direction);
+    }
+
+    public void addDirectionElement(MalusLevel malusDirectionElement) {
+        direction.add(malusDirectionElement);
+    }
+
 }

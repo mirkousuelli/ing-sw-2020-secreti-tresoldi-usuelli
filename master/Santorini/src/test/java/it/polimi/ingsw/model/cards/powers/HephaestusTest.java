@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
@@ -9,6 +11,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,14 +23,17 @@ public class HephaestusTest {
      */
 
     @Test
-    void testCorrectSameCellBuild() {
+    void testCorrectSameCellBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HEPHAESTUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block empty = (Block) board.getCell(1, 1);
@@ -34,7 +42,7 @@ public class HephaestusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Demeter
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -44,7 +52,7 @@ public class HephaestusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(true);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
         board.build(player1.getCurrentWorker(), empty);
@@ -60,14 +68,17 @@ public class HephaestusTest {
     }
 
     @Test
-    void testDifferentCellBuild() {
+    void testDifferentCellBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HEPHAESTUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyBuild = (Block) board.getCell(1, 1);
@@ -77,7 +88,7 @@ public class HephaestusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Demeter
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -87,7 +98,7 @@ public class HephaestusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(true);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -105,15 +116,18 @@ public class HephaestusTest {
     }
 
     @Test
-    void testOccupiedCellBuild() {
+    void testOccupiedCellBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HEPHAESTUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyBuild = (Block) board.getCell(1, 1);
@@ -124,7 +138,7 @@ public class HephaestusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Demeter
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -134,7 +148,7 @@ public class HephaestusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(true);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -154,14 +168,17 @@ public class HephaestusTest {
     }
 
     @Test
-    void testNotAdjacentCellBuild() {
+    void testNotAdjacentCellBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.HEPHAESTUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyBuild = (Block) board.getCell(1, 1);
@@ -171,7 +188,7 @@ public class HephaestusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Demeter
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.ADDITIONAL);
@@ -181,7 +198,7 @@ public class HephaestusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(true);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);

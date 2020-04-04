@@ -52,7 +52,7 @@ public class Card {
         return powerList.get(i);
     }
 
-    public void setPower(Power power) {
+    public void addPower(Power power) {
         powerList.add(power);
     }
 }

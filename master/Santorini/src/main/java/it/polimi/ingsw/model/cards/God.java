@@ -12,6 +12,7 @@ public enum God {
     MINOTAUR,
     PAN,
     PERSEPHONE,
+    POSEIDON,
     PROMETHEUS,
     TRITON,
     ZEUS;

@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
@@ -9,6 +11,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,15 +24,18 @@ public class MinotaurTest {
      */
 
     @Test
-    void testCorrectPush() {
+    void testCorrectPush() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.MINOTAUR);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -39,7 +47,7 @@ public class MinotaurTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Minotaur
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -49,7 +57,7 @@ public class MinotaurTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.PUSH);
+        power1.setAllowedMove(MovementType.PUSH);*/
 
         //push
         assertTrue(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
@@ -68,15 +76,18 @@ public class MinotaurTest {
     }
 
     @Test
-    void testOccupiedNewPos() {
+    void testOccupiedNewPos() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.MINOTAUR);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -89,7 +100,7 @@ public class MinotaurTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Minotaur
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -99,7 +110,7 @@ public class MinotaurTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.PUSH);
+        power1.setAllowedMove(MovementType.PUSH);*/
 
         //push
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
@@ -121,15 +132,18 @@ public class MinotaurTest {
     }
 
     @Test
-    void testDomeNewPos() {
+    void testDomeNewPos() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.MINOTAUR);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -141,7 +155,7 @@ public class MinotaurTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Minotaur
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -151,7 +165,7 @@ public class MinotaurTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.PUSH);
+        power1.setAllowedMove(MovementType.PUSH);*/
 
         newPos.setLevel(Level.DOME);
         newPos.setPreviousLevel(Level.TOP);
@@ -174,15 +188,18 @@ public class MinotaurTest {
     }
 
     @Test
-    void testNotAdjacentOpponent() {
+    void testNotAdjacentOpponent() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.MINOTAUR);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -193,7 +210,7 @@ public class MinotaurTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Minotaur
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -203,7 +220,7 @@ public class MinotaurTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.PUSH);
+        power1.setAllowedMove(MovementType.PUSH);*/
 
         //push
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
@@ -222,14 +239,17 @@ public class MinotaurTest {
     }
 
     @Test
-    void testSamePlayerWorker() {
+    void testSamePlayerWorker() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.MINOTAUR);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -240,7 +260,7 @@ public class MinotaurTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Minotaur
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MOVE);
         power1.setTiming(Timing.DEFAULT);
@@ -250,7 +270,7 @@ public class MinotaurTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.PUSH);
+        power1.setAllowedMove(MovementType.PUSH);*/
 
         //push
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));

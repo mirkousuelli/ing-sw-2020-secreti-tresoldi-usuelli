@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
@@ -14,6 +16,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,14 +28,17 @@ public class PrometheusTest {
      */
 
     @Test
-    void testAdditionalBuild() {
+    void testAdditionalBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PROMETHEUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -40,7 +48,7 @@ public class PrometheusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Prometheus
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.START_TURN);
@@ -55,8 +63,7 @@ public class PrometheusTest {
         power1.malus.setMalusType(MalusType.MOVE);
         power1.malus.setPermanent(false);
         power1.malus.setNumberOfTurns(1);
-        power1.malus.addDirectionElement(MalusLevel.UP);
-        power1.malus.setPersonal(true);
+        power1.malus.addDirectionElement(MalusLevel.UP);*/
 
         //build with power
         assertTrue(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
@@ -78,14 +85,17 @@ public class PrometheusTest {
     }
 
     //@Test TO-DO control malus in getPossibleMoves
-    void testMoveUp() {
+    void testMoveUp() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PROMETHEUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -110,7 +120,6 @@ public class PrometheusTest {
         power1.malus.setPermanent(false);
         power1.malus.setNumberOfTurns(1);
         power1.malus.addDirectionElement(MalusLevel.UP);
-        power1.malus.setPersonal(true);
 
         //build with power
         assertTrue(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
@@ -127,14 +136,17 @@ public class PrometheusTest {
     }
 
     @Test
-    void testNotAdjacentCell() {
+    void testNotAdjacentCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PROMETHEUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block notAdjacentCell = (Block) board.getCell(2, 1);
@@ -159,7 +171,6 @@ public class PrometheusTest {
         power1.malus.setPermanent(false);
         power1.malus.setNumberOfTurns(1);
         power1.malus.addDirectionElement(MalusLevel.UP);
-        power1.malus.setPersonal(true);
 
         //build with power
         assertFalse(power1.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));
@@ -173,14 +184,17 @@ public class PrometheusTest {
     }
 
     @Test
-    void testOccupiedCell() {
+    void testOccupiedCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PROMETHEUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block occupiedCell = (Block) board.getCell(1, 1);
@@ -190,7 +204,7 @@ public class PrometheusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Prometheus
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.START_TURN);
@@ -205,8 +219,7 @@ public class PrometheusTest {
         power1.malus.setMalusType(MalusType.MOVE);
         power1.malus.setPermanent(false);
         power1.malus.setNumberOfTurns(1);
-        power1.malus.addDirectionElement(MalusLevel.UP);
-        power1.malus.setPersonal(true);
+        power1.malus.addDirectionElement(MalusLevel.UP);*/
 
         //build with power
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
@@ -220,14 +233,17 @@ public class PrometheusTest {
     }
 
     @Test
-    void testCompleteTowerCell() {
+    void testCompleteTowerCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         BuildPower power1;
 
-        player1.setCard(new Card());
-        power1 = new BuildPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PROMETHEUS);
+        player1.setCard(deck.popRandomCard());
+        power1 = (BuildPower) player1.getCard().getPower(0);
+        //power1 = new BuildPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block completeTower = (Block) board.getCell(1, 1);
@@ -236,7 +252,7 @@ public class PrometheusTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //Prometheus
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.BUILD);
         power1.setTiming(Timing.START_TURN);
@@ -251,8 +267,7 @@ public class PrometheusTest {
         power1.malus.setMalusType(MalusType.MOVE);
         power1.malus.setPermanent(false);
         power1.malus.setNumberOfTurns(1);
-        power1.malus.addDirectionElement(MalusLevel.UP);
-        power1.malus.setPersonal(true);
+        power1.malus.addDirectionElement(MalusLevel.UP);*/
 
         completeTower.setPreviousLevel(Level.TOP);
         completeTower.setLevel(Level.DOME);

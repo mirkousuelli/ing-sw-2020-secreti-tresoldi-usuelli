@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
@@ -15,7 +17,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +30,19 @@ public class PersephoneTest {
      *   If possible, at least one Worker must move up this turn
      */
 
-    //@Test
-    void testMustMoveUpMalus() {
+    @Test
+    void testMustMoveUpMalus() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
+        Deck deck = new Deck();
         MalusPower power1;
 
-        player1.setCard(new Card());
-        power1 = new MalusPower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.PERSEPHONE);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MalusPower) player1.getCard().getPower(0);
+        //power1 = new MalusPower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player2 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -44,7 +51,7 @@ public class PersephoneTest {
         player2.setCurrentWorker(player2.getWorkers().get(0));
 
         //Persephone
-        power1.setWorkerType(WorkerType.DEFAULT);
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.MALUS);
         power1.setTiming(Timing.START_TURN);
@@ -62,7 +69,7 @@ public class PersephoneTest {
         power1.malus.setNumberOfTurns(1);
         power1.malus.addDirectionElement(MalusLevel.DOWN);
         power1.malus.addDirectionElement(MalusLevel.SAME);
-        power1.malus.setPersonal(false);
+        //power1.malus.setPersonal(false);*/
 
         emptyMove.setLevel(Level.BOTTOM);
         emptyMove.setPreviousLevel(Level.GROUND);

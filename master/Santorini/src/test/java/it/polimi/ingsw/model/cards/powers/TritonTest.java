@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.cards.Card;
+import it.polimi.ingsw.model.cards.Deck;
+import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
@@ -9,6 +11,9 @@ import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,14 +23,17 @@ public class TritonTest {
      */
 
     @Test
-    void testPerimCell() {
+    void testPerimCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.TRITON);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyPower1 = (Block) board.getCell(0, 0);
@@ -61,14 +69,17 @@ public class TritonTest {
     }
 
     @Test
-    void testNotPerimCell() {
+    void testNotPerimCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.TRITON);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyPower1 = (Block) board.getCell(0, 0);
@@ -102,14 +113,17 @@ public class TritonTest {
     }
 
     @Test
-    void testOccupiedPerimCell() {
+    void testOccupiedPerimCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.TRITON);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block worker2Player1 = (Block) board.getCell(0, 1);
@@ -145,14 +159,17 @@ public class TritonTest {
     }
 
     @Test
-    void testDomePerimCell() {
+    void testDomePerimCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
+        Deck deck = new Deck();
         MovePower power1;
 
-        player1.setCard(new Card());
-        power1 = new MovePower();
-        player1.getCard().setPower(power1);
+        deck.fetchCard(God.TRITON);
+        player1.setCard(deck.popRandomCard());
+        power1 = (MovePower) player1.getCard().getPower(0);
+        //power1 = new MovePower();
+        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block dome = (Block) board.getCell(1, 0);

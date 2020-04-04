@@ -16,33 +16,35 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PanTest {
+public class ChronusTest {
     /* Power:
      *   You also win if your Worker moves down two or more levels
      */
 
     @Test
-    void testPan() throws ParserConfigurationException, SAXException {
+    void testChronus() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
         Deck deck = new Deck();
         WinConditionPower power1;
 
-        deck.fetchCard(God.PAN);
+        deck.fetchCard(God.CHRONUS);
         player1.setCard(deck.popRandomCard());
         power1 = (WinConditionPower) player1.getCard().getPower(0);
         //power1 = new WinConditionPower();
         //player1.getCard().addPower(power1);
 
-        Block worker1Player1 = (Block) board.getCell(0, 0);
-        Block empty = (Block) board.getCell(1, 1);
+        Block worker1Player1 = (Block) board.getCell(1,1);
+        List<Block> towerList = new ArrayList<>();
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Pan
-        power1.setWorkerType(WorkerType.DEFAULT);
+        //Chronus
+        /*power1.setWorkerType(WorkerType.DEFAULT);
         power1.setWorkerInitPos(WorkerPosition.DEFAULT);
         power1.setEffect(Effect.WIN_COND);
         power1.setTiming(Timing.DEFAULT);
@@ -54,11 +56,16 @@ public class PanTest {
         power1.getConstraints().setUnderItself(false);
         power1.setAllowedBlock(BlockType.DEFAULT);
         power1.setAllowedMove(MovementType.DEFAULT);
-        power1.setAllowedWin(WinType.DOWNTOFROMTWO);
+        power1.setAllowedWin(WinType.FIVETOWER);*/
 
-        worker1Player1.setLevel(Level.MIDDLE);
-        //move
-        board.move(player1.getCurrentWorker(), empty);
+        for (int i = 0; i < 5; i++) {
+            Block tower = (Block) board.getCell(i, 0);
+            tower.setLevel(Level.DOME);
+            tower.setPreviousLevel(Level.TOP);
+
+            towerList.add(tower);
+        }
+
         //win condition power
         //assertTrue(power1.usePower(board));
     }

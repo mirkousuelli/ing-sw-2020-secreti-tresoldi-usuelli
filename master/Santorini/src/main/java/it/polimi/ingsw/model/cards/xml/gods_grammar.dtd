@@ -8,7 +8,7 @@
         <!ELEMENT name (#PCDATA)>
         <!ELEMENT description (#PCDATA)>
 
-        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win))>
+        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win), personalMalus)>
             <!-- what -->
             <!ELEMENT effect EMPTY>
             <!ATTLIST effect
@@ -60,7 +60,6 @@
                     <!ATTLIST malus
                         type (build | move) #REQUIRED
                         permanent (true | false) "false"
-                        personal (true | false) "false"
                         directions (up | down | same | default) "default"
                     >
                 <!ELEMENT directions (up?, down?, same?, default?)>
@@ -74,3 +73,10 @@
                 <!ATTLIST win
                         type (downfromtwo | fivetower | default) "default"
                 >
+
+            <!ELEMENT personalMalus (directions?, numturns?)>
+                    <!ATTLIST personalMalus
+                        type (build | move | default) "default"
+                        permanent (true | false) "false"
+                        directions (up | down | same | default) "default"
+                    >

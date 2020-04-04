@@ -85,19 +85,19 @@ public class HandlerDTD extends DefaultHandler {
                 case "EFFECT":
                     switch (attributes.getValue("what")) {
                         case "move":
-                            this.currCard.setPower(new MovePower());
+                            this.currCard.addPower(new MovePower());
                             break;
                         case "build":
-                            this.currCard.setPower(new BuildPower());
+                            this.currCard.addPower(new BuildPower());
                             break;
                         case "malus":
-                            this.currCard.setPower(new MalusPower());
+                            this.currCard.addPower(new MalusPower());
                             break;
                         case "win":
-                            this.currCard.setPower(new WinConditionPower());
+                            this.currCard.addPower(new WinConditionPower());
                             break;
                         default:
-                            this.currCard.setPower(new Power());
+                            this.currCard.addPower(new Power());
                             break;
                     }
 
@@ -139,7 +139,7 @@ public class HandlerDTD extends DefaultHandler {
                 case "MALUS":
                     this.currCard.getPower(indexPower).getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
                     this.currCard.getPower(indexPower).getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
                     break;
 
                 case "UP":

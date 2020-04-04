@@ -11,7 +11,7 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.MalusPlayer;
+import it.polimi.ingsw.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Cell;
 import it.polimi.ingsw.model.map.Worker;
@@ -43,10 +43,10 @@ public abstract class ActivePower extends Power {
     }
 
     private void addPersonalMalus(Player currentPlayer) {
-        MalusPlayer malusPlayer;
+        Malus malusPlayer;
 
-        if (malus != null) {
-            malusPlayer = new MalusPlayer(malus);
+        if (personalMalus != null) {
+            malusPlayer = new Malus(personalMalus);
             currentPlayer.addMalus(malusPlayer);
         }
     }
