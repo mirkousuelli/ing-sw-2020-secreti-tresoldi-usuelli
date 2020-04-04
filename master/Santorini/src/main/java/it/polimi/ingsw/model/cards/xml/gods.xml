@@ -7,12 +7,12 @@
         <name>Apollo</name>
         <description>Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated</description>
         <power>
+            <!-- what -->
+            <effect what="move"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="move"/>
             <!-- when -->
             <timing/>
             <!-- why -->
@@ -27,12 +27,12 @@
         <name>Arthemis</name>
         <description>Your Worker may move one additional time, but not back to its initial space</description>
         <power>
+            <!-- what -->
+            <effect what="move"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="move"/>
             <!-- when -->
             <timing when="additional"/>
             <!-- why -->
@@ -49,12 +49,12 @@
         <name>Athena</name>
         <description>If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn</description>
         <power>
+            <!-- what -->
+            <effect what="malus"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="malus"/>
             <!-- when -->
             <timing when="endturn"/>
             <!-- why -->
@@ -74,12 +74,12 @@
         <name>Atlas</name>
         <description>Your Worker may build a dome at any level</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing/>
             <!-- why -->
@@ -94,12 +94,12 @@
         <name>Chronus</name>
         <description>You also win when there are at least five Complete Towers on the board</description>
         <power>
+            <!-- what -->
+            <effect what="win"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="win"/>
             <!-- when -->
             <timing when="endturn"/>
             <!-- why -->
@@ -114,12 +114,12 @@
         <name>Demeter</name>
         <description>Your Worker may build one additional time, but not on the same space</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing when="additional"/>
             <!-- why -->
@@ -136,12 +136,12 @@
         <name>Hephaestus</name>
         <description>Your Worker may build one additional block (not dome) on top of your first block</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing when="additional"/>
             <!-- why -->
@@ -158,12 +158,12 @@
         <name>Hestia</name>
         <description>Your Worker may build one additional time, but this cannot be on a perimeter space</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing when="additional"/>
             <!-- why -->
@@ -180,12 +180,12 @@
         <name>Minotaur</name>
         <description>Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level</description>
         <power>
+            <!-- what -->
+            <effect what="move"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="move"/>
             <!-- when -->
             <timing/>
             <!-- why -->
@@ -200,12 +200,12 @@
         <name>Pan</name>
         <description>You also win if your Worker moves down two or more levels</description>
         <power>
+            <!-- what -->
+            <effect what="win"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="win"/>
             <!-- when -->
             <timing when="endturn"/>
             <!-- why -->
@@ -220,12 +220,12 @@
         <name>Persephone</name>
         <description>If possible, at least one Worker must move up this turn</description>
         <power>
+            <!-- what -->
+            <effect what="malus"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="malus"/>
             <!-- when -->
             <timing/>
             <!-- why -->
@@ -244,12 +244,12 @@
         <name>Prometheus</name>
         <description>If your Worker does not move up, it may build both before and after moving</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing when="startturn"/>
             <!-- why -->
@@ -258,12 +258,12 @@
             <build/>
         </power>
         <power>
+            <!-- what -->
+            <effect what="malus"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="malus"/>
             <!-- when -->
             <timing when="startturn"/>
             <!-- why -->
@@ -283,12 +283,12 @@
         <name>Triton</name>
         <description>Each time your Worker moves into a perimeter space, it may immediately move again</description>
         <power>
+            <!-- what -->
+            <effect what="move"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="move"/>
             <!-- when -->
             <timing/>
             <!-- why -->
@@ -303,12 +303,12 @@
         <name>Zeus</name>
         <description>Your Worker may build a block under itself</description>
         <power>
+            <!-- what -->
+            <effect what="build"/>
             <!-- who -->
             <worker/>
             <!-- where -->
             <workerpos/>
-            <!-- what -->
-            <effect what="build"/>
             <!-- when -->
             <timing/>
             <!-- why -->

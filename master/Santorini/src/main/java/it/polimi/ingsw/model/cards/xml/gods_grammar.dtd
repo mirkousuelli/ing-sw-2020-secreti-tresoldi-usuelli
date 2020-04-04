@@ -8,7 +8,13 @@
         <!ELEMENT name (#PCDATA)>
         <!ELEMENT description (#PCDATA)>
 
-        <!ELEMENT power (worker, workerpos, effect, timing, constraints, (move | build | malus | win))>
+        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win))>
+            <!-- what -->
+            <!ELEMENT effect EMPTY>
+            <!ATTLIST effect
+                    what (build | move | win | malus) #REQUIRED
+                    >
+
             <!-- who -->
             <!ELEMENT worker EMPTY>
                     <!ATTLIST worker 
@@ -19,12 +25,6 @@
             <!ELEMENT workerpos EMPTY>
                     <!ATTLIST workerpos 
                         where (default | ground | middle | top) "default"
-                    >
-
-            <!-- what -->
-            <!ELEMENT effect EMPTY>
-                    <!ATTLIST effect 
-                        what (build | move | win | malus) #REQUIRED
                     >
 
             <!-- when -->

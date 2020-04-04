@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.cards.xml;
 import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
+import it.polimi.ingsw.model.cards.powers.*;
 import it.polimi.ingsw.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
@@ -25,14 +26,14 @@ public class HandlerDTD extends DefaultHandler {
     private God currGod;
     private God readGod;
     private Card currCard;
-    private int index;
+    private int indexGod;
+    private int indexPower;
 
     private boolean read;
     private boolean name;
     private boolean description;
     private boolean numadd;
     private boolean numturns;
-    private boolean closeReading;
 
     public HandlerDTD(Deck deck) {
         super();
@@ -48,10 +49,11 @@ public class HandlerDTD extends DefaultHandler {
     }
 
     public void setGods(List<God> gods) {
-        index = 0;
+        indexGod = 0;
+        indexPower = 0;
 
         this.godsList = gods;
-        this.currGod = godsList.get(index);
+        this.currGod = godsList.get(indexGod);
     }
 
     @Override
@@ -65,6 +67,7 @@ public class HandlerDTD extends DefaultHandler {
             if (attributes.getValue("id").equalsIgnoreCase(this.currGod.toString())) {
                 currCard = new Card();
                 this.read = true;
+                indexPower = 0;
             }
         } else if (read) {
 
@@ -79,28 +82,46 @@ public class HandlerDTD extends DefaultHandler {
                     this.description = true;
                     break;
 
+                case "EFFECT":
+                    switch (attributes.getValue("what")) {
+                        case "move":
+                            this.currCard.setPower(new MovePower());
+                            break;
+                        case "build":
+                            this.currCard.setPower(new BuildPower());
+                            break;
+                        case "malus":
+                            this.currCard.setPower(new MalusPower());
+                            break;
+                        case "win":
+                            this.currCard.setPower(new WinConditionPower());
+                            break;
+                        default:
+                            this.currCard.setPower(new Power());
+                            break;
+                    }
+
+                    this.currCard.getPower(indexPower).setEffect(Effect.parseString(attributes.getValue("what")));
+                    break;
+
                 case "WORKER":
-                    this.currCard.getPower().setWorkerType(WorkerType.parseString(attributes.getValue("who")));
+                    this.currCard.getPower(indexPower).setWorkerType(WorkerType.parseString(attributes.getValue("who")));
                     break;
 
                 case "WORKERPOS":
-                    this.currCard.getPower().setWorkerInitPos(WorkerPosition.parseString(attributes.getValue("where")));
-                    break;
-
-                case "EFFECT":
-                    this.currCard.getPower().setEffect(Effect.parseString(attributes.getValue("what")));
+                    this.currCard.getPower(indexPower).setWorkerInitPos(WorkerPosition.parseString(attributes.getValue("where")));
                     break;
 
                 case "TIMING":
-                    this.currCard.getPower().setTiming(Timing.parseString(attributes.getValue("when")));
+                    this.currCard.getPower(indexPower).setTiming(Timing.parseString(attributes.getValue("when")));
                     break;
 
                 case "CONSTRAINTS":
-                    this.currCard.getPower().getConstraints().setSameCell(attributes.getValue("samecell").equalsIgnoreCase("true"));
-                    this.currCard.getPower().getConstraints().setNotSameCell(attributes.getValue("notsamecell").equalsIgnoreCase("true"));
-                    this.currCard.getPower().getConstraints().setPerimCell(attributes.getValue("perimcell").equalsIgnoreCase("true"));
-                    this.currCard.getPower().getConstraints().setNotPerimCell(attributes.getValue("notperimcell").equalsIgnoreCase("true"));
-                    this.currCard.getPower().getConstraints().setUnderItself(attributes.getValue("underitself").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getConstraints().setSameCell(attributes.getValue("samecell").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getConstraints().setNotSameCell(attributes.getValue("notsamecell").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getConstraints().setPerimCell(attributes.getValue("perimcell").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getConstraints().setNotPerimCell(attributes.getValue("notperimcell").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getConstraints().setUnderItself(attributes.getValue("underitself").equalsIgnoreCase("true"));
                     break;
 
                 case "NUMADD":
@@ -108,33 +129,33 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "MOVE":
-                    this.currCard.getPower().setAllowedMove(MovementType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedMove(MovementType.parseString(attributes.getValue("type")));
                     break;
 
                 case "BUILD":
-                    this.currCard.getPower().setAllowedBlock(BlockType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedBlock(BlockType.parseString(attributes.getValue("type")));
                     break;
 
                 case "MALUS":
-                    this.currCard.getPower().getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
-                    this.currCard.getPower().getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    this.currCard.getPower().getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
                     break;
 
                 case "UP":
-                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.UP);
+                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.UP);
                     break;
 
                 case "DOWN":
-                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.DOWN);
+                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DOWN);
                     break;
 
                 case "SAME":
-                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.SAME);
+                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.SAME);
                     break;
 
                 case "DEFAULT":
-                    this.currCard.getPower().getMalus().addDirectionElement(MalusLevel.DEFAULT);
+                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DEFAULT);
                     break;
 
                 case "NUMTURNS":
@@ -142,7 +163,7 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "WIN":
-                    this.currCard.getPower().setAllowedWin(WinType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedWin(WinType.parseString(attributes.getValue("type")));
                     break;
 
                 default:
@@ -156,11 +177,14 @@ public class HandlerDTD extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("GOD") && readGod.equals(currGod)) {
             this.deck.addCard(currCard);
-            index += 1;
-            if (index < godsList.size()) {
-                this.currGod = this.godsList.get(index);
+            indexGod += 1;
+            indexPower = 0;
+            if (indexGod < godsList.size()) {
+                this.currGod = this.godsList.get(indexGod);
             }
             this.read = false;
+        } else if (qName.equalsIgnoreCase("POWER") && readGod.equals(currGod)) {
+            indexPower += 1;
         }
     }
 
@@ -176,10 +200,10 @@ public class HandlerDTD extends DefaultHandler {
             currCard.setDescription(str);
             description = false;
         } else if (numadd) {
-            this.currCard.getPower().getConstraints().setNumberOfAdditional(Integer.parseInt(str));
+            this.currCard.getPower(indexPower).getConstraints().setNumberOfAdditional(Integer.parseInt(str));
             numadd = false;
         } else if (numturns) {
-            //this,currCard.getPower().malus.setNumberOfTurns(Integer.parseInt(str));
+            this.currCard.getPower(indexPower).getMalus().setNumberOfTurns(Integer.parseInt(str));
             numturns = false;
         }
     }
