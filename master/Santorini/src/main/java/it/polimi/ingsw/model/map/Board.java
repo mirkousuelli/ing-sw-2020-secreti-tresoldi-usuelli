@@ -10,9 +10,11 @@
 
 package it.polimi.ingsw.model.map;
 
+import it.polimi.ingsw.model.Player;
+
 import java.util.*;
 
-public class Board implements Cloneable{
+public class Board implements Cloneable {
     /* @class
      * it holds 25 cells in a 5x5 map
      */
@@ -179,7 +181,7 @@ public class Board implements Cloneable{
         return toReturn;
     }
 
-    public List<Cell> getPossibleMoves(Cell cell) {
+    public List<Cell> getPossibleMoves(Player player, Cell cell) {
         /* @getter
          * it considers malus attributes in player and modify possible around cells
          */
@@ -195,7 +197,7 @@ public class Board implements Cloneable{
         }
 
         // cannot move up malus active
-        /*if (this.player.isCannotMoveUpActive()) {
+        /*if () {
             // look for everything around
             for (Cell around : this.currCell.getAround()) {
                 // checking level difference
@@ -238,13 +240,14 @@ public class Board implements Cloneable{
         return getAround(cell);
     }
 
-    public boolean move(Worker worker, Cell newCell) {
+    public boolean move(Player player, Cell newCell) {
         /* @function
          * it makes worker moving to another cell going through an operation of undecorate-decorate
          */
+        Worker worker = player.getCurrentWorker();
 
         // if it is not a dome, free and it is contained within possible choices
-        if (newCell.isWalkable() && this.getPossibleMoves(worker.getLocation()).contains(newCell)) {
+        if (newCell.isWalkable() && this.getPossibleMoves(player, worker.getLocation()).contains(newCell)) {
             // removing pawn from the current cell
             worker.getLocation().removePawn();
 
@@ -262,11 +265,11 @@ public class Board implements Cloneable{
         return false;
     }
 
-    public boolean build(Worker worker, Cell cellToBuildUp) {
+    public boolean build(Player player, Cell cellToBuildUp) {
         /* @function
          * it builds around except for its current location (by default), unless a god change this rule
          */
-
+        Worker worker = player.getCurrentWorker();
         Block toBuild = (Block) cellToBuildUp;
 
         // if it is not a dome, free and it is contained within possible choices
