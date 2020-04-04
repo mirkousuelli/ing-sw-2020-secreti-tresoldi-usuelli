@@ -54,4 +54,37 @@ public enum God {
                 return null;
         }
     }
+
+    public static God parseString(String str) {
+        if (str.equalsIgnoreCase("APOLLO"))
+            return APOLLO;
+        else if (str.equalsIgnoreCase("ARTHEMIS"))
+            return ARTHEMIS;
+        else if (str.equalsIgnoreCase("ATHENA"))
+            return ATHENA;
+        else if (str.equalsIgnoreCase("ATLAS"))
+            return ATLAS;
+        else if (str.equalsIgnoreCase("CHRONUS"))
+            return CHRONUS;
+        else if (str.equalsIgnoreCase("DEMETER"))
+            return DEMETER;
+        else if (str.equalsIgnoreCase("HEPHAESTUS"))
+            return HEPHAESTUS;
+        else if (str.equalsIgnoreCase("HESTIA"))
+            return HESTIA;
+        else if (str.equalsIgnoreCase("MINOTAUR"))
+            return MINOTAUR;
+        else if (str.equalsIgnoreCase("PAN"))
+            return PAN;
+        else if (str.equalsIgnoreCase("PERSEPHONE"))
+            return PERSEPHONE;
+        else if (str.equalsIgnoreCase("PROMETHEUS"))
+            return PROMETHEUS;
+        else if (str.equalsIgnoreCase("TRITON"))
+            return TRITON;
+        else if (str.equalsIgnoreCase("ZEUS"))
+            return ZEUS;
+        else
+            return null;
+    }
 }

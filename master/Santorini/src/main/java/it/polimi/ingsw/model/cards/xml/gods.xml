@@ -5,9 +5,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - APOLLO - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="APOLLO">
         <name>Apollo</name>
-        <description>
-            Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated
-        </description>
+        <description>Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated</description>
         <power>
             <!-- who -->
             <worker/>
@@ -27,9 +25,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - ARTHEMIS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="ARTHEMIS">
         <name>Arthemis</name>
-        <description>
-            Your Worker may move one additional time, but not back to its initial space
-        </description>
+        <description>Your Worker may move one additional time, but not back to its initial space</description>
         <power>
             <!-- who -->
             <worker/>
@@ -51,9 +47,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - ATHENA - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="ATHENA">
         <name>Athena</name>
-        <description>
-            If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn
-        </description>
+        <description>If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn</description>
         <power>
             <!-- who -->
             <worker/>
@@ -67,8 +61,10 @@
             <constraints/>
             <!-- how -->
             <malus type="move">
+                <directions>
+                    <up/>
+                </directions>
                 <numturns>1</numturns>
-                <directions up="true"/>
             </malus>
         </power>
     </god>
@@ -76,9 +72,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - ATLAS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="ATLAS">
         <name>Atlas</name>
-        <description>
-            Your Worker may build a dome at any level
-        </description>
+        <description>Your Worker may build a dome at any level</description>
         <power>
             <!-- who -->
             <worker/>
@@ -98,9 +92,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - CHRONUS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="CHRONUS">
         <name>Chronus</name>
-        <description>
-            You also win when there are at least five Complete Towers on the board
-        </description>
+        <description>You also win when there are at least five Complete Towers on the board</description>
         <power>
             <!-- who -->
             <worker/>
@@ -120,9 +112,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - DEMETER - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="DEMETER">
         <name>Demeter</name>
-        <description>
-            Your Worker may build one additional time, but not on the same space
-        </description>
+        <description>Your Worker may build one additional time, but not on the same space</description>
         <power>
             <!-- who -->
             <worker/>
@@ -144,9 +134,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - HEPHAESTUS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="HEPHAESTUS">
         <name>Hephaestus</name>
-        <description>
-            Your Worker may build one additional block (not dome) on top of your first block
-        </description>
+        <description>Your Worker may build one additional block (not dome) on top of your first block</description>
         <power>
             <!-- who -->
             <worker/>
@@ -168,9 +156,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - HESTIA - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="HESTIA">
         <name>Hestia</name>
-        <description>
-            Your Worker may build one additional time, but this cannot be on a perimeter space
-        </description>
+        <description>Your Worker may build one additional time, but this cannot be on a perimeter space</description>
         <power>
             <!-- who -->
             <worker/>
@@ -192,9 +178,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - MINOTAUR - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="MINOTAUR">
         <name>Minotaur</name>
-        <description>
-            Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level
-        </description>
+        <description>Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level</description>
         <power>
             <!-- who -->
             <worker/>
@@ -214,9 +198,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - PAN - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="PAN">
         <name>Pan</name>
-        <description>
-            You also win if your Worker moves down two or more levels
-        </description>
+        <description>You also win if your Worker moves down two or more levels</description>
         <power>
             <!-- who -->
             <worker/>
@@ -236,9 +218,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - PERSEPHONE - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="PERSEPHONE">
         <name>Persephone</name>
-        <description>
-            If possible, at least one Worker must move up this turn
-        </description>
+        <description>If possible, at least one Worker must move up this turn</description>
         <power>
             <!-- who -->
             <worker/>
@@ -252,7 +232,9 @@
             <constraints/>
             <!-- how -->
             <malus type="move" permanent="true">
-                <directions up="true"/>
+                <directions>
+                    <up/>
+                </directions>
             </malus>
         </power>
     </god>
@@ -260,9 +242,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - PROMETHEUS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="PROMETHEUS">
         <name>Prometheus</name>
-        <description>
-            If your Worker does not move up, it may build both before and after moving
-        </description>
+        <description>If your Worker does not move up, it may build both before and after moving</description>
         <power>
             <!-- who -->
             <worker/>
@@ -282,9 +262,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - TRITON - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="TRITON">
         <name>Triton</name>
-        <description>
-            Each time your Worker moves into a perimeter space, it may immediately move again
-        </description>
+        <description>Each time your Worker moves into a perimeter space, it may immediately move again</description>
         <power>
             <!-- who -->
             <worker/>
@@ -304,9 +282,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - ZEUS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="ZEUS">
         <name>Zeus</name>
-        <description>
-            Your Worker may build a block under itself
-        </description>
+        <description>Your Worker may build a block under itself</description>
         <power>
             <!-- who -->
             <worker/>

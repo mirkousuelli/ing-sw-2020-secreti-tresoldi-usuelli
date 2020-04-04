@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ParserXML {
-    private final String XMLFILE = "gods.xml";
+    private final String XMLFILE = "src/main/java/it/polimi/ingsw/model/cards/xml/gods.xml";
 
     private SAXParserFactory factory;
     private SAXParser parser;

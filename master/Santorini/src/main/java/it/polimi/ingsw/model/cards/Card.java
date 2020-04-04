@@ -26,6 +26,7 @@ public class Card {
          * it sets the attributes describing the card
          */
 
+        this.power = new Power();
     }
 
     public String getName() {
@@ -41,7 +42,7 @@ public class Card {
     }
 
     public void setDescription(String description) {
-        this.name = description;
+        this.description = description;
     }
 
     public Power getPower() {
