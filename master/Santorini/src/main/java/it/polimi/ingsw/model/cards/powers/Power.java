@@ -18,7 +18,6 @@ import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Worker;
 
 public class Power {
-    private String description;
     protected WorkerType workerType;
     protected WorkerPosition workerInitPos;
     protected Effect effect;
@@ -36,14 +35,6 @@ public class Power {
     public Power() {
         constraints = new Constraint();
         malus = new Malus();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public WorkerType getWorkerType() {

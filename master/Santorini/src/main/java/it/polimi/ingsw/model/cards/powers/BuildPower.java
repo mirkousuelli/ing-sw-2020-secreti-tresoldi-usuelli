@@ -25,17 +25,14 @@ public class BuildPower extends ActivePower {
         super();
     }
 
-    @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
         if (constraints.isSameCell() && !cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
         if (constraints.isNotSameCell() && cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
+        if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
 
         if (allowedBlock.equals(BlockType.DOME)) {
             return build(cellToBuild, 4);
-        }
-        else if (allowedBlock.equals(BlockType.NOT_DOME)) {
-            if (cellToBuild.getLevel().equals(Level.TOP)) return false;
         }
 
         return build(cellToBuild, cellToBuild.getLevel().toInt() + 1);

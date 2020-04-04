@@ -257,6 +257,25 @@
             <!-- how -->
             <build/>
         </power>
+        <power>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- what -->
+            <effect what="malus"/>
+            <!-- when -->
+            <timing when="startturn"/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <malus type="move" personal="true">
+                <directions>
+                    <up/>
+                </directions>
+                <numturns>1</numturns>
+            </malus>
+        </power>
     </god>
 
     <!-- - - -  - - - - - - - - - - - - - - - - - TRITON - - - - - - - - - - - - - - - - - - - - - - - - -->

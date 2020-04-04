@@ -12,6 +12,9 @@ package it.polimi.ingsw.model.cards;
 
 import it.polimi.ingsw.model.cards.powers.Power;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Card {
     /*@class
      * it describes the player's card
@@ -19,14 +22,14 @@ public class Card {
 
     private String name;
     private String description;
-    private Power power;
+    private List<Power> powerList;
 
     public Card() {
         /*@constructor
          * it sets the attributes describing the card
          */
 
-        this.power = new Power();
+        powerList = new ArrayList<>();
     }
 
     public String getName() {
@@ -45,11 +48,11 @@ public class Card {
         this.description = description;
     }
 
-    public Power getPower() {
-        return power;
+    public Power getPower(int i) {
+        return powerList.get(i);
     }
 
     public void setPower(Power power) {
-        this.power = power;
+        powerList.add(power);
     }
 }

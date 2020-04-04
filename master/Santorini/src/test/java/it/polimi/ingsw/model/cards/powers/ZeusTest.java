@@ -43,7 +43,7 @@ public class ZeusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(true);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build with power
         assertTrue(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
@@ -81,7 +81,7 @@ public class ZeusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(true);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.DEFAULT);
 
         worker1Player1.setLevel(Level.TOP);
         worker1Player1.setPreviousLevel(Level.MIDDLE);
@@ -124,7 +124,7 @@ public class ZeusTest {
         power1.getConstraints().setPerimCell(false);
         power1.getConstraints().setSameCell(false);
         power1.getConstraints().setUnderItself(true);
-        power1.setAllowedBlock(BlockType.NOT_DOME);
+        power1.setAllowedBlock(BlockType.DEFAULT);
 
         //build with power
         assertFalse(power1.usePower(player1, notUnderItselfCell, board.getAround(notUnderItselfCell)));
