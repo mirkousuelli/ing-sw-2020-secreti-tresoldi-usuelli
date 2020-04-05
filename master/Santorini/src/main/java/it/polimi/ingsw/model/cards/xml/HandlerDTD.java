@@ -4,10 +4,7 @@ import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
 import it.polimi.ingsw.model.cards.powers.*;
-import it.polimi.ingsw.model.cards.powers.tags.Effect;
-import it.polimi.ingsw.model.cards.powers.tags.Timing;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerPosition;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
+import it.polimi.ingsw.model.cards.powers.tags.*;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.model.cards.powers.tags.effectType.WinType;
@@ -139,16 +136,16 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "MALUS":
+                    this.currCard.getPower(indexPower).setMalus(new Malus());
                     this.currCard.getPower(indexPower).getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
                     this.currCard.getPower(indexPower).getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
                     personal = false;
                     break;
 
                 case "PERSONALMALUS":
+                    this.currCard.getPower(indexPower).setPersonalMalus(new Malus());
                     this.currCard.getPower(indexPower).getPersonalMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
                     this.currCard.getPower(indexPower).getPersonalMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
                     personal = true;
                     break;
 
@@ -225,7 +222,10 @@ public class HandlerDTD extends DefaultHandler {
             this.currCard.getPower(indexPower).getConstraints().setNumberOfAdditional(Integer.parseInt(str));
             numadd = false;
         } else if (numturns) {
-            this.currCard.getPower(indexPower).getMalus().setNumberOfTurns(Integer.parseInt(str));
+            if (personal)
+                this.currCard.getPower(indexPower).getPersonalMalus().setNumberOfTurns(Integer.parseInt(str));
+            else
+                this.currCard.getPower(indexPower).getMalus().setNumberOfTurns(Integer.parseInt(str));
             numturns = false;
         }
     }

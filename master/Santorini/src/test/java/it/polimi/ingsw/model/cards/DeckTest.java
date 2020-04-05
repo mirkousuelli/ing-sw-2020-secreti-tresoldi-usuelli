@@ -37,7 +37,7 @@ class DeckTest {
     void fetchCardTest() throws ParserConfigurationException, SAXException {
         Deck deck = new Deck();
 
-        God god = God.POSEIDON;
+        God god = God.PROMETHEUS;
 
         deck.fetchCard(god);
     }
