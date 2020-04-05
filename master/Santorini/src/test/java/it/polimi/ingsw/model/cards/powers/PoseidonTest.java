@@ -29,11 +29,9 @@ public class PoseidonTest {
         Deck deck = new Deck();
         BuildPower power1;
 
-        //deck.fetchCard(God.POSEIDON);
+        deck.fetchCard(God.POSEIDON);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(3, 3);
         Block worker2Player1 = (Block) board.getCell(1, 1);
@@ -44,19 +42,6 @@ public class PoseidonTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Poseidon
-        /*power1.setWorkerType(WorkerType.UNMOVED_WORKER);
-        power1.setWorkerInitPos(WorkerPosition.GROUND);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.END_TURN);
-        power1.getConstraints().setNumberOfAdditional(3);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build with power and an unmoved ground-level worker
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
@@ -84,11 +69,9 @@ public class PoseidonTest {
         Deck deck = new Deck();
         BuildPower power1;
 
-        //deck.fetchCard(God.POSEIDON);
+        deck.fetchCard(God.POSEIDON);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(3, 3);
         Block worker2Player1 = (Block) board.getCell(1, 1);
@@ -99,19 +82,6 @@ public class PoseidonTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Poseidon
-        /*power1.setWorkerType(WorkerType.UNMOVED_WORKER);
-        power1.setWorkerInitPos(WorkerPosition.GROUND);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.END_TURN);
-        power1.getConstraints().setNumberOfAdditional(3);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         emptyPower1.setLevel(Level.DOME);
         emptyPower1.setPreviousLevel(Level.TOP);
@@ -146,11 +116,9 @@ public class PoseidonTest {
         Deck deck = new Deck();
         BuildPower power1;
 
-        //deck.fetchCard(God.POSEIDON);
+        deck.fetchCard(God.POSEIDON);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(2, 2);
         Block worker2Player1 = (Block) board.getCell(1, 1);
@@ -158,19 +126,6 @@ public class PoseidonTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Poseidon
-        /*power1.setWorkerType(WorkerType.UNMOVED_WORKER);
-        power1.setWorkerInitPos(WorkerPosition.GROUND);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.END_TURN);
-        power1.getConstraints().setNumberOfAdditional(3);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build with power and an unmoved ground-level worker
         assertFalse(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
@@ -192,11 +147,9 @@ public class PoseidonTest {
         Deck deck = new Deck();
         BuildPower power1;
 
-        //deck.fetchCard(God.POSEIDON);
+        deck.fetchCard(God.POSEIDON);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(3, 3);
         Block worker2Player1 = (Block) board.getCell(1, 1);
@@ -206,18 +159,6 @@ public class PoseidonTest {
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Poseidon
-        /*power1.setWorkerType(WorkerType.UNMOVED_WORKER);
-        power1.setWorkerInitPos(WorkerPosition.GROUND);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.END_TURN);
-        power1.getConstraints().setNumberOfAdditional(3);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build with power and an unmoved ground-level worker
         assertFalse(power1.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));

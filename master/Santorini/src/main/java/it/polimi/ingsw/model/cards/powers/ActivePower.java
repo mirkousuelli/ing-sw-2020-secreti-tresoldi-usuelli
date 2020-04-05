@@ -1,4 +1,4 @@
-/* *
+/*
  * Project : Santorini
  * Group : GC15
  * Author : Riccardo Secreti, Fabio Tresoldi, Mirko Usuelli
@@ -18,10 +18,20 @@ import it.polimi.ingsw.model.map.Worker;
 
 import java.util.List;
 
+/**
+ *
+ */
 public abstract class ActivePower extends Power {
+
+    protected int numberOfActionsRemaining;
+    protected Worker workerToUse;
 
     public ActivePower() {
         super();
+    }
+
+    public void setNumberOfActionsRemaining() {
+        numberOfActionsRemaining = constraints.getNumberOfAdditional();
     }
 
     private boolean preamble(Player currentPlayer, Cell cellToUse) {
@@ -79,6 +89,7 @@ public abstract class ActivePower extends Power {
         return true;
     }
 
+    //Overload
     protected abstract boolean useActivePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency);
 
     private boolean isPerim(Cell cellToUse) {

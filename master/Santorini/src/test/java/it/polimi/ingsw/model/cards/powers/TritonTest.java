@@ -1,12 +1,8 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.powers.tags.*;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
@@ -32,8 +28,6 @@ public class TritonTest {
         deck.fetchCard(God.TRITON);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyPower1 = (Block) board.getCell(0, 0);
@@ -41,19 +35,6 @@ public class TritonTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Triton
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.DEFAULT);
-        power1.getConstraints().setNumberOfAdditional(-1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(true);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
 
         //move with power on perim
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
@@ -78,27 +59,12 @@ public class TritonTest {
         deck.fetchCard(God.TRITON);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyPower1 = (Block) board.getCell(0, 0);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Triton
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.DEFAULT);
-        power1.getConstraints().setNumberOfAdditional(-1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(true);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
 
         //move with power on perim
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
@@ -122,8 +88,6 @@ public class TritonTest {
         deck.fetchCard(God.TRITON);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block worker2Player1 = (Block) board.getCell(0, 1);
@@ -132,19 +96,6 @@ public class TritonTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Triton
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.DEFAULT);
-        power1.getConstraints().setNumberOfAdditional(-1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(true);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
 
         //move with power on perim
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
@@ -168,8 +119,6 @@ public class TritonTest {
         deck.fetchCard(God.TRITON);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block dome = (Block) board.getCell(1, 0);
@@ -177,19 +126,6 @@ public class TritonTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Triton
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.DEFAULT);
-        power1.getConstraints().setNumberOfAdditional(-1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(true);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
 
         dome.setLevel(Level.DOME);
         dome.setPreviousLevel(Level.TOP);

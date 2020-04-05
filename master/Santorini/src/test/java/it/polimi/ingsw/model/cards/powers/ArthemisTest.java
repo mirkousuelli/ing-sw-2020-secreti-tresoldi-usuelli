@@ -1,12 +1,8 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.powers.tags.*;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
@@ -32,8 +28,6 @@ public class ArthemisTest {
         deck.fetchCard(God.ARTHEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -42,23 +36,8 @@ public class ArthemisTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Arthemis
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
-
         //move
-        //player1.move(emptyMove);
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
         //move with power
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -80,8 +59,6 @@ public class ArthemisTest {
         deck.fetchCard(God.ARTHEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -89,23 +66,8 @@ public class ArthemisTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Arthemis
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
-
         //move
-        //player1.move(emptyMove);
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
 
@@ -127,8 +89,6 @@ public class ArthemisTest {
         deck.fetchCard(God.ARTHEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -137,26 +97,11 @@ public class ArthemisTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Arthemis
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
-
         moreThanOneLevelMove.setLevel(Level.MIDDLE);
         moreThanOneLevelMove.setPreviousLevel(Level.BOTTOM);
 
         //move
-        //player1.move(emptyMove);
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, moreThanOneLevelMove, board.getAround(moreThanOneLevelMove)));
 
@@ -181,8 +126,6 @@ public class ArthemisTest {
         deck.fetchCard(God.ARTHEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -191,26 +134,11 @@ public class ArthemisTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Arthemis
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
-
         dome.setLevel(Level.DOME);
         dome.setPreviousLevel(Level.TOP);
 
         //move
-        //player1.move(emptyMove);
-        player1.getCurrentWorker().setPreviousLocation(worker1Player1);
-        player1.getCurrentWorker().setLocation(emptyMove);
+        board.move(player1.getCurrentWorker(), emptyMove);
 
         emptyMove.setLevel(Level.TOP);
         emptyMove.setPreviousLevel(Level.MIDDLE);
@@ -241,8 +169,6 @@ public class ArthemisTest {
         deck.fetchCard(God.ARTHEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
-        //power1 = new MovePower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block emptyMove = (Block) board.getCell(1, 1);
@@ -252,21 +178,7 @@ public class ArthemisTest {
         player1.initializeWorkerPosition(2, worker2Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
-        //Arthemis
-        power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MOVE);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(true);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedMove(MovementType.DEFAULT);
-
         //move
-        //player1.move(emptyMove);
         board.move(player1.getCurrentWorker(), emptyMove);
 
         //move with power

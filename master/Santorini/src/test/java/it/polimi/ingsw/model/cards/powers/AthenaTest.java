@@ -1,13 +1,8 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.powers.tags.*;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.MovementType;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.WinType;
 import it.polimi.ingsw.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.model.map.Block;
@@ -38,8 +33,6 @@ public class AthenaTest {
         deck.fetchCard(God.PERSEPHONE);
         player1.setCard(deck.popRandomCard());
         power1 = (MalusPower) player1.getCard().getPower(0);
-        //power1 = new MalusPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker1Player2 = (Block) board.getCell(1, 1);
@@ -50,26 +43,6 @@ public class AthenaTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
         player2.initializeWorkerPosition(1, worker1Player2);
         player2.setCurrentWorker(player2.getWorkers().get(0));
-
-        //Athena
-        /*power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.MALUS);
-        power1.setTiming(Timing.END_TURN);
-        power1.getConstraints().setNumberOfAdditional(0);
-        power1.getConstraints().setNotPerimCell(false);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);
-        power1.setAllowedMove(MovementType.DEFAULT);
-        power1.setAllowedWin(WinType.DEFAULT);
-        power1.malus.setMalusType(MalusType.MOVE);
-        power1.malus.setPermanent(false);
-        power1.malus.setNumberOfTurns(1);
-        power1.malus.addDirectionElement(MalusLevel.UP);
-        //power1.malus.setPersonal(false);*/
 
         //player1
         //build

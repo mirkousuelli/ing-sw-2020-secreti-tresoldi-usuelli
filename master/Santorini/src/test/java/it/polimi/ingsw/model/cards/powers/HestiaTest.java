@@ -1,12 +1,8 @@
 package it.polimi.ingsw.model.cards.powers;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.cards.Card;
 import it.polimi.ingsw.model.cards.Deck;
 import it.polimi.ingsw.model.cards.God;
-import it.polimi.ingsw.model.cards.powers.tags.*;
-import it.polimi.ingsw.model.cards.powers.tags.effectType.BlockType;
-import it.polimi.ingsw.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.model.map.Block;
 import it.polimi.ingsw.model.map.Board;
 import it.polimi.ingsw.model.map.Level;
@@ -32,28 +28,12 @@ public class HestiaTest {
         deck.fetchCard(God.HESTIA);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
-
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
         Block emptyPower = (Block) board.getCell(1, 2);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Hestia
-        /*power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(true);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -80,8 +60,6 @@ public class HestiaTest {
         deck.fetchCard(God.HESTIA);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -89,19 +67,6 @@ public class HestiaTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Hestia
-        /*power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(true);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -129,8 +94,6 @@ public class HestiaTest {
         deck.fetchCard(God.HESTIA);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -139,19 +102,6 @@ public class HestiaTest {
         player1.initializeWorkerPosition(1, worker1Player1);
         player2.initializeWorkerPosition(1, worker1Player2);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Hestia
-        /*power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(true);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
@@ -180,8 +130,6 @@ public class HestiaTest {
         deck.fetchCard(God.HESTIA);
         player1.setCard(deck.popRandomCard());
         power1 = (BuildPower) player1.getCard().getPower(0);
-        //power1 = new BuildPower();
-        //player1.getCard().addPower(power1);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -189,19 +137,6 @@ public class HestiaTest {
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
-
-        //Hestia
-        /*power1.setWorkerType(WorkerType.DEFAULT);
-        power1.setWorkerInitPos(WorkerPosition.DEFAULT);
-        power1.setEffect(Effect.BUILD);
-        power1.setTiming(Timing.ADDITIONAL);
-        power1.getConstraints().setNumberOfAdditional(1);
-        power1.getConstraints().setNotPerimCell(true);
-        power1.getConstraints().setNotSameCell(false);
-        power1.getConstraints().setPerimCell(false);
-        power1.getConstraints().setSameCell(false);
-        power1.getConstraints().setUnderItself(false);
-        power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
         board.build(player1.getCurrentWorker(), emptyBuild);
