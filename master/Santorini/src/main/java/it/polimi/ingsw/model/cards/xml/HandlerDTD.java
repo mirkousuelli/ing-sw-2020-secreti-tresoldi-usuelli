@@ -34,6 +34,7 @@ public class HandlerDTD extends DefaultHandler {
     private boolean description;
     private boolean numadd;
     private boolean numturns;
+    private boolean personal;
 
     public HandlerDTD(Deck deck) {
         super();
@@ -141,22 +142,42 @@ public class HandlerDTD extends DefaultHandler {
                     this.currCard.getPower(indexPower).getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
                     this.currCard.getPower(indexPower).getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
                     //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    personal = false;
+                    break;
+
+                case "PERSONALMALUS":
+                    this.currCard.getPower(indexPower).getPersonalMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).getPersonalMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
+                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    personal = true;
                     break;
 
                 case "UP":
-                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.UP);
+                    if (personal)
+                        this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.UP);
+                    else
+                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.UP);
                     break;
 
                 case "DOWN":
-                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DOWN);
+                    if (personal)
+                        this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.DOWN);
+                    else
+                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DOWN);
                     break;
 
                 case "SAME":
-                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.SAME);
+                    if (personal)
+                        this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.SAME);
+                    else
+                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.SAME);
                     break;
 
                 case "DEFAULT":
-                    this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DEFAULT);
+                    if (personal)
+                        this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.DEFAULT);
+                    else
+                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DEFAULT);
                     break;
 
                 case "NUMTURNS":
