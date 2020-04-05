@@ -41,9 +41,9 @@ public class PrometheusTest {
         //build with power
         assertTrue(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
 
 
 
@@ -77,7 +77,7 @@ public class PrometheusTest {
         //build with power
         assertTrue(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
         //move
-        assertFalse(board.move(player1.getCurrentWorker(), emptyMove));
+        assertFalse(board.move(player1, emptyMove));
 
 
 

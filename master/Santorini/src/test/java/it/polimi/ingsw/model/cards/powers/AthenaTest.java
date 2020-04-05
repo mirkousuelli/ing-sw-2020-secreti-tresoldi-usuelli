@@ -30,7 +30,7 @@ public class AthenaTest {
         Deck deck = new Deck();
         MalusPower power1;
 
-        deck.fetchCard(God.PERSEPHONE);
+        deck.fetchCard(God.ATHENA);
         player1.setCard(deck.popRandomCard());
         power1 = (MalusPower) player1.getCard().getPower(0);
 
@@ -46,9 +46,9 @@ public class AthenaTest {
 
         //player1
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //move
-        board.move(player1.getCurrentWorker(), emptyBuild);
+        board.move(player1, emptyBuild);
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
@@ -56,9 +56,9 @@ public class AthenaTest {
 
         //player2
         //build
-        board.build(player2.getCurrentWorker(), cannotMoveUpCell);
+        assertTrue(board.build(player2, cannotMoveUpCell));
         //move
-        assertFalse(board.move(player2.getCurrentWorker(), cannotMoveUpCell));
+        assertFalse(board.move(player2, cannotMoveUpCell));
 
 
 
@@ -71,7 +71,7 @@ public class AthenaTest {
         assertEquals(Level.BOTTOM, cannotMoveUpCell.getLevel());
         assertEquals(Level.GROUND, cannotMoveUpCell.getPreviousLevel());
         assertEquals(cannotMoveUpCell, player2.getCurrentWorker().getPreviousBuild());
-        assertEquals(worker1Player2, player1.getCurrentWorker().getLocation());
+        assertEquals(worker1Player2, player2.getCurrentWorker().getLocation());
         assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
         assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
     }

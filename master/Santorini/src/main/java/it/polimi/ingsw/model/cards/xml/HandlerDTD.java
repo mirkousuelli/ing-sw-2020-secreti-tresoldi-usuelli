@@ -54,6 +54,7 @@ public class HandlerDTD extends DefaultHandler {
 
         this.godsList = gods;
         this.currGod = godsList.get(indexGod);
+        this.readGod = this.currGod;
     }
 
     @Override

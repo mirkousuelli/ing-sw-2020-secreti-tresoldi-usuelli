@@ -37,7 +37,7 @@ public class ArthemisTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
         //move with power
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -67,7 +67,7 @@ public class ArthemisTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
 
@@ -101,7 +101,7 @@ public class ArthemisTest {
         moreThanOneLevelMove.setPreviousLevel(Level.BOTTOM);
 
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, moreThanOneLevelMove, board.getAround(moreThanOneLevelMove)));
 
@@ -138,7 +138,7 @@ public class ArthemisTest {
         dome.setPreviousLevel(Level.TOP);
 
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
 
         emptyMove.setLevel(Level.TOP);
         emptyMove.setPreviousLevel(Level.MIDDLE);
@@ -179,7 +179,7 @@ public class ArthemisTest {
         player1.setCurrentWorker(player1.getWorkers().get(0));
 
         //move
-        board.move(player1.getCurrentWorker(), emptyMove);
+        board.move(player1, emptyMove);
 
         //move with power
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));

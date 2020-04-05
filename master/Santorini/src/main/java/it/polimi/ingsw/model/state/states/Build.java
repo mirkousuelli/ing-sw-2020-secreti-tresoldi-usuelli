@@ -34,7 +34,7 @@ public class Build implements GameState {
         this.game = game;
         // it shows the possible cells where the worker can build and then allows him to build on one of them
         // System.out.println(possibleBuilds);
-        game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
+        game.getBoard().build(game.getCurrentPlayer(), cellToBuildUp);
 
         // this.game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
 

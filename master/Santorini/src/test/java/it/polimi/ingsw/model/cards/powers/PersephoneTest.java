@@ -48,7 +48,7 @@ public class PersephoneTest {
         opponents.add(player2);
         assertTrue(power1.usePower(opponents));
         //move up
-        assertFalse(board.move(player2.getCurrentWorker(), emptyMove));
+        assertFalse(board.move(player2, emptyMove));
 
 
 

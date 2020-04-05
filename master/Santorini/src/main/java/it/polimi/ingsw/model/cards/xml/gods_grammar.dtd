@@ -8,7 +8,7 @@
         <!ELEMENT name (#PCDATA)>
         <!ELEMENT description (#PCDATA)>
 
-        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win), personalMalus)>
+        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win), personalMalus?)>
             <!-- what -->
             <!ELEMENT effect EMPTY>
             <!ATTLIST effect

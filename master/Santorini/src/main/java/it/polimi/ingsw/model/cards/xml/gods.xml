@@ -19,7 +19,6 @@
             <constraints/>
             <!-- how -->
             <move type="swap"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -42,7 +41,6 @@
             </constraints>
             <!-- how -->
             <move/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -68,7 +66,6 @@
                 </directions>
                 <numturns>1</numturns>
             </malus>
-            <personalMalus/>
         </power>
     </god>
 
@@ -89,7 +86,6 @@
             <constraints/>
             <!-- how -->
             <build type="dome"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -110,7 +106,6 @@
             <constraints/>
             <!-- how -->
             <win type="fivetower"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -133,7 +128,6 @@
             </constraints>
             <!-- how -->
             <build/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -156,7 +150,6 @@
             </constraints>
             <!-- how -->
             <build type="notdome"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -179,7 +172,6 @@
             </constraints>
             <!-- how -->
             <build/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -200,7 +192,6 @@
             <constraints/>
             <!-- how -->
             <move type="push"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -221,7 +212,6 @@
             <constraints/>
             <!-- how -->
             <win type="downfromtwo"/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -243,10 +233,10 @@
             <!-- how -->
             <malus type="move" permanent="true">
                 <directions>
-                    <up/>
+                    <down/>
+                    <same/>
                 </directions>
             </malus>
-            <personalMalus/>
         </power>
     </god>
 
@@ -255,7 +245,6 @@
         <name>Poseidon</name>
         <description>If your unmoved Worker is on the ground level, it may build up to three times</description>
         <power>
-            <!-- what -->
             <effect what="build"/>
             <!-- who -->
             <worker who="unmoved"/>
@@ -269,7 +258,6 @@
             </constraints>
             <!-- how -->
             <build/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -316,7 +304,6 @@
             <constraints perimcell="true"/>
             <!-- how -->
             <move/>
-            <personalMalus/>
         </power>
     </god>
 
@@ -337,7 +324,6 @@
             <constraints underitself="true"/>
             <!-- how -->
             <build/>
-            <personalMalus/>
         </power>
     </god>
 </cards>
