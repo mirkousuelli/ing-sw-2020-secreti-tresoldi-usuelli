@@ -11,6 +11,8 @@
 package it.polimi.ingsw.model.map;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.model.cards.powers.tags.malus.MalusLevel;
 
 import java.util.*;
 
@@ -181,23 +183,60 @@ public class Board implements Cloneable {
         return toReturn;
     }
 
-    public List<Cell> getPossibleMoves(Player player, Cell cell) {
+    public List<Cell> getPossibleMoves(Player player) {
         /* @getter
          * it considers malus attributes in player and modify possible around cells
          */
-        List<Cell> toReturn = getAround(cell);
+        List<Cell> toReturn = getAround(player.getCurrentWorker().getLocation());
+        List<Cell> copy;
 
         // checking for around cell higher than allowed
-        for (Cell around : getAround(cell)) {
+        for (Cell around : getAround(player.getCurrentWorker().getLocation())) {
             // if it is busy or complete or higher than allowed
-            if (!around.isWalkable() || cell.getLevel().toInt() + 1 < around.getLevel().toInt()) {
+            if ((!around.isWalkable()) || (player.getCurrentWorker().getLocation().getLevel().toInt() + 1 < around.getLevel().toInt())) {
                 // then remove it from the list
                 toReturn.remove(around);
             }
         }
 
+        for (Malus malus : player.getMalusList()) {
+            for (MalusLevel direction : malus.getDirection()) {
+                if (direction == MalusLevel.UP) {
+                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                        // checking level difference
+                        if (player.getCurrentWorker().getLocation().getLevel().toInt() < around.getLevel().toInt()) {
+                            //removing from the list to return
+                            toReturn.remove(around);
+                        }
+                    }
+                } else if (direction == MalusLevel.DOWN) {
+                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                        // checking level difference
+                        if (player.getCurrentWorker().getLocation().getLevel().toInt() > around.getLevel().toInt()) {
+                            //removing from the list to return
+                            toReturn.remove(around);
+                        }
+                    }
+                } else if (direction == MalusLevel.SAME) {
+                    copy = new ArrayList<>(toReturn);
+
+                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                        // checking level difference
+                        if (player.getCurrentWorker().getLocation().getLevel().toInt() == around.getLevel().toInt()) {
+                            //removing from the list to return
+                            toReturn.remove(around);
+                        }
+                    }
+
+                    if (toReturn.size() == 0) {
+                        toReturn = copy;
+                    }
+                }
+            }
+        }
+
         // cannot move up malus active
-        /*if () {
+        /*if (this.player.cannotMoveUpActive()) {
             // look for everything around
             for (Cell around : this.currCell.getAround()) {
                 // checking level difference
@@ -247,7 +286,7 @@ public class Board implements Cloneable {
         Worker worker = player.getCurrentWorker();
 
         // if it is not a dome, free and it is contained within possible choices
-        if (newCell.isWalkable() && this.getPossibleMoves(player, worker.getLocation()).contains(newCell)) {
+        if (newCell.isWalkable() && this.getPossibleMoves(player).contains(newCell)) {
             // removing pawn from the current cell
             worker.getLocation().removePawn();
 

@@ -55,7 +55,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
-        board.build(player1.getCurrentWorker(), empty);
+        board.build(player1, empty);
         //build with power
         assertTrue(power1.usePower(player1, empty, board.getAround(empty)));
 
@@ -101,7 +101,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -151,7 +151,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
@@ -201,7 +201,7 @@ public class HephaestusTest {
         power1.setAllowedBlock(BlockType.NOT_DOME);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 

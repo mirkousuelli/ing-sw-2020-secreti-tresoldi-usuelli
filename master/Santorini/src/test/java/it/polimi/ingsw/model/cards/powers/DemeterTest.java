@@ -56,7 +56,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -103,7 +103,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
 
@@ -150,7 +150,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
 
@@ -203,7 +203,7 @@ public class DemeterTest {
         completeTower.setLevel(Level.DOME);
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, completeTower, board.getAround(completeTower)));
 
@@ -249,7 +249,7 @@ public class DemeterTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, notAdjacent, board.getAround(notAdjacent)));
 

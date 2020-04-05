@@ -58,7 +58,7 @@ public class PanTest {
 
         worker1Player1.setLevel(Level.MIDDLE);
         //move
-        board.move(player1.getCurrentWorker(), empty);
+        board.move(player1, empty);
         //win condition power
         //assertTrue(power1.usePower(board));
     }

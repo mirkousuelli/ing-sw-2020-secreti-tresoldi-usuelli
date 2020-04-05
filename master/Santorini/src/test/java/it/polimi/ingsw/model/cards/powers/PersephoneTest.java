@@ -71,15 +71,15 @@ public class PersephoneTest {
         power1.malus.addDirectionElement(MalusLevel.SAME);
         //power1.malus.setPersonal(false);*/
 
-        emptyMove.setLevel(Level.BOTTOM);
-        emptyMove.setPreviousLevel(Level.GROUND);
+        //emptyMove.setLevel(Level.BOTTOM);
+        //emptyMove.setPreviousLevel(Level.GROUND);
 
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
         assertTrue(power1.usePower(opponents));
         //move up
-        assertFalse(board.move(player2.getCurrentWorker(), emptyMove));
+        assertFalse(board.move(player2, emptyMove));
 
 
 

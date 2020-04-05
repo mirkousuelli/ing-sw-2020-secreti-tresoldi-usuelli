@@ -56,7 +56,7 @@ public class HestiaTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -104,7 +104,7 @@ public class HestiaTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
@@ -154,7 +154,7 @@ public class HestiaTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
@@ -204,7 +204,7 @@ public class HestiaTest {
         power1.setAllowedBlock(BlockType.DEFAULT);*/
 
         //build
-        board.build(player1.getCurrentWorker(), emptyBuild);
+        board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 

@@ -233,7 +233,8 @@
             <!-- how -->
             <malus type="move" permanent="true">
                 <directions>
-                    <up/>
+                    <down/>
+                    <same/>
                 </directions>
             </malus>
         </power>

@@ -73,7 +73,7 @@ class WorkerTest {
                 assertSame(tester, origin.getPawn()); // right pawn on block
 
                 // testing each direction around the current block (either center or corner or side condition)
-                for (Cell around : board.getPossibleMoves(player, tester.getLocation())) {
+                for (Cell around : board.getPossibleMoves(player)) {
                     // each direction around
                     assertTrue(board.move(player, around)); // move around one direction at once
                     assertSame(tester.getLocation(), around); // right current location
