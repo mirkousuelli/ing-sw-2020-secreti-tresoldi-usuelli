@@ -100,8 +100,8 @@ public class Power {
      */
     public Power() {
         constraints = new Constraints();
-        malus = new Malus();
-        personalMalus = new Malus();
+        //malus = new Malus();
+        //personalMalus = new Malus();
     }
 
     public WorkerType getWorkerType() {
@@ -168,8 +168,16 @@ public class Power {
         return malus;
     }
 
+    public void setMalus(Malus malus) {
+        this.malus = malus;
+    }
+
     public Malus getPersonalMalus() {
         return personalMalus;
+    }
+
+    public void setPersonalMalus(Malus malus) {
+        this.personalMalus = malus;
     }
 
     /**

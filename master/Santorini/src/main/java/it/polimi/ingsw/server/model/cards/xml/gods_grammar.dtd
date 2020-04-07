@@ -60,7 +60,6 @@
                     <!ATTLIST malus
                         type (build | move) #REQUIRED
                         permanent (true | false) "false"
-                        directions (up | down | same | default) "default"
                     >
                 <!ELEMENT directions (up?, down?, same?, default?)>
                     <!ELEMENT up EMPTY>
@@ -78,5 +77,4 @@
                     <!ATTLIST personalMalus
                         type (build | move | default) "default"
                         permanent (true | false) "false"
-                        directions (up | down | same | default) "default"
                     >
