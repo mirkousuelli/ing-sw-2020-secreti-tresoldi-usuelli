@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="DemandType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CREATE_GAME"/>
+            <xs:enumeration value="JOIN_GAME"/>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="CHOOSE_DECK"/>
+            <xs:enumeration value="CHOOSE_CARD"/>
+            <xs:enumeration value="CHOOSE_WORKER"/>
+            <xs:enumeration value="MOVE"/>
+            <xs:enumeration value="BUILD"/>
+            <xs:enumeration value="USE_POWER"/>
+            <xs:enumeration value="CONFIRM"/>
+            <xs:enumeration value="UNDO"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AnswerType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ERROR"/>
+            <xs:enumeration value="SUCCESS"/>
+            <xs:enumeration value="DEFEAT"/>
+            <xs:enumeration value="VICTORY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="coordinate">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="cell">
+        <xs:sequence>
+            <xs:element name="x" type="coordinate"/>
+            <xs:element name="y" type="coordinate"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Message" abstract="true">
+        <xs:sequence>
+            <xs:element name="header"/>
+            <xs:element name="payload" minOccurs="0">
+                <xs:simpleType>
+                    <xs:union memberTypes="xs:string cell"/>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Demand">
+        <xs:complexContent>
+            <xs:restriction base="Message">
+                <xs:sequence>
+                    <xs:element name="header" type="DemandType"/>
+                </xs:sequence>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Answer">
+        <xs:complexContent>
+            <xs:extension base="Message">
+                <xs:sequence>
+                    <xs:element name="header" type="AnswerType"/>
+                    <xs:element name="context" type="DemandType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>
