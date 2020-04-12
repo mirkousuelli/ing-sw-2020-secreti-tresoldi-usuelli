@@ -1,5 +1,7 @@
 package it.polimi.ingsw.communication.message;
 
+import it.polimi.ingsw.communication.message.xml.AnswerXML;
+
 public class Answer<S> extends Message<AnswerType, S> {
 
     protected final DemandType context;
@@ -9,8 +11,25 @@ public class Answer<S> extends Message<AnswerType, S> {
         this.context = context;
     }
 
+    public Answer(AnswerXML<S> xml) {
+        super(xml.getHeader(), xml.getPayload());
+        this.context = xml.getContext();
+    }
+
     public DemandType getContext() {
         return this.context;
     }
 
+    @Override
+    public AnswerXML<S> messageToXML() {
+
+        AnswerXML<S> toSend = new AnswerXML<>();
+
+        toSend.setHeader(this.getHeader());
+        toSend.setContext(this.getContext());
+        toSend.setPayload(this.getPayload());
+
+        return toSend;
+
+    }
 }

@@ -1,11 +1,13 @@
 package it.polimi.ingsw.communication.message;
 
+import it.polimi.ingsw.communication.message.xml.MessageXML;
+
 public abstract class Message<H, P> {
 
-    protected final H header;
-    protected final P payload;
+    private final H header;
+    private final P payload;
 
-    Message(H header, P payload) {
+    public Message(H header, P payload) {
         this.header = header;
         this.payload = payload;
     }
@@ -17,5 +19,7 @@ public abstract class Message<H, P> {
     public P getPayload() {
         return this.payload;
     }
+
+    public abstract MessageXML<H, P> messageToXML();
 
 }
