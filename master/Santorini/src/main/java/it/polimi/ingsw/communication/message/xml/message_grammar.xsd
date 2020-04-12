@@ -33,7 +33,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="cell">
+    <xs:complexType name="Cell">
         <xs:sequence>
             <xs:element name="x" type="coordinate"/>
             <xs:element name="y" type="coordinate"/>
@@ -45,7 +45,7 @@
             <xs:element name="header"/>
             <xs:element name="payload" minOccurs="0">
                 <xs:simpleType>
-                    <xs:union memberTypes="xs:string cell"/>
+                    <xs:union memberTypes="xs:string Cell"/>
                 </xs:simpleType>
             </xs:element>
         </xs:sequence>
@@ -71,5 +71,9 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:element name="demand" type="Demand"/>
+    <xs:element name="answer" type="Answer"/>
+    <xs:element name="cell" type="Cell"/>
 
 </xs:schema>
