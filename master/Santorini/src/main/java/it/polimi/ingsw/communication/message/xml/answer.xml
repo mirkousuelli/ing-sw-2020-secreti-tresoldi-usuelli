@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<Answer xmlns:xsi="http://www.w3.org/2001/XMLSchema"
-         xsi:noNamespaceSchemaLocation="message_grammar.xsd">
-    <header>SUCCESS</header>
-    <context>JOIN_GAME</context>
-    <payload/>
-</Answer>

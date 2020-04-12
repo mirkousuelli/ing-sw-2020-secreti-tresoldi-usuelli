@@ -1,23 +1,38 @@
 package it.polimi.ingsw.communication.message.xml;
 
-import it.polimi.ingsw.communication.message.Message;
+import it.polimi.ingsw.communication.message.*;
 
 import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MessageDecoder {
 
-    public Message deserializeFromXML() throws IOException {
+    private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
-        FileInputStream fis = new FileInputStream("message.xml");
-        XMLDecoder decoder = new XMLDecoder(fis);
-        Message decodedMessage = (Message) decoder.readObject();
+    public MessageDecoder(String path) {
+        XML_FILE = path;
+    }
 
-        decoder.close();
-        fis.close();
+    public Message decode() throws IOException {
 
-        return decodedMessage;
+        try {
+            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(XML_FILE)));
+            MessageXML decoded = (MessageXML) decoder.readObject();
+
+            if (decoded.getHeader() instanceof DemandType) {
+                return new Demand((DemandXML) decoded);
+            } else if (decoded.getHeader() instanceof AnswerType){
+                return new Answer((AnswerXML) decoded);
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File " + XML_FILE + ".xml not found");
+        }
+
+        return null;
     }
 
 }

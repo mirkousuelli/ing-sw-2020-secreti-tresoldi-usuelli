@@ -9,85 +9,51 @@ import java.io.*;
 
 public class MessageEncoder {
 
-    final static String FILE_MESSAGE_XML = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
+    private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
-    public static void main(String[] args) throws IOException
-    {
-        boolean demand = false;
-        Message decoded;
-
-        if (demand) {
-            Message message = new Demand<>(DemandType.JOIN_GAME, "1234");
-            MessageXML toSend = message.messageToXML();
-
-            encode ( toSend );
-            decoded = decode();
-        } else {
-            Message message = new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, "1234");
-            MessageXML toSend = message.messageToXML();
-
-            encode ( toSend );
-            decoded = decode();
-        }
+    public MessageEncoder(String path) {
+        XML_FILE = path;
     }
 
-    public static void encode(MessageXML message) throws IOException
+    public void encode(Message message) throws IOException
     {
-        /*FileOutputStream fos = new FileOutputStream("message.xml");
-        XMLEncoder encoder = new XMLEncoder(fos);
-
-        encoder.setExceptionListener(new ExceptionListener() {
-            public void exceptionThrown(Exception e) {
-                System.out.println("Exception! :" + e.toString());
-            }
-        });
-
-        encoder.writeObject(message);
-        encoder.close();
-        fos.close();*/
-
         try{
-            FileOutputStream fos = new FileOutputStream(FILE_MESSAGE_XML);
+            FileOutputStream fos = new FileOutputStream(XML_FILE);
             XMLEncoder encoder = new XMLEncoder(fos);
+            MessageXML toEncode = message.messageToXML();
+
             encoder.setExceptionListener(new ExceptionListener() {
                 public void exceptionThrown(Exception e) {
                     System.out.println("Exception! :"+e.toString());
                 }
             });
-            encoder.writeObject(message);
+
+
+            encoder.writeObject(toEncode);
             encoder.close();
             fos.close();
 
         }catch(FileNotFoundException fileNotFound){
-            System.out.println("ERROR: While Creating or Opening the File message.xml");
+            System.out.println("ERROR: While Creating or Opening the File" + XML_FILE + ".xml");
         }
     }
 
-    public static Message decode() throws IOException {
+    /*public static void main(String[] args) throws IOException
+    {
+        boolean demand = false;
+        Message decoded;
 
-        /*FileInputStream fis = new FileInputStream("message.xml");
-        XMLDecoder decoder = new XMLDecoder(fis);
-        Demand decodedMessage = (Demand) decoder.readObject();
+        if (demand) {
+            Message toSend = new Demand<>(DemandType.JOIN_GAME, "1234");
 
-        decoder.close();
-        fis.close();
+            encode ( toSend.messageToXML() );
+            decoded = decode();
+        } else {
+            Message toSend = new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, "1234");
 
-        return decodedMessage;*/
-
-        try {
-            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(FILE_MESSAGE_XML)));
-            MessageXML decoded = (MessageXML) decoder.readObject();
-
-            if (decoded.getHeader() instanceof DemandType) {
-                return new Demand((DemandXML) decoded);
-            } else  if (decoded.getHeader() instanceof AnswerType){
-                return new Answer((AnswerXML) decoded);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("ERROR: File message.xml not found");
+            encode ( toSend.messageToXML() );
+            decoded = decode();
         }
-
-        return null;
-    }
+    }*/
 
 }
