@@ -24,7 +24,7 @@ public class Player {
      */
 
     public final String nickName;
-    public final List<Worker> worker;
+    private final List<Worker> worker;
     private Card card;
     private Worker currentWorker;
     private List<Malus> malusList;
@@ -39,6 +39,10 @@ public class Player {
         card = null;
         currentWorker = null;
         malusList = new ArrayList<>();
+    }
+
+    public String getNickName() {
+        return nickName;
     }
 
     public boolean initializeWorkerPosition(int id, Block position) {
