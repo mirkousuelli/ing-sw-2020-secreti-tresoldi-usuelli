@@ -3,7 +3,7 @@ package it.polimi.ingsw.server.view;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.observer.Observer;
-import it.polimi.ingsw.server.network.ClientHandlerSocket;
+import it.polimi.ingsw.server.network.ClientConnection;
 
 public class RemoteView extends View {
 
@@ -20,17 +20,17 @@ public class RemoteView extends View {
         }
     }
 
-    private ClientHandlerSocket connection;
+    private ClientConnection clientConnection;
 
-    public RemoteView(String player, ClientHandlerSocket c){
+    public RemoteView(String player, ClientConnection clientConnection){
         super(player);
-        this.connection = c;
-        c.addObserver(new MessageReceiver());
+        this.clientConnection = clientConnection;
+        clientConnection.addObserver(new MessageReceiver());
     }
 
     @Override
     protected void showAnswer(Answer answer) {
         System.out.println("showModel: " + answer.getPayload().toString());
-        connection.asyncSend(answer);
+        clientConnection.asyncSend(answer);
     }
 }
