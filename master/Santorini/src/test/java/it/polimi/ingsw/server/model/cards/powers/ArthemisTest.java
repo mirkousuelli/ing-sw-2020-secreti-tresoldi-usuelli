@@ -20,6 +20,12 @@ public class ArthemisTest {
 
     @Test
     void testAdditionalDifferentCellMove() throws ParserConfigurationException, SAXException {
+        /* @function
+         * It verifies if it is possible to move one additional time.
+         *
+         * UsePower have to return true. Current and previous locations of must change accordingly.
+         */
+
         Player player1 = new Player("Pl1");
         Board board = new Board();
         Deck deck = new Deck();

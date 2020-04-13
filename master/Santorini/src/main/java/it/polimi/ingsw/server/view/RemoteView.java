@@ -1,37 +1,36 @@
 package it.polimi.ingsw.server.view;
 
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.state.Game;
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.observer.Observer;
+import it.polimi.ingsw.server.network.ClientConnection;
 
 public class RemoteView extends View {
 
-    private class MessageReceiver implements Observer<Message> {
+    private class MessageReceiver implements Observer<Demand> {
 
         @Override
-        public void update(Message message) {
-            System.out.println("Received: " + message);
-            try{
-                //Choice choice = Choice.parseInput(message.getMessage());
-                //processChoice(choice);
-                processMessage(message);
-            } catch (IllegalArgumentException e) {
-                connection.send(new Message("Error! Make your move"));
+        public void update(Demand demand) {
+            try {
+                System.out.println("Received: " + demand.toString());
+                processMessage(demand);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
     }
 
-    private Connection connection;
+    private ClientConnection clientConnection;
 
-    public RemoteView(Player player, String opponent, Connection c){
+    public RemoteView(String player, ClientConnection clientConnection){
         super(player);
-        this.connection = c;
-        c.addObserver(new MessageReceiver());
-        //c.asyncSend("Your opponent is: " + opponent + "\tMake your move");
-        c.send(new Message("Your opponent is: " + opponent + "\tMake your move"));
+        this.clientConnection = clientConnection;
+        clientConnection.addObserver(new MessageReceiver());
     }
 
     @Override
-    protected void showModel(Game model) {
-
+    protected void showAnswer(Answer answer) {
+        System.out.println("showModel: " + answer.getPayload().toString());
+        clientConnection.asyncSend(answer);
     }
 }

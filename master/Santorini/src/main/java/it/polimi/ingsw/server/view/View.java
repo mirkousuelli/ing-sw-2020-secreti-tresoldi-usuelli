@@ -1,30 +1,34 @@
 package it.polimi.ingsw.server.view;
 
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.communication.observer.Observer;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.state.Game;
 
-public abstract class View extends Observable<Message> implements Observer<Answer> {
+public abstract class View extends Observable<ActionToPerformView> implements Observer<Answer>, IView {
 
-    private Player player;
+    private final String player;
 
-    protected View(Player player){
+    protected View(String player){
         this.player = player;
     }
 
-    protected Player getPlayer(){
+    protected String getPlayer(){
         return player;
     }
 
-    protected void processMessage(Message message){
-        //notify(message);
+    public void processMessage(Demand demand){
+        notify(new ActionToPerformView(player, demand, this));
     }
 
-    protected abstract void showModel(Game model);
+    protected abstract void showAnswer(Answer answer);
 
+    public void reportError(Answer answer) {
+        showAnswer(answer);
+    }
 
     @Override
     public void update(Answer answer) {
-        showModel(answer);
+        showAnswer(answer);
     }
 }

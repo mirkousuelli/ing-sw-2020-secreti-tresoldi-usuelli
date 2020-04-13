@@ -19,6 +19,12 @@ class ApolloTest {
 
     @Test
     void testCorrectSwap() throws ParserConfigurationException, SAXException {
+        /* @function
+         * It verifies if it is possible to swap a worker with an adjacent opponent worker.
+         *
+         * UsePower have to return true. Current and previous locations of must change accordingly.
+         */
+
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
@@ -54,6 +60,12 @@ class ApolloTest {
 
     @Test
     void testSamePlayerWorkerSwap() throws ParserConfigurationException, SAXException {
+        /* @function
+         * It verifies if usePower wrongly allows to swap a worker with a worker of the same player.
+         *
+         * UsePower have to return false, current and previous locations of each worker must remain unchanged.
+         */
+
         Player player1 = new Player("Pl1");
         Board board = new Board();
         Deck deck = new Deck();
@@ -88,6 +100,12 @@ class ApolloTest {
 
     @Test
     void testEmptyCellSwap() throws ParserConfigurationException, SAXException {
+        /* @function
+         * It verifies if usePower wrongly allows to swap a worker with an empty cell.
+         *
+         * UsePower have to return false, current and previous locations of each worker must remain unchanged.
+         */
+
         Player player1 = new Player("Pl1");
         Board board = new Board();
         Deck deck = new Deck();
@@ -117,6 +135,12 @@ class ApolloTest {
 
     @Test
     void testNotAdjacentSwap() throws ParserConfigurationException, SAXException {
+        /* @function
+         * It verifies if usePower wrongly allows to swap a worker with a non adjacent worker.
+         *
+         * UsePower have to return false, current and previous locations of each worker must remain unchanged.
+         */
+
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
         Board board = new Board();
