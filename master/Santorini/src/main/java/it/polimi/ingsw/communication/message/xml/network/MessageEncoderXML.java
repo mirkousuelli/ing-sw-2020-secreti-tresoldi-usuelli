@@ -10,7 +10,7 @@ import java.io.*;
 
 public class MessageEncoderXML {
 
-    private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
+    private static String XML_FILE = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
     public MessageEncoderXML(String path) {
         XML_FILE = path;
@@ -39,22 +39,24 @@ public class MessageEncoderXML {
         }
     }
 
-    /*public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException
     {
         boolean demand = false;
+        MessageEncoderXML encoderXML = new MessageEncoderXML(XML_FILE);
+        MessageDecoderXML decoderXML = new MessageDecoderXML(XML_FILE);
         Message decoded;
 
         if (demand) {
             Message toSend = new Demand<>(DemandType.JOIN_GAME, "1234");
 
-            encode ( toSend.messageToXML() );
-            decoded = decode();
+            encoderXML.encode ( toSend );
+             decoded = decoderXML.decode();
         } else {
-            Message toSend = new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, "1234");
+            Message toSend = new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, "Mirko Gay");
 
-            encode ( toSend.messageToXML() );
-            decoded = decode();
+            encoderXML.encode ( toSend );
+             decoded = decoderXML.decode();
         }
-    }*/
+    }
 
 }

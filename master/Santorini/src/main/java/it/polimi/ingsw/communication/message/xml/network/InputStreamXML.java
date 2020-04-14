@@ -7,17 +7,17 @@ import java.io.InputStream;
 
 public class InputStreamXML extends ByteArrayInputStream {
 
-    private DataInputStream inchannel;
+    private DataInputStream inChannel;
 
-    public InputStreamXML(InputStream inchannel) {
+    public InputStreamXML(InputStream inChannel) {
         super(new byte[2]);
-        this.inchannel = new DataInputStream(inchannel);
+        this.inChannel = new DataInputStream(inChannel);
     }
 
-    public void recive() throws IOException {
-        int i = inchannel.readInt();
+    public void receive() throws IOException {
+        int i = inChannel.readInt();
         byte[] data = new byte[i];
-        inchannel.read(data, 0, i);
+        inChannel.read(data, 0, i);
         this.buf = data;
         this.count = i;
         this.mark = 0;

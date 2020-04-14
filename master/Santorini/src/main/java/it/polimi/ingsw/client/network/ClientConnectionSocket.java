@@ -1,12 +1,16 @@
 package it.polimi.ingsw.client.network;
 
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.DemandType;
+import it.polimi.ingsw.communication.message.Message;
+import it.polimi.ingsw.communication.message.xml.network.InputStreamXML;
+import it.polimi.ingsw.communication.message.xml.network.OutputStreamXML;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
-public class ClientConnectionSocket implements ClientConnectionType {
+public class ClientConnectionSocket implements ClientConnection {
     private String ip;
     private int port;
 
@@ -21,22 +25,26 @@ public class ClientConnectionSocket implements ClientConnectionType {
 
         System.out.println("Connection established");
 
-        Scanner socketIn = new Scanner(socket.getInputStream());
-        PrintWriter socketOut = new PrintWriter(socket.getOutputStream());
-        Scanner stdin = new Scanner(System.in);
+        //Scanner socketIn = new Scanner(socket.getInputStream());
+        //PrintWriter socketOut = new PrintWriter(socket.getOutputStream());
+        //Scanner stdin = new Scanner(System.in);
+        OutputStreamXML socketOut = new OutputStreamXML();
+        InputStreamXML socketIn = new InputStreamXML();
 
         try{
             while (true){
-                String inputLine = stdin.nextLine();
-                socketOut.println(inputLine);
-                socketOut.flush();
+                //String inputLine = stdin.nextLine();
+                Message msg = new Demand(DemandType.JOIN_GAME, "1234");
+                //socketOut.println(/*inputLine*/);
+                //socketOut.flush();
+                socketOut.send(msg);
                 String socketLine = socketIn.nextLine();
                 System.out.println(socketLine);
             }
         } catch(NoSuchElementException e){
             System.out.println("Connection closed");
         } finally {
-            stdin.close();
+            //stdin.close();
             socketIn.close();
             socketOut.close();
             socket.close();

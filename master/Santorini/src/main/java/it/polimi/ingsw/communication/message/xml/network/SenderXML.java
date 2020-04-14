@@ -15,11 +15,11 @@ import java.util.logging.Logger;
 
 public class SenderXML {
 
-    public static void send(Document tosend, OutputStream channel) throws TransformerConfigurationException, IOException {
+    public static void send(Document toSend, OutputStream channel) throws TransformerConfigurationException, IOException {
         OutputStreamXML out = new OutputStreamXML(channel);
 
         StreamResult sr = new StreamResult(out);
-        DOMSource ds = new DOMSource(tosend);
+        DOMSource ds = new DOMSource(toSend);
         Transformer tf = TransformerFactory.newInstance().newTransformer();
 
         try {

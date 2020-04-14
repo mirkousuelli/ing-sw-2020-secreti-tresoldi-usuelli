@@ -7,17 +7,22 @@ import java.io.OutputStream;
 
 public class OutputStreamXML extends ByteArrayOutputStream {
 
-    private DataOutputStream outchannel;
+    private DataOutputStream outChannel;
 
-    public OutputStreamXML(OutputStream outchannel) {
+    public OutputStreamXML(OutputStream outChannel) {
         super();
-        this.outchannel = new DataOutputStream(outchannel);
+        this.outChannel = new DataOutputStream(outChannel);
     }
 
     public void send() throws IOException {
         byte[] data = toByteArray();
-        outchannel.writeInt(data.length);
-        outchannel.write(data);
+        outChannel.writeInt(data.length);
+        outChannel.write(data);
         reset();
     }
+
+    /*public void flush() throws IOException {
+        this.outChannel.flush();
+    }*/
+
 }

@@ -21,7 +21,7 @@ public class ReceiverXML {
 
         InputStreamXML xmlin = new InputStreamXML(channel);
 
-        xmlin.recive();
+        xmlin.receive();
 
         request = docBuilder.parse(xmlin);
 

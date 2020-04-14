@@ -13,10 +13,10 @@ import java.io.IOException;
 
 public class MessageDecoderXML {
 
-    private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
+    private final String XML_FILE = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
     public MessageDecoderXML(String path) {
-        XML_FILE = path;
+        //XML_FILE = path;
     }
 
     public Message decode() throws IOException {
