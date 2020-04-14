@@ -5,10 +5,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientHandlerSocket implements Runnable {
-    private Socket socket;
+public class ServerClientHandlerSocket implements Runnable {
+    private final Socket socket;
 
-    public ClientHandlerSocket(Socket socket){
+    public ServerClientHandlerSocket(Socket socket){
         this.socket = socket;
     }
 

@@ -1,6 +1,9 @@
-package it.polimi.ingsw.communication.message.xml;
+package it.polimi.ingsw.communication.message.xml.network;
 
 import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.xml.AnswerXML;
+import it.polimi.ingsw.communication.message.xml.DemandXML;
+import it.polimi.ingsw.communication.message.xml.MessageXML;
 
 import java.beans.XMLDecoder;
 import java.io.BufferedInputStream;
@@ -8,11 +11,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class MessageDecoder {
+public class MessageDecoderXML {
 
     private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
-    public MessageDecoder(String path) {
+    public MessageDecoderXML(String path) {
         XML_FILE = path;
     }
 

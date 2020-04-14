@@ -6,10 +6,10 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MultiTaskServer {
-    private int port;
+public class ServerManager {
+    private final int port;
 
-    public MultiTaskServer(int port){
+    public ServerManager(int port){
         this.port = port;
     }
 
@@ -29,11 +29,12 @@ public class MultiTaskServer {
         while (true){
             try{
                 Socket socket = serverSocket.accept();
-                executor.submit(new ClientHandlerSocket(socket));
+                executor.submit(new ServerClientHandlerSocket(socket));
             }catch(IOException e){
                 break; //In case the serverSocket gets closed
             }
         }
+
         executor.shutdown();
         serverSocket.close();
     }

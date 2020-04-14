@@ -1,17 +1,18 @@
-package it.polimi.ingsw.communication.message.xml;
+package it.polimi.ingsw.communication.message.xml.network;
 
 import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.xml.MessageXML;
 
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 
-public class MessageEncoder {
+public class MessageEncoderXML {
 
     private final String XML_FILE; // = "src/main/java/it/polimi/ingsw/communication/message/xml/message.xml";
 
-    public MessageEncoder(String path) {
+    public MessageEncoderXML(String path) {
         XML_FILE = path;
     }
 

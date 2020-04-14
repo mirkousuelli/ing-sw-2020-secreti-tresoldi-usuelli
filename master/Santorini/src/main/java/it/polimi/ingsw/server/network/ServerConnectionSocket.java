@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 
-public class SocketClientConnection extends Observable<Demand> implements ClientConnection, Runnable {
+public class ServerConnectionSocket extends Observable<Demand> implements ServerConnectionType, Runnable {
 
     private Socket socket;
     private ObjectOutputStream out;
@@ -17,7 +17,7 @@ public class SocketClientConnection extends Observable<Demand> implements Client
 
     private boolean active = true;
 
-    public SocketClientConnection(Socket socket, Server server) {
+    public ServerConnectionSocket(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
     }
