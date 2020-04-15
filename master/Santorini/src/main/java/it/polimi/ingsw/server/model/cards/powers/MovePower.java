@@ -11,6 +11,7 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.tags.effectType.BlockType;
 import it.polimi.ingsw.server.model.cards.powers.tags.effectType.MovementType;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
@@ -19,7 +20,7 @@ import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.List;
 
-public class MovePower extends ActivePower {
+public class MovePower<S> extends ActivePower<S> {
 
     public MovePower() {
         super();
@@ -33,12 +34,12 @@ public class MovePower extends ActivePower {
         Block newPos;
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
-        if (allowedMove.equals(MovementType.SWAP)) {
+        if (getAllowedAction().equals(MovementType.SWAP)) {
             newPos = workerToUse.getLocation();
 
             return move(currentPlayer, cellToMove, opponentWorker, newPos);
         }
-        else if (allowedMove.equals(MovementType.PUSH)) {
+        else if (getAllowedAction().equals(MovementType.PUSH)) {
             newPos = (Block) find(currentPlayer, cellToMove, adjacency);
 
             if (newPos == null) return false;
@@ -120,5 +121,10 @@ public class MovePower extends ActivePower {
 
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "MOVE";
     }
 }

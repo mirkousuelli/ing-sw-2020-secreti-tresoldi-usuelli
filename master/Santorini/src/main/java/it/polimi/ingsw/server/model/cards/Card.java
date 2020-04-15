@@ -22,7 +22,7 @@ public class Card {
 
     private String name;
     private String description;
-    private List<Power> powerList;
+    private final List<Power> powerList;
 
     public Card() {
         /*@constructor

@@ -31,7 +31,7 @@ import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
  *     Powers must have also a constructor which take an instance of the temporary sub-class to initialize by copy its attributes.
  *     Power should have a getter for each attribute of Power.
  */
-public class Power {
+public class Power<S> {
     /**
      * Represents the state the worker must be to be able to use the power.
      * It can be unmoved or default.
@@ -64,28 +64,8 @@ public class Power {
      */
     protected Constraints constraints;
     /**
-     * Symbolizes which blocks can be built with the god's power.
-     * For example, Atlas' power allows the player to build only domes as an additional build.
-     */
-    protected BlockType allowedBlock;
-    /**
-     * Symbolizes which moves are permitted with the god's power.
-     * For example, Minotaur's power allows the player to push straight backwards an opponent's worker.
-     */
-    protected MovementType allowedMove;
-    /**
-     * Represents an additional way with which the player can win a game.
-     * For example, Pan's power allows the player to win if one of its workers moves down two or more levels.
-     */
-    protected WinType allowedWin;
-    /**
-     * Represents a malus that can/must be applied on the opponents.
-     * It can be a move malus or a build one.
-     * Also, it can be permanent or limited to a specific number of turns.
-     * For example, Persephone's power applies a permanent move malus on the opponents.
-     * Opponents, if possible, must move up.
-     */
-    protected Malus malus;
+     * */
+    protected S allowedAction;
     /**
      * Represents a complementary malus.
      * That is to say, a malus applied on the owner of the card when he will use its god's power.
@@ -140,36 +120,12 @@ public class Power {
         return constraints;
     }
 
-    public BlockType getAllowedBlock() {
-        return allowedBlock;
+    public S getAllowedAction() {
+        return allowedAction;
     }
 
-    public void setAllowedBlock(BlockType allowedBlock) {
-        this.allowedBlock = allowedBlock;
-    }
-
-    public MovementType getAllowedMove() {
-        return allowedMove;
-    }
-
-    public void setAllowedMove(MovementType allowedMove) {
-        this.allowedMove = allowedMove;
-    }
-
-    public WinType getAllowedWin() {
-        return allowedWin;
-    }
-
-    public void setAllowedWin(WinType allowedWin) {
-        this.allowedWin = allowedWin;
-    }
-
-    public Malus getMalus() {
-        return malus;
-    }
-
-    public void setMalus(Malus malus) {
-        this.malus = malus;
+    public void setAllowedAction(S allowedAction) {
+        this.allowedAction = allowedAction;
     }
 
     public Malus getPersonalMalus() {

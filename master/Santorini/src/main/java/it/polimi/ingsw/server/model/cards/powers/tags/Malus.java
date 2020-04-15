@@ -11,7 +11,7 @@ public class Malus {
     private MalusType malusType;
     private boolean permanent;
     private int numberOfTurns;
-    private List<MalusLevel> direction;
+    private final List<MalusLevel> direction;
 
     public Malus() {
         direction = new ArrayList<>();

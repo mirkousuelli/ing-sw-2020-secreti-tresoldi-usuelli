@@ -19,7 +19,7 @@ import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.List;
 
-public class BuildPower extends ActivePower {
+public class BuildPower<S> extends ActivePower<S> {
 
     public BuildPower() {
         super();
@@ -31,7 +31,7 @@ public class BuildPower extends ActivePower {
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
 
-        if (allowedBlock.equals(BlockType.DOME)) {
+        if (getAllowedAction().equals(BlockType.DOME)) {
             return build(cellToBuild, 4);
         }
 
@@ -48,5 +48,10 @@ public class BuildPower extends ActivePower {
         ((Block) cellToBuild).addPawn(temp);
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "BUILD";
     }
 }

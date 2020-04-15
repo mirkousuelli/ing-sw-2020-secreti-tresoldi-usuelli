@@ -84,20 +84,20 @@ public class HandlerDTD extends DefaultHandler {
                 case "EFFECT":
                     switch (attributes.getValue("what")) {
                         case "move":
-                            this.currCard.addPower(new MovePower());
+                            this.currCard.addPower(new MovePower<MovementType>());
                             break;
                         case "build":
-                            this.currCard.addPower(new BuildPower());
+                            this.currCard.addPower(new BuildPower<BlockType>());
                             break;
                         case "malus":
-                            this.currCard.addPower(new MalusPower());
+                            this.currCard.addPower(new MalusPower<Malus>());
                             break;
                         case "win":
-                            this.currCard.addPower(new WinConditionPower());
+                            this.currCard.addPower(new WinConditionPower<WinType>());
                             break;
-                        default:
+                        /*default:
                             this.currCard.addPower(new Power());
-                            break;
+                            break;*/
                     }
 
                     this.currCard.getPower(indexPower).setEffect(Effect.parseString(attributes.getValue("what")));
@@ -128,18 +128,17 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "MOVE":
-                    this.currCard.getPower(indexPower).setAllowedMove(MovementType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedAction(MovementType.parseString(attributes.getValue("type")));
                     break;
 
                 case "BUILD":
-                    this.currCard.getPower(indexPower).setAllowedBlock(BlockType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedAction(BlockType.parseString(attributes.getValue("type")));
                     break;
 
                 case "MALUS":
-                    this.currCard.getPower(indexPower).setMalus(new Malus());
-                    this.currCard.getPower(indexPower).getMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
-                    this.currCard.getPower(indexPower).getMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
+                    this.currCard.getPower(indexPower).setAllowedAction(new Malus());
+                    ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).setMalusType(MalusType.parseString(attributes.getValue("type")));
+                    ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
                     personal = false;
                     break;
 
@@ -147,7 +146,6 @@ public class HandlerDTD extends DefaultHandler {
                     this.currCard.getPower(indexPower).setPersonalMalus(new Malus());
                     this.currCard.getPower(indexPower).getPersonalMalus().setMalusType(MalusType.parseString(attributes.getValue("type")));
                     this.currCard.getPower(indexPower).getPersonalMalus().setPermanent(attributes.getValue("permanent").equalsIgnoreCase("true"));
-                    //this.currCard.getPower(indexPower).getMalus().setPersonal(attributes.getValue("personal").equalsIgnoreCase("true"));
                     personal = true;
                     break;
 
@@ -155,28 +153,28 @@ public class HandlerDTD extends DefaultHandler {
                     if (personal)
                         this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.UP);
                     else
-                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.UP);
+                        ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).addDirectionElement(MalusLevel.UP);
                     break;
 
                 case "DOWN":
                     if (personal)
                         this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.DOWN);
                     else
-                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DOWN);
+                        ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).addDirectionElement(MalusLevel.DOWN);
                     break;
 
                 case "SAME":
                     if (personal)
                         this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.SAME);
                     else
-                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.SAME);
+                        ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).addDirectionElement(MalusLevel.SAME);
                     break;
 
                 case "DEFAULT":
                     if (personal)
                         this.currCard.getPower(indexPower).getPersonalMalus().addDirectionElement(MalusLevel.DEFAULT);
                     else
-                        this.currCard.getPower(indexPower).getMalus().addDirectionElement(MalusLevel.DEFAULT);
+                        ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).addDirectionElement(MalusLevel.DEFAULT);
                     break;
 
                 case "NUMTURNS":
@@ -184,7 +182,7 @@ public class HandlerDTD extends DefaultHandler {
                     break;
 
                 case "WIN":
-                    this.currCard.getPower(indexPower).setAllowedWin(WinType.parseString(attributes.getValue("type")));
+                    this.currCard.getPower(indexPower).setAllowedAction(WinType.parseString(attributes.getValue("type")));
                     break;
 
                 default:
@@ -227,7 +225,7 @@ public class HandlerDTD extends DefaultHandler {
             if (personal)
                 this.currCard.getPower(indexPower).getPersonalMalus().setNumberOfTurns(Integer.parseInt(str));
             else
-                this.currCard.getPower(indexPower).getMalus().setNumberOfTurns(Integer.parseInt(str));
+                ((Malus) this.currCard.getPower(indexPower).getAllowedAction()).setNumberOfTurns(Integer.parseInt(str));
             numturns = false;
         }
     }

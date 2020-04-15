@@ -27,7 +27,7 @@ public class Player {
     private final List<Worker> worker;
     private Card card;
     private Worker currentWorker;
-    private List<Malus> malusList;
+    private final List<Malus> malusList;
 
     public Player(String nickName) {
         /*@constructor

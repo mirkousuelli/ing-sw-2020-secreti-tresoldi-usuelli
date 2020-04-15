@@ -12,21 +12,27 @@ package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.effectType.MovementType;
 
 import java.util.List;
 
-public class MalusPower extends Power {
+public class MalusPower<S> extends Power<S> {
 
     public MalusPower() {
         super();
     }
 
     public boolean usePower(List<Player> opponents) {
-        Malus malusPlayer = new Malus(malus);
+        Malus malusPlayer = new Malus((Malus) allowedAction);
 
         for (Player opponent : opponents)
             opponent.addMalus(malusPlayer);
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "MALUS";
     }
 }

@@ -12,7 +12,10 @@ package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.WorkerPosition;
 import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
@@ -21,7 +24,7 @@ import java.util.List;
 /**
  *
  */
-public abstract class ActivePower extends Power {
+public abstract class ActivePower<S> extends Power<S> {
 
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
@@ -44,7 +47,8 @@ public abstract class ActivePower extends Power {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        //if (!workerInitPos.equals(WorkerPosition.DEFAULT) && !workerToUse.getLocation().getLevel().equals(workerInitPos)) return false;
+        if (!workerInitPos.equals(WorkerPosition.DEFAULT)) return false;
+        if (verifyMalus(currentPlayer, cellToUse)) return false;
 
         setNumberOfActionsRemaining();
 
@@ -70,12 +74,14 @@ public abstract class ActivePower extends Power {
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
 
+        if (timing.equals(Timing.DEFAULT)) {
+            //----------------------------------------------------
+        }
 
         if (constraints.isUnderItself())
             return workerToUse.getLocation().equals(cellToUse);
         else
             return isAdjacent(cellToUse);
-
     }
 
     public boolean usePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency) {
@@ -99,5 +105,33 @@ public abstract class ActivePower extends Power {
     private boolean isAdjacent(Cell cellToUse) {
         return (cellToUse.getX() - workerToUse.getLocation().getX() >= -1 && cellToUse.getX() - workerToUse.getLocation().getX() <=1  &&
                 cellToUse.getY() - workerToUse.getLocation().getY() >= -1 && cellToUse.getY() - workerToUse.getLocation().getY() <=1);
+    }
+
+    protected boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
+        if (currentPlayer.getMalusList() != null) {
+            for (Malus malus : currentPlayer.getMalusList()) {
+                for (MalusLevel direction : malus.getDirection()) {
+                    switch (direction) {
+                        case UP:
+                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > cellToUse.getLevel().toInt())
+                                return false;
+                            break;
+                        case DOWN:
+                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() < cellToUse.getLevel().toInt())
+                                return false;
+                            break;
+                        case SAME:
+                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt().equals(cellToUse.getLevel().toInt()))
+                                return false;
+                            break;
+                        case DEFAULT:
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

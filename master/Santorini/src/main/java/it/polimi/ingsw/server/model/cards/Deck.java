@@ -21,8 +21,8 @@ public class Deck {
      * it contains a list of the 14 chosen cards
      */
 
-    private List<Card> cards;
-    private ParserXML parser;
+    private final List<Card> cards;
+    private final ParserXML parser;
 
     public Deck() throws ParserConfigurationException, SAXException {
         /*@constructor
