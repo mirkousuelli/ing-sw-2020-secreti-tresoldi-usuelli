@@ -1,9 +1,6 @@
-package it.polimi.ingsw.communication.message.xml.network;
+package it.polimi.ingsw.communication.message.xml.network.serialization.stream;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class InputStreamXML extends ByteArrayInputStream {
 

@@ -3,18 +3,18 @@
  <object class="it.polimi.ingsw.communication.message.xml.AnswerXML">
   <void property="context">
    <object class="java.lang.Enum" method="valueOf">
-    <class>it.polimi.ingsw.communication.message.DemandType</class>
-    <string>JOIN_GAME</string>
+    <class>it.polimi.ingsw.communication.message.header.DemandType</class>
+    <string>CREATE_GAME</string>
    </object>
   </void>
   <void property="header">
    <object class="java.lang.Enum" method="valueOf">
-    <class>it.polimi.ingsw.communication.message.AnswerType</class>
-    <string>SUCCESS</string>
+    <class>it.polimi.ingsw.communication.message.header.AnswerType</class>
+    <string>ERROR</string>
    </object>
   </void>
   <void property="payload">
-   <string>Mirko Gay</string>
+   <string>1234</string>
   </void>
  </object>
 </java>

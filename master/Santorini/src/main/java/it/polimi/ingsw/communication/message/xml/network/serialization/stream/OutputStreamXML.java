@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message.xml.network;
+package it.polimi.ingsw.communication.message.xml.network.serialization.stream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -7,7 +7,7 @@ import java.io.OutputStream;
 
 public class OutputStreamXML extends ByteArrayOutputStream {
 
-    private DataOutputStream outChannel;
+    private final DataOutputStream outChannel;
 
     public OutputStreamXML(OutputStream outChannel) {
         super();
@@ -20,9 +20,5 @@ public class OutputStreamXML extends ByteArrayOutputStream {
         outChannel.write(data);
         reset();
     }
-
-    /*public void flush() throws IOException {
-        this.outChannel.flush();
-    }*/
 
 }

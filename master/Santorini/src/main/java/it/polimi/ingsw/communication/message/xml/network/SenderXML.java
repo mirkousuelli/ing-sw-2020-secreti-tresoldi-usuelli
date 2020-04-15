@@ -1,33 +1,56 @@
 package it.polimi.ingsw.communication.message.xml.network;
 
-import org.w3c.dom.Document;
+import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.xml.MessageXML;
+import it.polimi.ingsw.communication.message.xml.network.serialization.SerializeXML;
+import org.xml.sax.SAXException;
 
-import javax.xml.transform.Transformer;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.beans.ExceptionListener;
+import java.beans.XMLEncoder;
+import java.io.*;
 
 public class SenderXML {
 
-    public static void send(Document toSend, OutputStream channel) throws TransformerConfigurationException, IOException {
-        OutputStreamXML out = new OutputStreamXML(channel);
+    private final String XML_FILE;
 
-        StreamResult sr = new StreamResult(out);
-        DOMSource ds = new DOMSource(toSend);
-        Transformer tf = TransformerFactory.newInstance().newTransformer();
-
-        try {
-            tf.transform(ds, sr);
-        } catch (TransformerException ex) {
-            Logger.getLogger(SenderXML.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        out.send();
+    public SenderXML(String path) {
+        XML_FILE = path;
     }
+
+    public void encode(Message message) throws IOException {
+        try{
+            FileOutputStream fos = new FileOutputStream(XML_FILE);
+            XMLEncoder encoder = new XMLEncoder(fos);
+            MessageXML toEncode = message.messageToXML();
+
+            encoder.setExceptionListener(new ExceptionListener() {
+                public void exceptionThrown(Exception e) {
+                    System.out.println("Exception! :" + e.toString());
+                }
+            });
+
+            encoder.writeObject(toEncode);
+            encoder.close();
+            fos.close();
+
+        }catch(FileNotFoundException fileNotFound){
+            System.out.println("ERROR: While Creating or Opening the File" + XML_FILE + ".xml");
+        }
+    }
+
+    public void send(Message message, OutputStream out) throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException {
+        this.encode(message);
+
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+        Document doc = docBuilder.parse(XML_FILE);
+
+        SerializeXML.send(doc, out);
+    }
+
 }

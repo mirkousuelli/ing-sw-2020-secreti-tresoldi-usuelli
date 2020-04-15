@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message;
+package it.polimi.ingsw.communication.message.header;
 
 public enum DemandType {
     CREATE_GAME,

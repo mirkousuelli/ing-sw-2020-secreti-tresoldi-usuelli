@@ -1,30 +1,64 @@
 package it.polimi.ingsw.communication.message.xml.network;
 
+import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.xml.AnswerXML;
+import it.polimi.ingsw.communication.message.xml.DemandXML;
+import it.polimi.ingsw.communication.message.xml.MessageXML;
+import it.polimi.ingsw.communication.message.xml.network.serialization.DeserializeXML;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.beans.XMLDecoder;
+import java.io.*;
 
 public class ReceiverXML {
 
-    public static Document receive(InputStream channel) throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
+    private final String XML_FILE;
 
-        DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
-        Document request = null;
+    public ReceiverXML(String path) {
+        XML_FILE = path;
+    }
 
+    public Message decode() throws IOException {
 
-        InputStreamXML xmlin = new InputStreamXML(channel);
+        try {
+            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(XML_FILE)));
+            MessageXML decoded = (MessageXML) decoder.readObject();
 
-        xmlin.receive();
+            if (decoded.getHeader() instanceof DemandType) {
+                return new Demand((DemandXML) decoded);
+            } else if (decoded.getHeader() instanceof AnswerType){
+                return new Answer((AnswerXML) decoded);
+            }
 
-        request = docBuilder.parse(xmlin);
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File " + XML_FILE + ".xml not found");
+        }
 
-        return request;
+        return null;
+    }
+
+    public Message receive(InputStream in) throws IOException {
+        try {
+            Document doc = DeserializeXML.receive(in);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result =  new StreamResult(new File(XML_FILE));
+            transformer.transform(source, result);
+
+            return this.decode();
+        } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
