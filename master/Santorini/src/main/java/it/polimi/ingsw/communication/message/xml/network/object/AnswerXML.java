@@ -1,7 +1,7 @@
-package it.polimi.ingsw.communication.message.xml;
+package it.polimi.ingsw.communication.message.xml.network.object;
 
-import it.polimi.ingsw.communication.message.AnswerType;
-import it.polimi.ingsw.communication.message.DemandType;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 
 public class AnswerXML<S> extends MessageXML<AnswerType, S> {
 

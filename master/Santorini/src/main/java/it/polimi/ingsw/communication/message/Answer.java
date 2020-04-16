@@ -1,6 +1,8 @@
 package it.polimi.ingsw.communication.message;
 
-import it.polimi.ingsw.communication.message.xml.AnswerXML;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.xml.network.object.AnswerXML;
 
 public class Answer<S> extends Message<AnswerType, S> {
 

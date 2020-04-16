@@ -1,89 +1,46 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.observer.Observable;
-
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ServerConnectionSocket extends Observable<Demand> implements ServerConnectionType, Runnable {
+public class ServerConnectionSocket implements ServerConnection {
+    private final int port;
 
-    private Socket socket;
-    private ObjectOutputStream out;
-    private Server server;
-
-    private boolean active = true;
-
-    public ServerConnectionSocket(Socket socket, Server server) {
-        this.socket = socket;
-        this.server = server;
+    public ServerConnectionSocket(int port){
+        this.port = port;
     }
 
-    private synchronized boolean isActive(){
-        return active;
-    }
+    public void startServer() throws IOException{
+        //It creates threads when necessary, otherwise it re-uses existing one when possible
+        ExecutorService executor = Executors.newCachedThreadPool();
+        ServerSocket serverSocket;
 
-    private synchronized void send(Object message) {
-        try {
-            out.reset();
-            out.writeObject(message);
-            out.flush();
-        } catch(IOException e){
-            System.err.println(e.getMessage());
-        }
-
-    }
-
-    @Override
-    public synchronized void closeConnection() {
-        send("Connection closed!");
-        try {
-            socket.close();
-        } catch (IOException e) {
-            System.err.println("Error when closing socket!");
-        }
-        active = false;
-    }
-
-    private void close() {
-        closeConnection();
-        System.out.println("Deregistering client...");
-        //server.deregisterConnection(this);
-        System.out.println("Done!");
-    }
-
-    @Override
-    public void asyncSend(final Object message){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                send(message);
-            }
-        }).start();
-    }
-
-    @Override
-    public void run() {
-        ObjectInputStream in;
-        Demand demand;
         try{
-            in = new ObjectInputStream(socket.getInputStream());
-            out = new ObjectOutputStream(socket.getOutputStream());
-            send("Welcome!\nWhat is your name?");
-            Demand read = (Demand) in.readObject();
-            demand = read;
-            //server.lobby(this, demand);
-            while(isActive()){
-                read = (Demand) in.readObject();
-                notify(read);
-            }
-        } catch (IOException | NoSuchElementException | ClassNotFoundException e) {
-            System.err.println("Error!" + e.getMessage());
-        }finally{
-            close();
+            serverSocket = new ServerSocket(port);
+        }catch (IOException e){
+            System.err.println(e.getMessage()); //port not available
+            return;
         }
+
+        //System.out.println("Server ready");
+
+        while (true){
+            try{
+                Socket socket = serverSocket.accept();
+                executor.submit(new ServerClientHandlerSocket(socket, this));
+            }catch(IOException e){
+                break; //In case the serverSocket gets closed
+            }
+        }
+
+        executor.shutdown();
+        serverSocket.close();
     }
+
+    //register
+
+    //unregister
 }

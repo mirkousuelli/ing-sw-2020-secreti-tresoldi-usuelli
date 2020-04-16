@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message;
+package it.polimi.ingsw.communication.message.payload;
 
 public class MessageCell {
     private final int x;

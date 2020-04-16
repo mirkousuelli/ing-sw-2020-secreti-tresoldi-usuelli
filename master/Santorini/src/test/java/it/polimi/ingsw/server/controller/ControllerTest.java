@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.DemandType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.state.Game;
 import it.polimi.ingsw.server.model.state.states.Build;

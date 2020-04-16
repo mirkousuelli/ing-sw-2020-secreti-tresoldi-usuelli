@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="13.0.2" class="java.beans.XMLDecoder">
+ <object class="it.polimi.ingsw.communication.message.xml.network.object.DemandXML">
+  <void property="header">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>it.polimi.ingsw.communication.message.header.DemandType</class>
+    <string>UNDO</string>
+   </object>
+  </void>
+  <void property="payload">
+   <string>1234</string>
+  </void>
+ </object>
+</java>
