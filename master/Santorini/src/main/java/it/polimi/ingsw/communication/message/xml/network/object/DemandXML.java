@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message.xml;
+package it.polimi.ingsw.communication.message.xml.network.object;
 
 import it.polimi.ingsw.communication.message.header.DemandType;
 

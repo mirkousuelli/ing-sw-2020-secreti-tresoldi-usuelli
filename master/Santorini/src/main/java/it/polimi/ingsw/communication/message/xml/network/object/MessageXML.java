@@ -1,6 +1,4 @@
-package it.polimi.ingsw.communication.message.xml;
-
-import it.polimi.ingsw.communication.message.Message;
+package it.polimi.ingsw.communication.message.xml.network.object;
 
 public abstract class MessageXML<H, P> {
 

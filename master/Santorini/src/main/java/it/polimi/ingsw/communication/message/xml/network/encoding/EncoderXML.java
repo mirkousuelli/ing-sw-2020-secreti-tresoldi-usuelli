@@ -1,8 +1,7 @@
-package it.polimi.ingsw.communication.message.xml.network;
+package it.polimi.ingsw.communication.message.xml.network.encoding;
 
 import it.polimi.ingsw.communication.message.*;
-import it.polimi.ingsw.communication.message.xml.MessageXML;
-import it.polimi.ingsw.communication.message.xml.network.serialization.SerializeXML;
+import it.polimi.ingsw.communication.message.xml.network.object.MessageXML;
 import org.xml.sax.SAXException;
 
 import org.w3c.dom.Document;
@@ -14,11 +13,11 @@ import java.beans.ExceptionListener;
 import java.beans.XMLEncoder;
 import java.io.*;
 
-public class SenderXML {
+public class EncoderXML {
 
     private final String XML_FILE;
 
-    public SenderXML(String path) {
+    public EncoderXML(String path) {
         XML_FILE = path;
     }
 
@@ -43,7 +42,7 @@ public class SenderXML {
         }
     }
 
-    public void send(Message message, OutputStream out) throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException {
+    /*public void send(Message message, OutputStream out) throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException {
         this.encode(message);
 
         DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -51,6 +50,6 @@ public class SenderXML {
         Document doc = docBuilder.parse(XML_FILE);
 
         SerializeXML.send(doc, out);
-    }
+    }*/
 
 }

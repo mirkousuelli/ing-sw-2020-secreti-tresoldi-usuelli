@@ -1,7 +1,7 @@
 package it.polimi.ingsw.communication.message;
 
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.xml.DemandXML;
+import it.polimi.ingsw.communication.message.xml.network.object.DemandXML;
 
 public class Demand<S> extends Message<DemandType, S> {
 

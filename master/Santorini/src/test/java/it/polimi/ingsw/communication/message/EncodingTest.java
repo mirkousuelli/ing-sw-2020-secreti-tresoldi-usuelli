@@ -2,8 +2,8 @@ package it.polimi.ingsw.communication.message;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.xml.network.ReceiverXML;
-import it.polimi.ingsw.communication.message.xml.network.SenderXML;
+import it.polimi.ingsw.communication.message.xml.network.encoding.DecoderXML;
+import it.polimi.ingsw.communication.message.xml.network.encoding.EncoderXML;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,26 +11,26 @@ import java.io.IOException;
 
 public class EncodingTest {
     private final String FILE = "src/test/java/it/polimi/ingsw/communication/message/message_sent.xml";
-    private final SenderXML encoderXML = new SenderXML(FILE);
-    private final ReceiverXML decoderXML = new ReceiverXML(FILE);
+    private final EncoderXML encoderXML = new EncoderXML(FILE);
+    private final DecoderXML decoderXML = new DecoderXML(FILE);
     private final String payload = "1234";
 
     @Test
     public void AnswerTest() throws IOException
     {
-        Message toSend;
-        Message decoded;
+        Message toEncode;
+        Message toDecode;
 
         for (AnswerType header : AnswerType.values()) {
             for (DemandType context : DemandType.values()) {
                 // test
-                toSend = new Answer<>(header, context, this.payload);
-                encoderXML.encode(toSend);
-                decoded = decoderXML.decode();
+                toEncode = new Answer<>(header, context, this.payload);
+                encoderXML.encode(toEncode);
+                toDecode = decoderXML.decode();
 
-                assertEquals(decoded.getHeader(), toSend.getHeader());
-                assertEquals(((Answer)decoded).getContext(), ((Answer)toSend).getContext());
-                assertEquals(decoded.getPayload(), toSend.getPayload());
+                assertEquals(toDecode.getHeader(), toEncode.getHeader());
+                assertEquals(((Answer)toDecode).getContext(), ((Answer)toEncode).getContext());
+                assertEquals(toDecode.getPayload(), toEncode.getPayload());
             }
         }
     }
@@ -38,17 +38,17 @@ public class EncodingTest {
     @Test
     public void DemandTest() throws IOException
     {
-        Message toSend;
-        Message decoded;
+        Message toEncode;
+        Message toDecode;
 
         for (DemandType header : DemandType.values()) {
             // test
-            toSend = new Demand<>(header, this.payload);
-            encoderXML.encode(toSend);
-            decoded = decoderXML.decode();
+            toEncode = new Demand<>(header, this.payload);
+            encoderXML.encode(toEncode);
+            toDecode = decoderXML.decode();
 
-            assertEquals(decoded.getHeader(), toSend.getHeader());
-            assertEquals(decoded.getPayload(), toSend.getPayload());
+            assertEquals(toDecode.getHeader(), toEncode.getHeader());
+            assertEquals(toDecode.getPayload(), toEncode.getPayload());
         }
     }
 }

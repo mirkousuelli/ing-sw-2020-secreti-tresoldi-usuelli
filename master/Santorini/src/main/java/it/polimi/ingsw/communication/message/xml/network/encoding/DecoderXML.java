@@ -1,12 +1,12 @@
-package it.polimi.ingsw.communication.message.xml.network;
+package it.polimi.ingsw.communication.message.xml.network.encoding;
 
 import it.polimi.ingsw.communication.message.*;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.xml.AnswerXML;
-import it.polimi.ingsw.communication.message.xml.DemandXML;
-import it.polimi.ingsw.communication.message.xml.MessageXML;
-import it.polimi.ingsw.communication.message.xml.network.serialization.DeserializeXML;
+import it.polimi.ingsw.communication.message.xml.network.object.AnswerXML;
+import it.polimi.ingsw.communication.message.xml.network.object.DemandXML;
+import it.polimi.ingsw.communication.message.xml.network.object.MessageXML;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -19,15 +19,15 @@ import javax.xml.transform.stream.StreamResult;
 import java.beans.XMLDecoder;
 import java.io.*;
 
-public class ReceiverXML {
+public class DecoderXML {
 
     private final String XML_FILE;
 
-    public ReceiverXML(String path) {
+    public DecoderXML(String path) {
         XML_FILE = path;
     }
 
-    public Message decode() throws IOException {
+    public Message decode() {
 
         try {
             XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(XML_FILE)));
@@ -46,7 +46,7 @@ public class ReceiverXML {
         return null;
     }
 
-    public Message receive(InputStream in) throws IOException {
+    /*public Message receive(InputStream in) throws IOException {
         try {
             Document doc = DeserializeXML.receive(in);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -60,5 +60,5 @@ public class ReceiverXML {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 }
