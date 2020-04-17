@@ -6,6 +6,7 @@ public enum DemandType {
     START,
     CHOOSE_DECK,
     CHOOSE_CARD,
+    PLACE_WORKERS,
     CHOOSE_WORKER,
     MOVE,
     BUILD,
@@ -25,6 +26,8 @@ public enum DemandType {
                 return CHOOSE_DECK;
             case "chooseCard":
                 return CHOOSE_CARD;
+            case "placeWorkers":
+                return PLACE_WORKERS;
             case "chooseWorker":
                 return CHOOSE_WORKER;
             case "move":
@@ -55,6 +58,8 @@ public enum DemandType {
                 return "chooseDeck";
             case CHOOSE_CARD:
                 return "chooseCard";
+            case PLACE_WORKERS:
+                return "placeWorkers";
             case CHOOSE_WORKER:
                 return "chooseWorker";
             case MOVE:

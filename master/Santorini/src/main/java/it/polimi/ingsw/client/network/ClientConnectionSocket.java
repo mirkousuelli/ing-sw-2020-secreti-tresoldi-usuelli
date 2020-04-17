@@ -1,22 +1,26 @@
 package it.polimi.ingsw.client.network;
 
+import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.DemandType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.xml.network.InputStreamXML;
 import it.polimi.ingsw.communication.message.xml.network.OutputStreamXML;
+import it.polimi.ingsw.communication.observer.Observable;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 
-public class ClientConnectionSocket implements ClientConnection {
+public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements ClientConnection<S> {
     private String ip;
     private int port;
 
-    public ClientConnectionSocket(String ip, int port){
+    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView){
         this.ip = ip;
         this.port = port;
+        this.addObserver(clientView);
     }
 
     public void startClient() throws IOException {
@@ -50,5 +54,18 @@ public class ClientConnectionSocket implements ClientConnection {
             socket.close();
         }
     }
+
+    @Override
+    public void update(Demand<S> message) {
+
+    }
+
+    @Override
+    public void closeConnection() {
+        socketIn.close();
+        socketOut.close();
+        socket.close();
+    }
+
 
 }

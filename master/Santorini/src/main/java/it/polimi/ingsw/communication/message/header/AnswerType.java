@@ -4,7 +4,11 @@ public enum AnswerType {
     ERROR,
     SUCCESS,
     DEFEAT,
-    VICTORY;
+    VICTORY,
+    START,
+    CHOOSE_DECK,
+    CHOOSE_CARD,
+    CHOOSE_STARTER;
 
     public AnswerType parseString(String str) {
         switch (str) {
@@ -16,6 +20,14 @@ public enum AnswerType {
                 return DEFEAT;
             case "victory":
                 return VICTORY;
+            case "start":
+                return START;
+            case "chooseDeck":
+                return CHOOSE_DECK;
+            case "chooseCard":
+                return CHOOSE_CARD;
+            case "chooseStarter":
+                return CHOOSE_STARTER;
             default:
                 return null;
         }
@@ -32,6 +44,14 @@ public enum AnswerType {
                 return "defeat";
             case VICTORY:
                 return "victory";
+            case START:
+                return "start";
+            case CHOOSE_DECK:
+                return "chooseDeck";
+            case CHOOSE_CARD:
+                return "chooseCard";
+            case CHOOSE_STARTER:
+                return "chooseStarter";
             default:
                 return null;
         }

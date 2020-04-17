@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.communication.message.Answer;
-import it.polimi.ingsw.communication.message.AnswerType;
-import it.polimi.ingsw.communication.message.DemandType;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.model.state.Game;
 import it.polimi.ingsw.server.view.ActionToPerformView;
@@ -17,12 +17,12 @@ public class Controller implements Observer<ActionToPerformView> {
 
     private synchronized void performAction(ActionToPerformView actionToPerformView) {
         if (!model.getCurrentPlayer().nickName.equals(actionToPerformView.getPlayer())) {
-            actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), "Not current player"));
+            actionToPerformView.getIView().reportError(new Answer<String>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), "Not current player"));
             return;
         }
 
         if (!model.getState().toString().equals(actionToPerformView.getDemand().getHeader().toString())) {
-            actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), "Not permitted"));
+            actionToPerformView.getIView().reportError(new Answer<String>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), "Not permitted"));
             return;
         }
 
