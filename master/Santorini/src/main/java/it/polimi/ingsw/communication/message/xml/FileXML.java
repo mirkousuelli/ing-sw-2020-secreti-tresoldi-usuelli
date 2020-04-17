@@ -24,13 +24,13 @@ public class FileXML {
         this.receiver = new DeserializerXML(pathFile, sock);
     }
 
-    public void write(Message message) throws IOException {
+    public void send(Message message) throws IOException {
         this.encoder.encode(message);
-        this.sender.send();
+        this.sender.write();
     }
 
-    public Message read() throws IOException {
-        this.receiver.receive();
+    public Message receive() throws IOException {
+        this.receiver.read();
         return this.decoder.decode();
     }
 

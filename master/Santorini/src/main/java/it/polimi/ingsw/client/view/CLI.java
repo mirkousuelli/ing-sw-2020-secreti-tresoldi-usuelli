@@ -4,7 +4,7 @@ import it.polimi.ingsw.client.network.ClientConnection;
 import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.reduced.ReducedCell;
+import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.server.model.cards.God;
 
 import java.util.ArrayList;

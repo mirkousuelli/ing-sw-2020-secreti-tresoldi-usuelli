@@ -18,16 +18,17 @@ public class DeserializerXML {
         this.sock = sock;
     }
 
-    public void receive() throws IOException {
+    public void read() throws IOException {
         int bytesRead;
         int current = 0;
 
+        byte[] myByteArray = new byte[FILE_SIZE];
+        fos = new FileOutputStream(file);
+        bos = new BufferedOutputStream(fos);
+
         try {
             // receive file
-            byte[] myByteArray = new byte[FILE_SIZE];
             is = sock.getInputStream();
-            fos = new FileOutputStream(file);
-            bos = new BufferedOutputStream(fos);
             bytesRead = is.read(myByteArray, 0, myByteArray.length);
             current = bytesRead;
 
@@ -44,8 +45,9 @@ public class DeserializerXML {
             e.printStackTrace();
         }
         finally {
-            if (fos != null) fos.close();
             if (bos != null) bos.close();
+            if (fos != null) fos.close();
+            //if (is != null) is.close();
         }
     }
 }

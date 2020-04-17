@@ -10,39 +10,41 @@ public class SerializerXML {
     private FileInputStream fis;
     private BufferedInputStream bis;
     private OutputStream os;
-    private Socket sock;
+    private final Socket sock;
 
     public SerializerXML(String pathFile, Socket sock) throws FileNotFoundException {
         this.file = new File (pathFile);
         this.sock = sock;
     }
 
-    public void send() {
-        int end = 0;
+    public void write() throws IOException {
+        int end;
+
+        byte [] myByteArray  = new byte [(int)file.length()];
+        fis = new FileInputStream(file);
+        bis = new BufferedInputStream(fis);
+
         try {
-            while (end != this.EOF) {
-                try {
-                    // send file
-                    byte [] myByteArray  = new byte [(int)file.length()];
-                    fis = new FileInputStream(file);
-                    bis = new BufferedInputStream(fis);
+            do {
+                end = bis.read(myByteArray,0,myByteArray.length);
+                if (end != this.EOF) {
+                    try {
+                        // send file
+                        os = sock.getOutputStream();
 
-                    end = bis.read(myByteArray,0,myByteArray.length);
-                    os = sock.getOutputStream();
-
-                    os.write(myByteArray,0,myByteArray.length);
-                    os.flush();
+                        os.write(myByteArray,0,myByteArray.length);
+                        os.flush();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                finally {
-                    if (bis != null) bis.close();
-                    if (os != null) os.close();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            } while (end != this.EOF);
+        }
+        finally {
+            if (bis != null) bis.close();
+            if (fis != null) fis.close();
+            //if (os != null) os.close();
         }
     }
 }
