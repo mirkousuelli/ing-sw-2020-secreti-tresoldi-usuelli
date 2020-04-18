@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
+    private final String FILE = "src/main/java/it/polimi/ingsw/server/network/message/message_lobby-0001.xml"; // X TESTING
 
     public ServerConnectionSocket(int port){
         this.port = port;
@@ -17,6 +18,7 @@ public class ServerConnectionSocket implements ServerConnection {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
+        Socket socket = null;
 
         try{
             serverSocket = new ServerSocket(port);
@@ -25,18 +27,20 @@ public class ServerConnectionSocket implements ServerConnection {
             return;
         }
 
-        //System.out.println("Server ready");
+        System.out.println("Server ready");
 
         while (true){
             try{
-                Socket socket = serverSocket.accept();
-                executor.submit(new ServerClientHandlerSocket(socket, this));
-            }catch(IOException e){
+                socket = serverSocket.accept();
+                executor.submit(new ServerClientHandlerSocket(socket, this, FILE));
+            }
+            catch(IOException e){
                 break; //In case the serverSocket gets closed
             }
         }
 
         executor.shutdown();
+        if (socket != null) socket.close();
         serverSocket.close();
     }
 

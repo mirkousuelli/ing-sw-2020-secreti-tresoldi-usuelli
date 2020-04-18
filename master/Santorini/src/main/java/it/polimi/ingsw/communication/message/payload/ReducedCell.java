@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message.reduced;
+package it.polimi.ingsw.communication.message.payload;
 
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.message.reduced;
+package it.polimi.ingsw.communication.message.payload;
 
 public enum ReducedLevel {
     /* @enum

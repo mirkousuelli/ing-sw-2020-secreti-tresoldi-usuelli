@@ -1,6 +1,5 @@
-package it.polimi.ingsw.communication.message.reduced;
+package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Worker;
 
 public class ReducedWorker {

@@ -44,8 +44,8 @@ public class SerializationTest {
             //for (DemandType context : DemandType.values()) {
                 // test
                 toSend = new Answer<>(AnswerType.SUCCESS, DemandType.BUILD, this.payload);
-                sendFile.write(toSend);
-                toReceive = receiveFile.read();
+                sendFile.send(toSend);
+                toReceive = receiveFile.receive();
 
                 assertEquals(toReceive.getHeader(), toSend.getHeader());
                 assertEquals(((Answer)toReceive).getContext(), ((Answer)toSend).getContext());
