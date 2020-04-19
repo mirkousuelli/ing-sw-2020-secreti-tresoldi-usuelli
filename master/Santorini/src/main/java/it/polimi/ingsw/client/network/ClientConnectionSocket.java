@@ -8,6 +8,7 @@ import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
@@ -16,6 +17,7 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     //private String ip;    SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
     //private int port;     SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
     Socket socket;
+    FileXML file;
     private final String FILE = "src/main/java/it/polimi/ingsw/client/network/message/message.xml"; // X TESTING
 
     public ClientConnectionSocket(String ip, int port/*, ClientView<S> clientView*/) throws IOException {
@@ -23,11 +25,12 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
         //this.port = port; SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
         //this.addObserver(clientView); X FABIO
         socket = new Socket(ip, port);
+        //this.file = file;
     }
 
     public void startClient() throws IOException {
         boolean testDemand = true; // DA CAMBIARE anche in ServerClientHandlerSocket !!!!!!!!!!!!!
-        FileXML file = new FileXML(FILE, socket);
+        file = new FileXML(FILE, socket);
 
         System.out.println("Connection established");
 
@@ -51,12 +54,16 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     }
 
     @Override
-    public void update(Demand<S> message) {
-
+    public void update(Demand<S> demand) {
+        try {
+            file.send(demand);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void closeConnection() {
-
+    public void closeConnection() throws IOException {
+        socket.close();
     }
 }

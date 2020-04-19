@@ -1,31 +1,29 @@
 package it.polimi.ingsw.communication.message.payload;
 
+import it.polimi.ingsw.client.view.cli.Color;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 
-public class ReducedCell {
-    private final int x;
-    private final int y;
-    private final ReducedLevel level;
-    private final ReducedAction action;
-    private final ReducedWorker worker;
+public class ReducedCell extends MessageCell {
+
+    private /*final*/ ReducedLevel level;
+    private /*final*/ ReducedAction action;
+    private /*final*/ ReducedWorker worker;
 
     public ReducedCell(int x, int y, Level level, DemandType action, Worker worker, Player player) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.level = ReducedLevel.parseInt(level.toInt());
         this.action = ReducedAction.parseString(action.toString());
         this.worker = new ReducedWorker(worker, player.nickName);
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public ReducedCell(int x, int y) {
+        super(x, y);
+        level = null;
+        action = null;
+        worker = null;
     }
 
     public ReducedLevel getLevel() {
@@ -40,7 +38,11 @@ public class ReducedCell {
         return worker;
     }
 
-    /*public void setLevel(ReducedLevel level) {
+    public boolean isFree() {
+        return worker == null;
+    }
+
+    public void setLevel(ReducedLevel level) {
         this.level = level;
     }
 
@@ -50,5 +52,5 @@ public class ReducedCell {
 
     public void setWorker(ReducedWorker worker) {
         this.worker = worker;
-    }*/
+    }
 }

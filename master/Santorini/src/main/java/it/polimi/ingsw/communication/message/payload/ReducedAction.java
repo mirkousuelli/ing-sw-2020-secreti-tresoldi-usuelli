@@ -5,26 +5,17 @@ public enum ReducedAction {
      * it standardize possible actions for a better reading.
      */
 
-    DEFAULT, MOVE, BUILD, USEPOWER;
+    DEFAULT("Default"), MOVE("Move"), BUILD("Build"), USEPOWER("Use power");
+
+    private final String name;
+
+    ReducedAction(String name) {
+        this.name = name;
+    }
 
     @Override
     public String toString() {
-        /* @function
-         * it prints what string corresponds to each action
-         */
-
-        switch (this) {
-            case DEFAULT:
-                return "0";
-            case MOVE:
-                return "1";
-            case BUILD:
-                return "2";
-            case USEPOWER:
-                return "3";
-            default:
-                return null;
-        }
+        return name;
     }
 
     public Integer toInt() {

@@ -6,21 +6,23 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.state.Game;
 import it.polimi.ingsw.server.model.state.states.Build;
 import it.polimi.ingsw.server.model.state.states.Move;
-import it.polimi.ingsw.server.network.ServerConnectionType;
+import it.polimi.ingsw.server.network.ServerClientHandler;
+import it.polimi.ingsw.server.network.ServerClientHandlerSocket;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 class ControllerTest {
 
     //@Test
-    void testMessage() {
+    void testMessage() throws FileNotFoundException {
         List<View> playerViews = new ArrayList<>();
         List<Player> players = new ArrayList<>();
-        List<ServerConnectionType> connections = new ArrayList<>();
+        List<ServerClientHandler> connections = new ArrayList<>();
         Game model = new Game(3);
         Controller controller = new Controller(model);
 
@@ -28,9 +30,9 @@ class ControllerTest {
         players.add(new Player("Pl2"));
         players.add(new Player("Pl3"));
 
-        /*connections.add(new ServerConnectionSocket());
-        connections.add(new ServerConnectionSocket());
-        connections.add(new ServerConnectionSocket());*/
+        /*connections.add(new ServerClientHandlerSocket());
+        connections.add(new ServerClientHandlerSocket());
+        connections.add(new ServerClientHandlerSocket());*/
 
         playerViews.add(new RemoteView(players.get(0).nickName, connections.get(0)));
         playerViews.add(new RemoteView(players.get(1).nickName, connections.get(1)));

@@ -6,6 +6,8 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.communication.observer.Observer;
 
+import java.io.IOException;
+
 
 public abstract class ClientView<S> extends Observable<Demand<S>> implements Observer<Answer<S>> {
 
@@ -19,7 +21,7 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
         this.addObserver(clientConnection);
     }
 
-    public void endGame() {
+    public void endGame() throws IOException {
         clientConnection.closeConnection();
     }
 
