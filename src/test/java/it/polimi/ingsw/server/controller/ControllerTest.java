@@ -23,7 +23,7 @@ class ControllerTest {
         List<View> playerViews = new ArrayList<>();
         List<Player> players = new ArrayList<>();
         List<ServerClientHandler> connections = new ArrayList<>();
-        Game model = new Game(3);
+        Game model = null;//new Game(3);
         Controller controller = new Controller(model);
 
         players.add(new Player("Pl1"));
@@ -38,15 +38,15 @@ class ControllerTest {
         playerViews.add(new RemoteView(players.get(1).nickName, connections.get(1)));
         playerViews.add(new RemoteView(players.get(2).nickName, connections.get(2)));
 
-        for (Player p : players)
+        /*for (Player p : players)
             model.addPlayer(p.getNickName());
 
         for (View p : playerViews) {
             model.addObserver(p);
             p.addObserver(controller);
-        }
+        }*/
 
-        model.setCurrentPlayer(model.getPlayers().get(0));
+        //model.setCurrentPlayer(model.getPlayers().get(0));
 
         //unicast - ko currentState
         model.setState(new Move(model));

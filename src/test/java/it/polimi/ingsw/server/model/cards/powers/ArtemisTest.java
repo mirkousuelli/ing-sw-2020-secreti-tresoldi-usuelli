@@ -13,7 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ArthemisTest {
+public class ArtemisTest {
     /* Power:
      *   Your Worker may move one additional time, but not back to its initial space
      */
@@ -31,7 +31,7 @@ public class ArthemisTest {
         Deck deck = new Deck();
         MovePower power1;
 
-        deck.fetchCard(God.ARTHEMIS);
+        deck.fetchCard(God.ARTEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
 
@@ -62,7 +62,7 @@ public class ArthemisTest {
         Deck deck = new Deck();
         MovePower power1;
 
-        deck.fetchCard(God.ARTHEMIS);
+        deck.fetchCard(God.ARTEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
 
@@ -92,7 +92,7 @@ public class ArthemisTest {
         Deck deck = new Deck();
         MovePower power1;
 
-        deck.fetchCard(God.ARTHEMIS);
+        deck.fetchCard(God.ARTEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
 
@@ -129,7 +129,7 @@ public class ArthemisTest {
         Deck deck = new Deck();
         MovePower power1;
 
-        deck.fetchCard(God.ARTHEMIS);
+        deck.fetchCard(God.ARTEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
 
@@ -172,7 +172,7 @@ public class ArthemisTest {
         Deck deck = new Deck();
         MovePower power1;
 
-        deck.fetchCard(God.ARTHEMIS);
+        deck.fetchCard(God.ARTEMIS);
         player1.setCard(deck.popRandomCard());
         power1 = (MovePower) player1.getCard().getPower(0);
 

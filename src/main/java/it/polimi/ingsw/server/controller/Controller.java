@@ -26,7 +26,7 @@ public class Controller implements Observer<ActionToPerformView> {
             return;
         }
 
-        model.setRequest(actionToPerformView);
+        //model.setRequest(actionToPerformView);
         /*Object ret = */model.gameEngine();
 
         /*if (ret != null)
