@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,84 +21,46 @@ public class CLIPrinter {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    private static final String verticalWall = "---";//"\uD834\uDF6C";
-    private static final String horizontalWall = "|";//"\uD834\uDF63";
-    private static final String worker = "^";//"\uD83D\uDD74";
-
     public CLIPrinter() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static void printLogo(SantoriniPrintStream out) {
+    public static void printLogo(PrintStream out) {
         out.println(logo);
     }
 
-    public static void printString(SantoriniPrintStream out, String message, boolean newLine) {
+    public static void printString(PrintStream out, String message, boolean newLine) {
         out.print(message);
         if (newLine) out.print("\n");
     }
 
-    public static void printBoard(SantoriniPrintStream out, ReducedCell[][] board, List<ReducedPlayer> opponents) {
-        List<ReducedCell> occupiedCell = new ArrayList<>();
+    public static void printBoard(PrintStream out, ReducedCell[][] board, List<ReducedPlayer> opponents) {
 
-        //printVerticalWalls(out);
         for (int i = 4; i >= 0; i--) {
-            //out.print(horizontalWall);
-            for (int j = 0; j <5; j++) {
-                if(printCell(out, board[i][j], opponents))
-                    occupiedCell.add(board[i][j]);
-            }
-            //out.print(horizontalWall + "\n");
+            for (int j = 0; j <5; j++)
+                printCell(out, board[i][j], opponents);
             out.print("\n");
         }
-        //printVerticalWalls(out);
-        out.print("\n");
-        printOccupiedCell(out, occupiedCell);
-    }
-
-    private static void printVerticalWalls(SantoriniPrintStream out) {
-        for (int i = 0; i < 5; i++) out.print(verticalWall);
         out.print("\n");
     }
 
-    /*
-    private static void printHorizontalWalls(SantoriniPrintStream out) {
-        for (int i = 0; i < 5; i++) out.print(horizontalWall);
-        out.print("\n");
-    }*/
-
-    private static boolean printCell(SantoriniPrintStream out, ReducedCell cell, List<ReducedPlayer> opponents) {
-        boolean occupied = false;
-
-        if (cell.isFree()) {
-            if (cell.getColor() != null) out.print(Color.parseString(cell.getColor()));
-            out.print("[" + cell.getLevel().toInt() + "]" + Color.RESET);
+    private static void printCell(PrintStream out, ReducedCell cell, List<ReducedPlayer> opponents) {
+        if (!cell.isFree()) {
+            out.print(opponents.stream()
+                    .filter(opponent -> opponent.getNickname().equals(cell.getWorker().getOwner()))
+                    .map(ReducedPlayer::getColor)
+                    .map(Color::parseString)
+                    .reduce(null, (a, b) -> a != null
+                                                    ? a
+                                                    : b
+                    )
+            );
         }
-        else {
-            String workerColor = Color.RESET;
-            for (ReducedPlayer player : opponents) {
-                if (player.getNickname().equals(cell.getWorker().getOwner())) {
-                    workerColor = player.getColor();
-                    occupied = true;
-                }
-            }
-            out.print(Color.parseString(workerColor) + "[" + worker + "]" + Color.RESET);
-        }
+        out.print("[" + cell.getLevel().toInt() + "]" + Color.RESET);
 
-        return occupied;
     }
 
-    private static void printOccupiedCell(SantoriniPrintStream out, List<ReducedCell> cellList) {
-        for (ReducedCell c : cellList) {
-            out.print("cell: (" + c.getX() + ", " + c.getY() + ")\t");
-            out.print("level: " + c.getLevel().toString() + "\t");
-            out.println("occupied by: " + c.getWorker().getOwner());
-        }
-
-        out.print("\n");
-    }
-
-    public static void printOpponents(SantoriniPrintStream out, List<ReducedPlayer> opponents) {
+    public static void printOpponents(PrintStream out, List<ReducedPlayer> opponents) {
         out.print("Opponent");
         if (opponents.size() == 2) out.print("s");
         out.print(": ");
@@ -113,15 +76,15 @@ public class CLIPrinter {
         out.print("\n");
     }
 
-    public static void printWorkers(SantoriniPrintStream out) {
+    public static void printWorkers(PrintStream out) {
         //TODO printWorkers
     }
 
-    public static void printGods(SantoriniPrintStream out) {
+    public static void printGods(PrintStream out) {
         //TODO printGods
     }
 
-    public static void printPossibleActions(SantoriniPrintStream out, ReducedCell[][] reducedBoard) {
+    public static void printPossibleActions(PrintStream out, ReducedCell[][] reducedBoard) {
         List<ReducedCell> cellList = Arrays.stream(reducedBoard).flatMap(Arrays::stream).filter(x -> x.getAction() != ReducedAction.DEFAULT).collect(Collectors.toList());
         List<ReducedAction> reducedActions = cellList.stream().map(ReducedCell::getAction).distinct().collect(Collectors.toList());
 

@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ class CLIPrinterTest {
 
     @Test
     void testPrint() {
-        SantoriniPrintStream out = new SantoriniPrintStream(System.out);
+        PrintStream out = new SantoriniPrintStream(System.out);
 
         //-----define objects------
         //^^^^^view^^^^^

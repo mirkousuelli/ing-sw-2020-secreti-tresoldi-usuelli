@@ -5,7 +5,7 @@ public enum ReducedAction {
      * it standardize possible actions for a better reading.
      */
 
-    DEFAULT("Default"), MOVE("Move"), BUILD("Build"), USEPOWER("Use power");
+    DEFAULT("Default"), MOVE("Move"), BUILD("Build"), USEPOWER("UsePower");
 
     private final String name;
 
