@@ -72,7 +72,7 @@ public class AthenaTest {
         assertEquals(Level.GROUND, cannotMoveUpCell.getPreviousLevel());
         assertEquals(cannotMoveUpCell, player2.getCurrentWorker().getPreviousBuild());
         assertEquals(worker1Player2, player2.getCurrentWorker().getLocation());
-        assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+        assertEquals(MalusType.MOVE, player2.getMalusList().get(0).getMalusType());
+        assertEquals(MalusLevel.UP, player2.getMalusList().get(0).getDirection().get(0));
     }
 }

@@ -66,9 +66,6 @@ public abstract class ActivePower<S> extends Power<S> {
     }
 
     private boolean verifyConstraints(Cell cellToUse) {
-        /*if (constraints.isSameCell() && !cellToUse.equals(workerToUse.getPreviousLocation())) return false;
-        if (constraints.isNotSameCell() && cellToUse.equals(workerToUse.getPreviousLocation())) return false;*/
-
         if (constraints.isPerimCell() && !isPerim(cellToUse))  return false;
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;

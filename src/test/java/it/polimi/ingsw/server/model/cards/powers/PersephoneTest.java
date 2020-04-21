@@ -56,9 +56,9 @@ public class PersephoneTest {
 
         assertEquals(worker1Player2, player2.getWorkers().get(0).getLocation());
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
-        assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.DOWN);
-        assertEquals(player2.getMalusList().get(0).getDirection().get(1), MalusLevel.SAME);
+        assertEquals(MalusType.MOVE, player2.getMalusList().get(0).getMalusType());
+        assertEquals(MalusLevel.DOWN, player2.getMalusList().get(0).getDirection().get(0));
+        assertEquals(MalusLevel.SAME, player2.getMalusList().get(0).getDirection().get(1));
     }
 
     @Test
@@ -94,8 +94,8 @@ public class PersephoneTest {
 
         assertEquals(tower, player2.getWorkers().get(0).getLocation());
         assertEquals(tower.getPawn(), player2.getWorkers().get(0));
-        assertEquals(player2.getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(player2.getMalusList().get(0).getDirection().get(0), MalusLevel.DOWN);
-        assertEquals(player2.getMalusList().get(0).getDirection().get(1), MalusLevel.SAME);
+        assertEquals(MalusType.MOVE, player2.getMalusList().get(0).getMalusType());
+        assertEquals(MalusLevel.DOWN, player2.getMalusList().get(0).getDirection().get(0));
+        assertEquals(MalusLevel.SAME, player2.getMalusList().get(0).getDirection().get(1));
     }
 }

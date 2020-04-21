@@ -6,7 +6,7 @@ import it.polimi.ingsw.client.view.cli.SantoriniPrintStream;
 import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.MessageCell;
 import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
@@ -40,134 +40,101 @@ public class CLI<S> extends ClientView<S> {
         reducedGodList = new ArrayList<>();
         opponents = new ArrayList<>();
         workers = new ArrayList<>();
-        turn = Turn.WAIT;
     }
 
     @Override
-    public void startUI() {
-        DemandType header;
+    protected void startUI() {
         S payload;
-        String nextLine = "1";
+        String nextLine;
         int x;
         int y;
+        boolean toRepeat = false;
+        God god;
+        List<God> chosenDeck = new ArrayList<>();
+        List<MessageCell> initialWorkerPosition = new ArrayList<>();
+        int i;
 
-
-        if(turn.equals(Turn.START) || turn.equals(Turn.CHOOSE_DECK)) {
-            CLIPrinter.printLogo(out);
-            if (opponents.size() == 1)
-                CLIPrinter.printString(out, "Your opponent is:", true);
-            else
-                CLIPrinter.printString(out, "Your opponents are:", true);
-            CLIPrinter.printOpponents(out, opponents);
+        if (turn.equals(Turn.START)) {
+            printStartInfo(out);
+            return;
         }
 
-        if (!turn.equals(Turn.START) && !turn.equals(Turn.WAIT)){
+        do {
             switch (turn) {
                 case CHOOSE_DECK:
-                    List<God> chosenDeck = new ArrayList<>();
-                    God god;
+                    CLIPrinter.printGods(out);
 
+                    i = 0;
                     do {
-                        CLIPrinter.printGods(out);
-                        CLIPrinter.printString(out, "Insert the name of one the gods which will be used in this match [godName]", true);
+                        CLIPrinter.printString(out, "Insert the name of one the gods which will be used in this match [godName]\n");
                         nextLine = in.nextLine();
                         god = God.parseString(nextLine);
 
-
-                        if (god != null && !chosenDeck.contains(god))
+                        if (god != null && !chosenDeck.contains(god)) {
                             chosenDeck.add(god);
-                        else
-                            CLIPrinter.printString(out, "Error, try again", true);
+                            i++;
+                        }
+                    } while (i <= 2);
 
-                    } while (chosenDeck.size() != opponents.size());
-
-                    //-------------------------------------------TODO demand deck
-                    header = DemandType.CONFIRM;
-                    payload = (S) nextLine;
+                    payload = (S) chosenDeck;
                     break;
 
                 case CHOOSE_CARD:
-                    God chosenGod;
+                    CLIPrinter.printGods(out);
+                    CLIPrinter.printString(out, "Insert the name of the chosen god [godName]\n");
+                    nextLine = in.nextLine();
+                    god = God.parseString(nextLine);
 
-                    do {
-                        CLIPrinter.printGods(out);
-                        CLIPrinter.printString(out, "Insert the name of the chosen god [godName]", true);
-                        nextLine = in.nextLine();
-                        chosenGod = God.parseString(nextLine);
+                    toRepeat = god != null && !reducedGodList.contains(god);
 
-                        if (chosenGod != null && !reducedGodList.contains(chosenGod))
-                            CLIPrinter.printString(out, "Error, try again", true);
-
-                    } while (!reducedGodList.contains(chosenGod));
-
-                    header = DemandType.CHOOSE_CARD;
-                    payload = (S) chosenGod;
+                    payload = (S) god;
                     break;
 
                 case PLACE_WORKERS:
-                    List<MessageCell> initialWorkerPosition = new ArrayList<>();
+                    CLIPrinter.printString(out, "Insert the initial locations of your worker [x,y]\n");
+                    x = in.nextInt();
+                    y = in.nextInt();
 
-                    do {
-                        CLIPrinter.printString(out, "Insert the initial locations of your worker [x,y]", true);
-                        x = in.nextInt();
-                        y = in.nextInt();
+                    if (checkCell(x, y))
+                        initialWorkerPosition.add(new MessageCell(x, y));
+                    else
+                        toRepeat = true;
 
-                        if (checkCell(x, y))
-                            initialWorkerPosition.add(new MessageCell(x, y));
-                        else
-                            CLIPrinter.printString(out, "Error, try again", true);
-
-                    } while (checkCell(x, y) || initialWorkerPosition.size() != 2);
-
-                    header = DemandType.CONFIRM; //--------------------------- TODO demand place workers
-                    payload = (S) nextLine;
+                    payload = (S) initialWorkerPosition;
                     break;
 
                 case CHOOSE_WORKER:
-                    do {
-                        CLIPrinter.printBoard(out, reducedBoard, opponents);
-                        CLIPrinter.printWorkers(out);
-                        CLIPrinter.printString(out, "Select a worker[1, 2]", true);
-                        nextLine = in.nextLine();
+                    CLIPrinter.printBoard(out, reducedBoard, opponents);
+                    CLIPrinter.printWorkers(out);
+                    CLIPrinter.printString(out, "Select a worker[1, 2]\n");
+                    nextLine = in.nextLine();
 
-                        if (!nextLine.equals("1") && !nextLine.equals("2"))
-                            CLIPrinter.printString(out, "Error, try again", true);
+                    toRepeat = !nextLine.equals("1") && !nextLine.equals("2");
 
-                    } while (!nextLine.equals("1") && !nextLine.equals("2"));
-
-                    header = DemandType.CHOOSE_WORKER;
                     payload = (S) nextLine;
                     break;
 
-                case ACTION:
-                    do {
-                        CLIPrinter.printBoard(out, reducedBoard, opponents);
-                        CLIPrinter.printPossibleActions(out, reducedBoard);
-                        CLIPrinter.printString(out, "Make your action [x,y]", true);
-                        x = in.nextInt();
-                        y = in.nextInt();
+                case MOVE:
+                case BUILD:
+                case USEPOWER:
+                    CLIPrinter.printBoard(out, reducedBoard, opponents);
+                    CLIPrinter.printPossibleActions(out, reducedBoard);
+                    CLIPrinter.printString(out, "Make your action [x,y]\n");
+                    x = in.nextInt();
+                    y = in.nextInt();
 
-                        if (checkCell(x, y))
-                            CLIPrinter.printString(out, "Error, try again", true);
+                    toRepeat = checkCell(x, y);
 
-                    } while (checkCell(x, y));
-
-                    header = DemandType.BUILD;
                     payload = (S) new MessageCell(x, y);
                     break;
 
                 case CONFIRM:
-                    do {
-                        CLIPrinter.printBoard(out, reducedBoard, opponents);
-                        CLIPrinter.printString(out, "Do you want to confirm your action? [Y/N]", true);
-                        nextLine = in.nextLine().toLowerCase();
+                    CLIPrinter.printBoard(out, reducedBoard, opponents);
+                    CLIPrinter.printString(out, "Do you want to confirm your action? [Y/N]\n");
+                    nextLine = in.nextLine().toLowerCase();
 
-                        if (!nextLine.equals("y") && !nextLine.equals("n"))
-                            CLIPrinter.printString(out, "Error, try again", true);
+                    toRepeat = !nextLine.equals("y") && !nextLine.equals("n");
 
-                    } while (!nextLine.equals("y") && !nextLine.equals("n"));
-
-                    header = DemandType.CONFIRM;
                     payload = (S) nextLine;
                     break;
 
@@ -175,33 +142,34 @@ public class CLI<S> extends ClientView<S> {
                     throw new RuntimeException("Not a valid turn");
             }
 
-            notify(new Demand<>(header, payload));
-        }
+            if (toRepeat)
+                CLIPrinter.printString(out, "Error, try again\n");
+        } while (toRepeat);
 
+        notify(new Demand<>(turn.toDemandType(), payload));
     }
 
     @Override
     public void update(Answer<S> answer) {
+        if (answer.getHeader().equals(AnswerType.DEFEAT) || answer.getHeader().equals(AnswerType.VICTORY)) {
+            CLIPrinter.printString(out, "You " + answer.getHeader().toString() + "!\n");
+            try {
+                endGame();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+
         switch (answer.getHeader()) {
             case ERROR:
-                CLIPrinter.printString(out, answer.getPayload().toString(), true);
-                startUI();
+                CLIPrinter.printString(out, answer.getPayload().toString() + "\n");
                 break;
 
             case SUCCESS:
-                CLIPrinter.printString(out, "Your action has been done!", true);
+                CLIPrinter.printString(out, "Your action has been done!\n");
                 turn = Turn.parseInt(turn.toInt() + 1); //--------------- TODO parseTurn
-                startUI();
-                break;
-
-            case DEFEAT:
-            case VICTORY:
-                CLIPrinter.printString(out, "You " + answer.getHeader().toString() + "!", true);
-                try {
-                    endGame();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 break;
 
             case START:
@@ -209,20 +177,16 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case CHOOSE_DECK:
-                opponents = new ArrayList<>((List<ReducedPlayer>) answer.getPayload());
             case CHOOSE_CARD:
                 reducedGodList = new ArrayList<>((List<God>) answer.getPayload());
-                startUI();
                 break;
 
-            case CHOOSE_STARTER:
-            case UPDATE:
-                startUI();
-                break;
+            default:
+                throw new RuntimeException("Not a valid update");
         }
 
         updateReduceObjects(answer);
-
+        startUI();
     }
 
     private void updateReduceObjects(Answer<S> answer) {
@@ -241,6 +205,16 @@ public class CLI<S> extends ClientView<S> {
 
     private boolean isYourTurn(String player) {
         return currentPlayer.equals(player);
+    }
+
+    private void printStartInfo(SantoriniPrintStream out) {
+        CLIPrinter.printLogo(out);
+        if (opponents.size() == 1)
+            CLIPrinter.printString(out, "Your opponent is:\n");
+        else
+            CLIPrinter.printString(out, "Your opponents are:\n");
+        CLIPrinter.printOpponents(out, opponents);
+
     }
 
     private boolean checkCell(int x, int y) {

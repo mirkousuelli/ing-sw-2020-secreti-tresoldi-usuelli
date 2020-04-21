@@ -5,7 +5,6 @@ import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +20,7 @@ public class CLIPrinter {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    public CLIPrinter() {
+    private CLIPrinter() {
         throw new IllegalStateException("Utility class");
     }
 
@@ -29,9 +28,8 @@ public class CLIPrinter {
         out.println(logo);
     }
 
-    public static void printString(PrintStream out, String message, boolean newLine) {
+    public static void printString(PrintStream out, String message) {
         out.print(message);
-        if (newLine) out.print("\n");
     }
 
     public static void printBoard(PrintStream out, ReducedCell[][] board, List<ReducedPlayer> opponents) {

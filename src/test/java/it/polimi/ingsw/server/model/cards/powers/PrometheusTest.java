@@ -53,8 +53,8 @@ public class PrometheusTest {
         assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(emptyMove, player1.getCurrentWorker().getLocation());
-        assertEquals(player1.getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(player1.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+        assertEquals(MalusType.MOVE, player1.getMalusList().get(0).getMalusType());
+        assertEquals(MalusLevel.UP, player1.getMalusList().get(0).getDirection().get(0));
     }
 
     //@Test TO-DO control malus in getPossibleMoves
@@ -84,8 +84,8 @@ public class PrometheusTest {
 
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
-        assertEquals(player1.getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(player1.getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+        assertEquals(MalusType.MOVE, player1.getMalusList().get(0).getMalusType());
+        assertEquals(MalusLevel.UP, player1.getMalusList().get(0).getDirection().get(0));
     }
 
     @Test

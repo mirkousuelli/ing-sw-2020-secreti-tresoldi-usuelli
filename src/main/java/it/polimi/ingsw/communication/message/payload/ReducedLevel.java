@@ -38,7 +38,7 @@ public enum ReducedLevel {
             case DOME:
                 return "4";
             default:
-                return null;
+                return "";
         }
     }
 

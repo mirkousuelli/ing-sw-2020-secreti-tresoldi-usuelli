@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.cards.God;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Level;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,7 +18,7 @@ public class PoseidonTest {
      *   If your unmoved Worker is on the ground level, it may build up to three times
      */
 
-    //@Test
+    @Test
     void testUnmovedGroundLevelWorkerThreeBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
@@ -57,7 +58,7 @@ public class PoseidonTest {
         assertEquals(emptyPower3, player1.getWorkers().get(1).getPreviousBuild());
     }
 
-    //@Test
+    @Test
     void testNoCellToBuildUp() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
@@ -104,7 +105,7 @@ public class PoseidonTest {
         assertNull(player1.getWorkers().get(1).getPreviousBuild());
     }
 
-    //@Test
+    @Test
     void testOccupiedCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
@@ -135,7 +136,7 @@ public class PoseidonTest {
         assertNull(player1.getWorkers().get(1).getPreviousBuild());
     }
 
-    //@Test
+    @Test
     void testNotAdjacentCell() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();

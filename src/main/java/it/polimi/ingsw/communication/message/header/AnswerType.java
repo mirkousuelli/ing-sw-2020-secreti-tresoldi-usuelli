@@ -7,9 +7,7 @@ public enum AnswerType {
     VICTORY,
     START,
     CHOOSE_DECK,
-    CHOOSE_CARD,
-    CHOOSE_STARTER,
-    UPDATE;
+    CHOOSE_CARD;
 
     public AnswerType parseString(String str) {
         switch (str) {
@@ -27,10 +25,6 @@ public enum AnswerType {
                 return CHOOSE_DECK;
             case "chooseCard":
                 return CHOOSE_CARD;
-            case "chooseStarter":
-                return CHOOSE_STARTER;
-            case "update":
-                return UPDATE;
             default:
                 return null;
         }
@@ -53,12 +47,8 @@ public enum AnswerType {
                 return "chooseDeck";
             case CHOOSE_CARD:
                 return "chooseCard";
-            case CHOOSE_STARTER:
-                return "chooseStarter";
-            case UPDATE:
-                return "update";
             default:
-                return null;
+                return "";
         }
     }
 }

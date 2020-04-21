@@ -21,7 +21,7 @@ public class CLIPrinter {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    public CLIPrinter() {
+    private CLIPrinter() {
         throw new IllegalStateException("Utility class");
     }
 

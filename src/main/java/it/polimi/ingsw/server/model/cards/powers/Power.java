@@ -80,8 +80,6 @@ public class Power<S> {
      */
     public Power() {
         constraints = new Constraints();
-        //malus = new Malus();
-        //personalMalus = new Malus();
     }
 
     public WorkerType getWorkerType() {

@@ -25,5 +25,5 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
         clientConnection.closeConnection();
     }
 
-    public abstract void startUI();
+    protected abstract void startUI();
 }
