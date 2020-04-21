@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT cards (god*)>
+    <!ELEMENT god (name, description, power+)>
+            <!ATTLIST god
+                id ID #REQUIRED
+            >
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT description (#PCDATA)>
+
+        <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win), personalMalus?)>
+            <!-- what -->
+            <!ELEMENT effect EMPTY>
+            <!ATTLIST effect
+                    what (build | move | win | malus) #REQUIRED
+                    >
+
+            <!-- who -->
+            <!ELEMENT worker EMPTY>
+                    <!ATTLIST worker 
+                        who (default | unmoved) "default"
+                    >
+
+            <!-- where -->
+            <!ELEMENT workerpos EMPTY>
+                    <!ATTLIST workerpos 
+                        where (default | ground | middle | top) "default"
+                    >
+
+            <!-- when -->
+            <!ELEMENT timing EMPTY>
+                    <!ATTLIST timing 
+                        when (additional | startturn | endturn | default) "default"
+                    >
+
+            <!-- why -->
+            <!ELEMENT constraints (numadd?)>
+                    <!ATTLIST constraints
+                        samecell (true | false) "false"
+                        notsamecell (true |false) "false"
+                        perimcell (true | false) "false"
+                        notperimcell (true | false) "false"
+                        underitself (true | false) "false"
+                    >
+                <!ELEMENT numadd (#PCDATA)>
+
+            <!-- how -->
+
+            <!ELEMENT move EMPTY>
+                    <!ATTLIST move 
+                        type (swap | push | default) "default"
+                    >
+
+            <!ELEMENT build EMPTY>
+                    <!ATTLIST build
+                        type (dome | notdome | default) "default"
+                    >
+
+            <!ELEMENT malus (directions?, numturns?)>
+                    <!ATTLIST malus
+                        type (build | move) #REQUIRED
+                        permanent (true | false) "false"
+                    >
+                <!ELEMENT directions (up?, down?, same?, default?)>
+                    <!ELEMENT up EMPTY>
+                    <!ELEMENT down EMPTY>
+                    <!ELEMENT same EMPTY>
+                    <!ELEMENT default EMPTY>
+                <!ELEMENT numturns (#PCDATA)>
+
+            <!ELEMENT win EMPTY>
+                <!ATTLIST win
+                        type (downfromtwo | fivetower | default) "default"
+                >
+
+            <!ELEMENT personalMalus (directions?, numturns?)>
+                    <!ATTLIST personalMalus
+                        type (build | move | default) "default"
+                        permanent (true | false) "false"
+                    >

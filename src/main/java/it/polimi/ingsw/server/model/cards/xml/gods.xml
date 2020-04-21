@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cards SYSTEM "gods_grammar.dtd">
+
+<cards>
+    <!-- - - - - - - - - - - - - - - - - - - - - - APOLLO - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="APOLLO">
+        <name>Apollo</name>
+        <description>Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated</description>
+        <power>
+            <!-- what -->
+            <effect what="move"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <move type="swap"/>
+        </power>
+    </god>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - ARTHEMIS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="ARTHEMIS">
+        <name>Arthemis</name>
+        <description>Your Worker may move one additional time, but not back to its initial space</description>
+        <power>
+            <!-- what -->
+            <effect what="move"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="additional"/>
+            <!-- why -->
+            <constraints notsamecell="true">
+                <numadd>1</numadd>
+            </constraints>
+            <!-- how -->
+            <move/>
+        </power>
+    </god>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - ATHENA - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="ATHENA">
+        <name>Athena</name>
+        <description>If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn</description>
+        <power>
+            <!-- what -->
+            <effect what="malus"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="endturn"/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <malus type="move">
+                <directions>
+                    <up/>
+                </directions>
+                <numturns>1</numturns>
+            </malus>
+        </power>
+    </god>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - ATLAS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="ATLAS">
+        <name>Atlas</name>
+        <description>Your Worker may build a dome at any level</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <build type="dome"/>
+        </power>
+    </god>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - CHRONUS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="CHRONUS">
+        <name>Chronus</name>
+        <description>You also win when there are at least five Complete Towers on the board</description>
+        <power>
+            <!-- what -->
+            <effect what="win"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="endturn"/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <win type="fivetower"/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - DEMETER - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="DEMETER">
+        <name>Demeter</name>
+        <description>Your Worker may build one additional time, but not on the same space</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="additional"/>
+            <!-- why -->
+            <constraints notsamecell="true">
+                <numadd>1</numadd>
+            </constraints>
+            <!-- how -->
+            <build/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - HEPHAESTUS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="HEPHAESTUS">
+        <name>Hephaestus</name>
+        <description>Your Worker may build one additional block (not dome) on top of your first block</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="additional"/>
+            <!-- why -->
+            <constraints samecell="true">
+                <numadd>1</numadd>
+            </constraints>
+            <!-- how -->
+            <build type="notdome"/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - HESTIA - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="HESTIA">
+        <name>Hestia</name>
+        <description>Your Worker may build one additional time, but this cannot be on a perimeter space</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="additional"/>
+            <!-- why -->
+            <constraints notperimcell="true">
+                <numadd>1</numadd>
+            </constraints>
+            <!-- how -->
+            <build/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - MINOTAUR - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="MINOTAUR">
+        <name>Minotaur</name>
+        <description>Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level</description>
+        <power>
+            <!-- what -->
+            <effect what="move"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <move type="push"/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - PAN - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="PAN">
+        <name>Pan</name>
+        <description>You also win if your Worker moves down two or more levels</description>
+        <power>
+            <!-- what -->
+            <effect what="win"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="endturn"/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <win type="downfromtwo"/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - PERSEPHONE - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="PERSEPHONE">
+        <name>Persephone</name>
+        <description>If possible, at least one Worker must move up this turn</description>
+        <power>
+            <!-- what -->
+            <effect what="malus"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <malus type="move" permanent="true">
+                <directions>
+                    <down/>
+                    <same/>
+                </directions>
+            </malus>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - POSEIDON - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="POSEIDON">
+        <name>Poseidon</name>
+        <description>If your unmoved Worker is on the ground level, it may build up to three times</description>
+        <power>
+            <effect what="build"/>
+            <!-- who -->
+            <worker who="unmoved"/>
+            <!-- where -->
+            <workerpos where="ground"/>
+            <!-- when -->
+            <timing when="endturn"/>
+            <!-- why -->
+            <constraints>
+                <numadd>3</numadd>
+            </constraints>
+            <!-- how -->
+            <build/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - PROMETHEUS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="PROMETHEUS">
+        <name>Prometheus</name>
+        <description>If your Worker does not move up, it may build both before and after moving</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing when="startturn"/>
+            <!-- why -->
+            <constraints/>
+            <!-- how -->
+            <build/>
+            <personalMalus type="move">
+                <directions>
+                    <up/>
+                </directions>
+                <numturns>1</numturns>
+            </personalMalus>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - TRITON - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="TRITON">
+        <name>Triton</name>
+        <description>Each time your Worker moves into a perimeter space, it may immediately move again</description>
+        <power>
+            <!-- what -->
+            <effect what="move"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints perimcell="true"/>
+            <!-- how -->
+            <move/>
+        </power>
+    </god>
+
+    <!-- - - -  - - - - - - - - - - - - - - - - - ZEUS - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <god id="ZEUS">
+        <name>Zeus</name>
+        <description>Your Worker may build a block under itself</description>
+        <power>
+            <!-- what -->
+            <effect what="build"/>
+            <!-- who -->
+            <worker/>
+            <!-- where -->
+            <workerpos/>
+            <!-- when -->
+            <timing/>
+            <!-- why -->
+            <constraints underitself="true"/>
+            <!-- how -->
+            <build/>
+        </power>
+    </god>
+</cards>
