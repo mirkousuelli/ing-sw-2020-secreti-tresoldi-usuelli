@@ -1,6 +1,5 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.client.view.cli.Color;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Level;

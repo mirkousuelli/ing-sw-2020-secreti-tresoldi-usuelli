@@ -1,8 +1,7 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
 public enum WorkerType {
-    //Lavoratore viene usato per il potere
-    //(i.e. Poseidon usa UNMOVED_WORKER)
+    //Which worker the power uses
     UNMOVED_WORKER, DEFAULT;
 
     public static WorkerType parseString(String str) {

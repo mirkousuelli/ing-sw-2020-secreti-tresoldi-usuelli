@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
 public enum Effect {
-    //Effetto della carta
+    //Card effect
     BUILD, MOVE, WIN_COND, MALUS;
 
     public static Effect parseString(String str) {

@@ -11,9 +11,6 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.cards.powers.tags.*;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.BlockType;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.MovementType;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.WinType;
 import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
 
 /**

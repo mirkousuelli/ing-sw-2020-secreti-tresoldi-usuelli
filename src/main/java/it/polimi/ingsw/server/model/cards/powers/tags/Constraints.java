@@ -1,15 +1,12 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
 public class Constraints {
-    private int numberOfAdditional; // Numero di volte che puoi usare il potere nello stesso turno
-    private boolean sameCell; // se DEVO applicare il potere sulla cella su cui ho mosso/costruito nelle stesso turno
-    private boolean notSameCell; // se NON POSSO applicare il potere sulla cella che ho mosso/costruito nelle stesso turno
-    private boolean perimCell; // se DEVO applicare il potere sulle celle perimetrali
-    private boolean notPerimCell; // se NON POSSO applicare il potere sulle celle perimetrali
-    private boolean underItself; // se DEVO applicare il potere sulla cella su cui ho mosso/costruito nella stessa celle in cui mi trovo
-    //notUnderItself non c'è perché normalente lo dicono già le regole base, non ha senso
-
-    public Constraints() {}
+    private int numberOfAdditional;
+    private boolean sameCell;
+    private boolean notSameCell;
+    private boolean perimCell;
+    private boolean notPerimCell;
+    private boolean underItself;
 
     public int getNumberOfAdditional() {
         return numberOfAdditional;

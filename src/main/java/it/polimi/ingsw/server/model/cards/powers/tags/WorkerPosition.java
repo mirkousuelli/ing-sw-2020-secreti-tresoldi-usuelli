@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
 public enum WorkerPosition {
-    //Posizione iniziale che il worker usato dal potere deve avere
-    //(i.e. Poseidon una worker che si trova al livello GROUND)
-    //DEFAULT significa che va bene qualsiasi livello
+    //Initial position a worker must have to activete the power
     GROUND, BOTTOM, MIDDLE, TOP, DEFAULT;
 
     public static WorkerPosition parseString(String str) {

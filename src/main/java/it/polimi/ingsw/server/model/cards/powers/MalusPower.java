@@ -12,7 +12,6 @@ package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.MovementType;
 
 import java.util.List;
 
