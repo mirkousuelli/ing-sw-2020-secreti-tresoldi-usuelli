@@ -73,7 +73,7 @@ public enum DemandType {
             case UNDO:
                 return "undo";
             default:
-                return null;
+                return "";
         }
     }
 }

@@ -5,22 +5,28 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.network.ServerClientHandler;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class RemoteView extends View {
 
     private class MessageReceiver implements Observer<Demand> {
 
+        private final Logger logger = Logger.getLogger(MessageReceiver.class.getName());
+
         @Override
         public void update(Demand demand) {
             try {
-                System.out.println("Received: " + demand.toString());
+                logger.info(() -> "Received: " + demand.toString() + "\n");
                 processMessage(demand);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                logger.log( Level.SEVERE, e.toString(), e);
             }
         }
     }
 
-    private ServerClientHandler serverClientHandler;
+    private final ServerClientHandler serverClientHandler;
+    private final Logger logger = Logger.getLogger(RemoteView.class.getName());
 
     public RemoteView(String player, ServerClientHandler serverClientHandler){
         super(player);
@@ -30,7 +36,7 @@ public class RemoteView extends View {
 
     @Override
     protected void showAnswer(Answer answer) {
-        System.out.println("showModel: " + answer.getPayload().toString());
+        logger.info(() -> "showModel: " + answer.getPayload().toString() + "\n");
         serverClientHandler.asyncSend(answer);
     }
 }

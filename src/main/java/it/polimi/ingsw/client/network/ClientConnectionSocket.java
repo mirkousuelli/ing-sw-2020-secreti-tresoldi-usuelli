@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.network;
 
-import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
@@ -20,10 +19,9 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     FileXML file;
     private final String FILE = "src/main/java/it/polimi/ingsw/client/network/message/message.xml"; // X TESTING
 
-    public ClientConnectionSocket(String ip, int port/*, ClientView<S> clientView*/) throws IOException {
+    public ClientConnectionSocket(String ip, int port) throws IOException {
         //this.ip = ip;     SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
         //this.port = port; SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
-        //this.addObserver(clientView); X FABIO
         socket = new Socket(ip, port);
         //this.file = file;
     }

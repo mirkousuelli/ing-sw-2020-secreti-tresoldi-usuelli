@@ -7,7 +7,7 @@ import it.polimi.ingsw.communication.observer.Observer;
 import java.io.IOException;
 
 public interface ClientConnection<S> extends Observer<Demand<S>> {
-    //RSI or Socket
+    //RMI or Socket
     void update(Demand<S> message);
 
 

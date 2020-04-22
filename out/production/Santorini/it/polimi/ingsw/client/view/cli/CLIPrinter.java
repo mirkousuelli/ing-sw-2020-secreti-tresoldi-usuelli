@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class CLIPrinter {
 
-    private static final String logo = "\n" +
+    private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
             " / _____)             _             (_)     (_)\n" +
             "( (____  _____ ____ _| |_ ___   ____ _ ____  _ \n" +
@@ -26,7 +26,7 @@ public class CLIPrinter {
     }
 
     public static void printLogo(PrintStream out) {
-        out.println(logo);
+        out.println(LOGO);
     }
 
     public static void printString(PrintStream out, String message, boolean newLine) {
