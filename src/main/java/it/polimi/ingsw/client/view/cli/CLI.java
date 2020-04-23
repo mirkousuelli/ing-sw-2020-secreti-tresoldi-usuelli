@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CLI<S> extends ClientView<S> {
 
     private final Scanner in;
     final SantoriniPrintStream out;
+    private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     public CLI(ReducedPlayer player, ClientConnection<S> clientConnection) {
         super(player, clientConnection);
@@ -40,7 +43,7 @@ public class CLI<S> extends ClientView<S> {
                 try {
                     endGame();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "Got an IOException.", e);
                 }
 
                 CLIPrinter.printString(out, "Game ended\n");
@@ -121,7 +124,7 @@ public class CLI<S> extends ClientView<S> {
                     nextLine = in.nextLine();
                     coord = stringToInt(nextLine);
 
-                    if (coord != null && clientModel.getReducedCell(coord.get(0), coord.get(1)).isFree()) {
+                    if (!coord.isEmpty() && clientModel.getReducedCell(coord.get(0), coord.get(1)).isFree()) {
                         initialWorkerPosition.add(new ReducedDemandCell(coord.get(0), coord.get(1)));
                         toRepeat = false;
                         i++;
@@ -142,7 +145,7 @@ public class CLI<S> extends ClientView<S> {
                     nextLine = in.nextLine();
                     coord = stringToInt(nextLine);
 
-                    toRepeat = coord == null || clientModel.checkWorker(coord.get(0), coord.get(1));
+                    toRepeat = coord.isEmpty() || clientModel.checkWorker(coord.get(0), coord.get(1));
 
                     if (toRepeat)
                         printError();
@@ -159,7 +162,7 @@ public class CLI<S> extends ClientView<S> {
                     nextLine = in.nextLine();
                     coord = stringToInt(nextLine);
 
-                    toRepeat = clientModel.evalToRepeat(coord.get(0), coord.get(1));
+                    toRepeat = coord.isEmpty() || clientModel.evalToRepeat(coord.get(0), coord.get(1));
 
                     if (toRepeat)
                         printError();
@@ -219,7 +222,7 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private List<Integer> stringToInt(String string) {
-        if (string.length() != 3) return null;
+        if (string.length() != 3) return new ArrayList<>();
 
         List<Integer> ret = new ArrayList<>();
 

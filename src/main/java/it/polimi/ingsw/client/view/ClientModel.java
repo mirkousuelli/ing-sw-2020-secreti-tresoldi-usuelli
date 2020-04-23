@@ -28,7 +28,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
     private String currentWorker;
     private Turn turn;
     private AnswerType state;
-    private ReducedPlayer player;
+    private final ReducedPlayer player;
 
 
     public ClientModel(ReducedPlayer player) {
@@ -61,7 +61,8 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
 
         notify(this);
 
-        nextTurn(answer.getContext());
+        if(!nextTurn(answer.getContext()))
+            throw new NotAValidTurnRunTimeException("Not a valid turn");
     }
 
     private void updateReduceObjects(Answer<S> answer) {

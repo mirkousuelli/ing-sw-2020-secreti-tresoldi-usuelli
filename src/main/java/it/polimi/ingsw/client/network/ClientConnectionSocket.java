@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network;
 
+import it.polimi.ingsw.client.view.cli.CLI;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements ClientConnection<S> {
     //private String ip;    SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
@@ -18,6 +21,7 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     Socket socket;
     FileXML file;
     private final String FILE = "src/main/java/it/polimi/ingsw/client/network/message/message.xml"; // X TESTING
+    private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port) throws IOException {
         //this.ip = ip;     SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
@@ -35,17 +39,18 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
         try{
             //while (true){        L'HO TOLTO PER TESTING
             if (testDemand) {
-                System.out.println("Sending...");
+                LOGGER.log(Level.INFO, "Sending...");
                 file.send(new Demand(DemandType.JOIN_GAME, "1234"));
-                System.out.println("Sent!");
+                LOGGER.log(Level.INFO, "Sent!");
+
             } else {
-                System.out.println("Receiving...");
+                LOGGER.log(Level.INFO, "Receiving...");
                 Answer answer = (Answer) file.receive();
-                System.out.println("Received!");
+                LOGGER.log(Level.INFO, "Received!");
             }
             //}
         } catch(NoSuchElementException e){
-            System.out.println("Connection closed");
+            LOGGER.log(Level.SEVERE, "Connection closed.", e);
         }
 
         socket.close();
@@ -53,11 +58,11 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
 
     @Override
     public void update(Demand<S> demand) {
-        System.out.print("Sent\n");
+        LOGGER.log(Level.INFO, "Sent!");
         /*try {
             file.send(demand);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Got an IOException!", e);
         }*/
     }
 

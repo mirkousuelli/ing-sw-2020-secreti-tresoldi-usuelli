@@ -83,18 +83,19 @@ public class CLIPrinter {
         if (godList.size() > 1) out.print("s");
         out.print(": ");
 
-        /*godList.stream()
-               .map(God::toString)
-               .filter(Objects::nonNull)
-               .map(s -> s.subSequence(0, 1).toString() + s.toLowerCase().subSequence(1, s.length()).toString())
-               .forEach(out::print);*/
-
         out.print(godList + "\n");
     }
 
     public static void printPossibleActions(PrintStream out, ReducedAnswerCell[][] reducedBoard) {
-        List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard).flatMap(Arrays::stream).filter(x -> x.getAction() != ReducedAction.DEFAULT).collect(Collectors.toList());
-        List<ReducedAction> reducedActions = cellList.stream().map(ReducedAnswerCell::getAction).distinct().collect(Collectors.toList());
+        List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard)
+                                                 .flatMap(Arrays::stream)
+                                                 .filter(x -> x.getAction() != ReducedAction.DEFAULT)
+                                                 .collect(Collectors.toList());
+
+        List<ReducedAction> reducedActions = cellList.stream()
+                                                     .map(ReducedAnswerCell::getAction)
+                                                     .distinct()
+                                                     .collect(Collectors.toList());
 
         out.print("Action");
         if (reducedActions.size() >= 2) out.print("s");

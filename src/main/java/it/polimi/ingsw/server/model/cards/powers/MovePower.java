@@ -11,7 +11,7 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.MovementType;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Level;

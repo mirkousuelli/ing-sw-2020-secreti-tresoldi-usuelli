@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.cards.powers.tags.effectType;
+package it.polimi.ingsw.server.model.cards.powers.tags.effecttype;
 
 public enum WinType {
     DOWNTOFROMTWO, FIVETOWER, DEFAULT;

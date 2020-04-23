@@ -10,7 +10,7 @@
 
 package it.polimi.ingsw.server.model.cards.powers;
 
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.WinType;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.WinType;
 import it.polimi.ingsw.server.model.state.Game;
 
 public class WinConditionPower<S> extends Power<S> {
