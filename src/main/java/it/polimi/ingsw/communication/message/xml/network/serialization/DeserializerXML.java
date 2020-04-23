@@ -45,9 +45,8 @@ public class DeserializerXML {
             e.printStackTrace();
         }
         finally {
-            if (bos != null) bos.close();
-            if (fos != null) fos.close();
-            //if (is != null) is.close();
+            bos.close();
+            fos.close();
         }
     }
 }

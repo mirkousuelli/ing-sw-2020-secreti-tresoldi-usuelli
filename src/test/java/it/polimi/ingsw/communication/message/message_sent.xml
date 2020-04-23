@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <java version="13.0.2" class="java.beans.XMLDecoder">
- <object class="it.polimi.ingsw.communication.message.xml.network.object.DemandXML">
-  <void property="header">
+ <object class="it.polimi.ingsw.communication.message.Answer">
+  <void property="context">
    <object class="java.lang.Enum" method="valueOf">
     <class>it.polimi.ingsw.communication.message.header.DemandType</class>
     <string>UNDO</string>
    </object>
   </void>
+  <void property="header">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>it.polimi.ingsw.communication.message.header.AnswerType</class>
+    <string>START</string>
+   </object>
+  </void>
   <void property="payload">
-   <string>1234</string>
+   <object class="it.polimi.ingsw.communication.message.payload.ReducedDeck">
+    <void property="list">
+     <object class="java.util.ArrayList">
+      <void method="add">
+       <object class="java.lang.Enum" method="valueOf">
+        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <string>APOLLO</string>
+       </object>
+      </void>
+      <void method="add">
+       <object class="java.lang.Enum" method="valueOf">
+        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <string>ARTEMIS</string>
+       </object>
+      </void>
+      <void method="add">
+       <object class="java.lang.Enum" method="valueOf">
+        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <string>DEMETER</string>
+       </object>
+      </void>
+     </object>
+    </void>
+   </object>
   </void>
  </object>
 </java>

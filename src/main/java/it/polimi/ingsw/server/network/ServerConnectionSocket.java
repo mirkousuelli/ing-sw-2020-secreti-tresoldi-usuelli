@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private final String FILE = "src/main/java/it/polimi/ingsw/server/network/message/message_lobby-0001.xml"; // X TESTING
+    private final String FILE = "src/main/java/it/polimi/ingsw/server/network/message/message.xml"; // X TESTING
 
     public ServerConnectionSocket(int port){
         this.port = port;

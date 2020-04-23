@@ -64,7 +64,7 @@ public class CLI<S> extends ClientView<S> {
         boolean toUsePower = false;
         God god;
         List<God> chosenDeck;
-        List<MessageCell> initialWorkerPosition;
+        List<ReducedDemandCell> initialWorkerPosition;
 
         Turn turn = clientModel.getTurn();
 
@@ -115,7 +115,7 @@ public class CLI<S> extends ClientView<S> {
                     y = in.nextInt();
 
                     if (clientModel.checkCell(x, y))
-                        initialWorkerPosition.add(new MessageCell(x, y));
+                        initialWorkerPosition.add(new ReducedDemandCell(x, y));
                     else {
                         toRepeat = true;
                         printError();
@@ -158,7 +158,7 @@ public class CLI<S> extends ClientView<S> {
                 if (clientModel.getReducedCell(x, y).getAction().equals(ReducedAction.USEPOWER))
                     toUsePower = true;
 
-                payload = (S) new MessageCell(x, y);
+                payload = (S) new ReducedDemandCell(x, y);
                 break;
 
             case CONFIRM:
