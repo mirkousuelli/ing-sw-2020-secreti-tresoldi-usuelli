@@ -8,7 +8,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
-import it.polimi.ingsw.communication.message.payload.ReducedCell;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.server.model.Player;
@@ -112,11 +112,11 @@ class CLITest {
 
 
             //move
-            List<ReducedCell> cells = new ArrayList<>();
-            cells.add(new ReducedCell(0,0, Level.GROUND, ReducedAction.DEFAULT, workers.get(2), players.get(0)));
-            cells.add(new ReducedCell(0,1, Level.GROUND, ReducedAction.DEFAULT, workers.get(3), players.get(0)));
-            cells.add(new ReducedCell(1,0, Level.TOP, ReducedAction.DEFAULT, null, null));
-            cells.add(new ReducedCell(1,1, Level.GROUND, ReducedAction.MOVE, null, null));
+            List<ReducedAnswerCell> cells = new ArrayList<>();
+            cells.add(new ReducedAnswerCell(0,0, Level.GROUND, ReducedAction.DEFAULT, workers.get(2), players.get(0)));
+            cells.add(new ReducedAnswerCell(0,1, Level.GROUND, ReducedAction.DEFAULT, workers.get(3), players.get(0)));
+            cells.add(new ReducedAnswerCell(1,0, Level.TOP, ReducedAction.DEFAULT, null, null));
+            cells.add(new ReducedAnswerCell(1,1, Level.GROUND, ReducedAction.MOVE, null, null));
 
 
             answer = (Answer<S>) new Answer<>(AnswerType.SUCCESS, DemandType.BUILD, cells);
