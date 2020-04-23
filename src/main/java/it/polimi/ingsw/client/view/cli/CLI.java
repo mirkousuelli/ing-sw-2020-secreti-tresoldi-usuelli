@@ -19,18 +19,23 @@ public class CLI<S> extends ClientView<S> {
     private final Scanner in;
     final SantoriniPrintStream out;
 
-    public CLI(String nickName, ClientConnection<S> clientConnection) {
-        super(nickName, clientConnection);
+    public CLI(ReducedPlayer player, ClientConnection<S> clientConnection) {
+        super(player, clientConnection);
         in = new Scanner(System.in);
         out = new SantoriniPrintStream(System.out);
     }
 
     @Override
     public void update(ClientModel<S> clientModel) {
+        if (clientModel.getState().equals(AnswerType.START)) {
+            printOpponents(out, clientModel);
+            return;
+        }
+
         if (clientModel.getState().equals(AnswerType.ERROR))
             printError();
 
-        if(clientModel.isYourTurn(nickName)) {
+        if(clientModel.isYourTurn(player.getNickname())) {
             if (clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY)) {
                 try {
                     endGame();
@@ -48,8 +53,7 @@ public class CLI<S> extends ClientView<S> {
             if (clientModel.getTurn().equals(Turn.BUILD) || clientModel.getTurn().equals(Turn.MOVE))
                 printChanges(out, clientModel);
 
-
-            if (clientModel.getState().equals(AnswerType.START) || clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY))
+            if (clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY))
                 printOpponents(out, clientModel);
         }
     }
@@ -58,13 +62,13 @@ public class CLI<S> extends ClientView<S> {
         DemandType demandType;
         S payload;
         String nextLine;
-        int x;
-        int y;
-        boolean toRepeat = false;
+        boolean toRepeat;
         boolean toUsePower = false;
+        int i;
         God god;
         List<God> chosenDeck;
         List<MessageCell> initialWorkerPosition;
+        List<Integer> coord;
 
         Turn turn = clientModel.getTurn();
 
@@ -72,33 +76,33 @@ public class CLI<S> extends ClientView<S> {
         switch (turn) {
             case CHOOSE_DECK:
                 chosenDeck = new ArrayList<>();
-                CLIPrinter.printGods(out);
+                printCards(out, clientModel);
 
-                x = 0;
+                i = 0;
                 do {
                     CLIPrinter.printString(out, "Insert the name of one the gods which will be used in this match [godName]\n");
                     nextLine = in.nextLine();
                     god = God.parseString(nextLine);
 
-                    if (god != null && !chosenDeck.contains(god)) {
+                    if (god != null && !clientModel.checkGod(god)) {
                         chosenDeck.add(god);
-                        x++;
+                        i++;
                     }
                     else
                         printError();
-                } while (x <= 2);
+                } while (i <= 2);
 
                 payload = (S) chosenDeck;
                 break;
 
             case CHOOSE_CARD:
                 do {
-                    CLIPrinter.printGods(out);
+                    printCards(out, clientModel);
                     CLIPrinter.printString(out, "Insert the name of the chosen god [godName]\n");
                     nextLine = in.nextLine();
                     god = God.parseString(nextLine);
 
-                    toRepeat = god != null && !clientModel.getReducedGodList().contains(god);
+                    toRepeat = god == null || clientModel.checkGod(god);
 
                     if (toRepeat)
                         printError();
@@ -108,37 +112,43 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case PLACE_WORKERS:
-                do {
-                    initialWorkerPosition = new ArrayList<>();
-                    CLIPrinter.printString(out, "Insert the initial locations of your worker [x,y]\n");
-                    x = in.nextInt();
-                    y = in.nextInt();
+                initialWorkerPosition = new ArrayList<>();
 
-                    if (clientModel.checkCell(x, y))
-                        initialWorkerPosition.add(new MessageCell(x, y));
+                i = 0;
+                printChanges(out, clientModel);
+                do {
+                    CLIPrinter.printString(out, "Insert the initial locations of your worker [x,y]\n");
+                    nextLine = in.nextLine();
+                    coord = stringToInt(nextLine);
+
+                    if (coord != null && clientModel.getReducedCell(coord.get(0), coord.get(1)).isFree()) {
+                        initialWorkerPosition.add(new MessageCell(coord.get(0), coord.get(1)));
+                        toRepeat = false;
+                        i++;
+                    }
                     else {
                         toRepeat = true;
                         printError();
                     }
-                } while (toRepeat);
+                } while (toRepeat || i <= 1);
 
                 payload = (S) initialWorkerPosition;
                 break;
 
             case CHOOSE_WORKER:
                 do {
-                    CLIPrinter.printBoard(out, clientModel.getReducedBoard(), clientModel.getOpponents());
-                    CLIPrinter.printWorkers(out);
-                    CLIPrinter.printString(out, "Select a worker[1, 2]\n");
+                    printChanges(out, clientModel);
+                    CLIPrinter.printString(out, "Select a worker[x,y]\n");
                     nextLine = in.nextLine();
+                    coord = stringToInt(nextLine);
 
-                    toRepeat = !nextLine.equals("1") && !nextLine.equals("2");
+                    toRepeat = coord == null || clientModel.checkWorker(coord.get(0), coord.get(1));
 
                     if (toRepeat)
                         printError();
                 } while (toRepeat);
 
-                payload = (S) nextLine;
+                payload = (S) new MessageCell(coord.get(0), coord.get(1));
                 break;
 
             case MOVE:
@@ -146,19 +156,18 @@ public class CLI<S> extends ClientView<S> {
                 do {
                     printChanges(out, clientModel);
                     CLIPrinter.printString(out, "Make your action [x,y]\n");
-                    x = in.nextInt();
-                    y = in.nextInt();
+                    nextLine = in.nextLine();
+                    coord = stringToInt(nextLine);
 
-                    toRepeat = clientModel.checkCell(x, y);
+                    toRepeat = clientModel.evalToRepeat(coord.get(0), coord.get(1));
 
                     if (toRepeat)
                         printError();
                 } while (toRepeat);
 
-                if (clientModel.getReducedCell(x, y).getAction().equals(ReducedAction.USEPOWER))
-                    toUsePower = true;
+                toUsePower = clientModel.evalToUsePower(coord.get(0), coord.get(1));
 
-                payload = (S) new MessageCell(x, y);
+                payload = (S) new MessageCell(coord.get(0), coord.get(1));
                 break;
 
             case CONFIRM:
@@ -193,11 +202,30 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private void printChanges(SantoriniPrintStream out, ClientModel<S> clientModel) {
-        CLIPrinter.printBoard(out, clientModel.getReducedBoard(), clientModel.getOpponents());
+        List<ReducedPlayer> players = new ArrayList<>(clientModel.getOpponents());
+        players.add(player);
+
+        CLIPrinter.printBoard(out, clientModel.getReducedBoard(), players);
         CLIPrinter.printPossibleActions(out, clientModel.getReducedBoard());
+        printCards(out, clientModel);
     }
 
     private void printOpponents(SantoriniPrintStream out, ClientModel<S> clientModel) {
         CLIPrinter.printOpponents(out, clientModel.getOpponents());
+    }
+
+    private void printCards(SantoriniPrintStream out, ClientModel<S> clientModel) {
+        CLIPrinter.printGods(out, clientModel.getReducedGodList());
+    }
+
+    private List<Integer> stringToInt(String string) {
+        if (string.length() != 3) return null;
+
+        List<Integer> ret = new ArrayList<>();
+
+        ret.add((int) string.charAt(0) - 48);
+        ret.add((int) string.charAt(2) - 48);
+
+        return ret;
     }
 }

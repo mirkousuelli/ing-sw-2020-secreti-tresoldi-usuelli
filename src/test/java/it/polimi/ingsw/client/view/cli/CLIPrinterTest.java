@@ -137,8 +137,8 @@ class CLIPrinterTest {
 
         //----test static methods----
         CLIPrinter.printLogo(out);
-        CLIPrinter.printString(out, "newLine false ", true);
-        CLIPrinter.printString(out, "newLine true", true);
+        CLIPrinter.printString(out, "newLine false ");
+        CLIPrinter.printString(out, "newLine true");
         CLIPrinter.printBoard(out, reducedBoard, reducedPlayerList);
         CLIPrinter.printOpponents(out, opponents);
         CLIPrinter.printPossibleActions(out, reducedBoard);

@@ -1,10 +1,12 @@
 package it.polimi.ingsw.client.view;
 
+
 import it.polimi.ingsw.client.view.cli.NotAValidTurnRunTimeException;
 import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
@@ -14,6 +16,7 @@ import it.polimi.ingsw.server.model.cards.God;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientModel<S> extends Observable<ClientModel<S>> implements Observer<Answer<S>> {
 
@@ -25,22 +28,40 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
     private String currentWorker;
     private Turn turn;
     private AnswerType state;
+    private ReducedPlayer player;
 
-    public ClientModel() {
+
+    public ClientModel(ReducedPlayer player) {
         reducedBoard = new ReducedCell[5][5];
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                reducedBoard[i][j] = new ReducedCell(i, j);
+            }
+        }
+
+        this.player = player;
+        turn = Turn.START;
     }
 
     @Override
     public void update(Answer<S> answer) {
         state = answer.getHeader();
 
-        if (state.equals(AnswerType.START))
-            opponents = new ArrayList<>((List<ReducedPlayer>) answer.getPayload());
+        if (state.equals(AnswerType.START)) {
+            currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
+
+            opponents = ((List<ReducedPlayer>) answer.getPayload()).stream()
+                                                                   .filter(p -> !p.getNickname().equals(player.getNickname()))
+                                                                   .collect(Collectors.toList());
+        }
 
         if (state.equals(AnswerType.SUCCESS))
             updateReduceObjects(answer);
 
         notify(this);
+
+        nextTurn(answer.getContext());
     }
 
     private void updateReduceObjects(Answer<S> answer) {
@@ -52,10 +73,17 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
 
             case PLACE_WORKERS:
                 workers = new ArrayList<>((List<ReducedWorker>) answer.getPayload());
+
+                for (ReducedWorker w : workers)
+                    reducedBoard[w.getX()][w.getY()].setWorker(w);
                 break;
 
             case CHOOSE_WORKER:
-                currentWorker = answer.getPayload().toString();
+                currentPlayer = player.getNickname();
+                workers.addAll((List<ReducedWorker>) answer.getPayload());
+
+                for (ReducedWorker w : (List<ReducedWorker>) answer.getPayload())
+                    reducedBoard[w.getX()][w.getY()].setWorker(w);
                 break;
 
             case MOVE:
@@ -70,8 +98,6 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
             default:
                 throw new NotAValidTurnRunTimeException("Not a valid turn");
         }
-
-        nextTurn(answer.getContext());
     }
 
     private void updateReducedBoard(List<ReducedCell> cells) {
@@ -96,11 +122,51 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
     }
 
     public ReducedCell getReducedCell(int x, int y) {
-        return checkCell(x, y) ? reducedBoard[x][y] : null;
+        return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
     public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
+    }
+
+    public boolean checkGod(God god) {
+        if (god == null) return true;
+
+        return reducedGodList.stream()
+                             .noneMatch(g -> g.equals(god));
+    }
+
+    public boolean checkWorker(int x, int y) {
+        if (checkCell(x, y)) return true;
+
+        return workers.stream()
+                      .filter(w -> w.getOwner().equals(player.getNickname()))
+                      .noneMatch(w -> w.getX() == x && w.getY() == y);
+    }
+
+    public boolean evalToRepeat(int x, int y) {
+        if (checkCell(x, y)) return true;
+
+        switch (reducedBoard[x][y].getAction()) {
+            case BUILD:
+            case MOVE:
+                return !reducedBoard[x][y].isFree();
+
+            case DEFAULT:
+                return true;
+
+            case USEPOWER:
+                return false;
+
+            default:
+                throw  new NotAValidTurnRunTimeException("Not a valid turn");
+        }
+    }
+
+    public boolean evalToUsePower(int x, int y) {
+        if (checkCell(x, y)) return false;
+
+        return reducedBoard[x][y].getAction().equals(ReducedAction.USEPOWER);
     }
 
     public List<God> getReducedGodList() {

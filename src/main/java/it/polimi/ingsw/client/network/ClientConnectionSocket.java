@@ -22,7 +22,7 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     public ClientConnectionSocket(String ip, int port) throws IOException {
         //this.ip = ip;     SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
         //this.port = port; SECONDO ME SONO INUTILI PERCHE SERVONO SOLO AD APRIRE LA SOCKET
-        socket = new Socket(ip, port);
+        //socket = new Socket(ip, port);
         //this.file = file;
     }
 
@@ -53,11 +53,12 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
 
     @Override
     public void update(Demand<S> demand) {
-        try {
+        System.out.print("Sent\n");
+        /*try {
             file.send(demand);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     @Override

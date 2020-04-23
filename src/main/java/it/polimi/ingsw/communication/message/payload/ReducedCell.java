@@ -11,17 +11,20 @@ public class ReducedCell extends MessageCell {
     private /*final*/ ReducedAction action;
     private /*final*/ ReducedWorker worker;
 
-    public ReducedCell(int x, int y, Level level, DemandType action, Worker worker, Player player) {
+    public ReducedCell(int x, int y, Level level, ReducedAction action, Worker worker, Player player) {
         super(x, y);
         this.level = ReducedLevel.parseInt(level.toInt());
-        this.action = ReducedAction.parseString(action.toString());
-        this.worker = new ReducedWorker(worker, player.nickName);
+        this.action = action;
+        this.worker = null;
+
+        if (worker != null && player != null && player.nickName != null)
+            this.worker = new ReducedWorker(worker, player.nickName);
     }
 
     public ReducedCell(int x, int y) {
         super(x, y);
-        level = null;
-        action = null;
+        level = ReducedLevel.GROUND;
+        action = ReducedAction.DEFAULT;
         worker = null;
     }
 

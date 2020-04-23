@@ -3,15 +3,17 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.server.model.cards.God;
 
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CLIPrinter {
 
-    private static final String logo = "\n" +
+    private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
             " / _____)             _             (_)     (_)\n" +
             "( (____  _____ ____ _| |_ ___   ____ _ ____  _ \n" +
@@ -25,7 +27,7 @@ public class CLIPrinter {
     }
 
     public static void printLogo(PrintStream out) {
-        out.println(logo);
+        out.println(LOGO);
     }
 
     public static void printString(PrintStream out, String message) {
@@ -48,7 +50,9 @@ public class CLIPrinter {
                     .filter(opponent -> opponent.getNickname().equals(cell.getWorker().getOwner()))
                     .map(ReducedPlayer::getColor)
                     .map(Color::parseString)
-                    .reduce(null, (a, b) -> a != null
+                    .filter(Objects::nonNull)
+                    .map(Color::getEscape)
+                    .reduce(Color.RESET, (a, b) -> !a.equals(Color.RESET)
                             ? a
                             : b
                     )
@@ -74,12 +78,18 @@ public class CLIPrinter {
         out.print("\n");
     }
 
-    public static void printWorkers(PrintStream out) {
-        //TODO printWorkers
-    }
+    public static void printGods(PrintStream out, List<God> godList) {
+        out.print("Card");
+        if (godList.size() > 1) out.print("s");
+        out.print(": ");
 
-    public static void printGods(PrintStream out) {
-        //TODO printGods
+        /*godList.stream()
+               .map(God::toString)
+               .filter(Objects::nonNull)
+               .map(s -> s.subSequence(0, 1).toString() + s.toLowerCase().subSequence(1, s.length()).toString())
+               .forEach(out::print);*/
+
+        out.print(godList + "\n");
     }
 
     public static void printPossibleActions(PrintStream out, ReducedCell[][] reducedBoard) {
