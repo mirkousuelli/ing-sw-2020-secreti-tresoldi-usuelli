@@ -1,17 +1,16 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 
-public class ReducedCell extends MessageCell {
+public class ReducedAnswerCell extends ReducedDemandCell {
 
-    private /*final*/ ReducedLevel level;
-    private /*final*/ ReducedAction action;
-    private /*final*/ ReducedWorker worker;
+    private ReducedLevel level;
+    private ReducedAction action;
+    private ReducedWorker worker;
 
-    public ReducedCell(int x, int y, Level level, ReducedAction action, Worker worker, Player player) {
+    public ReducedAnswerCell(int x, int y, Level level, ReducedAction action, Worker worker, Player player) {
         super(x, y);
         this.level = ReducedLevel.parseInt(level.toInt());
         this.action = action;
@@ -21,12 +20,14 @@ public class ReducedCell extends MessageCell {
             this.worker = new ReducedWorker(worker, player.nickName);
     }
 
-    public ReducedCell(int x, int y) {
+    public ReducedAnswerCell(int x, int y) {
         super(x, y);
         level = ReducedLevel.GROUND;
         action = ReducedAction.DEFAULT;
         worker = null;
     }
+
+    public ReducedAnswerCell() {}
 
     public ReducedLevel getLevel() {
         return level;

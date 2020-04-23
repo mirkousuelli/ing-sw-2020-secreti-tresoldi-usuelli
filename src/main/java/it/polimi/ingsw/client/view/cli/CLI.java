@@ -67,7 +67,7 @@ public class CLI<S> extends ClientView<S> {
         int i;
         God god;
         List<God> chosenDeck;
-        List<MessageCell> initialWorkerPosition;
+        List<ReducedDemandCell> initialWorkerPosition;
         List<Integer> coord;
 
         Turn turn = clientModel.getTurn();
@@ -122,7 +122,7 @@ public class CLI<S> extends ClientView<S> {
                     coord = stringToInt(nextLine);
 
                     if (coord != null && clientModel.getReducedCell(coord.get(0), coord.get(1)).isFree()) {
-                        initialWorkerPosition.add(new MessageCell(coord.get(0), coord.get(1)));
+                        initialWorkerPosition.add(new ReducedDemandCell(coord.get(0), coord.get(1)));
                         toRepeat = false;
                         i++;
                     }
@@ -148,7 +148,7 @@ public class CLI<S> extends ClientView<S> {
                         printError();
                 } while (toRepeat);
 
-                payload = (S) new MessageCell(coord.get(0), coord.get(1));
+                payload = (S) new ReducedDemandCell(coord.get(0), coord.get(1));
                 break;
 
             case MOVE:
@@ -167,7 +167,7 @@ public class CLI<S> extends ClientView<S> {
 
                 toUsePower = clientModel.evalToUsePower(coord.get(0), coord.get(1));
 
-                payload = (S) new MessageCell(coord.get(0), coord.get(1));
+                payload = (S) new ReducedDemandCell(coord.get(0), coord.get(1));
                 break;
 
             case CONFIRM:

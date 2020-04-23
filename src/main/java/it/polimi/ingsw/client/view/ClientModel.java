@@ -7,7 +7,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
-import it.polimi.ingsw.communication.message.payload.ReducedCell;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.communication.observer.Observable;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class ClientModel<S> extends Observable<ClientModel<S>> implements Observer<Answer<S>> {
 
-    private final ReducedCell[][] reducedBoard;
+    private final ReducedAnswerCell[][] reducedBoard;
     private List<God> reducedGodList;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
@@ -32,11 +32,11 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
 
 
     public ClientModel(ReducedPlayer player) {
-        reducedBoard = new ReducedCell[5][5];
+        reducedBoard = new ReducedAnswerCell[5][5];
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                reducedBoard[i][j] = new ReducedCell(i, j);
+                reducedBoard[i][j] = new ReducedAnswerCell(i, j);
             }
         }
 
@@ -88,7 +88,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
 
             case MOVE:
             case BUILD:
-                updateReducedBoard((List<ReducedCell>) answer.getPayload());
+                updateReducedBoard((List<ReducedAnswerCell>) answer.getPayload());
                 break;
 
             case CONFIRM:
@@ -100,8 +100,8 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
         }
     }
 
-    private void updateReducedBoard(List<ReducedCell> cells) {
-        for (ReducedCell c : cells) {
+    private void updateReducedBoard(List<ReducedAnswerCell> cells) {
+        for (ReducedAnswerCell c : cells) {
             reducedBoard[c.getX()][c.getY()] = c;
         }
     }
@@ -117,11 +117,11 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
         return true;
     }
 
-    public ReducedCell[][] getReducedBoard() {
+    public ReducedAnswerCell[][] getReducedBoard() {
         return reducedBoard;
     }
 
-    public ReducedCell getReducedCell(int x, int y) {
+    public ReducedAnswerCell getReducedCell(int x, int y) {
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 

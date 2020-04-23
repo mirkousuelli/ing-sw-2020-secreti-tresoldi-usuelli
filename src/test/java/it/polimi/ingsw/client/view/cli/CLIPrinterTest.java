@@ -11,8 +11,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class CLIPrinterTest {
 
     @Test
@@ -21,7 +19,7 @@ class CLIPrinterTest {
 
         //-----define objects------
         //^^^^^view^^^^^
-        ReducedCell[][] reducedBoard = new ReducedCell[5][5];
+        ReducedAnswerCell[][] reducedBoard = new ReducedAnswerCell[5][5];
         List<ReducedPlayer> reducedPlayerList = new ArrayList<>();
         List<ReducedPlayer> opponents = new ArrayList<>();
 
@@ -90,7 +88,7 @@ class CLIPrinterTest {
         //initialize reduce board
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                reducedBoard[i][j] = new ReducedCell(board.getCell(i, j).getX(), board.getCell(i, j).getY());
+                reducedBoard[i][j] = new ReducedAnswerCell(board.getCell(i, j).getX(), board.getCell(i, j).getY());
                 reducedBoard[i][j].setLevel(ReducedLevel.GROUND);
                 reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
             }

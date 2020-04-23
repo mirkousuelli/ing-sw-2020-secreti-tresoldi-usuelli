@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
-import it.polimi.ingsw.communication.message.payload.ReducedCell;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.God;
 
@@ -34,7 +34,7 @@ public class CLIPrinter {
         out.print(message);
     }
 
-    public static void printBoard(PrintStream out, ReducedCell[][] board, List<ReducedPlayer> opponents) {
+    public static void printBoard(PrintStream out, ReducedAnswerCell[][] board, List<ReducedPlayer> opponents) {
 
         for (int i = 4; i >= 0; i--) {
             for (int j = 0; j <5; j++)
@@ -44,7 +44,7 @@ public class CLIPrinter {
         out.print("\n");
     }
 
-    private static void printCell(PrintStream out, ReducedCell cell, List<ReducedPlayer> opponents) {
+    private static void printCell(PrintStream out, ReducedAnswerCell cell, List<ReducedPlayer> opponents) {
         if (!cell.isFree()) {
             out.print(opponents.stream()
                     .filter(opponent -> opponent.getNickname().equals(cell.getWorker().getOwner()))
@@ -92,9 +92,9 @@ public class CLIPrinter {
         out.print(godList + "\n");
     }
 
-    public static void printPossibleActions(PrintStream out, ReducedCell[][] reducedBoard) {
-        List<ReducedCell> cellList = Arrays.stream(reducedBoard).flatMap(Arrays::stream).filter(x -> x.getAction() != ReducedAction.DEFAULT).collect(Collectors.toList());
-        List<ReducedAction> reducedActions = cellList.stream().map(ReducedCell::getAction).distinct().collect(Collectors.toList());
+    public static void printPossibleActions(PrintStream out, ReducedAnswerCell[][] reducedBoard) {
+        List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard).flatMap(Arrays::stream).filter(x -> x.getAction() != ReducedAction.DEFAULT).collect(Collectors.toList());
+        List<ReducedAction> reducedActions = cellList.stream().map(ReducedAnswerCell::getAction).distinct().collect(Collectors.toList());
 
         out.print("Action");
         if (reducedActions.size() >= 2) out.print("s");

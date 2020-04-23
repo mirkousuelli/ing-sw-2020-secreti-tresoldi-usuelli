@@ -7,10 +7,20 @@ import java.util.List;
 
 public class ReducedDeck {
 
-    private final List<God> reducedGodList;
+    private List<God> reducedGodList;
 
     public ReducedDeck(List<God> reducedGodList) {
         this.reducedGodList = new ArrayList<>(reducedGodList);
+    }
+
+    public ReducedDeck(){}
+
+    public List<God> getList() {
+        return reducedGodList;
+    }
+
+    public void setList(List<God> list) {
+        this.reducedGodList = list;
     }
 
     public God getReducedGod(int index) {

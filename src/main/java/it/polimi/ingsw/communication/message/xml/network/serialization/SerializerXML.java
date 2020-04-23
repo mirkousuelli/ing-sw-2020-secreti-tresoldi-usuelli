@@ -42,9 +42,8 @@ public class SerializerXML {
             } while (end != this.EOF);
         }
         finally {
-            if (bis != null) bis.close();
-            if (fis != null) fis.close();
-            //if (os != null) os.close();
+            bis.close();
+            fis.close();
         }
     }
 }
