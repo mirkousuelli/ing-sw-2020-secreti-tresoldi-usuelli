@@ -18,9 +18,11 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
 
     private final String FILE = "src/main/java/it/polimi/ingsw/client/network/message/message.xml"; // X TESTING
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
+    private boolean isActive;
 
     public ClientConnectionSocket(String ip, int port) throws IOException {
         socket = new Socket(ip, port);
+        isActive = true;
     }
 
     public void startClient() throws IOException {
@@ -45,9 +47,11 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
         } catch(NoSuchElementException e) {
             LOGGER.log(Level.SEVERE, "Connection closed.", e);
         }
-        finally {
-            closeConnection();
-        }
+    }
+
+    @Override
+    public boolean isActive() {
+        return isActive;
     }
 
     @Override
@@ -64,6 +68,7 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
     public void closeConnection() {
         try {
             socket.close();
+            isActive = false;
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);

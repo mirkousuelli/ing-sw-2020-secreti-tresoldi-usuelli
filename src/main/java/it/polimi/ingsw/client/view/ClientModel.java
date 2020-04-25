@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view;
 
-
+import it.polimi.ingsw.client.view.cli.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
@@ -31,7 +31,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
     private final ReducedPlayer player;
 
 
-    public ClientModel(ReducedPlayer player) {
+    public ClientModel(String playerName) {
         reducedBoard = new ReducedAnswerCell[5][5];
 
         for (int i = 0; i < 5; i++) {
@@ -40,8 +40,15 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
             }
         }
 
-        this.player = player;
+        player = new ReducedPlayer(playerName);
+        player.setColor(Color.RESET);
         turn = Turn.START;
+
+    }
+    
+    public ClientModel(ReducedPlayer player) {
+        this(player.getNickname());
+        player.setColor(player.getColor());
     }
 
     @Override

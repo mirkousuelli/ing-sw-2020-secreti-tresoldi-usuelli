@@ -23,4 +23,6 @@ public interface ClientConnection<S> extends Observer<Demand<S>> {
     void startClient() throws IOException;
 
     void closeConnection() throws IOException;
+
+    boolean isActive();
 }

@@ -13,10 +13,12 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
 
     protected final ReducedPlayer player;
     private final ClientConnection<S> clientConnection;
+    protected boolean notified;
 
     public ClientView(ReducedPlayer player, ClientConnection<S> clientConnection) {
         this.player = player;
         this.clientConnection = clientConnection;
+        notified = false;
     }
 
     public ClientView(String playerName, ClientConnection<S> clientConnection) {
@@ -28,7 +30,22 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
         return player;
     }
 
+    public void setNotified() {
+        this.notified = true;
+    }
+
+    protected abstract void startUI(ClientModel<S> clientModel);
+
     protected void endGame() throws IOException {
         clientConnection.closeConnection();
+    }
+
+    public void run(ClientModel<S> clientModel) {
+        while (clientConnection.isActive()) {
+            if (notified) {
+                startUI(clientModel);
+                notified = false;
+            }
+        }
     }
 }

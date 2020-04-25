@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.model.Player;
 public class ReducedPlayer {
 
     private final String nickname;
-    private final String color;
+    private String color;
 
     public ReducedPlayer(Player player, String color) {
         this.nickname = player.nickName;
@@ -23,6 +23,10 @@ public class ReducedPlayer {
 
     public String getColor() {
         return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
 

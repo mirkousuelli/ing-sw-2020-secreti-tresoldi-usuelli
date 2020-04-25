@@ -53,12 +53,21 @@ public class Client {
                 throw new NotAValidInputRunTimeException("Not a valid view");
         }
 
+        clientModel = new ClientModel(name);
+
+        //set up observers
+        clientConnection.addObserver(clientModel);
+        clientModel.addObserver(clientView);
+        clientView.addObserver(clientConnection);
+
         try{
             clientConnection.startClient();
         }
         catch (IOException e){
             LOGGER.log(Level.SEVERE, "Got an IOException", e);
         }
+
+        clientView.run(clientModel);
     }
 
     private static String askString(String message) {
@@ -68,8 +77,6 @@ public class Client {
     }
 
     private static int askInt(String message) {
-        System.out.println(message);
-
-        return Integer.parseInt(in.nextLine());
+        return Integer.parseInt(Client.askString(message));
     }
 }

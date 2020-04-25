@@ -14,6 +14,11 @@ public class GUI<S> extends ClientView<S>{
 
     @Override
     public void update(ClientModel<S> message) {
-        ;
+        //not implemented yet
+    }
+
+    @Override
+    protected void startUI(ClientModel<S> clientModel) {
+        //not implemented yet
     }
 }

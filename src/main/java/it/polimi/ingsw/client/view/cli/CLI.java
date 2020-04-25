@@ -56,7 +56,7 @@ public class CLI<S> extends ClientView<S> {
                 return;
             }
 
-            startUI(clientModel);
+            setNotified();
         }
         else {
             if (clientModel.getTurn().equals(Turn.BUILD) || clientModel.getTurn().equals(Turn.MOVE))
@@ -67,7 +67,8 @@ public class CLI<S> extends ClientView<S> {
         }
     }
 
-    private void startUI(ClientModel<S> clientModel) {
+    @Override
+    protected void startUI(ClientModel<S> clientModel) {
         DemandType demandType;
         S payload;
         String nextLine;
