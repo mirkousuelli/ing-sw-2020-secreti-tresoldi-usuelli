@@ -6,10 +6,13 @@
     <!-- list of players -->
     <!ELEMENT players (player+)>
         <!-- player's nickname to be parsed -->
-        <!ELEMENT player (#PCDATA)>
+        <!ELEMENT player (nickname, god?)>
+            <!ELEMENT nickname (#PCDATA)>
+            <!-- avoiding a deck tag introducing gods within player -->
+            <!ELEMENT god (#PCDATA)>
 
     <!-- current turn where tha game has been stopped, containing the current player -->
-    <!ELEMENT turn (state, player)>
+    <!ELEMENT turn (player,state)>
         <!-- state name which defines the position in the fsm -->
         <!ELEMENT state (#PCDATA)>
 

@@ -8,11 +8,11 @@
  * A.Y. : 2019 - 2020
  */
 
-package it.polimi.ingsw.server.model.state.states;
+package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.state.Game;
-import it.polimi.ingsw.server.model.state.GameState;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.GameState;
 
 public class ChangeTurn implements GameState {
     /* @abstractClass

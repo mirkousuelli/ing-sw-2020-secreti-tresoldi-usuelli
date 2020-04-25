@@ -4,14 +4,25 @@
 <game>
 
     <players>
-        <player></player>
-        <player></player>
-        <player></player>
+        <player>
+            <nickname>Riccardo</nickname>
+            <god>APOLLO</god>
+        </player>
+        <player>
+            <nickname>Fabio</nickname>
+            <god>ZEUS</god>
+        </player>
+        <player>
+            <nickname>Mirko</nickname>
+            <god>HEPHAESTUS</god>
+        </player>
     </players>
 
     <turn>
+        <player>
+            <nickname>Mirko</nickname>
+        </player>
         <state>CHOOSE_WORKER</state>
-        <player></player>
     </turn>
 
     <board>
@@ -20,7 +31,9 @@
             <y>0</y>
             <level>GROUND</level>
             <worker>
-                <player></player>
+                <player>
+                    <nickname>Mirko</nickname>
+                </player>
             </worker>
         </cell>
         <cell>
@@ -28,7 +41,9 @@
             <y>1</y>
             <level>GROUND</level>
             <worker>
-                <player></player>
+                <player>
+                    <nickname>Mirko</nickname>
+                </player>
             </worker>
         </cell>
         <cell>
@@ -36,7 +51,9 @@
             <y>2</y>
             <level>GROUND</level>
             <worker>
-                <player></player>
+                <player>
+                    <nickname>Fabio</nickname>
+                </player>
             </worker>
         </cell>
         <cell>
@@ -63,6 +80,11 @@
             <x>1</x>
             <y>2</y>
             <level>GROUND</level>
+            <worker>
+                <player>
+                    <nickname>Riccardo</nickname>
+                </player>
+            </worker>
         </cell>
         <cell>
             <x>1</x>
@@ -133,6 +155,11 @@
             <x>4</x>
             <y>1</y>
             <level>GROUND</level>
+            <worker>
+                <player>
+                    <nickname>Riccardo</nickname>
+                </player>
+            </worker>
         </cell>
         <cell>
             <x>4</x>
@@ -148,6 +175,11 @@
             <x>4</x>
             <y>4</y>
             <level>GROUND</level>
+            <worker>
+                <player>
+                    <nickname>Fabio</nickname>
+                </player>
+            </worker>
         </cell>
     </board>
 

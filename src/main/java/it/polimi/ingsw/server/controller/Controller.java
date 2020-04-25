@@ -4,7 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.observer.Observer;
-import it.polimi.ingsw.server.model.state.Game;
+import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.view.ActionToPerformView;
 
 public class Controller implements Observer<ActionToPerformView> {

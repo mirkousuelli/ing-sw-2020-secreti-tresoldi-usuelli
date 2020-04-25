@@ -1,53 +1,39 @@
-/* *
- * Project : Santorini
- * Group : GC15
- * Author : Riccardo Secreti, Fabio Tresoldi, Mirko Usuelli
- * Professor : Giampaolo Cugola
- * Course : Software Engineering Final Project
- * University : Politecnico di Milano
- * A.Y. : 2019 - 2020
- */
-
-package it.polimi.ingsw.server.model.state;
+package it.polimi.ingsw.server.model.game;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Deck;
+import it.polimi.ingsw.server.model.cards.God;
 import it.polimi.ingsw.server.model.map.Board;
-import it.polimi.ingsw.server.model.state.states.Start;
+import it.polimi.ingsw.server.model.game.states.Start;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
     /* @class
      * it contains all the information useful for the game that is being played
      */
-
-    public final Deck deck;
-    public final Board board;
-    public Player currentPlayer;
+    private List<Player> players;
+    private Deck deck;
+    private Board board;
     private GameState state;
-    public final int numberOfPlayers;
-    public int numPlayerRemaining;
-    public String[] Nicknames;
+    private int currentPlayer;
 
-    public Game(int numberOfPlayers, String[] Nicknames) {
+    public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
          * it is used to create a new game, initialising its state to start
          */
+        players = new ArrayList<>();
+        deck = new Deck();
+        board = new Board();
+        state = new Start(this);
+    }
 
-        this.Nicknames = Nicknames;
-        this.numberOfPlayers = numberOfPlayers;
-/*
-        Player p1 = new Player(Nicknames[0]);
-        Player p2 = new Player(Nicknames[1]);
-        if(numberOfPlayers == 3) {
-            Player p3 = new Player(Nicknames[2]);
-        }
-*/
-        deck = null;
-        board = null;
-        // state = null;
-        numPlayerRemaining = numberOfPlayers;
-
-        setState(new Start(this));
+    public void assignCard(God god) {
+        this.deck.fetchCard(god);
+        this.players.get(this.currentPlayer).setCard(this.deck.popCard(god));
     }
 
     public Board getBoard() {
@@ -57,6 +43,10 @@ public class Game {
         return board;
     }
 
+    public void setBoard(Board newBoard) {
+        this.board = newBoard;
+    }
+
     public Deck getDeck() {
         /* @getter
          * it gets the deck of cards in use
@@ -64,18 +54,22 @@ public class Game {
         return deck;
     }
 
+    public void setDeck(Deck newDeck) {
+        this.deck = newDeck;
+    }
+
     public void setCurrentPlayer(Player currentPlayer) {
         /* @setter
          * it sets the current player to the designated one
          */
-        this.currentPlayer = currentPlayer;
+        this.currentPlayer = players.indexOf(currentPlayer);
     }
 
     public Player getCurrentPlayer() {
         /* @getter
          * it gets the current player
          */
-        return currentPlayer;
+        return this.players.get(this.currentPlayer);
     }
 
     public GameState getState() {
@@ -90,6 +84,18 @@ public class Game {
          * it sets the current state to the designated one
          */
         this.state = state;
+    }
+
+    public void addPlayer(String nickname) {
+        this.players.add(new Player(nickname));
+    }
+
+    public Player getPlayer(String nickname) {
+        for (Player p : this.players) {
+            if (p.getNickName().equals(nickname))
+                return p;
+        }
+        return null;
     }
 
     public void gameEngine() {

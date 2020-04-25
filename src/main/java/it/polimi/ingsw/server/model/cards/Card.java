@@ -20,7 +20,7 @@ public class Card {
      * it describes the player's card
      */
 
-    private String name;
+    private God god;
     private String description;
     private final List<Power> powerList;
 
@@ -33,11 +33,11 @@ public class Card {
     }
 
     public String getName() {
-        return name;
+        return god.toString();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.god = God.parseString(name);
     }
 
     public String getDescription() {
@@ -54,5 +54,13 @@ public class Card {
 
     public void addPower(Power power) {
         powerList.add(power);
+    }
+
+    public God getGod() {
+        return god;
+    }
+
+    public void setGod(God newGod) {
+        this.god = newGod;
     }
 }
