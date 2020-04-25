@@ -28,6 +28,7 @@ public class Player {
     private Card card;
     private Worker currentWorker;
     private final List<Malus> malusList;
+    private final int NUM_WORKER = 2;
 
     public Player(String nickName) {
         /*@constructor
@@ -35,7 +36,7 @@ public class Player {
          */
 
         this.nickName = nickName;
-        worker = new ArrayList<>(2);
+        worker = new ArrayList<>(NUM_WORKER);
         card = null;
         currentWorker = null;
         malusList = new ArrayList<>();
@@ -53,9 +54,17 @@ public class Player {
         if (!position.isFree()) return false;
         if (id != 1 && id != 2) return false;
 
-        worker.add(new Worker(this, position));
+        this.addWorker(new Worker(position));
 
         return true;
+    }
+
+    public boolean addWorker(Worker newWorker) {
+        if (this.worker.size() < NUM_WORKER) {
+            this.worker.add(newWorker);
+            return true;
+        }
+        return false;
     }
 
     public List<Worker> getWorkers() {

@@ -130,4 +130,25 @@ public enum Level {
                 return null;
         }
     }
+
+    public static Level parseString(String level) {
+        /* @function
+         * it returns the correspondent level enum from an integer input
+         */
+
+        switch (level) {
+            case "GROUND":
+                return GROUND;
+            case "BOTTOM":
+                return BOTTOM;
+            case "MIDDLE":
+                return MIDDLE;
+            case "TOP":
+                return TOP;
+            case "DOME":
+                return DOME;
+            default:
+                return null;
+        }
+    }
 }

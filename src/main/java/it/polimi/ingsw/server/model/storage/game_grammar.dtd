@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- game composed by a list of players + current turn + current board -->
+<!ELEMENT game (players, turn, board)>
+
+    <!-- list of players -->
+    <!ELEMENT players (player+)>
+        <!-- player's nickname to be parsed -->
+        <!ELEMENT player (nickname, god?)>
+            <!ELEMENT nickname (#PCDATA)>
+            <!-- avoiding a deck tag introducing gods within player -->
+            <!ELEMENT god (#PCDATA)>
+
+    <!-- current turn where tha game has been stopped, containing the current player -->
+    <!ELEMENT turn (player,state)>
+        <!-- state name which defines the position in the fsm -->
+        <!ELEMENT state (#PCDATA)>
+
+    <!-- current board before the stoppage composed by 25 cells -->
+    <!ELEMENT board (cell+)>
+        <!-- every cell containing coordinates, level and presence of worker -->
+        <!ELEMENT cell (x, y, level, worker?)>
+            <!ELEMENT x (#PCDATA)>
+            <!ELEMENT y (#PCDATA)>
+            <!ELEMENT level (#PCDATA)>
+            <!ELEMENT worker (player)>

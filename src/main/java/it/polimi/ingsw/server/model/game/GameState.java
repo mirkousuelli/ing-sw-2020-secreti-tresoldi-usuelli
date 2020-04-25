@@ -8,7 +8,7 @@
  * A.Y. : 2019 - 2020
  */
 
-package it.polimi.ingsw.server.model.state;
+package it.polimi.ingsw.server.model.game;
 
 public interface GameState {
     /* @abstractClass

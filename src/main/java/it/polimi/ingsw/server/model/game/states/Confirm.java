@@ -11,10 +11,10 @@
 /* da decidere se mettere solo per funzionalità avanzata (undo) o anche come parte integrante del gioco
    (e quindi se un giocatore deve dare la conferma della propria mossa)
  */
-package it.polimi.ingsw.server.model.state.states;
+package it.polimi.ingsw.server.model.game.states;
 
-import it.polimi.ingsw.server.model.state.Game;
-import it.polimi.ingsw.server.model.state.GameState;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.GameState;
 
 public class Confirm implements GameState {
 

@@ -32,17 +32,7 @@ public class Deck {
 
         parser = new GodParser(this);
         cards = new ArrayList<>();
-
-        //test();
     }
-
-    /*public void test() {
-        List<God> gods = new ArrayList<God>();
-        gods.add(God.APOLLO);
-        gods.add(God.ZEUS);
-
-        fetchCards(gods);
-    }*/
 
     public Card popRandomCard() {
         /*@function
@@ -73,5 +63,24 @@ public class Deck {
 
     public void fetchDeck() {
         parser.parseCards(Arrays.asList(God.values()));
+    }
+
+    public Card popCard(God god) {
+        /*@function
+         * it picks the selected card from the deck
+         */
+
+        Card pickedCard = null;
+
+        if (!cards.isEmpty()) {
+            for (Card card : cards) {
+                if (card.getGod().equals(god)){
+                    pickedCard = card;
+                    cards.remove(pickedCard);
+                }
+            }
+        }
+
+        return pickedCard;
     }
 }

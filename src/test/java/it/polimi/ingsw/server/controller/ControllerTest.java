@@ -3,14 +3,12 @@ package it.polimi.ingsw.server.controller;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.state.Game;
-import it.polimi.ingsw.server.model.state.states.Build;
-import it.polimi.ingsw.server.model.state.states.Move;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.states.Build;
+import it.polimi.ingsw.server.model.game.states.Move;
 import it.polimi.ingsw.server.network.ServerClientHandler;
-import it.polimi.ingsw.server.network.ServerClientHandlerSocket;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
-import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

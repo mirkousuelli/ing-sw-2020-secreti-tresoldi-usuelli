@@ -23,12 +23,12 @@ public class Worker extends Pawn {
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Worker(Player player, Block pos) {
+    public Worker(Block pos) {
         /* @constructor
          * it re-calls its super class Pawn
          */
 
-        super(player, pos);
+        super(pos);
         this.prevCell = pos;
         this.prevBuild = null;
     }

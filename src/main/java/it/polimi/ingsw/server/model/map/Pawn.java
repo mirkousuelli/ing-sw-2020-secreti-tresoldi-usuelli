@@ -21,16 +21,14 @@ public abstract class Pawn implements Cell {
      */
 
     protected Block currCell; // current position in the grill
-    protected Player player; // pawn owner who can manage it
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
-    public Pawn (Player player, Block currCell) {
+    public Pawn (Block currCell) {
         /* @constructor
          * it constructs a pawn linking the owner (player) and is current position within the board
          */
 
-        this.player = player;
         this.currCell = currCell;
         this.currCell.addPawn(this);
     }
@@ -61,14 +59,6 @@ public abstract class Pawn implements Cell {
          */
 
         return this.currCell;
-    }
-
-    public Player getPlayer() {
-        /* @getter
-         * it gets the pawn owner
-         */
-
-        return this.player;
     }
 
     @Override
@@ -112,14 +102,6 @@ public abstract class Pawn implements Cell {
         this.currCell.removePawn();
         this.currCell = newCell;
         this.currCell.addPawn(this);
-    }
-
-    public void setPlayer(Player newPlayer) {
-        /* @setter
-         * it sets the pawn owner
-         */
-
-        this.player = newPlayer;
     }
 
     @Override
