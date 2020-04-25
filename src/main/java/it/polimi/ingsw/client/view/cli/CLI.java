@@ -28,6 +28,12 @@ public class CLI<S> extends ClientView<S> {
         out = new SantoriniPrintStream(System.out);
     }
 
+    public CLI(String playerName, ClientConnection<S> clientConnection) {
+        super(playerName, clientConnection);
+        in = new Scanner(System.in);
+        out = new SantoriniPrintStream(System.out);
+    }
+
     @Override
     public void update(ClientModel<S> clientModel) {
         if (clientModel.getState().equals(AnswerType.START)) {
@@ -189,7 +195,7 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             default:
-                throw new NotAValidTurnRunTimeException("Not a valid turn");
+                throw new NotAValidInputRunTimeException("Not a valid turn");
         }
 
         if (toUsePower)

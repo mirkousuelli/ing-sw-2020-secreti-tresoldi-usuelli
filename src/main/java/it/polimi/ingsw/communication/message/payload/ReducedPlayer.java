@@ -12,6 +12,11 @@ public class ReducedPlayer {
         this.color = color;
     }
 
+    public ReducedPlayer(String player) {
+        this.nickname = player;
+        color = null;
+    }
+
     public String getNickname() {
         return nickname;
     }

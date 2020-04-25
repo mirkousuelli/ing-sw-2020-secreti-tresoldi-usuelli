@@ -12,12 +12,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerClientHandlerSocket extends Observable<Demand> implements ServerClientHandler, Runnable {
 
     private Socket socket;
     private FileXML file;
     private ServerConnection server; // ??? NON SO A COSA SERVE
+    private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
     private boolean active = true;
 
@@ -36,7 +39,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             this.file.send(message);    // INCAPSULATO
         }
         catch(IOException e) {
-            System.err.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Got an IOException", e);
         }
     }
 
@@ -46,16 +49,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             socket.close();
         }
         catch (IOException e) {
-            System.err.println("Error when closing socket!");
+            LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
         }
         active = false;
     }
 
     private void close() {
         closeConnection();
-        System.out.println("Deregistering client...");
+        LOGGER.info("Deregistering client...");
         //server.deregisterConnection(this);          DA FARE
-        System.out.println("Done!");
+        LOGGER.info("Done");
     }
 
     @Override
@@ -74,16 +77,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
         try{
             if (testDemand) {
-                System.out.println("Receiving...");
+                LOGGER.info("Receiving...");
                 Demand read = (Demand) file.receive();
-                System.out.println("Received!");
+                LOGGER.info("Received!");
             } else {
-                System.out.println("Sending...");
+                LOGGER.info("Sending...");
                 send(new Answer(AnswerType.SUCCESS, DemandType.JOIN_GAME, "1234"));
-                System.out.println("Sent!");
+                LOGGER.info("Sent!");
             }
         } catch (IOException | NoSuchElementException e) {
-            System.err.println("Error!" + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error!" + e.getMessage(), e);
         }finally{
             close();
         }

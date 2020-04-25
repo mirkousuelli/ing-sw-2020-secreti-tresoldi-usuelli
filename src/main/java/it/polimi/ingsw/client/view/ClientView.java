@@ -19,6 +19,11 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
         this.clientConnection = clientConnection;
     }
 
+    public ClientView(String playerName, ClientConnection<S> clientConnection) {
+        player = new ReducedPlayer(playerName);
+        this.clientConnection = clientConnection;
+    }
+
     public ReducedPlayer getPlayer() {
         return player;
     }

@@ -62,7 +62,11 @@ public class MovePower<S> extends ActivePower<S> {
     private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block newPos) {
         if (cellToMove.isFree()) return false;
         if (opponentWorker == null) return false;
-        if (opponentWorker.getPlayer().equals(currentPlayer)) return false;
+
+        for (Worker w : currentPlayer.getWorkers()) {
+            if (w.equals(opponentWorker))
+                return false;
+        }
 
         workerToUse.setPreviousLocation(workerToUse.getLocation());
         opponentWorker.setPreviousLocation(cellToMove);

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 
-import it.polimi.ingsw.client.view.cli.NotAValidTurnRunTimeException;
+import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
@@ -62,7 +62,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
         notify(this);
 
         if(!nextTurn(answer.getContext()))
-            throw new NotAValidTurnRunTimeException("Not a valid turn");
+            throw new NotAValidInputRunTimeException("Not a valid turn");
     }
 
     private void updateReduceObjects(Answer<S> answer) {
@@ -97,7 +97,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
                 break;
 
             default:
-                throw new NotAValidTurnRunTimeException("Not a valid turn");
+                throw new NotAValidInputRunTimeException("Not a valid turn");
         }
     }
 
@@ -160,7 +160,7 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
                 return false;
 
             default:
-                throw  new NotAValidTurnRunTimeException("Not a valid turn");
+                throw  new NotAValidInputRunTimeException("Not a valid turn");
         }
     }
 

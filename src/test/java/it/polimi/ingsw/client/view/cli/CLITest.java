@@ -86,8 +86,8 @@ class CLITest {
             Block worker1Player2 = (Block) board.getCell(1, 3);
             Block worker1Player3 = (Block) board.getCell(2, 2);
 
-            workers.add(new Worker(players.get(1), worker1Player2));
-            workers.add(new Worker(players.get(2), worker1Player3));
+            workers.add(new Worker(/*players.get(1), */worker1Player2));
+            workers.add(new Worker(/*players.get(2), */worker1Player3));
 
             reducedWorkers.add(new ReducedWorker(workers.get(0), players.get(1).nickName));
             reducedWorkers.add(new ReducedWorker(workers.get(1), players.get(2).nickName));
@@ -101,8 +101,8 @@ class CLITest {
             Block worker1Player1 = (Block) board.getCell(0, 0);
             Block worker2Player1 = (Block) board.getCell(0, 1);
 
-            workers.add(new Worker(players.get(0), worker1Player1));
-            workers.add(new Worker(players.get(0), worker2Player1));
+            workers.add(new Worker(/*players.get(0), */worker1Player1));
+            workers.add(new Worker(/*players.get(0), */worker2Player1));
 
             reducedWorkers.add(new ReducedWorker(workers.get(2), players.get(0).nickName));
             reducedWorkers.add(new ReducedWorker(workers.get(3), players.get(0).nickName));
