@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 
 public class Client {
 
-    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
     private static final Scanner in = new Scanner(System.in);
     private static final PrintStream out = new SantoriniPrintStream(System.out);
 
@@ -43,34 +42,34 @@ public class Client {
                 throw new NotAValidInputRunTimeException("Not a valid connection type");
         }
 
+        clientModel = new ClientModel(name, clientConnection);
+
         switch (viewType) {
             case 1:
-                clientView = new CLI(name, clientConnection);
+                clientView = new CLI(name, clientModel);
                 break;
 
             case 2:
-                clientView = new GUI(name, clientConnection);
+                clientView = new GUI(name, clientModel);
                 break;
 
             default:
                 throw new NotAValidInputRunTimeException("Not a valid view");
         }
 
-        clientModel = new ClientModel(name);
+        clientConnection.setClientView(clientView);
 
-        //set up observers
-        clientConnection.addObserver(clientModel);
-        clientModel.addObserver(clientView);
-        clientView.addObserver(clientConnection);
+        new Thread(
+                clientView
+        ).start();
 
-        try{
-            clientConnection.startClient();
-        }
-        catch (IOException e){
-            LOGGER.log(Level.SEVERE, "Got an IOException", e);
-        }
+        new Thread(
+                clientConnection::run
+        ).start();
 
-        clientView.run(clientModel);
+        new Thread(
+                clientModel
+        ).start();
     }
 
     private static String askString(String message) {

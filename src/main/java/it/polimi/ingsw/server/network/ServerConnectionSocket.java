@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private final String FILE = "src/main/java/it/polimi/ingsw/server/network/message/message.xml"; // X TESTING
+    private final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message.xml"; // X TESTING
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     public ServerConnectionSocket(int port){
@@ -35,18 +35,17 @@ public class ServerConnectionSocket implements ServerConnection {
         while (true) {
             try {
                 socket = serverSocket.accept();
-                executor.submit(new ServerClientHandlerSocket(socket, this, FILE));
+                executor.submit(new ServerClientHandlerSocket(socket, this, FILEXML));
             }
             catch(IOException e) {
                 LOGGER.log(Level.SEVERE, "Got an IOException, serverSocket closed", e);
                 break;//In case the serverSocket gets closed
             }
-            finally {
-                executor.shutdown();
-                if (socket != null) socket.close();
-                serverSocket.close();
-            }
         }
+
+        executor.shutdown();
+        if (socket != null) socket.close();
+        serverSocket.close();
     }
 
     //register

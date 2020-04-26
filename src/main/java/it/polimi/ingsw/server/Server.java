@@ -12,7 +12,7 @@ public class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
     public static void main (String[] args ) {
-        ServerConnection server = new ServerConnectionSocket(1337);
+        ServerConnection server = new ServerConnectionSocket(23456);
 
         try {
             server.startServer();

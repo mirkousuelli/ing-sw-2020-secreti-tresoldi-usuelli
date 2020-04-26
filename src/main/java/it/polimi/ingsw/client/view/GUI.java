@@ -1,24 +1,18 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.network.ClientConnection;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public class GUI<S> extends ClientView<S>{
 
     ReducedPlayer player;
 
-    public GUI(String playerName, ClientConnection clientConnection) {
-        super(playerName, clientConnection);
+    public GUI(String playerName, ClientModel<S> clientModel) {
+        super(playerName, clientModel);
         player = new ReducedPlayer(playerName);
     }
 
     @Override
-    public void update(ClientModel<S> message) {
-        //not implemented yet
-    }
-
-    @Override
-    public void run(ClientModel<S> clientModel) {
+    public void run() {
         //not implemented yet
     }
 }

@@ -1,45 +1,81 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.network.ClientConnection;
+import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
-import it.polimi.ingsw.communication.observer.Observable;
-import it.polimi.ingsw.communication.observer.Observer;
 
-import java.io.IOException;
-
-public abstract class ClientView<S> extends Observable<Demand<S>> implements Observer<ClientModel<S>> {
+public abstract class ClientView<S> implements Runnable {
 
     protected final ReducedPlayer player;
-    private final ClientConnection<S> clientConnection;
-    protected boolean notified;
+    protected final ClientModel<S> clientModel;
 
-    public ClientView(ReducedPlayer player, ClientConnection<S> clientConnection) {
+    private Demand<S> demand;
+    private Answer<S> answer;
+    private boolean isActive;
+    private boolean isChanged;
+    public final Object lockDemand;
+
+    public ClientView(ReducedPlayer player, ClientModel<S> clientModel) {
         this.player = player;
-        this.clientConnection = clientConnection;
-        notified = false;
+        this.clientModel = clientModel;
+        isChanged = false;
+        lockDemand = new Object();
     }
 
-    public ClientView(String playerName, ClientConnection<S> clientConnection) {
-        player = new ReducedPlayer(playerName);
-        this.clientConnection = clientConnection;
+    public ClientView(String playerName, ClientModel<S> clientModel) {
+        this(new ReducedPlayer(playerName), clientModel);
     }
 
     public ReducedPlayer getPlayer() {
         return player;
     }
 
-    public ClientConnection<S> getClientConnection() {
-        return clientConnection;
+    protected synchronized void setDemand(Demand<S> demand) {
+            this.demand = demand;
     }
 
-    public void setNotified() {
-        this.notified = true;
+    public synchronized Demand<S> fetchDemand() {
+        setChanged(false);
+        return demand;
     }
 
-    protected void endGame() throws IOException {
-        clientConnection.closeConnection();
+    public synchronized boolean isChanged() {
+        return isChanged;
     }
 
-    public abstract void run(ClientModel<S> clientModel);
+    protected synchronized void setChanged(boolean isChanged) {
+        this.isChanged = isChanged;
+    }
+
+    public synchronized boolean isActive() {
+        return isActive;
+    }
+
+    public synchronized void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public synchronized Answer<S> getAnswer() {
+        return answer;
+    }
+
+    public synchronized void setAnswer(Answer<S> answer) {
+        this.answer = answer;
+    }
+
+    protected void endGame() {
+        setActive(false);
+    }
+
+    protected void setInitialRequest() {
+        synchronized (this) {
+            setDemand(new Demand(DemandType.CREATE_GAME, player.getNickname()));
+            setChanged(true);
+        }
+
+        synchronized (lockDemand) {
+            lockDemand.notifyAll();
+        }
+    }
 }

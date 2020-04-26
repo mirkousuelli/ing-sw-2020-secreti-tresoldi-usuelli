@@ -1,17 +1,17 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.network.ClientConnection;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.God;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,20 +22,19 @@ public class CLI<S> extends ClientView<S> {
     final SantoriniPrintStream out;
     private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
-    public CLI(ReducedPlayer player, ClientConnection<S> clientConnection) {
-        super(player, clientConnection);
+    public CLI(ReducedPlayer player, ClientModel<S> clientModel) {
+        super(player, clientModel);
         in = new Scanner(System.in);
         out = new SantoriniPrintStream(System.out);
     }
 
-    public CLI(String playerName, ClientConnection<S> clientConnection) {
-        super(playerName, clientConnection);
+    public CLI(String playerName, ClientModel<S> clientModel) {
+        super(playerName, clientModel);
         in = new Scanner(System.in);
         out = new SantoriniPrintStream(System.out);
     }
 
-    @Override
-    public void update(ClientModel<S> clientModel) {
+    private synchronized void update() {
         if (clientModel.getState().equals(AnswerType.START)) {
             printOpponents(out, clientModel);
             return;
@@ -46,17 +45,13 @@ public class CLI<S> extends ClientView<S> {
 
         if(clientModel.isYourTurn(player.getNickname())) {
             if (clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY)) {
-                try {
-                    endGame();
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "Got an IOException.", e);
-                }
+                endGame();
 
                 CLIPrinter.printString(out, "Game ended\n");
                 return;
             }
 
-            setNotified();
+            startUI();
         }
         else {
             if (clientModel.getTurn().equals(Turn.BUILD) || clientModel.getTurn().equals(Turn.MOVE))
@@ -67,17 +62,7 @@ public class CLI<S> extends ClientView<S> {
         }
     }
 
-    @Override
-    public void run(ClientModel<S> clientModel) {
-        while (getClientConnection().isActive()) {
-            if (notified) {
-                startUI(clientModel);
-                notified = false;
-            }
-        }
-    }
-
-    protected void startUI(ClientModel<S> clientModel) {
+    private synchronized void startUI() {
         DemandType demandType;
         S payload;
         String nextLine;
@@ -213,7 +198,54 @@ public class CLI<S> extends ClientView<S> {
         else
             demandType = turn.toDemandType();
 
-        notify(new Demand<>(demandType, payload));
+        setDemand(new Demand<>(demandType, payload));
+        setChanged(true);
+        this.notifyAll();
+    }
+
+    public Thread asyncReadFromModel() {
+        Thread t = new Thread(
+                () -> {
+                    try {
+                        Answer<S> temp;
+                        while (isActive()) {
+                            synchronized (clientModel) {
+                                while (!clientModel.isChanged()) clientModel.wait();
+                                temp = clientModel.getAnswer();
+                            }
+
+                            LOGGER.info("Receiving...");
+                            synchronized (this) {
+                                setAnswer(temp);
+                                LOGGER.info("Received!");
+                                update();
+                            }
+                        }
+                    } catch (Exception e){
+                        setActive(false);
+                        LOGGER.log(Level.SEVERE, "Got an exception", e);
+                    }
+                }
+        );
+
+        t.start();
+        return t;
+    }
+
+    @Override
+    public void run() {
+        setActive(true);
+        setChanged(false);
+
+        try {
+            setInitialRequest();
+            Thread read = asyncReadFromModel();
+            read.join();
+        } catch (InterruptedException | NoSuchElementException e) {
+            LOGGER.log(Level.SEVERE, "CLI closed", e);
+        } finally {
+            setActive(false);
+        }
     }
 
     private void printError() {

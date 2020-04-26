@@ -16,36 +16,49 @@ public class FileXML {
     private final SerializerXML sender;
     private final DeserializerXML receiver;
     private Message msg;
+    private boolean isChanged;
 
     public FileXML(String pathFile, Socket sock) throws FileNotFoundException {
         this.encoder = new EncoderXML(pathFile);
         this.decoder = new DecoderXML(pathFile);
         this.sender = new SerializerXML(pathFile, sock);
         this.receiver = new DeserializerXML(pathFile, sock);
+        msg = null;
+        setChanged(false);
+
     }
 
-    public void send(Message message) throws IOException {
-        this.msg = message;
+    public synchronized void send(Message message) throws IOException {
         this.encoder.encode(message);
         this.sender.write();
+
+        setChanged(false);
     }
 
-    public Message receive() throws IOException {
+    public synchronized Message receive() throws IOException {
         this.receiver.read();
-        return this.decoder.decode();
+        msg = decoder.decode();
+
+        setChanged(true);
+        return msg;
     }
 
-    public Message getMessage() {
-        return this.msg;
+    public synchronized boolean isChanged() {
+        return isChanged;
     }
-    
-    public boolean isChanged() throws IOException {
-        Message toMatch = this.receive();
+
+    public synchronized void setChanged(boolean changed) {
+        isChanged = changed;
+    }
+
+    public synchronized boolean isChangedServer() throws IOException {
+        Message toMatch = msg == null ? null : this.receive();
 
         if (this.msg.equals(toMatch)) {
             return false;
         } else {
             this.msg = toMatch;
+            this.notifyAll();
             return true;
         }
     }
