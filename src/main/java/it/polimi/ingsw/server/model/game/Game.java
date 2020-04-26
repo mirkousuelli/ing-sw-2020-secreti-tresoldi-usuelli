@@ -19,6 +19,7 @@ public class Game {
     private Board board;
     private GameState state;
     private int currentPlayer;
+    public final int DIM = 5;
 
     public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
