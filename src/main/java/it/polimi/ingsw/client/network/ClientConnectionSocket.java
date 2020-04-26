@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.network;
 
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
@@ -34,14 +35,14 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
         try {
             //while (true){        L'HO TOLTO PER TESTING
             if (testDemand) {
-                LOGGER.log(Level.INFO, "Sending...");
+                LOGGER.info("Sending...");
                 file.send(new Demand(DemandType.JOIN_GAME, "1234"));
-                LOGGER.log(Level.INFO, "Sent!");
+                LOGGER.info("Sent!");
 
             } else {
-                LOGGER.log(Level.INFO, "Receiving...");
+                LOGGER.info("Receiving...");
                 Answer answer = (Answer) file.receive();
-                LOGGER.log(Level.INFO, "Received!");
+                LOGGER.info("Received!");
             }
             //}
         } catch(NoSuchElementException e) {
@@ -56,12 +57,13 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
 
     @Override
     public void update(Demand<S> demand) {
-        LOGGER.log(Level.INFO, "Sent!");
         try {
             file.send(demand);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException!", e);
         }
+
+        LOGGER.info("Sent!");
     }
 
     @Override
@@ -71,7 +73,7 @@ public class ClientConnectionSocket<S> extends Observable<Answer<S>> implements 
             isActive = false;
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
+            LOGGER.log(Level.SEVERE, "Cannot close the socket", e);
         }
     }
 }

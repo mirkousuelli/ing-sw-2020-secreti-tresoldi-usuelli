@@ -8,7 +8,6 @@ import it.polimi.ingsw.communication.observer.Observer;
 
 import java.io.IOException;
 
-
 public abstract class ClientView<S> extends Observable<Demand<S>> implements Observer<ClientModel<S>> {
 
     protected final ReducedPlayer player;
@@ -30,22 +29,17 @@ public abstract class ClientView<S> extends Observable<Demand<S>> implements Obs
         return player;
     }
 
+    public ClientConnection<S> getClientConnection() {
+        return clientConnection;
+    }
+
     public void setNotified() {
         this.notified = true;
     }
-
-    protected abstract void startUI(ClientModel<S> clientModel);
 
     protected void endGame() throws IOException {
         clientConnection.closeConnection();
     }
 
-    public void run(ClientModel<S> clientModel) {
-        while (clientConnection.isActive()) {
-            if (notified) {
-                startUI(clientModel);
-                notified = false;
-            }
-        }
-    }
+    public abstract void run(ClientModel<S> clientModel);
 }

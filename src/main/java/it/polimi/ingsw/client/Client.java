@@ -7,8 +7,10 @@ import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.GUI;
 import it.polimi.ingsw.client.view.cli.CLI;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
+import it.polimi.ingsw.client.view.cli.SantoriniPrintStream;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +19,7 @@ public class Client {
 
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
     private static final Scanner in = new Scanner(System.in);
+    private static final PrintStream out = new SantoriniPrintStream(System.out);
 
     public static void main(String[] args) throws IOException {
         ClientView clientView;
@@ -71,7 +74,7 @@ public class Client {
     }
 
     private static String askString(String message) {
-        System.out.println(message);
+        out.println(message);
 
         return in.nextLine();
     }

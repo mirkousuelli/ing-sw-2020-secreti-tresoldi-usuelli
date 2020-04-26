@@ -12,7 +12,7 @@ public interface ClientConnection<S> extends Observer<Demand<S>> {
     //Observer
     void update(Demand<S> message);
 
-    //Observalbe
+    //Observable
     void addObserver(Observer<Answer<S>> observer);
 
     void removeObserver(Observer<Answer<S>> observer);

@@ -30,7 +30,6 @@ public class ClientModel<S> extends Observable<ClientModel<S>> implements Observ
     private AnswerType state;
     private final ReducedPlayer player;
 
-
     public ClientModel(String playerName) {
         reducedBoard = new ReducedAnswerCell[5][5];
 

@@ -18,7 +18,7 @@ public class GUI<S> extends ClientView<S>{
     }
 
     @Override
-    protected void startUI(ClientModel<S> clientModel) {
+    public void run(ClientModel<S> clientModel) {
         //not implemented yet
     }
 }

@@ -68,6 +68,15 @@ public class CLI<S> extends ClientView<S> {
     }
 
     @Override
+    public void run(ClientModel<S> clientModel) {
+        while (getClientConnection().isActive()) {
+            if (notified) {
+                startUI(clientModel);
+                notified = false;
+            }
+        }
+    }
+
     protected void startUI(ClientModel<S> clientModel) {
         DemandType demandType;
         S payload;
