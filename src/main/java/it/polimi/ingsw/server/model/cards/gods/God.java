@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.cards;
+package it.polimi.ingsw.server.model.cards.gods;
 
 public enum God {
     APOLLO,

@@ -7,7 +7,7 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.io.IOException;
 import java.util.ArrayList;

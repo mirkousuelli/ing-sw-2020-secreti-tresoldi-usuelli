@@ -2,20 +2,19 @@ package it.polimi.ingsw.server.model.game;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Deck;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.game.states.Start;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Game {
     /* @class
      * it contains all the information useful for the game that is being played
      */
-    private List<Player> players;
+    private final Lobby lobby;
     private Deck deck;
     private Board board;
     private GameState state;
@@ -25,15 +24,15 @@ public class Game {
         /* @constructor
          * it is used to create a new game, initialising its state to start
          */
-        players = new ArrayList<>();
-        deck = new Deck();
-        board = new Board();
-        state = new Start(this);
+        this.lobby = new Lobby();
+        this.deck = new Deck();
+        this.board = new Board();
+        this.state = new Start(this);
     }
 
     public void assignCard(God god) {
         this.deck.fetchCard(god);
-        this.players.get(this.currentPlayer).setCard(this.deck.popCard(god));
+        this.lobby.getPlayer(this.currentPlayer).setCard(this.deck.popCard(god));
     }
 
     public Board getBoard() {
@@ -62,14 +61,14 @@ public class Game {
         /* @setter
          * it sets the current player to the designated one
          */
-        this.currentPlayer = players.indexOf(currentPlayer);
+        this.currentPlayer = this.lobby.getIndex(currentPlayer);
     }
 
     public Player getCurrentPlayer() {
         /* @getter
          * it gets the current player
          */
-        return this.players.get(this.currentPlayer);
+        return this.lobby.getPlayer(this.currentPlayer);
     }
 
     public GameState getState() {
@@ -86,16 +85,8 @@ public class Game {
         this.state = state;
     }
 
-    public void addPlayer(String nickname) {
-        this.players.add(new Player(nickname));
-    }
-
-    public Player getPlayer(String nickname) {
-        for (Player p : this.players) {
-            if (p.getNickName().equals(nickname))
-                return p;
-        }
-        return null;
+    public Lobby getLobby() {
+        return this.lobby;
     }
 
     public void gameEngine() {

@@ -20,6 +20,7 @@ public class Worker extends Pawn {
 
     private Block prevCell;
     private Block prevBuild;
+    private boolean gender;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
@@ -31,6 +32,7 @@ public class Worker extends Pawn {
         super(pos);
         this.prevCell = pos;
         this.prevBuild = null;
+        this.gender = true;
     }
 
     /* GETTER  --------------------------------------------------------------------------------------------------------- */
@@ -79,5 +81,13 @@ public class Worker extends Pawn {
          * it indicates that the pawn worker is able to change is position
          */
         return true;
+    }
+
+    public void setGender(boolean gender) {
+        this.gender = gender;
+    }
+
+    public boolean isMale() {
+        return gender;
     }
 }

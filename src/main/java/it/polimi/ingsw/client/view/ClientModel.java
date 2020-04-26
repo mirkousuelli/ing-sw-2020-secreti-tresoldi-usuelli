@@ -12,7 +12,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.communication.observer.Observer;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
 import java.util.List;

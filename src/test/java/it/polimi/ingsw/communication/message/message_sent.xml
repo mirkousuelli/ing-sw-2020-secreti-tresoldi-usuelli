@@ -19,19 +19,19 @@
      <object class="java.util.ArrayList">
       <void method="add">
        <object class="java.lang.Enum" method="valueOf">
-        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <class>it.polimi.ingsw.server.model.cards.gods.God</class>
         <string>APOLLO</string>
        </object>
       </void>
       <void method="add">
        <object class="java.lang.Enum" method="valueOf">
-        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <class>it.polimi.ingsw.server.model.cards.gods.God</class>
         <string>ARTEMIS</string>
        </object>
       </void>
       <void method="add">
        <object class="java.lang.Enum" method="valueOf">
-        <class>it.polimi.ingsw.server.model.cards.God</class>
+        <class>it.polimi.ingsw.server.model.cards.gods.God</class>
         <string>DEMETER</string>
        </object>
       </void>

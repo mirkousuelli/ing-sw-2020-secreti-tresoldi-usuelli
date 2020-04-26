@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 
 import java.util.ArrayList;

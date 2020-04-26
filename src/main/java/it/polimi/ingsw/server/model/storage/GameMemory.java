@@ -1,27 +1,28 @@
 package it.polimi.ingsw.server.model.storage;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.Deck;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.*;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 
 import java.io.IOException;
-import java.util.List;
 
 public class GameMemory{
     /* game */
-    private static final int PLAYERS = 0;
+    private static final int LOBBY = 0;
     private static final int TURN = 1;
     private static final int BOARD = 2;
 
-    /* players */
+    /* lobby */
+    private static final int ID = 0;
+    private static final int PLAYERS = 1;
     private static final int NICKNAME = 0;
     private static final int GOD = 1;
 
@@ -36,16 +37,85 @@ public class GameMemory{
     private static final int WORKER = 3;
 
     public static void save(Game game, String path) {
-        List<Player> player;
-        Deck deck;
-        Board board;
-        GameState state;
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
+            Element gameNode = doc.createElement("game");
+            Element lobbyNode = doc.createElement("lobby");
+            Element turnNode = doc.createElement("turn");
+            Element boardNode = doc.createElement("board");
+
+            // TODO: complete game save with ALL the tag contained in game_grammar.dtd
+            //gameNode.appendChild();
+
+
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void save(Block block, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            // TODO: complete block update in saving file
+
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void save(Worker worker, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            // TODO: complete worker update inside the board
+
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void save(GameState state, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            // TODO: complete worker update inside the board
+
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void save(Player currentPlayer, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            // TODO: complete worker update inside the board
+
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void save(Lobby lobby, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            // TODO: complete worker update inside the board
 
         } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
@@ -62,22 +132,24 @@ public class GameMemory{
             Document doc = builder.parse(path);
 
             NodeList confNodes = doc.getDocumentElement().getChildNodes();
-            Node playersNode = confNodes.item(PLAYERS);
+            Node lobbyNode = confNodes.item(LOBBY);
             Node turnNode = confNodes.item(TURN);
             Node boardNode = confNodes.item(BOARD);
 
             /* players */
-            NodeList playerNode = playersNode.getChildNodes();
-            for (int i = 0; i <= playerNode.getLength(); i++) {
+            NodeList playerNode = lobbyNode.getChildNodes();
+            //game.getLobby().setID(playerNode.item(ID).getNodeValue());
+            // TODO: add attributes reading part
+            for (int i = PLAYERS; i <= playerNode.getLength(); i++) {
                 String nickname = playerNode.item(i).getChildNodes().item(NICKNAME).getNodeValue();
 
-                game.addPlayer(nickname);
-                game.setCurrentPlayer(game.getPlayer(nickname));
+                game.getLobby().addPlayer(nickname);
+                game.setCurrentPlayer(game.getLobby().getPlayer(nickname));
                 game.assignCard(God.parseString(playerNode.item(i).getChildNodes().item(GOD).getNodeValue()));
             }
 
             /* turn */
-            game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
+            game.setCurrentPlayer((game.getLobby().getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
             State state = State.parseString(turnNode.getChildNodes().item(STATE).getNodeValue());
             game.setState(state.toGameState(game));
 
@@ -90,7 +162,7 @@ public class GameMemory{
 
                 if (cellNode.getChildNodes().getLength() == WORKER) {
                     Worker worker = new Worker(cell);
-                    game.getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue()).addWorker(worker);
+                    game.getLobby().getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue()).addWorker(worker);
                 }
             }
 

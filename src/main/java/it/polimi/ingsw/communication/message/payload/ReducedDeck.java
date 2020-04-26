@@ -1,6 +1,6 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
 import java.util.List;

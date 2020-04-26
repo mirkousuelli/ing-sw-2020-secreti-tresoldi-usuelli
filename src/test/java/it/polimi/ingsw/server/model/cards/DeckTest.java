@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.server.model.cards.gods.God;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
