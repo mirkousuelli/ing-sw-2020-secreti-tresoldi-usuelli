@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!-- game composed by a list of players + current turn + current board -->
-<!ELEMENT game (players, turn, board)>
+<!ELEMENT game (lobby, turn, board)>
 
     <!-- list of players -->
-    <!ELEMENT players (player+)>
+    <!ELEMENT lobby (player+)>
         <!-- player's nickname to be parsed -->
         <!ELEMENT player (nickname, god?)>
             <!ELEMENT nickname (#PCDATA)>

@@ -3,7 +3,7 @@
 
 <game>
 
-    <players>
+    <lobby>
         <player>
             <nickname>Riccardo</nickname>
             <god>APOLLO</god>
@@ -16,7 +16,7 @@
             <nickname>Mirko</nickname>
             <god>HEPHAESTUS</god>
         </player>
-    </players>
+    </lobby>
 
     <turn>
         <player>
