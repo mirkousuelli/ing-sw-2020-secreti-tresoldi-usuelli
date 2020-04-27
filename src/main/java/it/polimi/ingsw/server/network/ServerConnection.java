@@ -1,12 +1,17 @@
 package it.polimi.ingsw.server.network;
 
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 public interface ServerConnection {
 
     void startServer() throws IOException;
 
-    //register
+    //lobby
+    void lobby(ServerClientHandler serverClientHandler, String name) throws ParserConfigurationException, SAXException;
 
-    //unregister
+    //deregister
+    void deregisterConnection(ServerClientHandler serverClientHandler);
 }

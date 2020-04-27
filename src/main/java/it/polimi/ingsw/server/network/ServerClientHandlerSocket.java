@@ -4,7 +4,9 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
@@ -16,14 +18,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     private final Socket socket;
     private final FileXML file;
-    private ServerConnection server; // ??? NON SO A COSA SERVE
+    private final ServerConnection server;
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
     private boolean active;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws FileNotFoundException {
         this.socket = socket;
-        this.server = server; // ??? NON SO A COSA SERVE
+        this.server = server;
         this.file = new FileXML(pathFile, socket);
     }
 
@@ -57,38 +59,44 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private synchronized void close() {
         closeConnection();
         LOGGER.info("Deregistering client...");
-        //server.deregisterConnection(this);          DA FARE
+        server.deregisterConnection(this);
         LOGGER.info("Done");
     }
 
     @Override
     public void asyncSend(final Message message) {
-        new Thread(
-                () -> {
-                    send(message);
-                    }
-                ).start();
+        new Thread( () -> send(message) ).start();
+    }
+
+    private Demand read() throws IOException {
+        Demand demand;
+
+        synchronized (file.lockReceive) {
+            LOGGER.info("Receiving...");
+            demand = (Demand) file.receive();
+        }
+        LOGGER.info("Received!");
+
+        return demand;
     }
 
     @Override
     public void run() {
         setActive(true);
         try {
-            Demand demand;
-            while(isActive()) {
-                synchronized (file) {
-                    while (!file.isChangedServer()) file.wait();
+            Demand demand = read();
 
-                    LOGGER.info("Receiving...");
-                    demand = (Demand) file.receive();
-                }
-
-                LOGGER.info("Received!");
-                LOGGER.info(LOGGER.getName() + "Notify!");
-                //notify(demand);
+            synchronized (server) {
+                server.lobby(this, (String) demand.getPayload());
             }
-        } catch (IOException | NoSuchElementException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Error!" + e.getMessage(), e);
+
+            while(isActive()) {
+                demand = read();
+                notify(demand);
+                LOGGER.info(LOGGER.getName() + "Notified!");
+            }
+        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to receive!!" + e.getMessage(), e);
         } finally {
             setActive(false);
             close();

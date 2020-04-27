@@ -72,8 +72,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                         try {
                             Answer<S> temp;
                             while (isActive()) {
-                                synchronized (file) {
-                                    while (!file.isChanged()) file.wait();
+                                synchronized (file.lockReceive) {
                                     try {
                                         temp = (Answer<S>) file.receive();
                                     }
@@ -113,7 +112,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                                 }
 
                                 LOGGER.info("Sending...");
-                                synchronized (file) {
+                                synchronized (file.lockSend) {
                                     try {
                                         file.send(demand);
                                     }

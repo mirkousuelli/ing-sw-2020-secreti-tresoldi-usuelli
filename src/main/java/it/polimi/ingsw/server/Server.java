@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+
 import it.polimi.ingsw.server.network.ServerConnection;
 import it.polimi.ingsw.server.network.ServerConnectionSocket;
 
@@ -11,8 +12,8 @@ public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
-    public static void main (String[] args ) {
-        ServerConnection server = new ServerConnectionSocket(23456);
+    public static void main (String[] args) {
+        ServerConnection server = new ServerConnectionSocket(12345);
 
         try {
             server.startServer();
