@@ -10,7 +10,8 @@
 
 package it.polimi.ingsw.server.model.cards;
 
-import it.polimi.ingsw.server.model.cards.xml.GodParser;
+import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.gods.GodParser;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

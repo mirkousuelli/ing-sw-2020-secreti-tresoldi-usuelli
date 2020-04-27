@@ -11,7 +11,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
 import java.util.List;

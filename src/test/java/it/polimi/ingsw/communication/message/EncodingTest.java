@@ -5,11 +5,7 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.network.encoding.DecoderXML;
 import it.polimi.ingsw.communication.message.xml.network.encoding.EncoderXML;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.God;
-import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
-import it.polimi.ingsw.server.model.map.Worker;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

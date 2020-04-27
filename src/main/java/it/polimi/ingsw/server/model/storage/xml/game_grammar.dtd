@@ -5,6 +5,8 @@
 
     <!-- list of players -->
     <!ELEMENT lobby (player+)>
+        <!ATTLIST lobby
+                id ID #REQUIRED>
         <!-- player's nickname to be parsed -->
         <!ELEMENT player (nickname, god?)>
             <!ELEMENT nickname (#PCDATA)>
@@ -24,3 +26,5 @@
             <!ELEMENT y (#PCDATA)>
             <!ELEMENT level (#PCDATA)>
             <!ELEMENT worker (player)>
+                <!ATTLIST worker
+                        gender (male | female) #REQUIRED>

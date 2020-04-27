@@ -24,11 +24,11 @@ public class Player {
      */
 
     public final String nickName;
-    private final List<Worker> worker;
+    private final List<Worker> workers;
     private Card card;
     private Worker currentWorker;
     private final List<Malus> malusList;
-    private final int NUM_WORKER = 2;
+    private final int NUM_WORKERS = 2;
 
     public Player(String nickName) {
         /*@constructor
@@ -36,7 +36,7 @@ public class Player {
          */
 
         this.nickName = nickName;
-        worker = new ArrayList<>(NUM_WORKER);
+        workers = new ArrayList<>(NUM_WORKERS);
         card = null;
         currentWorker = null;
         malusList = new ArrayList<>();
@@ -44,6 +44,10 @@ public class Player {
 
     public String getNickName() {
         return nickName;
+    }
+
+    public int getNumWorkers() {
+        return NUM_WORKERS;
     }
 
     public boolean initializeWorkerPosition(int id, Block position) {
@@ -56,12 +60,17 @@ public class Player {
 
         this.addWorker(new Worker(position));
 
+        // setting male and female
+        if (this.workers.size() == NUM_WORKERS) {
+            this.workers.get(0).setGender(!this.workers.get(1).isMale());
+        }
+
         return true;
     }
 
     public boolean addWorker(Worker newWorker) {
-        if (this.worker.size() < NUM_WORKER) {
-            this.worker.add(newWorker);
+        if (this.workers.size() < NUM_WORKERS) {
+            this.workers.add(newWorker);
             return true;
         }
         return false;
@@ -72,7 +81,7 @@ public class Player {
          * it returns player's workers
          */
 
-        return new ArrayList<>(worker);
+        return new ArrayList<>(workers);
     }
 
     public Worker getCurrentWorker() {

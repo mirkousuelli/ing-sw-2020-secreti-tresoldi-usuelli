@@ -1,8 +1,7 @@
-package it.polimi.ingsw.server.model.cards.xml;
+package it.polimi.ingsw.server.model.cards.gods;
 
 import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.Deck;
-import it.polimi.ingsw.server.model.cards.God;
 import it.polimi.ingsw.server.model.cards.powers.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;

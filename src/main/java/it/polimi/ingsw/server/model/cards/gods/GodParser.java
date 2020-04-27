@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.cards.xml;
+package it.polimi.ingsw.server.model.cards.gods;
 
 import it.polimi.ingsw.server.model.cards.Deck;
 
@@ -6,7 +6,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import it.polimi.ingsw.server.model.cards.God;
 import org.xml.sax.SAXException;
 
 import java.util.Collections;

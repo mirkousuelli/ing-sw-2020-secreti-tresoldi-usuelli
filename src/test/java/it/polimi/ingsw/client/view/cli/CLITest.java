@@ -12,18 +12,15 @@ import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.God;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CLITest {
 

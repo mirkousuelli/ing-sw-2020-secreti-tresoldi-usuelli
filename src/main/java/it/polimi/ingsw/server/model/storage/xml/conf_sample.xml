@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE game SYSTEM "game_grammar.dtd">
+<!DOCTYPE game SYSTEM
+        "/Users/mirkousuelli/OneDrive - Politecnico di Milano/GitHub/SW-Engineering-Project/mirko/ing-sw-2020-secreti-tresoldi-usuelli/src/main/java/it/polimi/ingsw/server/model/storage/xml/game_grammar.dtd">
 
 <game>
 
-    <lobby>
+    <lobby id="RFM1">
         <player>
             <nickname>Riccardo</nickname>
             <god>APOLLO</god>
@@ -30,7 +31,7 @@
             <x>0</x>
             <y>0</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="male">
                 <player>
                     <nickname>Mirko</nickname>
                 </player>
@@ -40,7 +41,7 @@
             <x>0</x>
             <y>1</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="female">
                 <player>
                     <nickname>Mirko</nickname>
                 </player>
@@ -50,7 +51,7 @@
             <x>0</x>
             <y>2</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="female">
                 <player>
                     <nickname>Fabio</nickname>
                 </player>
@@ -80,7 +81,7 @@
             <x>1</x>
             <y>2</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="male">
                 <player>
                     <nickname>Riccardo</nickname>
                 </player>
@@ -155,7 +156,7 @@
             <x>4</x>
             <y>1</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="female">
                 <player>
                     <nickname>Riccardo</nickname>
                 </player>
@@ -175,7 +176,7 @@
             <x>4</x>
             <y>4</y>
             <level>GROUND</level>
-            <worker>
+            <worker gender="male">
                 <player>
                     <nickname>Fabio</nickname>
                 </player>
