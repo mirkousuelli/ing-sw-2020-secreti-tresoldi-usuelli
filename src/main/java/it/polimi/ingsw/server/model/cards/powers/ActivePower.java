@@ -47,7 +47,6 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if (!workerInitPos.equals(WorkerPosition.DEFAULT)) return false;
         if (verifyMalus(currentPlayer, cellToUse)) return false;
 
         setNumberOfActionsRemaining();
