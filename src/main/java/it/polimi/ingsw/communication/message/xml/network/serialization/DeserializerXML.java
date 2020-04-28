@@ -32,11 +32,11 @@ public class DeserializerXML {
             bytesRead = is.read(myByteArray, 0, myByteArray.length);
             current = bytesRead;
 
-            do {
+            /*do {
                 bytesRead = is.read(myByteArray, current, (myByteArray.length - current));
                 if (bytesRead >= 0)
                     current += bytesRead;
-            } while (bytesRead > EOF);
+            } while (bytesRead > EOF);*/
 
             bos.write(myByteArray, 0, current);
             bos.flush();

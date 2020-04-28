@@ -1,22 +1,25 @@
 package it.polimi.ingsw.client.network;
 
+import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
-import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.observer.Observer;
 
 import java.io.IOException;
 
-public interface ClientConnection<S> extends Observer<Demand<S>> {
+public interface ClientConnection<S> {
     //RMI or Socket
-    void update(Demand<S> message);
 
-
-    void addObserver(Observer<Answer<S>> observer);
-
-    void removeObserver(Observer<Answer<S>> observer);
-
-    void notify(Answer<S> answer);
-
+    //Thread
+    void run();
 
     void closeConnection() throws IOException;
+
+    boolean isActive();
+
+    boolean isChanged();
+
+    void setChanged(boolean isChanged);
+
+    Answer<S> getAnswer();
+
+    void setClientView(ClientView<S> clientView);
 }

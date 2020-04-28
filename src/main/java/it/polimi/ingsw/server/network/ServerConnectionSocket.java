@@ -1,41 +1,60 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.server.controller.Controller;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.view.RemoteView;
+import it.polimi.ingsw.server.view.View;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private final String FILE = "src/main/java/it/polimi/ingsw/server/network/message/message.xml"; // X TESTING
+    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message";
+    private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
-    public ServerConnectionSocket(int port){
+    private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
+    private final Map<ServerClientHandler, ServerClientHandler> playingConnection = new HashMap<>();
+
+    public ServerConnectionSocket(int port) {
         this.port = port;
     }
 
-    public void startServer() throws IOException{
+    public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         Socket socket = null;
 
-        try{
+        try {
             serverSocket = new ServerSocket(port);
-        }catch (IOException e){
-            System.err.println(e.getMessage()); //port not available
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, port not available", e); //port not available
             return;
         }
 
-        System.out.println("Server ready");
+        LOGGER.info("Server ready");
 
-        while (true){
-            try{
+        while (true) {
+            try {
                 socket = serverSocket.accept();
-                executor.submit(new ServerClientHandlerSocket(socket, this, FILE));
+                ServerClientHandlerSocket handler = new ServerClientHandlerSocket(socket, this, FILEXML + waitingConnection.size() + ".xml");
+                executor.submit(handler);
             }
-            catch(IOException e){
-                break; //In case the serverSocket gets closed
+            catch(IOException e) {
+                LOGGER.log(Level.SEVERE, "Got an IOException, serverSocket closed", e);
+                break;//In case the serverSocket gets closed
             }
         }
 
@@ -44,7 +63,47 @@ public class ServerConnectionSocket implements ServerConnection {
         serverSocket.close();
     }
 
-    //register
+    //Deregister connection
+    @Override
+    public synchronized void deregisterConnection(ServerClientHandler c) {
+        ServerClientHandler opponent = playingConnection.get(c);
+        if(opponent != null) {
+            opponent.closeConnection();
+        }
 
-    //unregister
+        playingConnection.remove(c);
+        playingConnection.remove(opponent);
+        waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c);
+
+        //TODO
+        //remove from lobby
+    }
+
+    //Wait for another player
+    @Override
+    public synchronized void preLobby(ServerClientHandler c, String name) {
+        waitingConnection.put(name, c);
+        LOGGER.info(() -> name + " put!");
+        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
+
+    }
+
+    public void lobby() throws ParserConfigurationException, SAXException {
+        if (waitingConnection.size() == 2) {
+            List<String> keys = new ArrayList<>(waitingConnection.keySet());
+            ServerClientHandler c1 = waitingConnection.get(keys.get(0));
+            ServerClientHandler c2 = waitingConnection.get(keys.get(1));
+            View player1View = new RemoteView(keys.get(0), c1);
+            View player2View = new RemoteView(keys.get(1), c2);
+            Game model = new Game();
+            Controller controller = new Controller(model);
+            //model.addObserver(player1View);
+            //model.addObserver(player2View);
+            player1View.addObserver(controller);
+            player2View.addObserver(controller);
+            playingConnection.put(c1, c2);
+            playingConnection.put(c2, c1);
+            waitingConnection.clear();
+        }
+    }
 }

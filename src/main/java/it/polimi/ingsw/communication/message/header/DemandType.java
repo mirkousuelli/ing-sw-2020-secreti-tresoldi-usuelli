@@ -1,6 +1,7 @@
 package it.polimi.ingsw.communication.message.header;
 
 public enum DemandType {
+    CONNECT,
     CREATE_GAME,
     JOIN_GAME,
     START,
@@ -16,6 +17,8 @@ public enum DemandType {
 
     public DemandType parseString(String str) {
         switch (str) {
+            case "connect":
+                return CONNECT;
             case "createGame":
                 return CREATE_GAME;
             case "joinGame":
@@ -48,6 +51,8 @@ public enum DemandType {
     @Override
     public String toString() {
         switch (this) {
+            case CONNECT:
+                return "connect";
             case CREATE_GAME:
                 return "createGame";
             case JOIN_GAME:

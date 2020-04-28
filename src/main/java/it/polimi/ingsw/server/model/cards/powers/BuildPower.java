@@ -11,7 +11,7 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.tags.effectType.BlockType;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Level;
@@ -31,9 +31,8 @@ public class BuildPower<S> extends ActivePower<S> {
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
 
-        if (getAllowedAction().equals(BlockType.DOME)) {
+        if (getAllowedAction().equals(BlockType.DOME))
             return build(cellToBuild, 4);
-        }
 
         return build(cellToBuild, cellToBuild.getLevel().toInt() + 1);
     }

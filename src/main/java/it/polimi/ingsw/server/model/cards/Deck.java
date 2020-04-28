@@ -24,6 +24,7 @@ public class Deck {
 
     private final List<Card> cards;
     private final GodParser parser;
+    private static final Random randomIndex = new Random();
 
     public Deck() throws ParserConfigurationException, SAXException {
         /*@constructor
@@ -39,10 +40,9 @@ public class Deck {
          * it picks a card from the deck
          */
 
-        Random randomIndex = new Random();
         Card pickedCard = null;
 
-        if (cards.size() != 0) {
+        if (!cards.isEmpty()) {
             pickedCard= cards.get(randomIndex.nextInt(cards.size()));
             cards.remove(pickedCard);
         }
@@ -73,7 +73,7 @@ public class Deck {
 
         Card pickedCard = null;
 
-        if (cards.size() != 0) {
+        if (!cards.isEmpty()) {
             for (Card card : cards) {
                 if (card.getGod().equals(god)){
                     pickedCard = card;

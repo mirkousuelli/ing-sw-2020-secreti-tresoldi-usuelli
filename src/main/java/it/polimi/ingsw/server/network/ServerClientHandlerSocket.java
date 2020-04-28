@@ -1,29 +1,31 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.Message;
-import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerClientHandlerSocket extends Observable<Demand> implements ServerClientHandler, Runnable {
 
-    private Socket socket;
-    private FileXML file;
-    private ServerConnection server; // ??? NON SO A COSA SERVE
+    private final Socket socket;
+    private final FileXML file;
+    private final ServerConnection server;
+    private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
-    private boolean active = true;
+    private boolean active;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws FileNotFoundException {
         this.socket = socket;
-        this.server = server; // ??? NON SO A COSA SERVE
+        this.server = server;
         this.file = new FileXML(pathFile, socket);
     }
 
@@ -31,12 +33,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return active;
     }
 
+    public synchronized void setActive(boolean active) {
+        this.active = active;
+    }
+
     private synchronized void send(Message message) {
         try {
-            this.file.send(message);    // INCAPSULATO
+            file.send(message);    // INCAPSULATO
         }
         catch(IOException e) {
-            System.err.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "Got an IOException", e);
         }
     }
 
@@ -46,45 +52,53 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             socket.close();
         }
         catch (IOException e) {
-            System.err.println("Error when closing socket!");
+            LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
         }
-        active = false;
     }
 
-    private void close() {
+    private synchronized void close() {
         closeConnection();
-        System.out.println("Deregistering client...");
-        //server.deregisterConnection(this);          DA FARE
-        System.out.println("Done!");
+        LOGGER.info("Deregistering client...");
+        server.deregisterConnection(this);
+        LOGGER.info("Done");
     }
 
     @Override
-    public void asyncSend(final Object message){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                send((Message) message);
-            }
-        }).start();
+    public void asyncSend(final Message message) {
+        new Thread( () -> send(message) ).start();
+    }
+
+    private Demand read() throws IOException {
+        Demand demand;
+
+        synchronized (file.lockReceive) {
+            LOGGER.info("Receiving...");
+            demand = (Demand) file.receive();
+        }
+        LOGGER.info("Received!");
+
+        return demand;
     }
 
     @Override
     public void run() {
-        boolean testDemand = false; // DA CAMBIARE anche in ClientConnectionSocket !!!!!!!!!!!!!
+        setActive(true);
+        try {
+            Demand demand = read();
 
-        try{
-            if (testDemand) {
-                System.out.println("Receiving...");
-                Demand read = (Demand) file.receive();
-                System.out.println("Received!");
-            } else {
-                System.out.println("Sending...");
-                send(new Answer(AnswerType.SUCCESS, DemandType.JOIN_GAME, "1234"));
-                System.out.println("Sent!");
+            synchronized (server) {
+                server.preLobby(this, (String) demand.getPayload());
             }
-        } catch (IOException | NoSuchElementException e) {
-            System.err.println("Error!" + e.getMessage());
-        }finally{
+
+            while(isActive()) {
+                demand = read();
+                notify(demand);
+                LOGGER.info(LOGGER.getName() + "Notified!");
+            }
+        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to receive!!" + e.getMessage(), e);
+        } finally {
+            setActive(false);
             close();
         }
     }
