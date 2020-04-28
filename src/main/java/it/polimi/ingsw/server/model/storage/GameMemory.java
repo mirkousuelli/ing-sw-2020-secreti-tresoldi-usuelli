@@ -13,6 +13,7 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 
 import java.io.IOException;
+import java.util.List;
 
 public class GameMemory {
     /* game */
@@ -21,7 +22,6 @@ public class GameMemory {
     private static final int BOARD = 2;
 
     /* lobby */
-    private static final int ID = 0;
     private static final int NICKNAME = 0;
     private static final int GOD = 1;
 
@@ -47,17 +47,15 @@ public class GameMemory {
             /* lobby */
             Element lobbyNode = doc.createElement("lobby");
 
-            lobbyNode.setAttribute("id", game.getLobby().getID());
-
-            for (int i = 0; i < game.getLobby().getNumPlayers(); i++) {
+            for (int i = 0; i < game.getNumPlayers(); i++) {
                 Element playerNode = doc.createElement("player");
                 Element nicknameNode = doc.createElement("nickname");
                 Element godNode = doc.createElement("god");
 
-                nicknameNode.setNodeValue(game.getLobby().getPlayer(i).getNickName());
+                nicknameNode.setNodeValue(game.getPlayer(i).getNickName());
                 playerNode.appendChild(nicknameNode);
 
-                godNode.setNodeValue(game.getLobby().getPlayer(i).getCard().getName());
+                godNode.setNodeValue(game.getPlayer(i).getCard().getName());
                 playerNode.appendChild(godNode);
 
                 lobbyNode.appendChild(playerNode);
@@ -83,8 +81,8 @@ public class GameMemory {
             /* board */
             Element boardNode = doc.createElement("board");
 
-            for (int i = 0; i < game.DIM; i++) {
-                for (int j = 0; j < game.DIM; j++) {
+            for (int i = 0; i < game.getBoard().DIM; i++) {
+                for (int j = 0; j < game.getBoard().DIM; j++) {
                     Element cellNode = doc.createElement("cell");
                     Element xNode = doc.createElement("x");
                     Element yNode = doc.createElement("y");
@@ -102,8 +100,8 @@ public class GameMemory {
                 }
             }
 
-            for (int i = 0; i < game.getLobby().getNumPlayers(); i++) {
-                Player player = game.getLobby().getPlayer(i);
+            for (int i = 0; i < game.getNumPlayers(); i++) {
+                Player player = game.getPlayer(i);
                 for (int j = 0; j < player.getNumWorkers(); j++) {
                     Worker worker = player.getWorkers().get(j);
                     int x = worker.getX();
@@ -238,7 +236,7 @@ public class GameMemory {
         }
     }
 
-    public static void save(Lobby lobby, String path) {
+    public static void save(List<Player> players, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -251,15 +249,15 @@ public class GameMemory {
                 lobbyNode.removeChild(lobbyNode.getFirstChild());
 
             /* adding */
-            for (int i = 0; i < lobby.getNumPlayers(); i++) {
+            for (int i = 0; i < players.size(); i++) {
                 Element playerNode = doc.createElement("player");
                 Element nicknameNode = doc.createElement("nickname");
                 Element godNode = doc.createElement("god");
 
-                nicknameNode.setNodeValue(lobby.getPlayer(i).getNickName());
+                nicknameNode.setNodeValue(players.get(i).getNickName());
                 playerNode.appendChild(nicknameNode);
 
-                godNode.setNodeValue(lobby.getPlayer(i).getCard().getName());
+                godNode.setNodeValue(players.get(i).getCard().getName());
                 playerNode.appendChild(godNode);
 
                 lobbyNode.appendChild(playerNode);
@@ -285,18 +283,17 @@ public class GameMemory {
             Node boardNode = confNodes.item(BOARD);
 
             /* lobby */
-            game.getLobby().setID(lobbyNode.getAttributes().item(ID).getNodeValue());
             NodeList playerNode = lobbyNode.getChildNodes();
             for (int i = 0; i <= playerNode.getLength(); i++) {
                 String nickname = playerNode.item(i).getChildNodes().item(NICKNAME).getNodeValue();
 
-                game.getLobby().addPlayer(nickname);
-                game.setCurrentPlayer(game.getLobby().getPlayer(nickname));
+                game.addPlayer(nickname);
+                game.setCurrentPlayer(game.getPlayer(nickname));
                 game.assignCard(God.parseString(playerNode.item(i).getChildNodes().item(GOD).getNodeValue()));
             }
 
             /* turn */
-            game.setCurrentPlayer((game.getLobby().getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
+            game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
             State state = State.parseString(turnNode.getChildNodes().item(STATE).getNodeValue());
             game.setState(state.toGameState(game));
 
@@ -310,7 +307,7 @@ public class GameMemory {
                 if (cellNode.getChildNodes().getLength() == WORKER) {
                     Worker worker = new Worker(cell);
                     worker.setGender(cellNode.getChildNodes().item(WORKER).getAttributes().item(0).getNodeValue().equals("male"));
-                    game.getLobby().getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue()).addWorker(worker);
+                    game.getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue()).addWorker(worker);
                 }
             }
 

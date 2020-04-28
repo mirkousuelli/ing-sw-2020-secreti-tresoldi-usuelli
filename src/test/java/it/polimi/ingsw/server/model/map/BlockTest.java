@@ -75,7 +75,7 @@ class BlockTest {
         // check if it is free and walkable
         assertTrue(block.isWalkable());
         // adding a pawn on it
-        block.addPawn(new Worker(new Player("id"), block));
+        block.addPawn(new Worker(block));
         // checking that now it is not possible anymore
         assertFalse(block.isWalkable());
         // removing previous pawn

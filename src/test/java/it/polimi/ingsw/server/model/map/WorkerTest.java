@@ -180,7 +180,7 @@ class WorkerTest {
         Board board = new Board();
         Block origin = (Block)board.getCell(TEST[CENTER], TEST[CENTER]);
         Block next = (Block)board.getCell(origin.getX() + 1, origin.getY() + 1);
-        Worker enemy = new Worker(new Player("id"), next);
+        Worker enemy = new Worker(next);
 
         Player player = new Player("id");
         player.initializeWorkerPosition(1, origin);
@@ -216,7 +216,7 @@ class WorkerTest {
 
         Board board = new Board();
         Block origin = (Block) board.getCell(TEST[CENTER], TEST[CENTER]);
-        Worker tester = new Worker(new Player("id"), origin);
+        Worker tester = new Worker(origin);
 
         Player player = new Player("id");
         player.initializeWorkerPosition(1, origin);
@@ -268,7 +268,7 @@ class WorkerTest {
          */
         Board board = new Board();
         Block origin = (Block) board.getCell(TEST[CENTER], TEST[CENTER]);;
-        Worker tester = new Worker(new Player("id"), origin); // i need to initialize
+        Worker tester = new Worker(origin); // i need to initialize
         Block notAround = (Block) board.getCell(NOT_AROUND_X, NOT_AROUND_Y);
 
         Player player = new Player("id");
@@ -293,7 +293,7 @@ class WorkerTest {
         Board board = new Board();
         Block origin = (Block) board.getCell(TEST[CENTER], TEST[CENTER]);
         Block next = (Block) board.getCell(origin.getX() + 1, origin.getY() + 1);
-        Worker tester = new Worker(new Player("id"), origin); // i need to initialize
+        Worker tester = new Worker(origin); // i need to initialize
         Level backup;
 
         Player player = new Player("id");
@@ -353,7 +353,7 @@ class WorkerTest {
         Board board = new Board();
         Block origin = (Block)board.getCell(TEST[CENTER], TEST[CENTER]);
         Block next = (Block)board.getCell(origin.getX() + 1, origin.getY() + 1);
-        Worker enemy = new Worker(new Player("id"), next);
+        Worker enemy = new Worker(next);
 
         Player player = new Player("id");
         player.initializeWorkerPosition(1, origin);

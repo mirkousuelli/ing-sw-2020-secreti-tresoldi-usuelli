@@ -55,7 +55,7 @@ public enum State {
             return null;
     }
 
-    public GameState toGameState(Game game) {
+    /*public GameState toGameState(Game game) {
         switch (this) {
             case START:
                 return new Start(game);
@@ -74,5 +74,5 @@ public enum State {
             default:
                 return null;
         }
-    }
+    }*/
 }
