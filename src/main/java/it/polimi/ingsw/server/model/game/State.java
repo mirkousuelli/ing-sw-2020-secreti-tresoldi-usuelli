@@ -54,25 +54,4 @@ public enum State {
         else
             return null;
     }
-
-    /*public GameState toGameState(Game game) {
-        switch (this) {
-            case START:
-                return new Start(game);
-            case CHOOSE_WORKER:
-                return new ChooseWorker(game);
-            case MOVE:
-                return new Move(game);
-            case BUILD:
-                return new Build(game);
-            case CHANGE_TURN:
-                return new ChangeTurn(game);
-            case DEFEAT:
-                return new Defeat(game);
-            case VICTORY:
-                return new Victory(game);
-            default:
-                return null;
-        }
-    }*/
 }

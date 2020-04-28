@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GodParser {
-    private final String XMLFILE = "..\\ing-sw-2020-secreti-tresoldi-usuelli\\src\\main\\java\\it\\polimi\\ingsw\\server\\model\\cards\\gods\\xml\\gods.xml";
+    private final String XMLFILE = "src/main/java/it/polimi/ingsw/server/model/cards/gods/xml/gods.xml";
 
     private SAXParserFactory factory;
     private SAXParser parser;

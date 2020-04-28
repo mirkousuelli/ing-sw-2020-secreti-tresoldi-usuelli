@@ -94,9 +94,6 @@ public class GodHandler extends DefaultHandler {
                         case "win":
                             this.currCard.addPower(new WinConditionPower<WinType>());
                             break;
-                        /*default:
-                            this.currCard.addPower(new Power());
-                            break;*/
                     }
 
                     this.currCard.getPower(indexPower).setEffect(Effect.parseString(attributes.getValue("what")));

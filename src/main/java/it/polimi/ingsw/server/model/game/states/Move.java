@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -19,7 +20,6 @@ public class Move implements GameState {
     /* @abstractClass
      * it represents the state where a player has to move at least one of his worker
      */
-
     public Game game;
     private Cell currentCell;
     private Cell cellToMoveTo;
@@ -73,6 +73,11 @@ public class Move implements GameState {
         /* @function
          * it removes a worker from the game because of some God Power that can do it
          */
+    }
+
+    @Override
+    public String getName() {
+        return State.MOVE.toString();
     }
 
     public void gameEngine(Game game) {

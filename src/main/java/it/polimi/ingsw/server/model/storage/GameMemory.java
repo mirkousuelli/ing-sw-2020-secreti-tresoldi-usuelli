@@ -295,7 +295,7 @@ public class GameMemory {
             /* turn */
             game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
             State state = State.parseString(turnNode.getChildNodes().item(STATE).getNodeValue());
-            game.setState(state.toGameState(game));
+            game.setState(state);
 
             /* board */
             NodeList cells = boardNode.getChildNodes();

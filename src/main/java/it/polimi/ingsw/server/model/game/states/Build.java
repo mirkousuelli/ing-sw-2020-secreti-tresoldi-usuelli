@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -20,7 +21,6 @@ public class Build implements GameState {
     /* @abstractClass
      * it represents the state where a player must (or can, in case of some God powers) build a block with his worker
      */
-
     public Game game;
     private Cell currentCell;
     private Cell cellToBuildUp;
@@ -30,7 +30,6 @@ public class Build implements GameState {
         /* @constructor
          * it allows a player to build on a certain cell with a specific worker
          */
-
         this.game = game;
         // it shows the possible cells where the worker can build and then allows him to build on one of them
         // System.out.println(possibleBuilds);
@@ -53,6 +52,10 @@ public class Build implements GameState {
         // boolean buildSuccessful = false;
 
         return false;
+    }
+
+    public String getName() {
+        return State.BUILD.toString();
     }
 
     public void gameEngine(Game game) {

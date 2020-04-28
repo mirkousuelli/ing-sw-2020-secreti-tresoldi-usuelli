@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.State;
 
 public class Start implements GameState {
     /* @abstractClass
@@ -77,6 +78,11 @@ public class Start implements GameState {
          * the Challenger decides who starts first
          */
         return Starter;
+    }
+
+    @Override
+    public String getName() {
+        return State.START.toString();
     }
 
     public void gameEngine(Game game) {

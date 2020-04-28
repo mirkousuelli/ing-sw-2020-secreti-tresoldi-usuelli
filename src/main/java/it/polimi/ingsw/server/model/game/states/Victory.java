@@ -13,6 +13,7 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.State;
 
 public class Victory implements GameState {
     /* @abstractClass
@@ -44,7 +45,12 @@ public class Victory implements GameState {
        // System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
 
         // it cleans the whole board ( + probably needs to reset everything else?)
-        game.board.clean();
+        game.getBoard().clean();
+    }
+
+    @Override
+    public String getName() {
+        return State.VICTORY.toString();
     }
 
     public void gameEngine(Game game) {

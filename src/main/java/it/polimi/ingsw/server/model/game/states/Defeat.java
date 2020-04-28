@@ -13,12 +13,12 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.State;
 
 public class Defeat implements GameState {
     /* @abstractClass
      * it represents the state where a player has lost
      */
-
     public Game game;
 
     public Defeat(Game game) {
@@ -31,7 +31,7 @@ public class Defeat implements GameState {
         //the current player is eliminated with his workers
         removePlayer(game.getCurrentPlayer());
         removeWorkers(game.getCurrentPlayer());
-        game.numPlayerRemaining--;
+        game.setNumPlayers(game.getNumPlayers() - 1);
 
         // the game switches to ChangeTurn state (or maybe we could change here the current player and then go directly to ChooseWorker)
         game.setState(new ChangeTurn(game));
@@ -48,6 +48,11 @@ public class Defeat implements GameState {
         /* @function
          * it removes the workers of a player that lost
          */
+    }
+
+    @Override
+    public String getName() {
+        return State.DEFEAT.toString();
     }
 
     public void gameEngine(Game game) {

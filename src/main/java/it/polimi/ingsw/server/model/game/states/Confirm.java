@@ -18,6 +18,11 @@ import it.polimi.ingsw.server.model.game.GameState;
 
 public class Confirm implements GameState {
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
     public void gameEngine(Game game) {
         /*
          *

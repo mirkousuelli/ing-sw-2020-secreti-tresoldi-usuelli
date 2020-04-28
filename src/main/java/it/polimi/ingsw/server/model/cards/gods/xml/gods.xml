@@ -23,7 +23,7 @@
     </god>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - ARTHEMIS - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <god id="ARTHEMIS">
+    <god id="ARTEMIS">
         <name>Arthemis</name>
         <description>Your Worker may move one additional time, but not back to its initial space</description>
         <power>

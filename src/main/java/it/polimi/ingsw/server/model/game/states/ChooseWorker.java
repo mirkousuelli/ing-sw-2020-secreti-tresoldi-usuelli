@@ -13,12 +13,12 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.State;
 
 public class ChooseWorker implements GameState {
      /* @abstractClass
      * it represents the state where a player must choose the worker he wants to move
      */
-
     public Game game;
 
     public ChooseWorker(Game game) {
@@ -45,6 +45,9 @@ public class ChooseWorker implements GameState {
         return false;
     }
 
+    public String getName() {
+        return State.CHOOSE_WORKER.toString();
+    }
     public void gameEngine(Game game) {
         /*
          *

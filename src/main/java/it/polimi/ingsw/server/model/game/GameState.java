@@ -14,6 +14,6 @@ public interface GameState {
     /* @abstractClass
      * it contains the states which the game is divided into
      */
-
+    String getName();
     void gameEngine(Game game);
 }
