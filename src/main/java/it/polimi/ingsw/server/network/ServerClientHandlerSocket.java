@@ -87,7 +87,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             Demand demand = read();
 
             synchronized (server) {
-                server.lobby(this, (String) demand.getPayload());
+                server.preLobby(this, (String) demand.getPayload());
             }
 
             while(isActive()) {

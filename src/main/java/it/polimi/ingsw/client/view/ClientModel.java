@@ -55,6 +55,9 @@ public class ClientModel<S> implements Runnable {
 
         this.clientConnection = clientConnection;
 
+        setActive(false);
+        setChanged(false);
+
     }
     
     public ClientModel(ReducedPlayer player, ClientConnection<S> clientConnection) {
@@ -66,15 +69,15 @@ public class ClientModel<S> implements Runnable {
         return answer;
     }
 
-    public synchronized void setAnswer(Answer<S> answer) {
+    private synchronized void setAnswer(Answer<S> answer) {
         this.answer = answer;
     }
 
-    public synchronized boolean isActive() {
+    private synchronized boolean isActive() {
         return isActive;
     }
 
-    public synchronized void setActive(boolean active) {
+    private synchronized void setActive(boolean active) {
         isActive = active;
     }
 
@@ -94,6 +97,7 @@ public class ClientModel<S> implements Runnable {
                         while (isActive()) {
                             synchronized (clientConnection) {
                                 while (!clientConnection.isChanged()) clientConnection.wait();
+                                clientConnection.setChanged(false);
                                 temp = clientConnection.getAnswer();
                             }
 
@@ -102,9 +106,9 @@ public class ClientModel<S> implements Runnable {
                                 setAnswer(temp);
                                 updateModel();
                                 setChanged(true);
-                                clientConnection.notifyAll();
+                                LOGGER.info("Received: " + getAnswer().getHeader() + " " + getAnswer().getContext());
+                                this.notifyAll();
                             }
-                            LOGGER.info("Received!");
                         }
                     } catch (Exception e){
                         setActive(false);
@@ -142,7 +146,7 @@ public class ClientModel<S> implements Runnable {
                     .collect(Collectors.toList());
         }
 
-        if (state.equals(AnswerType.SUCCESS))
+        if (state.equals(AnswerType.SUCCESS) && !answer.getContext().equals(DemandType.CONNECT))
             updateReduceObjects(answer);
 
         if (!nextTurn(answer.getContext()))

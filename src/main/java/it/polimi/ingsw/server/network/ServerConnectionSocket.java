@@ -1,5 +1,8 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.view.RemoteView;
@@ -18,7 +21,7 @@ import java.util.logging.Logger;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message" + this.toString() + ".xml"; // X TESTING
+    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
@@ -46,7 +49,7 @@ public class ServerConnectionSocket implements ServerConnection {
         while (true) {
             try {
                 socket = serverSocket.accept();
-                ServerClientHandlerSocket handler = new ServerClientHandlerSocket(socket, this, FILEXML);
+                ServerClientHandlerSocket handler = new ServerClientHandlerSocket(socket, this, FILEXML + waitingConnection.size() + ".xml");
                 executor.submit(handler);
             }
             catch(IOException e) {
@@ -71,13 +74,21 @@ public class ServerConnectionSocket implements ServerConnection {
         playingConnection.remove(c);
         playingConnection.remove(opponent);
         waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c);
+
+        //TODO
+        //remove from lobby
     }
 
     //Wait for another player
     @Override
-    public synchronized void lobby(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
+    public synchronized void preLobby(ServerClientHandler c, String name) {
         waitingConnection.put(name, c);
         LOGGER.info(() -> name + " put!");
+        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
+
+    }
+
+    public void lobby() throws ParserConfigurationException, SAXException {
         if (waitingConnection.size() == 2) {
             List<String> keys = new ArrayList<>(waitingConnection.keySet());
             ServerClientHandler c1 = waitingConnection.get(keys.get(0));
@@ -93,19 +104,6 @@ public class ServerConnectionSocket implements ServerConnection {
             playingConnection.put(c1, c2);
             playingConnection.put(c2, c1);
             waitingConnection.clear();
-
-            //TODO
-            /*c1.asyncSend(model.getBoardCopy());
-            c2.asyncSend(model.getBoardCopy());
-            if(model.isPlayerTurn(player1)){
-                c1.asyncSend(gameMessage.moveMessage);
-                c2.asyncSend(gameMessage.waitMessage);
-            } else {
-                c2.asyncSend(gameMessage.moveMessage);
-                c1.asyncSend(gameMessage.waitMessage);
-            }*/
-
-
         }
     }
 }

@@ -36,12 +36,20 @@ public class CLI<S> extends ClientView<S> {
 
     private synchronized void update() {
         if (clientModel.getState().equals(AnswerType.START)) {
-            printOpponents(out, clientModel);
+            printOpponents();
             return;
         }
 
         if (clientModel.getState().equals(AnswerType.ERROR))
             printError();
+
+        if (getAnswer().getContext().equals(DemandType.CONNECT)) {
+            Demand<S> demand = askLobby();
+            setDemand(new Demand<>(demand.getHeader(), demand.getPayload()));
+            setChanged(true);
+            this.notifyAll();
+            return;
+        }
 
         if(clientModel.isYourTurn(player.getNickname())) {
             if (clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY)) {
@@ -55,10 +63,10 @@ public class CLI<S> extends ClientView<S> {
         }
         else {
             if (clientModel.getTurn().equals(Turn.BUILD) || clientModel.getTurn().equals(Turn.MOVE))
-                printChanges(out, clientModel);
+                printChanges();
 
             if (clientModel.getState().equals(AnswerType.DEFEAT) || clientModel.getState().equals(AnswerType.VICTORY))
-                printOpponents(out, clientModel);
+                printOpponents();
         }
     }
 
@@ -80,7 +88,7 @@ public class CLI<S> extends ClientView<S> {
         switch (turn) {
             case CHOOSE_DECK:
                 chosenDeck = new ArrayList<>();
-                printCards(out, clientModel);
+                printCards();
 
                 i = 0;
                 do {
@@ -101,7 +109,7 @@ public class CLI<S> extends ClientView<S> {
 
             case CHOOSE_CARD:
                 do {
-                    printCards(out, clientModel);
+                    printCards();
                     CLIPrinter.printString(out, "Insert the name of the chosen god [godName]\n");
                     nextLine = in.nextLine();
                     god = God.parseString(nextLine);
@@ -119,7 +127,7 @@ public class CLI<S> extends ClientView<S> {
                 initialWorkerPosition = new ArrayList<>();
 
                 i = 0;
-                printChanges(out, clientModel);
+                printChanges();
                 do {
                     CLIPrinter.printString(out, "Insert the initial locations of your worker [x,y]\n");
                     nextLine = in.nextLine();
@@ -141,7 +149,7 @@ public class CLI<S> extends ClientView<S> {
 
             case CHOOSE_WORKER:
                 do {
-                    printChanges(out, clientModel);
+                    printChanges();
                     CLIPrinter.printString(out, "Select a worker[x,y]\n");
                     nextLine = in.nextLine();
                     coord = stringToInt(nextLine);
@@ -158,7 +166,7 @@ public class CLI<S> extends ClientView<S> {
             case MOVE:
             case BUILD:
                 do {
-                    printChanges(out, clientModel);
+                    printChanges();
                     CLIPrinter.printString(out, "Make your action [x,y]\n");
                     nextLine = in.nextLine();
                     coord = stringToInt(nextLine);
@@ -176,7 +184,7 @@ public class CLI<S> extends ClientView<S> {
 
             case CONFIRM:
                 do {
-                    printChanges(out, clientModel);
+                    printChanges();
                     CLIPrinter.printString(out, "Do you want to confirm your action? [Y/N]\n");
                     nextLine = in.nextLine().toLowerCase();
 
@@ -211,6 +219,7 @@ public class CLI<S> extends ClientView<S> {
                         while (isActive()) {
                             synchronized (clientModel) {
                                 while (!clientModel.isChanged()) clientModel.wait();
+                                clientModel.setChanged(false);
                                 temp = clientModel.getAnswer();
                             }
 
@@ -252,20 +261,20 @@ public class CLI<S> extends ClientView<S> {
         CLIPrinter.printString(out, "Error, try again\n");
     }
 
-    private void printChanges(SantoriniPrintStream out, ClientModel<S> clientModel) {
+    private void printChanges() {
         List<ReducedPlayer> players = new ArrayList<>(clientModel.getOpponents());
         players.add(player);
 
         CLIPrinter.printBoard(out, clientModel.getReducedBoard(), players);
         CLIPrinter.printPossibleActions(out, clientModel.getReducedBoard());
-        printCards(out, clientModel);
+        printCards();
     }
 
-    private void printOpponents(SantoriniPrintStream out, ClientModel<S> clientModel) {
+    private void printOpponents() {
         CLIPrinter.printOpponents(out, clientModel.getOpponents());
     }
 
-    private void printCards(SantoriniPrintStream out, ClientModel<S> clientModel) {
+    private void printCards() {
         CLIPrinter.printGods(out, clientModel.getReducedGodList());
     }
 
@@ -278,5 +287,26 @@ public class CLI<S> extends ClientView<S> {
         ret.add((int) string.charAt(2) - 48);
 
         return ret;
+    }
+
+    protected Demand askLobby() {
+        Demand demand;
+        CLIPrinter.printString(out, "Do you want to create a lobby or join an existing one: 1-create, 2-join\n");
+
+        switch (Integer.parseInt(in.nextLine())) {
+            case 1:
+                    demand = new Demand(DemandType.CREATE_GAME, "");
+                break;
+            case 2:
+                CLIPrinter.printString(out,"Insert a lobby's id:\n");
+                String lobby = in.nextLine();
+                demand = new Demand(DemandType.JOIN_GAME, lobby);
+                break;
+
+            default:
+                throw new NotAValidInputRunTimeException("Not a valid command");
+        }
+
+        return demand;
     }
 }

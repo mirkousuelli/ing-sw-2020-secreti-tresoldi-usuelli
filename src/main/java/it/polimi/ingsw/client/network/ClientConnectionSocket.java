@@ -27,7 +27,9 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         socket = new Socket(ip, port);
         file = new FileXML(FILEXML, socket);
         this.clientView = clientView;
-        isActive = false;
+
+        setActive(false);
+        setChanged(false);
     }
 
     public ClientConnectionSocket(String ip, int port) throws IOException {
@@ -62,7 +64,8 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         return isChanged;
     }
 
-    private synchronized void setChanged(boolean changed) {
+    @Override
+    public synchronized void setChanged(boolean changed) {
         isChanged = changed;
     }
 

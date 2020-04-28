@@ -1,9 +1,13 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+
+import java.util.Scanner;
 
 public abstract class ClientView<S> implements Runnable {
 
@@ -19,8 +23,10 @@ public abstract class ClientView<S> implements Runnable {
     public ClientView(ReducedPlayer player, ClientModel<S> clientModel) {
         this.player = player;
         this.clientModel = clientModel;
-        isChanged = false;
         lockDemand = new Object();
+
+        setActive(false);
+        setChanged(false);
     }
 
     public ClientView(String playerName, ClientModel<S> clientModel) {
@@ -70,7 +76,7 @@ public abstract class ClientView<S> implements Runnable {
 
     protected void setInitialRequest() {
         synchronized (this) {
-            setDemand(new Demand(DemandType.CREATE_GAME, player.getNickname()));
+            setDemand(new Demand<S>(DemandType.CONNECT, (S) player.getNickname()));
             setChanged(true);
         }
 

@@ -17,6 +17,8 @@ public interface ClientConnection<S> {
 
     boolean isChanged();
 
+    void setChanged(boolean isChanged);
+
     Answer<S> getAnswer();
 
     void setClientView(ClientView<S> clientView);
