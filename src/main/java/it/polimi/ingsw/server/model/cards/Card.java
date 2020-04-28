@@ -16,14 +16,14 @@ import it.polimi.ingsw.server.model.cards.powers.Power;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Card {
+public class Card implements Cloneable {
     /*@class
      * it describes the player's card
      */
 
     private God god;
     private String description;
-    private final List<Power> powerList;
+    private List<Power> powerList;
 
     public Card() {
         /*@constructor
@@ -63,5 +63,24 @@ public class Card {
 
     public void setGod(God newGod) {
         this.god = newGod;
+    }
+
+    private List<Power> getPowerList() {
+        return this.powerList;
+    }
+
+    private void setPowerList(List<Power> powerList) {
+        this.powerList = powerList;
+    }
+
+    @Override
+    public Card clone() {
+        Card newCard = new Card();
+
+        newCard.setGod(this.god);
+        newCard.setDescription(this.description);
+        newCard.setPowerList(this.getPowerList());
+
+        return newCard;
     }
 }

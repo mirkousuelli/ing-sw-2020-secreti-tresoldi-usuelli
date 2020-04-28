@@ -270,10 +270,10 @@ public class GameMemory {
 
     public static Game load(String path) throws ParserConfigurationException, SAXException {
         Game game = new Game();
-        Board board = new Board();
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
@@ -284,30 +284,30 @@ public class GameMemory {
 
             /* lobby */
             NodeList playerNode = lobbyNode.getChildNodes();
-            for (int i = 0; i <= playerNode.getLength(); i++) {
-                String nickname = playerNode.item(i).getChildNodes().item(NICKNAME).getNodeValue();
+            for (int i = 0; i < playerNode.getLength(); i++) {
+                String nickname = playerNode.item(i).getChildNodes().item(NICKNAME).getTextContent();
 
                 game.addPlayer(nickname);
                 game.setCurrentPlayer(game.getPlayer(nickname));
-                game.assignCard(God.parseString(playerNode.item(i).getChildNodes().item(GOD).getNodeValue()));
+                game.assignCard(God.parseString(playerNode.item(i).getChildNodes().item(GOD).getTextContent()));
             }
 
             /* turn */
-            game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue())));
-            State state = State.parseString(turnNode.getChildNodes().item(STATE).getNodeValue());
+            game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getTextContent())));
+            State state = State.parseString(turnNode.getChildNodes().item(STATE).getTextContent());
             game.setState(state);
 
             /* board */
             NodeList cells = boardNode.getChildNodes();
             for (int i = 0; i < cells.getLength(); i++) {
                 Node cellNode = cells.item(i);
-                Block cell = (Block) board.getCell(Integer.parseInt(cellNode.getChildNodes().item(X).getNodeValue()), Integer.parseInt(cellNode.getChildNodes().item(Y).getNodeValue()));
-                cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getNodeValue()));
+                Block cell = (Block) game.getBoard().getCell(Integer.parseInt(cellNode.getChildNodes().item(X).getTextContent()), Integer.parseInt(cellNode.getChildNodes().item(Y).getTextContent()));
+                cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
 
-                if (cellNode.getChildNodes().getLength() == WORKER) {
+                if (cellNode.getChildNodes().getLength() == WORKER + 1) {
                     Worker worker = new Worker(cell);
-                    worker.setGender(cellNode.getChildNodes().item(WORKER).getAttributes().item(0).getNodeValue().equals("male"));
-                    game.getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getNodeValue()).addWorker(worker);
+                    worker.setGender(cellNode.getChildNodes().item(WORKER).getAttributes().getNamedItem("gender").getTextContent().equals("male"));
+                    game.getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getTextContent()).addWorker(worker);
                 }
             }
 

@@ -34,7 +34,7 @@ public class Start implements GameState {
          * it allows the game to begin
          */
 
-        this.game = game;
+        /*this.game = game;
 
         // initialisation of the game
         Player challenger = PickChallenger(game);
@@ -46,7 +46,7 @@ public class Start implements GameState {
         game.setCurrentPlayer(Starter);
 
         // After the initialisation of the game, it goes to ChooseWorker state
-        game.setState(new ChooseWorker(game));
+        game.setState(new ChooseWorker(game));*/
 
     }
 
@@ -77,7 +77,7 @@ public class Start implements GameState {
         /* @function
          * the Challenger decides who starts first
          */
-        return Starter;
+        return game.getCurrentPlayer();
     }
 
     @Override

@@ -3,7 +3,6 @@
         "/Users/mirkousuelli/OneDrive - Politecnico di Milano/GitHub/SW-Engineering-Project/mirko/ing-sw-2020-secreti-tresoldi-usuelli/src/main/java/it/polimi/ingsw/server/model/storage/xml/game_grammar.dtd">
 
 <game>
-
     <lobby>
         <player>
             <nickname>Riccardo</nickname>
@@ -18,14 +17,12 @@
             <god>HEPHAESTUS</god>
         </player>
     </lobby>
-
     <turn>
         <player>
             <nickname>Mirko</nickname>
         </player>
         <state>CHOOSE_WORKER</state>
     </turn>
-
     <board>
         <cell>
             <x>0</x>
@@ -183,5 +180,4 @@
             </worker>
         </cell>
     </board>
-
 </game>

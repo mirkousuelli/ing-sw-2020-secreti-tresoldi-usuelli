@@ -76,7 +76,7 @@ public class Deck {
         if (!cards.isEmpty()) {
             for (Card card : cards) {
                 if (card.getGod().equals(god)){
-                    pickedCard = card;
+                    pickedCard = card.clone();
                     cards.remove(pickedCard);
                 }
             }

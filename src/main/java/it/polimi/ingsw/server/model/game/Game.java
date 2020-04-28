@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.map.Board;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -28,6 +29,8 @@ public class Game {
         this.deck = new Deck();
         this.board = new Board();
         this.state = new Start(this);
+        this.currentPlayer = 0;
+        this.players = new ArrayList<>();
     }
 
     public void setNumPlayers(int numPlayers) {
@@ -39,8 +42,8 @@ public class Game {
     }
 
     public void addPlayer(String nickname) {
-        if (players.size() < numPlayers)
-            this.players.add(new Player(nickname));
+        //if (players.size() < numPlayers)
+        this.players.add(new Player(nickname));
         numPlayers++;
     }
 

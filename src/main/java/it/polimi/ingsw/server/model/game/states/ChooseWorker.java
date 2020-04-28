@@ -26,7 +26,7 @@ public class ChooseWorker implements GameState {
          * it lets the player choose the worker he wants to move
          */
 
-        this.game = game;
+        /*this.game = game;
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMove(game.getCurrentPlayer()))
@@ -35,7 +35,7 @@ public class ChooseWorker implements GameState {
             // the player has to pick a worker and the game goes to Move state
             // + ACTUAL PICK OF THE WORKER
             game.setState(new Move(game));
-        }
+        }*/
     }
 
     private boolean cannotMove(Player currentPlayer) {
