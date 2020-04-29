@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE game SYSTEM
-        "/Users/mirkousuelli/OneDrive - Politecnico di Milano/GitHub/SW-Engineering-Project/mirko/ing-sw-2020-secreti-tresoldi-usuelli/src/main/java/it/polimi/ingsw/server/model/storage/xml/game_grammar.dtd">
+<!DOCTYPE game SYSTEM "game_grammar.dtd">
 
 <game>
     <lobby>

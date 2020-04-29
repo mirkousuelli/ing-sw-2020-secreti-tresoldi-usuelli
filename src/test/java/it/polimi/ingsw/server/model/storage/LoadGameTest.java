@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model.storage;
 
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,7 +9,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class LoadGameTest {
-    private final String pathFile = "src/test/java/it/polimi/ingsw/server/model/storage/backup_test.xml";
+    private final String pathFile = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
     @Test
     public void LoadMatchTest() throws ParserConfigurationException, SAXException {
         Game game = GameMemory.load(pathFile);
@@ -24,6 +26,17 @@ public class LoadGameTest {
         /* turn */
         assertEquals(game.getCurrentPlayer().getNickName(),"Mirko");
         assertEquals(game.getState().getName(), "CHOOSE_WORKER");
+
+        /* malus */
+        assertEquals(game.getCurrentPlayer().getMalusList().size(), 2);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(0).getMalusType(), MalusType.MOVE);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(0).isPermanent(), true);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(0).getNumberOfTurns(), 0);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(1).getMalusType(), MalusType.BUILD);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(1).isPermanent(), false);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(1).getNumberOfTurns(), 5);
+        assertEquals(game.getCurrentPlayer().getMalusList().get(1).getDirection().get(0), MalusLevel.DOWN);
 
         /* board */
         assertSame(game.getPlayer(0).getWorkers().get(0).getLocation(), game.getBoard().getCell(1,2));
