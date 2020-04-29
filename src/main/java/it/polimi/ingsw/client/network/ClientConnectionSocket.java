@@ -111,7 +111,8 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                             while (isActive()) {
                                 synchronized (clientView.lockDemand) {
                                     while (!clientView.isChanged()) clientView.lockDemand.wait();
-                                    demand = clientView.fetchDemand();
+                                    clientView.setChanged(false);
+                                    demand = clientView.getDemand();
                                 }
 
                                 LOGGER.info("Sending...");

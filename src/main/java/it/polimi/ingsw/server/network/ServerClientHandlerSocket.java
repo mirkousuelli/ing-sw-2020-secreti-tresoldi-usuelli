@@ -37,17 +37,18 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         this.active = active;
     }
 
-    private synchronized void send(Message message) {
-        try {
-            file.send(message);    // INCAPSULATO
-        }
-        catch(IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException", e);
+    private void send(Message message) {
+        synchronized (file.lockSend) {
+            try {
+                file.send(message);    // INCAPSULATO
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Got an IOException", e);
+            }
         }
     }
 
     @Override
-    public synchronized void closeConnection() {
+    public void closeConnection() {
         try {
             socket.close();
         }
@@ -56,10 +57,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
-    private synchronized void close() {
+    private void close() {
         closeConnection();
         LOGGER.info("Deregistering client...");
-        server.deregisterConnection(this);
+        synchronized (server) {
+            server.deregisterConnection(this);
+        }
         LOGGER.info("Done");
     }
 
@@ -83,12 +86,20 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     @Override
     public void run() {
         setActive(true);
+
         try {
             Demand demand = read();
-
             synchronized (server) {
                 server.preLobby(this, (String) demand.getPayload());
             }
+
+            demand = read();
+            synchronized (server) {
+                server.lobby(demand, this);
+            }
+
+            //TODO
+            //wait start
 
             while(isActive()) {
                 demand = read();

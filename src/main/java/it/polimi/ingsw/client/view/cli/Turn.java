@@ -3,12 +3,14 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.communication.message.header.DemandType;
 
 public enum Turn {
-    ASKLOBBY, START, CHOOSE_DECK, CHOOSE_CARD, PLACE_WORKERS, CHOOSE_WORKER, MOVE, BUILD, CONFIRM;
+    WAIT, START, CHOOSE_DECK, CHOOSE_CARD, PLACE_WORKERS, CHOOSE_WORKER, MOVE, BUILD, CONFIRM;
 
     public static Turn parseDemandType(DemandType demandType) {
         switch (demandType) {
             case CONNECT:
-                return ASKLOBBY;
+            case CREATE_GAME:
+            case JOIN_GAME:
+                return WAIT;
             case START:
                 return START;
             case CHOOSE_DECK:
@@ -32,7 +34,7 @@ public enum Turn {
 
     public Integer toInt() {
         switch (this) {
-            case ASKLOBBY:
+            case WAIT:
                 return 0;
             case START:
                 return 1;
@@ -57,8 +59,6 @@ public enum Turn {
 
     public DemandType toDemandType() {
         switch (this) {
-            case ASKLOBBY:
-                return DemandType.CONNECT;
             case START:
                 return DemandType.START;
             case CHOOSE_DECK:

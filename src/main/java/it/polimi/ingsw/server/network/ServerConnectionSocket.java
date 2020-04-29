@@ -1,10 +1,13 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.network.message.Lobby;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
@@ -24,8 +27,8 @@ public class ServerConnectionSocket implements ServerConnection {
     private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
-    private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
-    private final Map<ServerClientHandler, ServerClientHandler> playingConnection = new HashMap<>();
+    private final Map<ServerClientHandler, String> waitingConnection = new HashMap<>();
+    private final List<Lobby> lobbyList = new ArrayList<>();
 
     public ServerConnectionSocket(int port) {
         this.port = port;
@@ -65,45 +68,69 @@ public class ServerConnectionSocket implements ServerConnection {
 
     //Deregister connection
     @Override
-    public synchronized void deregisterConnection(ServerClientHandler c) {
-        ServerClientHandler opponent = playingConnection.get(c);
-        if(opponent != null) {
-            opponent.closeConnection();
-        }
-
-        playingConnection.remove(c);
-        playingConnection.remove(opponent);
-        waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c);
-
+    public void deregisterConnection(ServerClientHandler c) {
         //TODO
-        //remove from lobby
     }
 
     //Wait for another player
     @Override
-    public synchronized void preLobby(ServerClientHandler c, String name) {
-        waitingConnection.put(name, c);
+    public void preLobby(ServerClientHandler c, String name) {
+        synchronized (waitingConnection) {
+            waitingConnection.put(c, name);
+        }
+
         LOGGER.info(() -> name + " put!");
         c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
+        LOGGER.info("Connect answer sent!");
 
     }
 
-    public void lobby() throws ParserConfigurationException, SAXException {
-        if (waitingConnection.size() == 2) {
-            List<String> keys = new ArrayList<>(waitingConnection.keySet());
-            ServerClientHandler c1 = waitingConnection.get(keys.get(0));
-            ServerClientHandler c2 = waitingConnection.get(keys.get(1));
-            View player1View = new RemoteView(keys.get(0), c1);
-            View player2View = new RemoteView(keys.get(1), c2);
-            Game model = new Game();
-            Controller controller = new Controller(model);
-            //model.addObserver(player1View);
-            //model.addObserver(player2View);
-            player1View.addObserver(controller);
-            player2View.addObserver(controller);
-            playingConnection.put(c1, c2);
-            playingConnection.put(c2, c1);
-            waitingConnection.clear();
+    @Override
+    public void lobby(Demand demand, ServerClientHandler c) throws ParserConfigurationException, SAXException {
+        Lobby lobby = null;
+        String value =  demand.getPayload().toString();
+        DemandType demandType = (DemandType) demand.getHeader();
+
+        synchronized (lobbyList) {
+            for (Lobby l : lobbyList) {
+                if (l.getID().equals(value)) {
+                    lobby = l;
+                    break;
+                }
+            }
+        }
+
+        switch (demandType) {
+            case CREATE_GAME:
+                if (lobby == null) {
+                    lobby = new Lobby(Integer.parseInt(value));
+
+                    synchronized (lobbyList) {
+                        lobbyList.add(lobby);
+                    }
+                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, lobby.getID()));
+                    LOGGER.info("Success create game sent!");
+                }
+                else {
+                    c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, "Not a valid create game"));
+                    LOGGER.info("Error create game sent!");
+                }
+                break;
+            case JOIN_GAME:
+                if (lobby != null) {
+                    synchronized (waitingConnection) {
+                        lobby.addPlayer(waitingConnection.get(c), c);
+                    }
+                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, ""));
+                    LOGGER.info("Success join game sent!");
+                }
+                else {
+                    c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.JOIN_GAME, "Not a join game"));
+                    LOGGER.info("Error join game sent!");
+                }
+                break;
+            default:
+                throw new NotAValidInputRunTimeException("Not a valid demand type");
         }
     }
 }

@@ -22,12 +22,6 @@ public class CLI<S> extends ClientView<S> {
     final SantoriniPrintStream out;
     private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
-    public CLI(ReducedPlayer player, ClientModel<S> clientModel) {
-        super(player, clientModel);
-        in = new Scanner(System.in);
-        out = new SantoriniPrintStream(System.out);
-    }
-
     public CLI(String playerName, ClientModel<S> clientModel) {
         super(playerName, clientModel);
         in = new Scanner(System.in);
@@ -45,9 +39,17 @@ public class CLI<S> extends ClientView<S> {
 
         if (getAnswer().getContext().equals(DemandType.CONNECT)) {
             Demand<S> demand = askLobby();
-            setDemand(new Demand<>(demand.getHeader(), demand.getPayload()));
-            setChanged(true);
-            this.notifyAll();
+
+            synchronized (lockDemand) {
+                setDemand(new Demand<>(demand.getHeader(), demand.getPayload()));
+                setChanged(true);
+                lockDemand.notifyAll();
+            }
+            return;
+        }
+
+        if (getAnswer().getContext().equals(DemandType.CREATE_GAME) || getAnswer().getContext().equals(DemandType.JOIN_GAME)) {
+            CLIPrinter.printString(out,"Done!\nWaiting for other players...\n");
             return;
         }
 
@@ -289,13 +291,21 @@ public class CLI<S> extends ClientView<S> {
         return ret;
     }
 
-    protected Demand askLobby() {
+    private synchronized Demand askLobby() {
         Demand demand;
         CLIPrinter.printString(out, "Do you want to create a lobby or join an existing one: 1-create, 2-join\n");
 
         switch (Integer.parseInt(in.nextLine())) {
             case 1:
-                    demand = new Demand(DemandType.CREATE_GAME, "");
+                    int number;
+                    do {
+                        CLIPrinter.printString(out, "Insert the number of players\n");
+                        number = Integer.parseInt(in.nextLine());
+                        if (number < 2 || number > 3)
+                            printError();
+                    } while (number < 2 || number > 3);
+
+                    demand = new Demand(DemandType.CREATE_GAME, number);
                 break;
             case 2:
                 CLIPrinter.printString(out,"Insert a lobby's id:\n");

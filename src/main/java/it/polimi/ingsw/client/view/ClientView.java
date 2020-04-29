@@ -20,8 +20,8 @@ public abstract class ClientView<S> implements Runnable {
     private boolean isChanged;
     public final Object lockDemand;
 
-    public ClientView(ReducedPlayer player, ClientModel<S> clientModel) {
-        this.player = player;
+    public ClientView(String playerName, ClientModel<S> clientModel) {
+        player = new ReducedPlayer(playerName);
         this.clientModel = clientModel;
         lockDemand = new Object();
 
@@ -29,28 +29,30 @@ public abstract class ClientView<S> implements Runnable {
         setChanged(false);
     }
 
-    public ClientView(String playerName, ClientModel<S> clientModel) {
-        this(new ReducedPlayer(playerName), clientModel);
-    }
-
     public ReducedPlayer getPlayer() {
         return player;
     }
 
     protected synchronized void setDemand(Demand<S> demand) {
+        synchronized (lockDemand) {
             this.demand = demand;
+        }
     }
 
-    public synchronized Demand<S> fetchDemand() {
-        setChanged(false);
-        return demand;
+    public synchronized Demand<S> getDemand() {
+        Demand<S> temp;
+
+        synchronized (lockDemand) {
+            temp = demand;
+        }
+        return temp;
     }
 
     public synchronized boolean isChanged() {
         return isChanged;
     }
 
-    protected synchronized void setChanged(boolean isChanged) {
+    public synchronized void setChanged(boolean isChanged) {
         this.isChanged = isChanged;
     }
 
@@ -62,11 +64,11 @@ public abstract class ClientView<S> implements Runnable {
         isActive = active;
     }
 
-    public synchronized Answer<S> getAnswer() {
+    protected synchronized Answer<S> getAnswer() {
         return answer;
     }
 
-    public synchronized void setAnswer(Answer<S> answer) {
+    protected synchronized void setAnswer(Answer<S> answer) {
         this.answer = answer;
     }
 

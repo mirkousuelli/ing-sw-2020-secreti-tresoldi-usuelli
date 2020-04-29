@@ -59,11 +59,6 @@ public class ClientModel<S> implements Runnable {
         setChanged(false);
 
     }
-    
-    public ClientModel(ReducedPlayer player, ClientConnection<S> clientConnection) {
-        this(player.getNickname(), clientConnection);
-        player.setColor(player.getColor());
-    }
 
     public synchronized Answer<S> getAnswer() {
         return answer;
@@ -146,7 +141,8 @@ public class ClientModel<S> implements Runnable {
                     .collect(Collectors.toList());
         }
 
-        if (state.equals(AnswerType.SUCCESS) && !answer.getContext().equals(DemandType.CONNECT))
+        if (state.equals(AnswerType.SUCCESS) && !answer.getContext().equals(DemandType.CONNECT) &&
+                !answer.getContext().equals(DemandType.CREATE_GAME) && !answer.getContext().equals(DemandType.JOIN_GAME))
             updateReduceObjects(answer);
 
         if (!nextTurn(answer.getContext()))
