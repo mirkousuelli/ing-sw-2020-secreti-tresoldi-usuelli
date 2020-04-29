@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!-- game composed by a list of players + current turn + current board -->
-<!ELEMENT game (lobby, turn, board)>
+<!ELEMENT game (lobby, board)>
 
     <!-- list of players -->
     <!ELEMENT lobby (player+)>
         <!-- player's nickname to be parsed -->
-        <!ELEMENT player (nickname, god?)>
+        <!ELEMENT player (nickname, god, pawns, malusList?)>
+            <!ATTLIST player
+                    state (START | CHOOSE_WORKER | MOVE | BUILD | CHANGE_TURN) #IMPLIED>
             <!ELEMENT nickname (#PCDATA)>
             <!-- avoiding a deck tag introducing gods within player -->
             <!ELEMENT god (#PCDATA)>
-
-    <!-- current turn where tha game has been stopped, containing the current player -->
-    <!ELEMENT turn (player,state)>
-        <!-- state name which defines the position in the fsm -->
-        <!ELEMENT state (#PCDATA)>
+            <!ELEMENT pawns (worker*)>
+                <!ELEMENT worker (x, y)>
+                <!ATTLIST worker
+                        gender (male | female) #REQUIRED>
+                    <!ELEMENT x (#PCDATA)>
+                    <!ELEMENT y (#PCDATA)>
+            <!ELEMENT malusList (malus*)>
+                <!ELEMENT malus (type, numTurn?, forbidden)>
+                    <!ATTLIST malus
+                            permanent (true | false) #REQUIRED>
+                    <!ELEMENT type (#PCDATA)>
+                    <!ELEMENT numTurn (#PCDATA)>
+                    <!ELEMENT forbidden (direction+)>
+                        <!ELEMENT direction (#PCDATA)>
 
     <!-- current board before the stoppage composed by 25 cells -->
     <!ELEMENT board (cell+)>
         <!-- every cell containing coordinates, level and presence of worker -->
-        <!ELEMENT cell (x, y, level, worker?)>
-            <!ELEMENT x (#PCDATA)>
-            <!ELEMENT y (#PCDATA)>
+        <!ELEMENT cell (x, y, level)>
             <!ELEMENT level (#PCDATA)>
-            <!ELEMENT worker (player)>
-                <!ATTLIST worker
-                        gender (male | female) #REQUIRED>

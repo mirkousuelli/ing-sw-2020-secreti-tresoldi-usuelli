@@ -1,68 +1,91 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE game SYSTEM
-        "/Users/mirkousuelli/OneDrive - Politecnico di Milano/GitHub/SW-Engineering-Project/mirko/ing-sw-2020-secreti-tresoldi-usuelli/src/main/java/it/polimi/ingsw/server/model/storage/xml/game_grammar.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE game SYSTEM "game_grammar.dtd">
 
 <game>
     <lobby>
         <player>
             <nickname>Riccardo</nickname>
-            <god>APOLLO</god>
+            <god>PERSEPHONE</god>
+            <pawns>
+                <worker gender="male">
+                    <x>1</x>
+                    <y>2</y>
+                </worker>
+                <worker gender="female">
+                    <x>4</x>
+                    <y>1</y>
+                </worker>
+            </pawns>
         </player>
         <player>
             <nickname>Fabio</nickname>
-            <god>ZEUS</god>
+            <god>ATHENA</god>
+            <pawns>
+                <worker gender="male">
+                    <x>0</x>
+                    <y>2</y>
+                </worker>
+                <worker gender="female">
+                    <x>4</x>
+                    <y>4</y>
+                </worker>
+            </pawns>
         </player>
-        <player>
+        <player state="CHOOSE_WORKER">
             <nickname>Mirko</nickname>
-            <god>HEPHAESTUS</god>
+            <god>ZEUS</god>
+            <pawns>
+                <worker gender="male">
+                    <x>0</x>
+                    <y>0</y>
+                </worker>
+                <worker gender="female">
+                    <x>0</x>
+                    <y>1</y>
+                </worker>
+            </pawns>
+            <malusList>
+                <malus permanent="true">
+                    <type>MOVE</type>
+                    <forbidden>
+                        <direction>UP</direction>
+                    </forbidden>
+                </malus>
+                <malus permanent="false">
+                    <type>BUILD</type>
+                    <numTurn>5</numTurn>
+                    <forbidden>
+                        <direction>DOWN</direction>
+                    </forbidden>
+                </malus>
+            </malusList>
         </player>
     </lobby>
-    <turn>
-        <player>
-            <nickname>Mirko</nickname>
-        </player>
-        <state>CHOOSE_WORKER</state>
-    </turn>
     <board>
         <cell>
             <x>0</x>
             <y>0</y>
             <level>GROUND</level>
-            <worker gender="male">
-                <player>
-                    <nickname>Mirko</nickname>
-                </player>
-            </worker>
         </cell>
         <cell>
             <x>0</x>
             <y>1</y>
-            <level>GROUND</level>
-            <worker gender="female">
-                <player>
-                    <nickname>Mirko</nickname>
-                </player>
-            </worker>
+            <level>BOTTOM</level>
         </cell>
         <cell>
             <x>0</x>
             <y>2</y>
-            <level>GROUND</level>
-            <worker gender="female">
-                <player>
-                    <nickname>Fabio</nickname>
-                </player>
-            </worker>
+            <level>MIDDLE</level>
         </cell>
         <cell>
             <x>0</x>
             <y>3</y>
-            <level>GROUND</level>
+            <level>TOP</level>
         </cell>
         <cell>
             <x>0</x>
             <y>4</y>
-            <level>GROUND</level>
+            <level>DOME</level>
         </cell>
         <cell>
             <x>1</x>
@@ -78,11 +101,6 @@
             <x>1</x>
             <y>2</y>
             <level>GROUND</level>
-            <worker gender="male">
-                <player>
-                    <nickname>Riccardo</nickname>
-                </player>
-            </worker>
         </cell>
         <cell>
             <x>1</x>
@@ -153,11 +171,6 @@
             <x>4</x>
             <y>1</y>
             <level>GROUND</level>
-            <worker gender="female">
-                <player>
-                    <nickname>Riccardo</nickname>
-                </player>
-            </worker>
         </cell>
         <cell>
             <x>4</x>
@@ -173,11 +186,6 @@
             <x>4</x>
             <y>4</y>
             <level>GROUND</level>
-            <worker gender="male">
-                <player>
-                    <nickname>Fabio</nickname>
-                </player>
-            </worker>
         </cell>
     </board>
 </game>
