@@ -2,11 +2,13 @@ package it.polimi.ingsw.server.model.storage;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.*;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
-import it.polimi.ingsw.server.network.message.Lobby;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
@@ -14,26 +16,26 @@ import org.xml.sax.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class GameMemory {
     /* game */
     private static final int LOBBY = 0;
-    private static final int TURN = 1;
-    private static final int BOARD = 2;
+    private static final int BOARD = 1;
 
     /* lobby */
     private static final int NICKNAME = 0;
     private static final int GOD = 1;
-
-    /* turn */
-    private static final int PLAYER = 0;
-    private static final int STATE = 1;
+    private static final int PAWNS = 2;
+    private static final int MALUS = 3;
+    private static final int TYPE = 0;
+    private static final int NUMTURN = 1;
+    private static final int DIRECTION = 2;
 
     /* board */
     private static final int X = 0;
     private static final int Y = 1;
     private static final int LEVEL = 2;
-    private static final int WORKER = 3;
 
     public static void save(Game game, String path) {
 
@@ -212,9 +214,9 @@ public class GameMemory {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            Node turnNode = doc.getDocumentElement().getChildNodes().item(TURN);
+            //Node turnNode = doc.getDocumentElement().getChildNodes().item(TURN);
 
-            turnNode.getChildNodes().item(STATE).setNodeValue(state.toString());
+            //turnNode.getChildNodes().item(STATE).setNodeValue(state.toString());
 
         } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
@@ -222,7 +224,7 @@ public class GameMemory {
     }
 
     public static void save(Player currentPlayer, String path) {
-        try {
+        /*try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
@@ -233,7 +235,7 @@ public class GameMemory {
 
         } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public static void save(List<Player> players, String path) {
@@ -270,6 +272,7 @@ public class GameMemory {
 
     public static Game load(String path) throws ParserConfigurationException, SAXException {
         Game game = new Game();
+        String currentPlayer = "";
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -279,38 +282,70 @@ public class GameMemory {
 
             NodeList confNodes = doc.getDocumentElement().getChildNodes();
             Node lobbyNode = confNodes.item(LOBBY);
-            Node turnNode = confNodes.item(TURN);
             Node boardNode = confNodes.item(BOARD);
 
             /* lobby */
             NodeList playerNode = lobbyNode.getChildNodes();
             for (int i = 0; i < playerNode.getLength(); i++) {
                 String nickname = playerNode.item(i).getChildNodes().item(NICKNAME).getTextContent();
+                Player player = new Player(nickname);
 
-                game.addPlayer(nickname);
-                game.setCurrentPlayer(game.getPlayer(nickname));
+                game.addPlayer(player);
+
+                if (playerNode.item(i).getAttributes().getLength() > 0) {
+                    currentPlayer = nickname;
+                    game.setState(Objects.requireNonNull(State.parseString(playerNode.item(i).getAttributes().getNamedItem("state").getTextContent())));
+                }
+
+                game.setCurrentPlayer(player);
                 game.assignCard(God.parseString(playerNode.item(i).getChildNodes().item(GOD).getTextContent()));
+
+                NodeList workerNode = playerNode.item(i).getChildNodes().item(PAWNS).getChildNodes();
+                for (int j = 0; j < workerNode.getLength(); j++) {
+                    int x = Integer.parseInt(workerNode.item(j).getChildNodes().item(X).getTextContent());
+                    int y = Integer.parseInt(workerNode.item(j).getChildNodes().item(Y).getTextContent());
+
+                    Worker worker = new Worker((Block) game.getBoard().getCell(x, y));
+                    worker.setGender(workerNode.item(j).getAttributes().getNamedItem("gender").getTextContent().equals("male"));
+
+                    player.addWorker(worker);
+                }
+
+                if (playerNode.item(i).getChildNodes().getLength() > MALUS) {
+                    NodeList malusNode = playerNode.item(i).getChildNodes().item(MALUS).getChildNodes();
+                    for (int k = 0; k < malusNode.getLength(); k++) {
+                        int offset = 0;
+                        Malus malus = new Malus();
+                        malus.setMalusType(MalusType.parseString(malusNode.item(k).getChildNodes().item(TYPE).getTextContent()));
+                        malus.setPermanent((malusNode.item(k).getAttributes().getNamedItem("permanent").getTextContent()).equals("true"));
+
+                        if (!malus.isPermanent())
+                            malus.setNumberOfTurns(Integer.parseInt(malusNode.item(k).getChildNodes().item(NUMTURN).getTextContent()));
+                        else
+                            offset = 1;
+
+                        NodeList directionNode = malusNode.item(k).getChildNodes().item(DIRECTION - offset).getChildNodes();
+                        for (int l = 0; l < directionNode.getLength(); l++) {
+                            malus.addDirectionElement(MalusLevel.parseString(directionNode.item(l).getTextContent()));
+                        }
+                        player.addMalus(malus);
+                    }
+                }
             }
 
             /* turn */
-            game.setCurrentPlayer((game.getPlayer(turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getTextContent())));
-            State state = State.parseString(turnNode.getChildNodes().item(STATE).getTextContent());
-            game.setState(state);
+            game.setCurrentPlayer(game.getPlayer(currentPlayer));
 
             /* board */
             NodeList cells = boardNode.getChildNodes();
             for (int i = 0; i < cells.getLength(); i++) {
                 Node cellNode = cells.item(i);
-                Block cell = (Block) game.getBoard().getCell(Integer.parseInt(cellNode.getChildNodes().item(X).getTextContent()), Integer.parseInt(cellNode.getChildNodes().item(Y).getTextContent()));
+                int x = Integer.parseInt(cellNode.getChildNodes().item(X).getTextContent());
+                int y = Integer.parseInt(cellNode.getChildNodes().item(Y).getTextContent());
+                Block cell = (Block) game.getBoard().getCell(x ,y);
+
                 cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
-
-                if (cellNode.getChildNodes().getLength() == WORKER + 1) {
-                    Worker worker = new Worker(cell);
-                    worker.setGender(cellNode.getChildNodes().item(WORKER).getAttributes().getNamedItem("gender").getTextContent().equals("male"));
-                    game.getPlayer(cellNode.getChildNodes().item(WORKER).getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME).getTextContent()).addWorker(worker);
-                }
             }
-
         }
         catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();

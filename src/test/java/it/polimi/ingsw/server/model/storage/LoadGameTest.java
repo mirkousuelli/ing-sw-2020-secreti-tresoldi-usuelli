@@ -15,11 +15,11 @@ public class LoadGameTest {
         /* lobby */
         assertEquals(game.getNumPlayers(), 3);
         assertEquals(game.getPlayer(0).getNickName(), "Riccardo");
-        assertEquals(game.getPlayer(0).getCard().getName(), "APOLLO");
+        assertEquals(game.getPlayer(0).getCard().getName(), "PERSEPHONE");
         assertEquals(game.getPlayer(1).getNickName(), "Fabio");
-        assertEquals(game.getPlayer(1).getCard().getName(), "ZEUS");
+        assertEquals(game.getPlayer(1).getCard().getName(), "ATHENA");
         assertEquals(game.getPlayer(2).getNickName(), "Mirko");
-        assertEquals(game.getPlayer(2).getCard().getName(), "HEPHAESTUS");
+        assertEquals(game.getPlayer(2).getCard().getName(), "ZEUS");
 
         /* turn */
         assertEquals(game.getCurrentPlayer().getNickName(),"Mirko");

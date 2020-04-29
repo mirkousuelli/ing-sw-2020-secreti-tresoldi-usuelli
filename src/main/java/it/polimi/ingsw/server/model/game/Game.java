@@ -42,8 +42,12 @@ public class Game {
     }
 
     public void addPlayer(String nickname) {
-        //if (players.size() < numPlayers)
         this.players.add(new Player(nickname));
+        numPlayers++;
+    }
+
+    public void addPlayer(Player player) {
+        this.players.add(player);
         numPlayers++;
     }
 
