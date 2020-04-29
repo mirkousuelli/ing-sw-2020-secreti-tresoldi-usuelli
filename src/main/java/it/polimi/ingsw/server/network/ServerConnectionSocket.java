@@ -1,21 +1,17 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.server.controller.Controller;
-import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.network.message.Lobby;
-import it.polimi.ingsw.server.view.RemoteView;
-import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +20,8 @@ import java.util.logging.Logger;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message";
+    private static final Random random = new SecureRandom();
+    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message" + random.nextInt() + ".xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<ServerClientHandler, String> waitingConnection = new HashMap<>();
@@ -36,6 +33,7 @@ public class ServerConnectionSocket implements ServerConnection {
 
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
+        ServerClientHandlerSocket handler;
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         Socket socket = null;
@@ -52,7 +50,7 @@ public class ServerConnectionSocket implements ServerConnection {
         while (true) {
             try {
                 socket = serverSocket.accept();
-                ServerClientHandlerSocket handler = new ServerClientHandlerSocket(socket, this, FILEXML + waitingConnection.size() + ".xml");
+                handler = new ServerClientHandlerSocket(socket, this, FILEXML);
                 executor.submit(handler);
             }
             catch(IOException e) {
@@ -74,10 +72,8 @@ public class ServerConnectionSocket implements ServerConnection {
 
     //Wait for another player
     @Override
-    public void preLobby(ServerClientHandler c, String name) {
-        synchronized (waitingConnection) {
-            waitingConnection.put(c, name);
-        }
+    public void connect(ServerClientHandler c, String name) {
+        waitingConnection.put(c, name);
 
         LOGGER.info(() -> name + " put!");
         c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
@@ -86,51 +82,94 @@ public class ServerConnectionSocket implements ServerConnection {
     }
 
     @Override
-    public void lobby(Demand demand, ServerClientHandler c) throws ParserConfigurationException, SAXException {
-        Lobby lobby = null;
-        String value =  demand.getPayload().toString();
-        DemandType demandType = (DemandType) demand.getHeader();
+    public boolean prelobby(Demand demand, ServerClientHandler c) throws ParserConfigurationException, SAXException {
+        Lobby lobby;
+        int value =  Integer.parseInt(demand.getPayload().toString());
 
-        synchronized (lobbyList) {
-            for (Lobby l : lobbyList) {
-                if (l.getID().equals(value)) {
-                    lobby = l;
-                    break;
+        switch (value) {
+            case 1:
+                lobby = new Lobby();
+
+                lobbyList.add(lobby);
+
+                lobby.addPlayer(waitingConnection.get(c), c);
+                waitingConnection.remove(c);
+                c.setLobby(lobby);
+                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, lobby.getID()));
+                LOGGER.info("Success create game sent!");
+                return false;
+
+            case 2:
+                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY, ""));
+                    LOGGER.info("Success ask lobby sent!");
+                return false;
+
+            default:
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean lobby(Demand demand, ServerClientHandler c) {
+        Lobby lobby;
+
+        switch ((DemandType) demand.getHeader()) {
+            case CREATE_GAME:
+                lobby = c.getLobby();
+
+                lobby.setNumberOfPlayers(Integer.parseInt(demand.getPayload().toString()));
+                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.WAIT, ""));
+                LOGGER.info("Success wait game sent!");
+                LOGGER.info(() -> "NumOfPl: " + lobby.getNumberOfPlayers());
+                return false;
+
+            case ASK_LOBBY:
+                boolean spaceInLobby;
+                String lobbyString = demand.getPayload().toString();
+                lobby = findLobby(lobbyString);
+
+                if (lobby != null) {
+                    spaceInLobby = lobby.addPlayer(waitingConnection.get(c), c);
+
+                    if (spaceInLobby) {
+                        lobby.addPlayer(waitingConnection.get(c), c);
+                        c.setLobby(lobby);
+                        waitingConnection.remove(c);
+                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, lobbyString));
+                        LOGGER.info("Success join game sent!");
+                        return false;
+                    }
+                    else {
+                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
+                        LOGGER.info("Error lobby full!");
+                        return true;
+                    }
                 }
+
+                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
+                LOGGER.info("Error!");
+                return true;
+
+            default:
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
+                LOGGER.info("Error!");
+        }
+
+        return true;
+    }
+
+    private Lobby findLobby(String lobbyString) {
+        Lobby l = null;
+
+        for (Lobby lobby : lobbyList) {
+            if (lobbyString.equals(lobby.getID())) {
+                l = lobby;
+                break;
             }
         }
 
-        switch (demandType) {
-            case CREATE_GAME:
-                if (lobby == null) {
-                    lobby = new Lobby(Integer.parseInt(value));
-
-                    synchronized (lobbyList) {
-                        lobbyList.add(lobby);
-                    }
-                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, lobby.getID()));
-                    LOGGER.info("Success create game sent!");
-                }
-                else {
-                    c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, "Not a valid create game"));
-                    LOGGER.info("Error create game sent!");
-                }
-                break;
-            case JOIN_GAME:
-                if (lobby != null) {
-                    synchronized (waitingConnection) {
-                        lobby.addPlayer(waitingConnection.get(c), c);
-                    }
-                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, ""));
-                    LOGGER.info("Success join game sent!");
-                }
-                else {
-                    c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.JOIN_GAME, "Not a join game"));
-                    LOGGER.info("Error join game sent!");
-                }
-                break;
-            default:
-                throw new NotAValidInputRunTimeException("Not a valid demand type");
-        }
+        return l;
     }
 }

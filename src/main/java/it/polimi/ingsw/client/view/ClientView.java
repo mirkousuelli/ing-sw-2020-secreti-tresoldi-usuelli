@@ -1,21 +1,17 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
-import java.util.Scanner;
-
 public abstract class ClientView<S> implements Runnable {
 
-    protected final ReducedPlayer player;
+    public final ReducedPlayer player;
     protected final ClientModel<S> clientModel;
 
     private Demand<S> demand;
-    private Answer<S> answer;
+    protected Answer<S> answer;
     private boolean isActive;
     private boolean isChanged;
     public final Object lockDemand;

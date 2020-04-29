@@ -1,16 +1,24 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.Message;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.SecureRandom;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,13 +28,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private final FileXML file;
     private final ServerConnection server;
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
+    Lobby lobby;
 
     private boolean active;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws FileNotFoundException {
         this.socket = socket;
         this.server = server;
-        this.file = new FileXML(pathFile, socket);
+        file = new FileXML(pathFile, socket);
     }
 
     private synchronized boolean isActive(){
@@ -88,29 +97,72 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         setActive(true);
 
         try {
-            Demand demand = read();
-            synchronized (server) {
-                server.preLobby(this, (String) demand.getPayload());
-            }
+            Demand demand;
+            boolean toRepeat;
 
+            //connect
             demand = read();
             synchronized (server) {
-                server.lobby(demand, this);
+                server.connect(this, (String) demand.getPayload());
             }
 
-            //TODO
-            //wait start
+            //createGame or askLobby
+            do {
+                demand = read();
+                synchronized (server) {
+                    toRepeat = server.prelobby(demand, this);
+                }
+            } while (toRepeat);
+
+            //wait or join game
+            boolean join = false;
+            do {
+                demand = read();
+                if (demand.getHeader().equals(DemandType.ASK_LOBBY))
+                    join = true;
+                synchronized (server) {
+                    toRepeat = server.lobby(demand, this);
+                }
+            } while (toRepeat);
+
+            if (join)
+                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, ""));
+
+            //wait
+            List<ReducedPlayer> players;
+            synchronized (lobby.lockLobby) {
+                while (!lobby.canStart()) lobby.lockLobby.wait();
+                synchronized (lobby.lockLobby) {
+                    lobby.lockLobby.notifyAll();
+                    players = lobby.getReducedPlayerList();
+                    lobby.setCurrentPlayer(players.get(0).getNickname());
+                }
+
+                //start
+                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.START, players));
+                LOGGER.info(() -> "Names: " + players.get(0).getNickname() + ", " + players.get(1).getNickname());
+            }
 
             while(isActive()) {
                 demand = read();
                 notify(demand);
                 LOGGER.info(LOGGER.getName() + "Notified!");
             }
-        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException e) {
+        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException e) {
             LOGGER.log(Level.SEVERE, "Failed to receive!!" + e.getMessage(), e);
         } finally {
             setActive(false);
             close();
         }
+    }
+
+    @Override
+    public Lobby getLobby() {
+        return lobby;
+    }
+
+    @Override
+    public void setLobby(Lobby lobby) {
+        this.lobby = lobby;
     }
 }

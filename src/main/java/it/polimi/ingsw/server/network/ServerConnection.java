@@ -11,9 +11,11 @@ public interface ServerConnection {
     void startServer() throws IOException;
 
     //lobby
-    void lobby(Demand demand, ServerClientHandler serverClientHandler) throws ParserConfigurationException, SAXException;
+    boolean prelobby(Demand demand, ServerClientHandler serverClientHandler) throws ParserConfigurationException, SAXException;
 
-    void preLobby(ServerClientHandler serverClientHandler, String name) throws ParserConfigurationException, SAXException;
+    void connect(ServerClientHandler serverClientHandler, String name) throws ParserConfigurationException, SAXException;
+
+    boolean lobby(Demand demand, ServerClientHandler c);
 
     //deregister
     void deregisterConnection(ServerClientHandler serverClientHandler);

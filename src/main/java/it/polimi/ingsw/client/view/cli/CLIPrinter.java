@@ -1,17 +1,33 @@
 package it.polimi.ingsw.client.view.cli;
 
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class CLIPrinter {
+public class CLIPrinter<S> {
+
+    private final ClientModel<S> clientModel;
+    private final ClientView<S> clientView;
+    private final PrintStream out;
+    private final Map<DemandType, String> stringMap = new HashMap<>();
+    private final Map<DemandType, Consumer<String>> initialMap= new HashMap<>();
+    private final Map<DemandType, Runnable> changesMap= new HashMap<>();
+
+    private static final String connect = "Connected!\n";
+    private static final String confirm = "Confirmed!\n";
+    private static final String wait = "Waiting other players...\n";
+    private static final String askLobby = "Ask your friend his lobby's id!\n";
 
     private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
@@ -22,29 +38,75 @@ public class CLIPrinter {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    private CLIPrinter() {
-        throw new IllegalStateException("Utility class");
+    public CLIPrinter(PrintStream out, ClientModel<S> clientModel, ClientView<S> clientView) {
+        this.out = out;
+        this.clientModel = clientModel;
+        this.clientView = clientView;
+
+        stringMap.put(DemandType.CONNECT, connect);
+        stringMap.put(DemandType.CONFIRM, confirm);
+        stringMap.put(DemandType.WAIT, wait);
+        stringMap.put(DemandType.ASK_LOBBY, askLobby);
+
+        initialMap.put(DemandType.CONNECT, this::printString);
+        initialMap.put(DemandType.CONFIRM, this::printString);
+        initialMap.put(DemandType.WAIT, this::printString);
+        initialMap.put(DemandType.ASK_LOBBY, this::printString);
+
+        changesMap.put(DemandType.CREATE_GAME, this::printLobby);
+        changesMap.put(DemandType.JOIN_GAME, this::printLobby);
+        changesMap.put(DemandType.START, this::printStart);
+        changesMap.put(DemandType.CHOOSE_DECK, this::printGods);
+        changesMap.put(DemandType.CHOOSE_CARD, this::printGods);
+        changesMap.put(DemandType.PLACE_WORKERS, this::printBoard);
+        changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
+        changesMap.put(DemandType.MOVE, this::printAll);
+        changesMap.put(DemandType.BUILD, this::printAll);
     }
 
-    public static void printLogo(PrintStream out) {
+    public void printLogo() {
         out.println(LOGO);
     }
 
-    public static void printString(PrintStream out, String message) {
+    public void printString(String message) {
         out.print(message);
     }
 
-    public static void printBoard(PrintStream out, ReducedAnswerCell[][] board, List<ReducedPlayer> opponents) {
+    public void printLobby() {
+        String id;
+
+        synchronized (clientModel) {
+            id = clientModel.getLobbyId();
+        }
+
+        out.println("Your lobby number is: " + id);
+    }
+
+    public void printStart() {
+        printLogo();
+        printOpponents();
+    }
+
+    private void printBoard() {
+        ReducedAnswerCell[][] board;
+        List<ReducedPlayer> opponents;
+
+        synchronized (clientModel) {
+            board = clientModel.getReducedBoard();
+            opponents = clientModel.getOpponents();
+        }
 
         for (int i = 4; i >= 0; i--) {
             for (int j = 0; j <5; j++)
-                printCell(out, board[i][j], opponents);
+                printCell(board[i][j], opponents);
             out.print("\n");
         }
         out.print("\n");
+
+        printOpponents();
     }
 
-    private static void printCell(PrintStream out, ReducedAnswerCell cell, List<ReducedPlayer> opponents) {
+    private void printCell(ReducedAnswerCell cell, List<ReducedPlayer> opponents) {
         if (!cell.isFree()) {
             out.print(opponents.stream()
                     .filter(opponent -> opponent.getNickname().equals(cell.getWorker().getOwner()))
@@ -62,7 +124,15 @@ public class CLIPrinter {
 
     }
 
-    public static void printOpponents(PrintStream out, List<ReducedPlayer> opponents) {
+    private void printOpponents() {
+        List<ReducedPlayer> opponents;
+
+        synchronized (clientModel) {
+            opponents = clientModel.getOpponents();
+        }
+
+        if (opponents.isEmpty()) return;
+
         out.print("Opponent");
         if (opponents.size() == 2) out.print("s");
         out.print(": ");
@@ -78,7 +148,13 @@ public class CLIPrinter {
         out.print("\n");
     }
 
-    public static void printGods(PrintStream out, List<God> godList) {
+    private void printGods() {
+        List<God> godList;
+
+        synchronized (clientModel) {
+            godList = clientModel.getReducedGodList();
+        }
+
         out.print("Card");
         if (godList.size() > 1) out.print("s");
         out.print(": ");
@@ -86,7 +162,13 @@ public class CLIPrinter {
         out.print(godList + "\n");
     }
 
-    public static void printPossibleActions(PrintStream out, ReducedAnswerCell[][] reducedBoard) {
+    private void printPossibleActions() {
+        ReducedAnswerCell[][] reducedBoard;
+
+        synchronized (clientModel) {
+            reducedBoard = clientModel.getReducedBoard();
+        }
+
         List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard)
                                                  .flatMap(Arrays::stream)
                                                  .filter(x -> x.getAction() != ReducedAction.DEFAULT)
@@ -113,6 +195,33 @@ public class CLIPrinter {
                             )
             );
         }
+    }
+
+    private void printAll() {
+        printBoard();
+        printPossibleActions();
+        printOpponents();
+    }
+
+    public void printError() {
+        out.println("Error, try again");
+    }
+
+    public void printSuccess() {
+        out.println("Done!");
+    }
+
+    public void printEnd(String player, String context) {
+        out.println(player + context + "!");
+    }
+
+    public void printChanges(DemandType demandType) {
+        Consumer<String> initlaFunct = initialMap.get(demandType);
+
+        if (initlaFunct != null)
+            initlaFunct.accept(stringMap.get(demandType));
+        else
+            changesMap.get(demandType).run();
     }
 }
 

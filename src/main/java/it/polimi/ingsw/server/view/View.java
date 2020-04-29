@@ -13,7 +13,7 @@ public abstract class View extends Observable<ActionToPerformView> implements Ob
         this.player = player;
     }
 
-    protected String getPlayer(){
+    public String getPlayer(){
         return player;
     }
 

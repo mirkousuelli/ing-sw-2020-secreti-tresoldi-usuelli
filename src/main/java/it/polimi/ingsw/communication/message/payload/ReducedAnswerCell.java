@@ -1,24 +1,10 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.map.Level;
-import it.polimi.ingsw.server.model.map.Worker;
-
 public class ReducedAnswerCell extends ReducedDemandCell {
 
     private ReducedLevel level;
     private ReducedAction action;
     private ReducedWorker worker;
-
-    public ReducedAnswerCell(int x, int y, Level level, ReducedAction action, Worker worker, Player player) {
-        super(x, y);
-        this.level = ReducedLevel.parseInt(level.toInt());
-        this.action = action;
-        this.worker = null;
-
-        if (worker != null && player != null && player.nickName != null)
-            this.worker = new ReducedWorker(worker, player.nickName);
-    }
 
     public ReducedAnswerCell(int x, int y) {
         super(x, y);

@@ -7,7 +7,9 @@ import it.polimi.ingsw.communication.message.xml.FileXML;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.security.SecureRandom;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,8 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     private boolean isChanged;
     private Answer<S> answer;
 
-    private final String FILEXML = "src/main/java/it/polimi/ingsw/client/network/message/message.xml";
+    private static final Random random = new SecureRandom();
+    private final String FILEXML = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {

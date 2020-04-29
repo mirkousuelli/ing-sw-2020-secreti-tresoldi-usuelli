@@ -3,10 +3,8 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.network.ClientConnection;
 import it.polimi.ingsw.client.view.cli.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
-import it.polimi.ingsw.client.view.cli.Turn;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
@@ -22,18 +20,21 @@ import java.util.stream.Collectors;
 
 public class ClientModel<S> implements Runnable {
 
+    private final ClientConnection<S> clientConnection;
+
     private final ReducedAnswerCell[][] reducedBoard;
     private List<God> reducedGodList;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
     private String currentWorker;
-    private Turn turn;
-    private AnswerType state;
     private final ReducedPlayer player;
+    private String lobbyId;
 
-    private final ClientConnection<S> clientConnection;
+
+    private final Object lockAnswer;
     private Answer<S> answer;
+
     private boolean isActive;
     private boolean isChanged;
 
@@ -51,21 +52,30 @@ public class ClientModel<S> implements Runnable {
 
         player = new ReducedPlayer(playerName);
         player.setColor(Color.RESET);
-        turn = Turn.START;
 
         this.clientConnection = clientConnection;
+
+        lockAnswer = new Object();
 
         setActive(false);
         setChanged(false);
 
     }
 
-    public synchronized Answer<S> getAnswer() {
-        return answer;
+    public Answer<S> getAnswer() {
+        Answer<S> temp;
+
+        synchronized (lockAnswer) {
+            temp = answer;
+        }
+
+        return temp;
     }
 
-    private synchronized void setAnswer(Answer<S> answer) {
-        this.answer = answer;
+    private void setAnswer(Answer<S> answer) {
+        synchronized (lockAnswer) {
+            this.answer = answer;
+        }
     }
 
     private synchronized boolean isActive() {
@@ -130,29 +140,42 @@ public class ClientModel<S> implements Runnable {
         }
     }
 
-    private synchronized void updateModel() {
-        state = answer.getHeader();
-
-        if (state.equals(AnswerType.START)) {
-            currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
-
-            opponents = ((List<ReducedPlayer>) answer.getPayload()).stream()
-                    .filter(p -> !p.getNickname().equals(player.getNickname()))
-                    .collect(Collectors.toList());
+    private void updateModel() {
+        synchronized (lockAnswer) {
+            if (answer.getHeader().equals(AnswerType.SUCCESS))
+                updateReduceObjects(answer);
         }
-
-        if (state.equals(AnswerType.SUCCESS) && !answer.getContext().equals(DemandType.CONNECT) &&
-                !answer.getContext().equals(DemandType.CREATE_GAME) && !answer.getContext().equals(DemandType.JOIN_GAME))
-            updateReduceObjects(answer);
-
-        if (!nextTurn(answer.getContext()))
-            throw new NotAValidInputRunTimeException("Not a valid turn");
     }
 
     private synchronized void updateReduceObjects(Answer<S> answer) {
-        switch (turn) {
+        switch (answer.getContext()) {
+            case CONNECT:
+                //TODO only print?
+                break;
+
+            case CREATE_GAME:
+            case JOIN_GAME:
+                lobbyId = answer.getPayload().toString();
+                break;
+
+            case ASK_LOBBY:
+                //TODO only print?
+                break;
+
+            case WAIT:
+                //TODO only print?
+                break;
+
+            case START:
+                currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
+
+                opponents = ((List<ReducedPlayer>) answer.getPayload());
+                //player = ((List<ReducedPlayer>) answer.getPayload())
+                break;
+
             case CHOOSE_DECK:
             case CHOOSE_CARD:
+            case USE_POWER: //TODO
                 reducedGodList = new ArrayList<>((List<God>) answer.getPayload());
                 break;
 
@@ -195,33 +218,35 @@ public class ClientModel<S> implements Runnable {
         return currentPlayer.equals(player);
     }
 
-    private synchronized boolean nextTurn(DemandType demandType) {
-        if (demandType == null) return false;
-        turn = Turn.parseDemandType(demandType);
-
-        return true;
-    }
-
     public ReducedAnswerCell[][] getReducedBoard() {
         return reducedBoard;
     }
 
-    public ReducedAnswerCell getReducedCell(int x, int y) {
+    public ReducedAnswerCell getReducedCell(String cellString) {
+        List<Integer> coord = stringToInt(cellString);
+        int x = coord.get(0);
+        int y = coord.get(1);
+
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
-    public synchronized boolean checkCell(int x, int y) {
+    public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
     }
 
-    public synchronized boolean checkGod(God god) {
+    public synchronized boolean checkGod(String godString) {
+        God god = God.parseString(godString);
         if (god == null) return true;
 
         return reducedGodList.stream()
                              .noneMatch(g -> g.equals(god));
     }
 
-    public synchronized boolean checkWorker(int x, int y) {
+    public synchronized boolean checkWorker(String workerString) {
+        List<Integer> coord = stringToInt(workerString);
+        int x = coord.get(0);
+        int y = coord.get(1);
+
         if (checkCell(x, y)) return true;
 
         return workers.stream()
@@ -229,7 +254,11 @@ public class ClientModel<S> implements Runnable {
                       .noneMatch(w -> w.getX() == x && w.getY() == y);
     }
 
-    public synchronized boolean evalToRepeat(int x, int y) {
+    public synchronized boolean evalToRepeat(String string) {
+        List<Integer> coord = stringToInt(string);
+        int x = coord.get(0);
+        int y = coord.get(1);
+
         if (checkCell(x, y)) return true;
 
         switch (reducedBoard[x][y].getAction()) {
@@ -248,7 +277,11 @@ public class ClientModel<S> implements Runnable {
         }
     }
 
-    public synchronized boolean evalToUsePower(int x, int y) {
+    public synchronized boolean evalToUsePower(String string) {
+        List<Integer> coord = stringToInt(string);
+        int x = coord.get(0);
+        int y = coord.get(1);
+
         if (checkCell(x, y)) return false;
 
         return reducedBoard[x][y].getAction().equals(ReducedAction.USEPOWER);
@@ -270,11 +303,18 @@ public class ClientModel<S> implements Runnable {
         return currentWorker;
     }
 
-    public synchronized Turn getTurn() {
-        return turn;
+    public String getLobbyId() {
+        return lobbyId;
     }
 
-    public synchronized AnswerType getState() {
-        return state;
+    private List<Integer> stringToInt(String string) {
+        if (string.length() != 3) return new ArrayList<>();
+
+        List<Integer> ret = new ArrayList<>();
+
+        ret.add((int) string.charAt(0) - 48);
+        ret.add((int) string.charAt(2) - 48);
+
+        return ret;
     }
 }

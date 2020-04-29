@@ -1,24 +1,27 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.server.model.Player;
-
 public class ReducedPlayer {
 
-    private final String nickname;
+    private String nickname;
     private String color;
 
-    public ReducedPlayer(Player player, String color) {
-        this.nickname = player.nickName;
+    public ReducedPlayer(String player, String color) {
+        this.nickname = player;
         this.color = color;
     }
 
+    public ReducedPlayer() {}
+
     public ReducedPlayer(String player) {
-        this.nickname = player;
-        color = null;
+        this(player, null);
     }
 
     public String getNickname() {
         return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getColor() {
