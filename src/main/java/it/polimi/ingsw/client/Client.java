@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.view.GUI;
 import it.polimi.ingsw.client.view.cli.CLI;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.client.view.cli.SantoriniPrintStream;
+import it.polimi.ingsw.communication.Color;
 
 import java.io.IOException;
 import java.io.PrintStream;

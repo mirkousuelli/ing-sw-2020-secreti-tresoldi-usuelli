@@ -1,7 +1,5 @@
 package it.polimi.ingsw.server.model.game;
 
-import it.polimi.ingsw.server.model.game.states.*;
-
 public enum State {
     START,
     CHOOSE_WORKER,
@@ -18,19 +16,19 @@ public enum State {
          */
         switch (this) {
             case START:
-                return "START";
+                return "start";
             case CHOOSE_WORKER:
-                return "CHOOSE_WORKER";
+                return "chooseWorker";
             case MOVE:
-                return "MOVE";
+                return "move";
             case BUILD:
-                return "BUILD";
+                return "build";
             case CHANGE_TURN:
-                return "CHANGE_TURN";
+                return "changeTurn";
             case DEFEAT:
-                return "DEFEAT";
+                return "defeat";
             case VICTORY:
-                return "VICTORY";
+                return "victory";
             default:
                 return "";
         }

@@ -10,7 +10,6 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
-import it.polimi.ingsw.client.view.cli.Color;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;

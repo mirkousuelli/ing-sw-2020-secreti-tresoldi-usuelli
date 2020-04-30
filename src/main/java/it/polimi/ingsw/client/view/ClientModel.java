@@ -1,14 +1,11 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.network.ClientConnection;
-import it.polimi.ingsw.client.view.cli.Color;
+import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.payload.ReducedAction;
-import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
-import it.polimi.ingsw.communication.message.payload.ReducedWorker;
+import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
@@ -16,14 +13,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ClientModel<S> implements Runnable {
 
     private final ClientConnection<S> clientConnection;
 
-    private final ReducedAnswerCell[][] reducedBoard;
-    private List<God> reducedGodList;
+    private ReducedAnswerCell[][] reducedBoard;
+    private List<God> deck;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
@@ -43,6 +39,7 @@ public class ClientModel<S> implements Runnable {
 
     public ClientModel(String playerName, ClientConnection<S> clientConnection) {
         reducedBoard = new ReducedAnswerCell[5][5];
+        deck = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -60,6 +57,10 @@ public class ClientModel<S> implements Runnable {
         setActive(false);
         setChanged(false);
 
+    }
+
+    public ReducedPlayer getPlayer() {
+        return player;
     }
 
     public Answer<S> getAnswer() {
@@ -153,6 +154,25 @@ public class ClientModel<S> implements Runnable {
                 //TODO only print?
                 break;
 
+            case RELOAD:
+                ReducedGame reducedGame = ((ReducedGame) answer.getPayload());
+
+                reducedBoard = reducedGame.getReducedBoard();
+                lobbyId = reducedGame.getLobbyId();
+                opponents = reducedGame.getReducedPlayerList();
+                currentPlayer = opponents.get(reducedGame.getCurrentPlayerIndex()).getNickname();
+
+                for (ReducedPlayer o : opponents) {
+                    deck.add(o.getGod());
+                    if (o.getNickname().equals(player.getNickname())) {
+                        player.setGod(o.getGod());
+                        player.setColor(o.getColor());
+                        opponents.remove(o);
+                        break;
+                    }
+                }
+                break;
+
             case CREATE_GAME:
             case JOIN_GAME:
                 lobbyId = answer.getPayload().toString();
@@ -170,13 +190,19 @@ public class ClientModel<S> implements Runnable {
                 currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
 
                 opponents = ((List<ReducedPlayer>) answer.getPayload());
-                //player = ((List<ReducedPlayer>) answer.getPayload())
+
+                for (ReducedPlayer o : opponents) {
+                    if (o.getNickname().equals(player.getNickname())) {
+                        opponents.remove(o);
+                        break;
+                    }
+                }
                 break;
 
             case CHOOSE_DECK:
             case CHOOSE_CARD:
             case USE_POWER: //TODO
-                reducedGodList = new ArrayList<>((List<God>) answer.getPayload());
+                deck = new ArrayList<>((List<God>) answer.getPayload());
                 break;
 
             case PLACE_WORKERS:
@@ -214,8 +240,8 @@ public class ClientModel<S> implements Runnable {
         }
     }
 
-    public synchronized boolean isYourTurn(String player) {
-        return currentPlayer.equals(player);
+    public synchronized boolean isYourTurn() {
+        return currentPlayer.equals(player.getNickname());
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {
@@ -238,7 +264,7 @@ public class ClientModel<S> implements Runnable {
         God god = God.parseString(godString);
         if (god == null) return true;
 
-        return reducedGodList.stream()
+        return deck.stream()
                              .noneMatch(g -> g.equals(god));
     }
 
@@ -287,8 +313,13 @@ public class ClientModel<S> implements Runnable {
         return reducedBoard[x][y].getAction().equals(ReducedAction.USEPOWER);
     }
 
-    public synchronized List<God> getReducedGodList() {
-        return new ArrayList<>(reducedGodList);
+    public synchronized List<God> getDeck() {
+        List<God> ret = new ArrayList<>();
+
+        for (God g: deck)
+            ret.add(God.valueOf(g.toString()));
+
+        return ret;
     }
 
     public synchronized List<ReducedPlayer> getOpponents() {

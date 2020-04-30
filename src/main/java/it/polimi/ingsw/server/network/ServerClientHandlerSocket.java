@@ -5,9 +5,11 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedGame;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
@@ -15,10 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +36,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         this.socket = socket;
         this.server = server;
         file = new FileXML(pathFile, socket);
+        lobby = null;
     }
 
     private synchronized boolean isActive(){
@@ -106,42 +107,74 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 server.connect(this, (String) demand.getPayload());
             }
 
-            //createGame or askLobby
-            do {
-                demand = read();
-                synchronized (server) {
-                    toRepeat = server.prelobby(demand, this);
-                }
-            } while (toRepeat);
-
-            //wait or join game
-            boolean join = false;
-            do {
-                demand = read();
-                if (demand.getHeader().equals(DemandType.ASK_LOBBY))
-                    join = true;
-                synchronized (server) {
-                    toRepeat = server.lobby(demand, this);
-                }
-            } while (toRepeat);
-
-            if (join)
-                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, ""));
-
-            //wait
-            List<ReducedPlayer> players;
-            synchronized (lobby.lockLobby) {
-                while (!lobby.canStart()) lobby.lockLobby.wait();
+            boolean reload = false;
+            if (lobby != null) {
                 synchronized (lobby.lockLobby) {
-                    lobby.lockLobby.notifyAll();
-                    players = lobby.getReducedPlayerList();
-                    lobby.setCurrentPlayer(players.get(0).getNickname());
+                    reload = lobby.isReloaded();
+                }
+            }
+
+            if(!reload) {
+                //createGame or askLobby
+                do {
+                    demand = read();
+                    synchronized (server) {
+                        toRepeat = server.prelobby(demand, this);
+                    }
+                } while (toRepeat);
+
+                //wait or join game
+                boolean join = false;
+                do {
+                    demand = read();
+                    if (demand.getHeader().equals(DemandType.ASK_LOBBY))
+                        join = true;
+                    synchronized (server) {
+                        toRepeat = server.lobby(demand, this);
+                    }
+                } while (toRepeat);
+
+                if (join)
+                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, ""));
+
+                //wait
+                List<ReducedPlayer> players;
+                synchronized (lobby.lockLobby) {
+                    while (!lobby.canStart()) lobby.lockLobby.wait();
+                    synchronized (lobby.lockLobby) {
+                        lobby.lockLobby.notifyAll();
+                        players = lobby.getReducedPlayerList();
+                        lobby.setCurrentPlayer(players.get(0).getNickname());
+                    }
                 }
 
                 //start
                 asyncSend(new Answer(AnswerType.SUCCESS, DemandType.START, players));
                 LOGGER.info(() -> "Names: " + players.get(0).getNickname() + ", " + players.get(1).getNickname());
             }
+            else {
+                ReducedGame reducedGame;
+                synchronized (lobby.lockLobby) {
+                    while (!lobby.canStart()) lobby.lockLobby.wait();
+                    synchronized (lobby.lockLobby) {
+                        lobby.lockLobby.notifyAll();
+                        Game loadedGame = lobby.getGame();
+                        int curr = loadedGame.getPlayerList().indexOf(loadedGame.getCurrentPlayer());
+                        int currWorker = loadedGame.getCurrentPlayer().getWorkers().indexOf(loadedGame.getCurrentPlayer().getCurrentWorker());
+                        reducedGame = new ReducedGame(lobby.getID(), loadedGame.getBoard().map, loadedGame.getPlayerList(), curr, currWorker);
+
+                        for (ReducedPlayer reducedPlayer : lobby.getReducedPlayerList()) {
+                            for (ReducedPlayer rp : reducedGame.getReducedPlayerList()) {
+                                if (rp.getNickname().equals(reducedPlayer.getNickname()))
+                                    rp.setColor(reducedPlayer.getColor());
+                            }
+                        }
+                    }
+                }
+
+                asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
+            }
+
 
             while(isActive()) {
                 demand = read();
@@ -149,7 +182,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 LOGGER.info(LOGGER.getName() + "Notified!");
             }
         } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Failed to receive!!" + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e, () -> "Failed to receive!!" + e.getMessage());
         } finally {
             setActive(false);
             close();

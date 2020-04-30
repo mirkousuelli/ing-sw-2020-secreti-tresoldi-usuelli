@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.cli;
+package it.polimi.ingsw.communication;
 
 public enum Color {
     ANSI_RED("\u001B[31m"),
@@ -8,7 +8,7 @@ public enum Color {
     ANSI_PURPLE("\u001B[35m");
 
     public static final String RESET = "\u001B[0m";
-    private String escape;
+    private final String escape;
 
     Color(String escape) {
         this.escape = escape;
@@ -41,47 +41,25 @@ public enum Color {
         }
     }
 
-    public static Color parseString(String color) {
+    public static String parseString(String color) {
         switch (color.toLowerCase()) {
             case "red":
-                return ANSI_RED;
+                return ANSI_RED.getEscape();
 
             case "green":
-                return ANSI_GREEN;
+                return ANSI_GREEN.getEscape();
 
             case "yellow":
-                return ANSI_YELLOW;
+                return ANSI_YELLOW.getEscape();
 
             case "blue":
-                return ANSI_BLUE;
+                return ANSI_BLUE.getEscape();
 
             case "purple":
-                return ANSI_PURPLE;
+                return ANSI_PURPLE.getEscape();
 
             default:
-                return null;
-        }
-    }
-
-    public static Color parseInt(int color) {
-        switch (color) {
-            case 0:
-                return ANSI_RED;
-
-            case 1:
-                return ANSI_GREEN;
-
-            case 2:
-                return ANSI_YELLOW;
-
-            case 3:
-                return ANSI_BLUE;
-
-            case 4:
-                return ANSI_PURPLE;
-
-            default:
-                return null;
+                return Color.RESET;
         }
     }
 }

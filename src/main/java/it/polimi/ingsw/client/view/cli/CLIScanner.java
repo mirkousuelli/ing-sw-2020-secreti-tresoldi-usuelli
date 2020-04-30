@@ -24,16 +24,22 @@ public class CLIScanner<S> {
     private static final String confirm = "Do you want to confirm your action? [Y/N]\n";
     private static final String exceptionMessage = "Not a valid turn";
 
-    private final Map<DemandType, String> messageMap = new HashMap<>();
-    private final Map<DemandType, Function<String, Boolean>> toRepeatMap = new HashMap<>();
-    private final Map<DemandType, Function<Integer, Boolean>> indexMap = new HashMap<>();
-    private final Map<DemandType, Function<String, Boolean>> toUsePowerMap = new HashMap<>();
+    private final Map<DemandType, String> messageMap;
+    private final Map<DemandType, Function<String, Boolean>> toRepeatMap;
+    private final Map<DemandType, Function<Integer, Boolean>> indexMap;
+    private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
     private final ClientModel<S> clientModel;
 
     public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
         in = new Scanner(inputStream);
         this.out = out;
         this.clientModel = clientModel;
+
+
+        messageMap = new EnumMap<>(DemandType.class);
+        toRepeatMap = new EnumMap<>(DemandType.class);
+        indexMap = new EnumMap<>(DemandType.class);
+        toUsePowerMap = new EnumMap<>(DemandType.class);
 
         messageMap.put(DemandType.CONNECT, createJoinGame);
         messageMap.put(DemandType.CREATE_GAME, createGame);

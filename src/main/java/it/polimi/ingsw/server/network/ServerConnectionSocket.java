@@ -4,6 +4,10 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedGame;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
@@ -21,7 +25,8 @@ import java.util.logging.Logger;
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
     private static final Random random = new SecureRandom();
-    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message" + random.nextInt() + ".xml";
+    private static final String PATH = "src/main/java/it/polimi/ingsw/server/network/message/message";
+    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<ServerClientHandler, String> waitingConnection = new HashMap<>();
@@ -29,6 +34,20 @@ public class ServerConnectionSocket implements ServerConnection {
 
     public ServerConnectionSocket(int port) {
         this.port = port;
+
+        Game loadedGame = null;
+        Lobby loadedLobby;
+        try {
+            loadedGame = GameMemory.load(BACKUPPATH);
+        } catch (ParserConfigurationException | SAXException e) {
+            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
+        }
+
+        if (loadedGame != null) {
+            loadedLobby = new Lobby(loadedGame);
+            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+            lobbyList.add(loadedLobby);
+        }
     }
 
     public void startServer() throws IOException {
@@ -47,10 +66,10 @@ public class ServerConnectionSocket implements ServerConnection {
 
         LOGGER.info("Server ready");
 
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this, FILEXML);
+                handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
                 executor.submit(handler);
             }
             catch(IOException e) {
@@ -73,12 +92,21 @@ public class ServerConnectionSocket implements ServerConnection {
     //Wait for another player
     @Override
     public void connect(ServerClientHandler c, String name) {
+
+        for (Lobby l : lobbyList) {
+            if (l.isReloaded() && l.getGame().getPlayer(name) != null) {
+                l.addPlayer(name, c);
+                c.setLobby(l);
+                LOGGER.info("Reloaded!");
+                return;
+            }
+        }
+
         waitingConnection.put(c, name);
 
         LOGGER.info(() -> name + " put!");
         c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
         LOGGER.info("Connect answer sent!");
-
     }
 
     @Override
@@ -105,7 +133,7 @@ public class ServerConnectionSocket implements ServerConnection {
                 return false;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error preLobby!\n"));
         }
 
         return true;
@@ -142,19 +170,19 @@ public class ServerConnectionSocket implements ServerConnection {
                         return false;
                     }
                     else {
-                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
+                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby full!\n"));
                         LOGGER.info("Error lobby full!");
                         return true;
                     }
                 }
 
-                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
-                LOGGER.info("Error!");
+                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby does not exists!\n"));
+                LOGGER.info("Error lobby does not exists!");
                 return true;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
-                LOGGER.info("Error!");
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error lobby!\n"));
+                LOGGER.info("Error lobby!");
         }
 
         return true;

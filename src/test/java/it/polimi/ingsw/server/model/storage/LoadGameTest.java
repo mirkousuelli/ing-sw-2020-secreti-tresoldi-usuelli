@@ -28,7 +28,7 @@ public class LoadGameTest {
 
         /* turn */
         assertEquals(game.getCurrentPlayer().getNickName(),"Mirko");
-        assertEquals(game.getState().getName(), "CHOOSE_WORKER");
+        assertEquals(game.getState().getName(), "chooseWorker");
 
         /* malus */
         assertEquals(game.getCurrentPlayer().getMalusList().size(), 2);

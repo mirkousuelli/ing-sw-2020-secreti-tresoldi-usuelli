@@ -65,6 +65,10 @@ public class Game {
         return null;
     }
 
+    public List<Player> getPlayerList() {
+        return new ArrayList<>(players);
+    }
+
     public int getIndex(Player player) {
         return this.players.indexOf(player);
     }

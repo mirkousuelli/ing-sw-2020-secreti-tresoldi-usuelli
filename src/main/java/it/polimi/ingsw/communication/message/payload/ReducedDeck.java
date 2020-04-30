@@ -29,4 +29,11 @@ public class ReducedDeck {
         return reducedGodList.get(index);
     }
 
+    public List<God> getReducedGodList() {
+        return reducedGodList;
+    }
+
+    public void setReducedGodList(List<God> reducedGodList) {
+        this.reducedGodList = reducedGodList;
+    }
 }

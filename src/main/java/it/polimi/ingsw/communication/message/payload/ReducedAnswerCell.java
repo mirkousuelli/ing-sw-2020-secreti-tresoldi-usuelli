@@ -42,4 +42,5 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     public void setWorker(ReducedWorker worker) {
         this.worker = worker;
     }
+
 }
