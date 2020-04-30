@@ -62,27 +62,5 @@ public enum Color {
                 return Color.RESET;
         }
     }
-
-    public static Color parseInt(int color) {
-        switch (color) {
-            case 0:
-                return ANSI_RED;
-
-            case 1:
-                return ANSI_GREEN;
-
-            case 2:
-                return ANSI_YELLOW;
-
-            case 3:
-                return ANSI_BLUE;
-
-            case 4:
-                return ANSI_PURPLE;
-
-            default:
-                return null;
-        }
-    }
 }
 

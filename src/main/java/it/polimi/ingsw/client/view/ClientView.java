@@ -7,7 +7,6 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public abstract class ClientView<S> implements Runnable {
 
-    public final ReducedPlayer player;
     protected final ClientModel<S> clientModel;
 
     private Demand<S> demand;
@@ -17,16 +16,11 @@ public abstract class ClientView<S> implements Runnable {
     public final Object lockDemand;
 
     public ClientView(String playerName, ClientModel<S> clientModel) {
-        player = new ReducedPlayer(playerName);
         this.clientModel = clientModel;
         lockDemand = new Object();
 
         setActive(false);
         setChanged(false);
-    }
-
-    public ReducedPlayer getPlayer() {
-        return player;
     }
 
     protected synchronized void setDemand(Demand<S> demand) {
@@ -74,7 +68,7 @@ public abstract class ClientView<S> implements Runnable {
 
     protected void setInitialRequest() {
         synchronized (this) {
-            setDemand(new Demand<S>(DemandType.CONNECT, (S) player.getNickname()));
+            setDemand(new Demand<S>(DemandType.CONNECT, (S) clientModel.getPlayer().getNickname()));
             setChanged(true);
         }
 

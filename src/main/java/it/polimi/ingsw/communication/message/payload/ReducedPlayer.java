@@ -1,9 +1,18 @@
 package it.polimi.ingsw.communication.message.payload;
 
+import it.polimi.ingsw.server.model.cards.gods.God;
+
 public class ReducedPlayer {
 
     private String nickname;
     private String color;
+    private God god;
+
+    public ReducedPlayer(String player, String color, God god) {
+        this.nickname = player;
+        this.color = color;
+        this.god = god;
+    }
 
     public ReducedPlayer(String player, String color) {
         this.nickname = player;
@@ -12,8 +21,12 @@ public class ReducedPlayer {
 
     public ReducedPlayer() {}
 
+    public ReducedPlayer(String player, God god) {
+        this(player, null, god);
+    }
+
     public ReducedPlayer(String player) {
-        this(player, null);
+        this(player, null, null);
     }
 
     public String getNickname() {
@@ -30,6 +43,14 @@ public class ReducedPlayer {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public God getGod() {
+        return god;
+    }
+
+    public void setGod(God god) {
+        this.god = god;
     }
 }
 

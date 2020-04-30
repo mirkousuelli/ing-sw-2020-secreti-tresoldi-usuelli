@@ -24,6 +24,7 @@ public class CLIPrinter<S> {
     private final EnumMap<DemandType, Runnable> changesMap;
 
     private static final String CONNECT = "Connected!\n";
+    private static final String RELOAD = "Reloaded!\n";
     private static final String CONFIRM = "Confirmed!\n";
     private static final String WAIT = "Waiting other players...\n";
     private static final String ASKLOBBY = "Ask your friend his lobby's id!\n";
@@ -47,6 +48,7 @@ public class CLIPrinter<S> {
         changesMap = new EnumMap<>(DemandType.class);
 
         stringMap.put(DemandType.CONNECT, CONNECT);
+        stringMap.put(DemandType.RELOAD, RELOAD);
         stringMap.put(DemandType.CONFIRM, CONFIRM);
         stringMap.put(DemandType.WAIT, WAIT);
         stringMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
@@ -56,6 +58,7 @@ public class CLIPrinter<S> {
         initialMap.put(DemandType.WAIT, this::printString);
         initialMap.put(DemandType.ASK_LOBBY, this::printString);
 
+        changesMap.put(DemandType.RELOAD, this::printAll);
         changesMap.put(DemandType.CREATE_GAME, this::printLobby);
         changesMap.put(DemandType.JOIN_GAME, this::printLobby);
         changesMap.put(DemandType.START, this::printStart);
@@ -97,6 +100,7 @@ public class CLIPrinter<S> {
         synchronized (clientModel) {
             board = clientModel.getReducedBoard();
             opponents = clientModel.getOpponents();
+            opponents.add(clientModel.getPlayer());
         }
 
         for (int i = 4; i >= 0; i--) {
@@ -140,6 +144,7 @@ public class CLIPrinter<S> {
         out.print(": ");
 
         out.println(opponents.stream()
+                .filter(p -> !p.getNickname().equals(clientModel.getPlayer().getColor()))
                 .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getNickname() + Color.RESET)
                 .reduce(null, (a, b) -> a != null
                         ? a + ", " + b
@@ -147,21 +152,43 @@ public class CLIPrinter<S> {
                 )
         );
 
-        out.print("\n");
+        out.println("You: "+ Color.parseString(clientModel.getPlayer().getColor()) + clientModel.getPlayer().getNickname() + Color.RESET + "\n");
     }
 
     private void printGods() {
-        List<God> godList;
+        List<ReducedPlayer> playerList;
 
         synchronized (clientModel) {
-            godList = clientModel.getReducedGodList();
+            playerList = clientModel.getOpponents();
         }
 
-        out.print("Card");
-        if (godList.size() > 1) out.print("s");
+        if (playerList.isEmpty()) return;
+
+        out.print("Opponent card");
+        if (playerList.size() == 2) out.print("s");
         out.print(": ");
 
-        out.print(godList + "\n");
+        out.println(playerList.stream()
+                .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getGod() + Color.RESET)
+                .reduce(null, (a, b) -> a != null
+                        ? a + ", " + b
+                        : b
+                )
+        );
+
+        printYourCard();
+    }
+
+    private void printYourCard() {
+        God god;
+        String color;
+
+        synchronized (clientModel) {
+            god = clientModel.getPlayer().getGod();
+            color = Color.parseString(clientModel.getPlayer().getColor());
+        }
+
+        out.print("Your card: " + color + god + Color.RESET + "\n");
     }
 
     private void printPossibleActions() {
@@ -202,7 +229,7 @@ public class CLIPrinter<S> {
     private void printAll() {
         printBoard();
         printPossibleActions();
-        printOpponents();
+        printGods();
     }
 
     public void printError() {

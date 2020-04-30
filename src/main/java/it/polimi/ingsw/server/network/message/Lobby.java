@@ -24,13 +24,19 @@ public class Lobby {
     private final Map<View, ReducedPlayer> playerColor;
     private static final Random randomLobby = new SecureRandom();
     private int numberOfPlayers;
+    private boolean reloaded;
 
     public final Object lockLobby;
 
     public Lobby() throws ParserConfigurationException, SAXException {
+        this(new Game());
+        reloaded = false;
+    }
+
+    public Lobby(Game game) {
         ID = String.valueOf(Math.abs(randomLobby.nextInt()));
 
-        game = new Game();
+        this.game = game;
         controller = new Controller(game);
         playerViewList = new ArrayList<>();
         playingConnection = new HashMap<>();
@@ -38,6 +44,8 @@ public class Lobby {
 
         lockLobby = new Object();
         numberOfPlayers = 2; //default
+
+        reloaded = true;
     }
 
     public String getMessagePath() {
@@ -82,27 +90,22 @@ public class Lobby {
         //TODO
     }
 
+    public boolean isReloaded() {
+        return reloaded;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
     public synchronized boolean addPlayer(String player, ServerClientHandler serverClientHandler) {
         if (playingConnection.size() == numberOfPlayers) return false;
 
         RemoteView v = new RemoteView(player, serverClientHandler);
 
-        boolean toRepeat;
-        Color color;
-        do {
-            toRepeat = false;
-            color = Color.parseInt(randomLobby.nextInt(Color.values().length));
-            for (View view: playerViewList) {
-                if (playerColor.get(view).getColor().equals(color.toString())) {
-                    toRepeat = true;
-                    break;
-                }
-            }
-        } while (toRepeat);
-
         playerViewList.add(v);
         playingConnection.put(serverClientHandler, v);
-        playerColor.put(v, new ReducedPlayer(v.getPlayer(), color.toString()));
+        playerColor.put(v, new ReducedPlayer(v.getPlayer(), Color.values()[playerViewList.size()].toString()));
 
         v.addObserver(controller);
         //TODO
@@ -112,6 +115,6 @@ public class Lobby {
     }
 
     public synchronized boolean canStart() {
-        return playingConnection.size() == numberOfPlayers;
+        return playerViewList.size() == numberOfPlayers;
     }
 }

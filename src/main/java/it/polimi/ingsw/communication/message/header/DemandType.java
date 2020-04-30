@@ -2,6 +2,7 @@ package it.polimi.ingsw.communication.message.header;
 
 public enum DemandType {
     CONNECT,
+    RELOAD,
     CREATE_GAME,
     JOIN_GAME,
     ASK_LOBBY,
@@ -17,10 +18,12 @@ public enum DemandType {
     CONFIRM,
     UNDO;
 
-    public DemandType parseString(String str) {
+    public static DemandType parseString(String str) {
         switch (str) {
             case "connect":
                 return CONNECT;
+            case "reload":
+                return RELOAD;
             case "createGame":
                 return CREATE_GAME;
             case "joinGame":
@@ -55,6 +58,8 @@ public enum DemandType {
         switch (this) {
             case CONNECT:
                 return "connect";
+            case RELOAD:
+                return "reload";
             case CREATE_GAME:
                 return "createGame";
             case JOIN_GAME:

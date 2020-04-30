@@ -31,7 +31,7 @@ public class CLI<S> extends ClientView<S> {
             case DEFEAT:
             case VICTORY:
                 out.printEnd(answer.getPayload().toString(), answer.getHeader().toString());
-                if(clientModel.isYourTurn(player.getNickname()))
+                if(clientModel.isYourTurn())
                     endGame();
                 return;
 
@@ -41,7 +41,8 @@ public class CLI<S> extends ClientView<S> {
                 break;
         }
 
-        if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
+        if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
+            !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
             startUI();
     }
 
