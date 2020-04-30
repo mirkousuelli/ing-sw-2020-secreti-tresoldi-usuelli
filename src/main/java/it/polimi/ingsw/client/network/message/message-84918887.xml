@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="14.0.1" class="java.beans.XMLDecoder">
+ <object class="it.polimi.ingsw.communication.message.Demand">
+  <void property="header">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>it.polimi.ingsw.communication.message.header.DemandType</class>
+    <string>ASK_LOBBY</string>
+   </object>
+  </void>
+  <void property="payload">
+   <string>1726575367</string>
+  </void>
+ </object>
+</java>

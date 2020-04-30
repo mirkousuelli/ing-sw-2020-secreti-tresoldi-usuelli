@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE game PUBLIC "Santorini" "game_grammar.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE game SYSTEM "game_grammar.dtd">
+
 <game>
     <lobby>
         <player>

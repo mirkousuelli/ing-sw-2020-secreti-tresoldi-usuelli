@@ -30,7 +30,7 @@ public class Move implements GameState {
          * it allows a player to move to a certain cell with a specific worker
          */
 
-        this.game = game;
+        /*this.game = game;
 
         // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
         // ...
@@ -50,7 +50,7 @@ public class Move implements GameState {
                 else
                     // if the move isn't possible, the player has to move again
                     game.setState(new Move(game));
-        }
+        }*/
     }
 
     private boolean isMoveCorrect = true;

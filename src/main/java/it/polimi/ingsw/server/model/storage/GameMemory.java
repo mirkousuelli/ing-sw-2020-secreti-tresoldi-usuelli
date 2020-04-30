@@ -12,8 +12,13 @@ import it.polimi.ingsw.server.model.game.GameState;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.xml.sax.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +41,23 @@ public class GameMemory {
     private static final int X = 0;
     private static final int Y = 1;
     private static final int LEVEL = 2;
+
+    private static void saveFile(Document doc, String path) throws TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        DOMImplementation domImpl = doc.getImplementation();
+        DocumentType doctype = domImpl.createDocumentType("doctype",
+                "Santorini",
+                "game_grammar.dtd");
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(path));
+        transformer.transform(source, result);
+    }
 
     public static void save(Game game, String path) {
 
@@ -211,14 +233,25 @@ public class GameMemory {
     public static void save(GameState state, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            //Node turnNode = doc.getDocumentElement().getChildNodes().item(TURN);
+            NodeList confNodes = doc.getDocumentElement().getChildNodes();
+            Node lobbyNode = confNodes.item(LOBBY);
+            NodeList playerNode = lobbyNode.getChildNodes();
 
-            //turnNode.getChildNodes().item(STATE).setNodeValue(state.toString());
+            int i = 0;
+            while (i < playerNode.getLength()) {
+                if (playerNode.item(i).getAttributes().getLength() > 0) {
+                    playerNode.item(i).getAttributes().getNamedItem("state").setTextContent(state.getName());
+                }
+                i++;
+            }
 
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+            GameMemory.saveFile(doc, path);
+
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
     }
