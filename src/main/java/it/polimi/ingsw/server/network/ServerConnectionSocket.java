@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
     private static final Random random = new SecureRandom();
-    private static final String FILEXML = "src/main/java/it/polimi/ingsw/server/network/message/message" + random.nextInt() + ".xml";
+    private static final String PATH = "src/main/java/it/polimi/ingsw/server/network/message/message";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<ServerClientHandler, String> waitingConnection = new HashMap<>();
@@ -47,10 +47,10 @@ public class ServerConnectionSocket implements ServerConnection {
 
         LOGGER.info("Server ready");
 
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this, FILEXML);
+                handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
                 executor.submit(handler);
             }
             catch(IOException e) {
@@ -105,7 +105,7 @@ public class ServerConnectionSocket implements ServerConnection {
                 return false;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error preLobby!\n"));
         }
 
         return true;
@@ -142,19 +142,19 @@ public class ServerConnectionSocket implements ServerConnection {
                         return false;
                     }
                     else {
-                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
+                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby full!\n"));
                         LOGGER.info("Error lobby full!");
                         return true;
                     }
                 }
 
-                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error!\n"));
-                LOGGER.info("Error!");
+                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby does not exists!\n"));
+                LOGGER.info("Error lobby does not exists!");
                 return true;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error!\n"));
-                LOGGER.info("Error!");
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error lobby!\n"));
+                LOGGER.info("Error lobby!");
         }
 
         return true;

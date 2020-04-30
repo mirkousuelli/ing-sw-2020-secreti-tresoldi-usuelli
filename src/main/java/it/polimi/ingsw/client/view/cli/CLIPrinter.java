@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
@@ -18,14 +19,14 @@ public class CLIPrinter<S> {
     private final ClientModel<S> clientModel;
     private final ClientView<S> clientView;
     private final PrintStream out;
-    private final Map<DemandType, String> stringMap = new HashMap<>();
-    private final Map<DemandType, Consumer<String>> initialMap= new HashMap<>();
-    private final Map<DemandType, Runnable> changesMap= new HashMap<>();
+    private final EnumMap<DemandType, String> stringMap;
+    private final EnumMap<DemandType, Consumer<String>> initialMap;
+    private final EnumMap<DemandType, Runnable> changesMap;
 
-    private static final String connect = "Connected!\n";
-    private static final String confirm = "Confirmed!\n";
-    private static final String wait = "Waiting other players...\n";
-    private static final String askLobby = "Ask your friend his lobby's id!\n";
+    private static final String CONNECT = "Connected!\n";
+    private static final String CONFIRM = "Confirmed!\n";
+    private static final String WAIT = "Waiting other players...\n";
+    private static final String ASKLOBBY = "Ask your friend his lobby's id!\n";
 
     private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
@@ -41,10 +42,14 @@ public class CLIPrinter<S> {
         this.clientModel = clientModel;
         this.clientView = clientView;
 
-        stringMap.put(DemandType.CONNECT, connect);
-        stringMap.put(DemandType.CONFIRM, confirm);
-        stringMap.put(DemandType.WAIT, wait);
-        stringMap.put(DemandType.ASK_LOBBY, askLobby);
+        stringMap = new EnumMap<>(DemandType.class);
+        initialMap = new EnumMap<>(DemandType.class);
+        changesMap = new EnumMap<>(DemandType.class);
+
+        stringMap.put(DemandType.CONNECT, CONNECT);
+        stringMap.put(DemandType.CONFIRM, CONFIRM);
+        stringMap.put(DemandType.WAIT, WAIT);
+        stringMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
 
         initialMap.put(DemandType.CONNECT, this::printString);
         initialMap.put(DemandType.CONFIRM, this::printString);
@@ -111,7 +116,6 @@ public class CLIPrinter<S> {
                     .map(ReducedPlayer::getColor)
                     .map(Color::parseString)
                     .filter(Objects::nonNull)
-                    .map(Color::getEscape)
                     .reduce(Color.RESET, (a, b) -> !a.equals(Color.RESET)
                             ? a
                             : b

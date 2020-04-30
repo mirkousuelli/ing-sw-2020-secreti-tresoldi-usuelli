@@ -18,8 +18,8 @@ public class CLI<S> extends ClientView<S> {
 
     public CLI(String playerName, ClientModel<S> clientModel) {
         super(playerName, clientModel);
-        out = new CLIPrinter<S>(System.out, clientModel, this);
-        in = new CLIScanner<S>(System.in, out, clientModel);
+        out = new CLIPrinter<>(System.out, clientModel, this);
+        in = new CLIScanner<>(System.in, out, clientModel);
     }
 
     private synchronized void update() {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.network.message;
 
-import it.polimi.ingsw.client.view.cli.Color;
+import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;

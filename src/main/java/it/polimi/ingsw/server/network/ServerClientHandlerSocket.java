@@ -147,7 +147,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 LOGGER.info(LOGGER.getName() + "Notified!");
             }
         } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Failed to receive!!" + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e, () -> "Failed to receive!!" + e.getMessage());
         } finally {
             setActive(false);
             close();
