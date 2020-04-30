@@ -30,7 +30,7 @@
                 </worker>
             </pawns>
         </player>
-        <player state="CHOOSE_WORKER">
+        <player state="chooseWorker">
             <nickname>Mirko</nickname>
             <god>ZEUS</god>
             <pawns>

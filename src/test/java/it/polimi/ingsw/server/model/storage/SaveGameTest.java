@@ -23,7 +23,7 @@ public class SaveGameTest {
         game_1.setState(State.CHOOSE_WORKER);
         GameMemory.save(game_1.getState(), pathFile);
         game_2 = GameMemory.load(pathFile);
-        assertSame(game_2.getState().getName(), "CHOOSE_WORKER");
+        assertSame(game_2.getState().getName(), State.CHOOSE_WORKER.toString());
         assertSame(game_1.getState().getName(), game_2.getState().getName());
     }
 }

@@ -8,7 +8,7 @@
         <!-- player's nickname to be parsed -->
         <!ELEMENT player (nickname, god, pawns, malusList?)>
             <!ATTLIST player
-                    state (START | CHOOSE_WORKER | MOVE | BUILD | CHANGE_TURN) #IMPLIED>
+                    state (start | chooseWorker | move | build | changeTurn) #IMPLIED>
             <!ELEMENT nickname (#PCDATA)>
             <!-- avoiding a deck tag introducing gods within player -->
             <!ELEMENT god (#PCDATA)>

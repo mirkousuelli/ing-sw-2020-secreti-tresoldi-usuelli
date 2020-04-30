@@ -35,19 +35,19 @@ public enum State {
     }
 
     public static State parseString(String str) {
-        if (str.equalsIgnoreCase("START"))
+        if (str.equalsIgnoreCase("start"))
             return START;
-        else if (str.equalsIgnoreCase("CHOOSE_WORKER"))
+        else if (str.equalsIgnoreCase("chooseWorker"))
             return CHOOSE_WORKER;
-        else if (str.equalsIgnoreCase("MOVE"))
+        else if (str.equalsIgnoreCase("move"))
             return MOVE;
-        else if (str.equalsIgnoreCase("BUILD"))
+        else if (str.equalsIgnoreCase("build"))
             return BUILD;
-        else if (str.equalsIgnoreCase("CHANGE_TURN"))
+        else if (str.equalsIgnoreCase("changeTurn"))
             return CHANGE_TURN;
-        else if (str.equalsIgnoreCase("DEFEAT"))
+        else if (str.equalsIgnoreCase("defeat"))
             return DEFEAT;
-        else if (str.equalsIgnoreCase("VICTORY"))
+        else if (str.equalsIgnoreCase("victory"))
             return VICTORY;
         else
             return null;
