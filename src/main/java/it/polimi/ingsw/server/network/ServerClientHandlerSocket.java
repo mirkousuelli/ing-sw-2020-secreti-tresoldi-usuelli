@@ -15,10 +15,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
