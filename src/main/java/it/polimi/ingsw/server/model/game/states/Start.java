@@ -33,16 +33,6 @@ public class Start implements GameState {
         this.game = game;
     }
 
-    private Player PickChallenger(Game game) {
-        /* @function
-         * it selects who is the Challenger (randomly or by picking him)
-         */
-
-        Challenger = game.getPlayerList().get(0);
-
-        return Challenger;
-    }
-
     private void pickCards(Game game) {
         /* @function
          * the Challenger must choose the cards (based on the number of players) among which every player has to choose his own

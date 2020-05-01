@@ -43,9 +43,6 @@ public class ChooseWorker implements GameState {
 
     @Override
     public State gameEngine(Game game) {
-        /*
-         *
-         */
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMove(game.getCurrentPlayer()))

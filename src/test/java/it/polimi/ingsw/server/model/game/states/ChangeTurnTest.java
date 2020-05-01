@@ -61,7 +61,7 @@ public class ChangeTurnTest {
     @Test
     void switchToVictoryTest() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that the state changes to Victory if the right condition are verified
+         * it checks that the state changes to Victory if the right condition are verified (one player remaining)
          */
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
@@ -69,7 +69,6 @@ public class ChangeTurnTest {
 
         Game game = new Game();
         game.addPlayer(p1);
-        game.setNumPlayers(1);
 
         game.setCurrentPlayer(p1);
         game.setState(State.CHANGE_TURN);

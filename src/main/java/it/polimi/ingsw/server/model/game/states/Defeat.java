@@ -32,7 +32,7 @@ public class Defeat implements GameState {
     // TODO
     private void removePlayer(Player currentPlayer) {
         /* @function
-         * it eliminates the player (and his workers) that doesn't have any movable worker or cannot build with any of them
+         * it eliminates the player (with his workers) that doesn't have any movable worker or cannot build with any of them
          */
     }
 
