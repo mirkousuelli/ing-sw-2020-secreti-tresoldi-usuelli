@@ -14,6 +14,7 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.State;
 
 public class Undo implements GameState {
 
@@ -22,9 +23,11 @@ public class Undo implements GameState {
         return null;
     }
 
-    public void gameEngine(Game game) {
+    @Override
+    public State gameEngine(Game game) {
         /*
          *
          */
+        return null;
     }
 }

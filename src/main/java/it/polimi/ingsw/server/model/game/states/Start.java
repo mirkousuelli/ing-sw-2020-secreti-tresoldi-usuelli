@@ -17,37 +17,20 @@ import it.polimi.ingsw.server.model.game.State;
 
 public class Start implements GameState {
     /* @abstractClass
-     * it represents the state that include all the actions to initialize the game
+     * it represents the state that includes all the actions to initialize the game
      */
 
     public Game game;
     public Player Challenger;
     public Player Starter;
-    /*
-    Player p1 = new Player(game.Nicknames[0]);
-    Player p2 = new Player(game.Nicknames[1]);
-    Player p3 = new Player(game.Nicknames[2]);
-    */
 
+    // TODO complete the missing actions to start the game
     public Start(Game game) {
         /* @constructor
-         * it allows the game to begin
+         * it sets the game which the state is connected to
          */
 
-        /*this.game = game;
-
-        // initialisation of the game
-        Player challenger = PickChallenger(game);
-        Deck deck = game.getDeck();
-        distributeCard(game);
-        Starter = chooseStarter(game);
-
-        // it sets the current player to the Starter (the one chosen by the Challenger)
-        game.setCurrentPlayer(Starter);
-
-        // After the initialisation of the game, it goes to ChooseWorker state
-        game.setState(new ChooseWorker(game));*/
-
+        this.game = game;
     }
 
     private Player PickChallenger(Game game) {
@@ -55,25 +38,25 @@ public class Start implements GameState {
          * it selects who is the Challenger (randomly or by picking him)
          */
 
-       // Challenger = new Random().nextString(Nicknames.length);
+        Challenger = game.getPlayerList().get(0);
 
         return Challenger;
     }
 
     private void pickCards(Game game) {
         /* @function
-         * the Challenger must choose the cards (based on the number of players) between which every player has to choose his own
+         * the Challenger must choose the cards (based on the number of players) among which every player has to choose his own
          */
+
     }
 
-    // maybe we should add the possibility for every player to pick the card he wants (between the chosen one)
     private void distributeCard(Game game) {
         /* @function
          * every player chooses a card between the card picked by the Challenger
          */
     }
 
-    private Player chooseStarter(Game game) {
+    private Player pickStarter() {
         /* @function
          * the Challenger decides who starts first
          */
@@ -85,9 +68,19 @@ public class Start implements GameState {
         return State.START.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+
+        // initialisation of the game
+        Challenger = game.getPlayerList().get(0);
+        Deck deck = game.getDeck();
+        distributeCard(game);
+        Starter = pickStarter();
+
+        // it sets the current player to the Starter (the one chosen by the Challenger)
+        game.setCurrentPlayer(Starter);
+
+        // After the initialisation of the game, it goes to ChooseWorker state
+        return State.CHOOSE_WORKER;
     }
 }
