@@ -8,6 +8,8 @@ import it.polimi.ingsw.communication.message.xml.FileXML;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.SecureRandom;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.logging.Level;
@@ -20,7 +22,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     private ClientView<S> clientView;
     private boolean isActive;
     private boolean isChanged;
-    private Answer<S> answer;
+    private final List<Answer<S>> buffer;
 
     private static final Random random = new SecureRandom();
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
@@ -30,6 +32,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         socket = new Socket(ip, port);
         file = new FileXML(path, socket);
         this.clientView = clientView;
+        buffer = new LinkedList<>();
 
         setActive(false);
         setChanged(false);
@@ -45,21 +48,34 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     }
 
     @Override
-    public synchronized Answer<S> getAnswer() {
-        return answer;
-    }
-
-    private synchronized void setAnswer(Answer<S> answer) {
-        this.answer = answer;
-    }
-
-    @Override
     public synchronized boolean isActive() {
         return isActive;
     }
 
     private synchronized void setActive(boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public Answer<S> getAnswer() {
+        Answer<S> answer;
+
+        synchronized (buffer) {
+            answer = buffer.remove(0);
+        }
+
+        return answer;
+    }
+
+    @Override
+    public boolean hasAnswer() {
+        boolean ret;
+
+        synchronized (buffer) {
+            ret = buffer.size() > 0;
+        }
+
+        return ret;
     }
 
     @Override
@@ -88,13 +104,12 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                                     }
                                 }
 
-                                LOGGER.info("Receiving...");
-                                synchronized (this) {
-                                    setAnswer(temp);
-                                    LOGGER.info("Received!");
-
-                                    setChanged(true);
-                                    this.notifyAll();
+                                LOGGER.info("Queueing...");
+                                synchronized (buffer) {
+                                    buffer.add(temp);
+                                    LOGGER.info("Queued!");
+                                    buffer.notifyAll();
+                                    LOGGER.info("READ");
                                 }
                             }
                         } catch (Exception e){
@@ -116,6 +131,13 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                                     while (!clientView.isChanged()) clientView.lockDemand.wait();
                                     clientView.setChanged(false);
                                     demand = clientView.getDemand();
+                                }
+
+                                synchronized (buffer) {
+                                    if (hasAnswer()) {
+                                        buffer.notifyAll();
+                                        LOGGER.info("WRITE");
+                                    }
                                 }
 
                                 LOGGER.info("Sending...");
@@ -141,6 +163,38 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         return t;
     }
 
+    private Thread consumerThread() {
+        Thread t = new Thread(
+                () -> {
+                    try {
+                        while (isActive()) {
+                            synchronized (clientView.lockFree) {
+                                while (!clientView.isFree()) clientView.lockFree.wait();
+                                clientView.setFree(false);
+                            }
+
+                            synchronized (buffer) {
+                                while (!hasAnswer()) buffer.wait();
+                            }
+
+                            LOGGER.info("Consuming...");
+                            synchronized (this) {
+                                setChanged(true);
+                                this.notifyAll();
+                                LOGGER.info("Consumed!");
+                            }
+                        }
+                    } catch(Exception e) {
+                        setActive(false);
+                        LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
+                    }
+                }
+        );
+
+        t.start();
+        return t;
+    }
+
     @Override
     public void run() {
         setActive(true);
@@ -149,8 +203,10 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         try {
             Thread read = asyncReadFromSocket();
             Thread write = asyncWriteToSocket();
+            Thread consumer = consumerThread();
             read.join();
             write.join();
+            consumer.join();
         } catch (InterruptedException | NoSuchElementException e) {
             LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
         } finally {
@@ -163,7 +219,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     public synchronized void closeConnection() {
         try {
             socket.close();
-            isActive = false;
+            setActive(false);
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Cannot close socket", e);

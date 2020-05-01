@@ -4,8 +4,6 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedGame;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
@@ -35,19 +33,7 @@ public class ServerConnectionSocket implements ServerConnection {
     public ServerConnectionSocket(int port) {
         this.port = port;
 
-        Game loadedGame = null;
-        Lobby loadedLobby;
-        try {
-            loadedGame = GameMemory.load(BACKUPPATH);
-        } catch (ParserConfigurationException | SAXException e) {
-            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
-        }
-
-        if (loadedGame != null) {
-            loadedLobby = new Lobby(loadedGame);
-            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
-            lobbyList.add(loadedLobby);
-        }
+        loadLobby();
     }
 
     public void startServer() throws IOException {
@@ -86,7 +72,7 @@ public class ServerConnectionSocket implements ServerConnection {
     //Deregister connection
     @Override
     public void deregisterConnection(ServerClientHandler c) {
-        //TODO
+        //TODO lobby.stop?
     }
 
     //Wait for another player
@@ -199,5 +185,22 @@ public class ServerConnectionSocket implements ServerConnection {
         }
 
         return l;
+    }
+
+    private void loadLobby() {
+        Game loadedGame = null;
+        Lobby loadedLobby;
+
+        try {
+            loadedGame = GameMemory.load(BACKUPPATH);
+        } catch (ParserConfigurationException | SAXException e) {
+            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
+        }
+
+        if (loadedGame != null) {
+            loadedLobby = new Lobby(loadedGame);
+            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+            lobbyList.add(loadedLobby);
+        }
     }
 }

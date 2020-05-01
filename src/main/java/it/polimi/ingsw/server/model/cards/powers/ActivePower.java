@@ -13,7 +13,6 @@ package it.polimi.ingsw.server.model.cards.powers;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
-import it.polimi.ingsw.server.model.cards.powers.tags.WorkerPosition;
 import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;

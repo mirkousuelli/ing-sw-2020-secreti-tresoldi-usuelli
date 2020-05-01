@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public abstract class ClientView<S> implements Runnable {
 
@@ -13,14 +12,19 @@ public abstract class ClientView<S> implements Runnable {
     protected Answer<S> answer;
     private boolean isActive;
     private boolean isChanged;
-    public final Object lockDemand;
+    private boolean isFree;
 
-    public ClientView(String playerName, ClientModel<S> clientModel) {
+    public final Object lockDemand;
+    public final Object lockFree;
+
+    public ClientView(ClientModel<S> clientModel) {
         this.clientModel = clientModel;
         lockDemand = new Object();
+        lockFree = new Object();
 
         setActive(false);
         setChanged(false);
+        setFree(true);
     }
 
     protected synchronized void setDemand(Demand<S> demand) {
@@ -52,6 +56,22 @@ public abstract class ClientView<S> implements Runnable {
 
     public synchronized void setActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean isFree() {
+        boolean ret;
+
+        synchronized (lockFree) {
+            ret = isFree;
+        }
+
+        return ret;
+    }
+
+    public void setFree(boolean free) {
+        synchronized (lockFree) {
+            isFree = free;
+        }
     }
 
     protected synchronized Answer<S> getAnswer() {

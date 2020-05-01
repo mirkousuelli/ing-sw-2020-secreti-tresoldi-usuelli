@@ -34,7 +34,7 @@ public class Lobby {
     }
 
     public Lobby(Game game) {
-        ID = String.valueOf(Math.abs(randomLobby.nextInt()));
+        ID = String.valueOf(randomLobby.nextInt());
 
         this.game = game;
         controller = new Controller(game);
@@ -116,5 +116,9 @@ public class Lobby {
 
     public synchronized boolean canStart() {
         return playerViewList.size() == numberOfPlayers;
+    }
+
+    public synchronized boolean isCurrentPlayerInGame(ServerClientHandler c) {
+        return game.getCurrentPlayer().nickName.equals(playerColor.get(playingConnection.get(c)).getNickname());
     }
 }

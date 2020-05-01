@@ -7,7 +7,7 @@ public class GUI<S> extends ClientView<S>{
     ReducedPlayer player;
 
     public GUI(String playerName, ClientModel clientModel) {
-        super(playerName, clientModel);
+        super(clientModel);
         player = new ReducedPlayer(playerName);
     }
 

@@ -17,7 +17,7 @@ public class CLI<S> extends ClientView<S> {
     private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     public CLI(String playerName, ClientModel<S> clientModel) {
-        super(playerName, clientModel);
+        super(clientModel);
         out = new CLIPrinter<>(System.out, clientModel, this);
         in = new CLIScanner<>(System.in, out, clientModel);
     }
@@ -44,6 +44,11 @@ public class CLI<S> extends ClientView<S> {
         if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
             !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
             startUI();
+
+        synchronized (lockFree) {
+            setFree(true);
+            lockFree.notifyAll();
+        }
     }
 
     private synchronized void startUI() {

@@ -23,7 +23,7 @@ public class ClientModel<S> implements Runnable {
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
-    private String currentWorker;
+    private int currentWorker;
     private final ReducedPlayer player;
     private String lobbyId;
 
@@ -161,6 +161,8 @@ public class ClientModel<S> implements Runnable {
                 lobbyId = reducedGame.getLobbyId();
                 opponents = reducedGame.getReducedPlayerList();
                 currentPlayer = opponents.get(reducedGame.getCurrentPlayerIndex()).getNickname();
+                workers = reducedGame.getReducedWorkerList();
+                currentWorker = reducedGame.getCurrentWorkerIndex();
 
                 for (ReducedPlayer o : opponents) {
                     deck.add(o.getGod());
@@ -314,12 +316,7 @@ public class ClientModel<S> implements Runnable {
     }
 
     public synchronized List<God> getDeck() {
-        List<God> ret = new ArrayList<>();
-
-        for (God g: deck)
-            ret.add(God.valueOf(g.toString()));
-
-        return ret;
+        return new ArrayList<>(deck);
     }
 
     public synchronized List<ReducedPlayer> getOpponents() {
@@ -330,7 +327,7 @@ public class ClientModel<S> implements Runnable {
         return new ArrayList<>(workers);
     }
 
-    public synchronized String getCurrentWorker() {
+    public synchronized int getCurrentWorker() {
         return currentWorker;
     }
 
@@ -343,8 +340,8 @@ public class ClientModel<S> implements Runnable {
 
         List<Integer> ret = new ArrayList<>();
 
-        ret.add((int) string.charAt(0) - 48);
-        ret.add((int) string.charAt(2) - 48);
+        ret.add(0, (int) string.charAt(0) - 48);
+        ret.add(1, (int) string.charAt(2) - 48);
 
         return ret;
     }
