@@ -10,17 +10,22 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Cell;
 
 public class ChangeTurn implements GameState {
-    /* @abstractClass
+    /* @Class
      * it represents the state where the current player changes and the win conditions are checked
      */
 
-    public Game game;
+    private final Game game;
 
     public ChangeTurn(Game game) {
         /* @constructor
@@ -31,37 +36,24 @@ public class ChangeTurn implements GameState {
     }
 
 
-    private void changeCurrentPlayer(Game game) {
+    private void changeCurrentPlayer() {
         /* @function
          * it switches the player that must play
          */
 
-        if(game.getNumPlayers() == 3) {
-            if (game.getCurrentPlayer() == game.getPlayerList().get(0))
-                game.setCurrentPlayer(game.getPlayerList().get(1));
-            else {
-                if (game.getCurrentPlayer() == game.getPlayerList().get(1))
-                    game.setCurrentPlayer(game.getPlayerList().get(2));
-                else //which means that the current player is the last one
-                    game.setCurrentPlayer(game.getPlayerList().get(0));
-            }
+        int index = (game.getIndex(game.getCurrentPlayer()) + 1) % 3;
 
-        } else { // which means that there are two players in the game
-            if (game.getCurrentPlayer() == game.getPlayerList().get(0))
-                game.setCurrentPlayer(game.getPlayerList().get(1));
-            else
-                game.setCurrentPlayer(game.getPlayerList().get(0));
-        }
+        game.setCurrentPlayer(game.getPlayerList().get(index));
     }
 
 
-    private boolean onePlayerRemaining(Game game){
+    private boolean onePlayerRemaining(){
         return game.getNumPlayers() == 1;
     }
 
 
     // TODO actual check of win condition
-    private boolean controlWinCondition(Game game) {
+    private boolean controlWinCondition() {
         /* @predicate
          * it checks if any win condition is verified (some God powers add a secondary win condition)
          */
@@ -74,14 +66,23 @@ public class ChangeTurn implements GameState {
     }
 
     @Override
-    public State gameEngine(Game game) {
+    public ReturnContent gameEngine() {
+        ReturnContent returnContent = new ReturnContent();
+
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.CHANGE_TURN);
+
+
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        if(controlWinCondition(game) || onePlayerRemaining(game))
-            return State.VICTORY;
+        if(controlWinCondition() || onePlayerRemaining())
+            returnContent.setAnswerType(AnswerType.VICTORY);
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
-            changeCurrentPlayer(game);
-            return State.CHOOSE_WORKER;
+            changeCurrentPlayer();
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            returnContent.setState(State.CHOOSE_WORKER);
         }
+
+        return returnContent;
     }
 }

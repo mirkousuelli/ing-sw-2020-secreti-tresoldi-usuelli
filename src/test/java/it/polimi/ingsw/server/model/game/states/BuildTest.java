@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildTest {
     // TODO
-    @Test
+
+    //@Test
     void correctBuildTest() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks that the player picked a cell where he can build

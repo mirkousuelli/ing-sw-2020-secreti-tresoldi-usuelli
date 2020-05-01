@@ -16,37 +16,40 @@ public class CLI<S> extends ClientView<S> {
     private final CLIPrinter<S> out;
     private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
-    public CLI(String playerName, ClientModel<S> clientModel) {
+    public CLI(ClientModel<S> clientModel) {
         super(clientModel);
         out = new CLIPrinter<>(System.out, clientModel, this);
         in = new CLIScanner<>(System.in, out, clientModel);
     }
 
     private synchronized void update() {
+        boolean isYourTurn = false;
+
         switch (answer.getHeader()) {
             case ERROR:
                 out.printError();
+                isYourTurn = true;
                 break;
 
             case DEFEAT:
             case VICTORY:
                 out.printEnd(answer.getPayload().toString(), answer.getHeader().toString());
-                if(clientModel.isYourTurn())
+                if(clientModel.isYourTurn(clientModel.getPlayer().getNickname()))
                     endGame();
                 return;
 
             case SUCCESS:
                 out.printSuccess();
-                out.printChanges(answer.getContext());
+                synchronized (clientModel) {
+                    isYourTurn = out.printChanges(answer.getContext());
+                }
                 break;
         }
 
-        synchronized (clientModel) {
-            if (clientModel.isYourTurn()) {
-                if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
-                        !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
-                    startUI();
-            }
+        if (isYourTurn) {
+            if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
+                    !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
+                startUI();
         }
 
         synchronized (lockFree) {
@@ -58,7 +61,9 @@ public class CLI<S> extends ClientView<S> {
     private synchronized void startUI() {
         Demand<S> demand;
 
-        demand = in.requestInput(answer.getContext());
+        synchronized (clientModel) {
+            demand = in.requestInput(answer.getContext());
+        }
 
         setDemand(demand);
         setChanged(true);

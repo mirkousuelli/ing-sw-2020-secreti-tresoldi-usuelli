@@ -15,5 +15,6 @@ public interface GameState {
      * it contains the states which the game is divided into
      */
     String getName();
-    State gameEngine(Game game);
+
+    ReturnContent gameEngine();
 }

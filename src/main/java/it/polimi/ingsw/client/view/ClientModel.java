@@ -56,7 +56,6 @@ public class ClientModel<S> implements Runnable {
 
         setActive(false);
         setChanged(false);
-
     }
 
     public ReducedPlayer getPlayer() {
@@ -160,7 +159,7 @@ public class ClientModel<S> implements Runnable {
                 reducedBoard = reducedGame.getReducedBoard();
                 lobbyId = reducedGame.getLobbyId();
                 opponents = reducedGame.getReducedPlayerList();
-                currentPlayer = opponents.get(reducedGame.getCurrentPlayerIndex()).getNickname();
+                currentPlayer = reducedGame.getCurrentPlayerIndex();
                 workers = reducedGame.getReducedWorkerList();
                 currentWorker = reducedGame.getCurrentWorkerIndex();
 
@@ -215,16 +214,25 @@ public class ClientModel<S> implements Runnable {
                 break;
 
             case CHOOSE_WORKER:
-                currentPlayer = player.getNickname();
+                /*currentPlayer = player.getNickname();
                 workers.addAll((List<ReducedWorker>) answer.getPayload());
 
                 for (ReducedWorker w : (List<ReducedWorker>) answer.getPayload())
-                    reducedBoard[w.getX()][w.getY()].setWorker(w);
+                    reducedBoard[w.getX()][w.getY()].setWorker(w);*/
                 break;
 
             case MOVE:
             case BUILD:
                 updateReducedBoard((List<ReducedAnswerCell>) answer.getPayload());
+
+                workers = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        if(!reducedBoard[i][j].isFree()) {
+                            workers.add(reducedBoard[i][j].getWorker());
+                        }
+                    }
+                }
                 break;
 
             case CONFIRM:
@@ -242,8 +250,8 @@ public class ClientModel<S> implements Runnable {
         }
     }
 
-    public synchronized boolean isYourTurn() {
-        return currentPlayer.equals(player.getNickname());
+    public synchronized boolean isYourTurn(String nickName) {
+        return currentPlayer.equals(nickName);
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {
@@ -340,8 +348,8 @@ public class ClientModel<S> implements Runnable {
 
         List<Integer> ret = new ArrayList<>();
 
-        ret.add(0, (int) string.charAt(0) - 48);
-        ret.add(1, (int) string.charAt(2) - 48);
+        ret.add(0, string.charAt(0) - 48);
+        ret.add(1, string.charAt(2) - 48);
 
         return ret;
     }

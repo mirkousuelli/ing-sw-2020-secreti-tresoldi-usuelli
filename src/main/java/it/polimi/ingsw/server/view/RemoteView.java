@@ -36,7 +36,6 @@ public class RemoteView extends View {
 
     @Override
     protected void showAnswer(Answer answer) {
-        logger.info(() -> "showModel: " + answer.getPayload().toString() + "\n");
         serverClientHandler.asyncSend(answer);
     }
 }

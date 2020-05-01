@@ -21,6 +21,7 @@ public class Worker extends Pawn {
     private Block prevCell;
     private Block prevBuild;
     private boolean gender;
+    private int id;
 
     /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
@@ -33,6 +34,18 @@ public class Worker extends Pawn {
         this.prevCell = pos;
         this.prevBuild = null;
         this.gender = true;
+    }
+
+    public Worker(int id, Block pos) {
+        /* @constructor
+         * it re-calls its super class Pawn
+         */
+
+        super(pos);
+        this.prevCell = pos;
+        this.prevBuild = null;
+        this.gender = true;
+        this.id = id;
     }
 
     /* GETTER  --------------------------------------------------------------------------------------------------------- */
@@ -53,6 +66,9 @@ public class Worker extends Pawn {
         return prevBuild;
     }
 
+    public int getId() {
+        return id;
+    }
     /* SETTER ---------------------------------------------------------------------------------------------------------- */
 
     public void setPreviousLocation(Cell prevCell) {

@@ -108,8 +108,7 @@ public class Lobby {
         playerColor.put(v, new ReducedPlayer(v.getPlayer(), Color.values()[playerViewList.size()].toString()));
 
         v.addObserver(controller);
-        //TODO
-        //game addObserver view
+        game.addObserver(v);
 
         return true;
     }

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ChooseWorkerTest {
 
-    @Test
+    //@Test
     void correctEnteringToStateTest() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks whether if the game enters in the ChooseWorker state after everything is set up in Start state
@@ -33,7 +33,7 @@ public class ChooseWorkerTest {
     }
 
 
-    @Test
+    //@Test
     void switchToMoveTest() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks if the state changes to Move after the player has chosen the worker he wants to move

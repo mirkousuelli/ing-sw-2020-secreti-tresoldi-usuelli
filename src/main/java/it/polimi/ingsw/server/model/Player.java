@@ -58,7 +58,7 @@ public class Player {
         if (!position.isFree()) return false;
         if (id != 1 && id != 2) return false;
 
-        this.addWorker(new Worker(position));
+        this.addWorker(new Worker(id, position));
 
         // setting male and female
         if (this.workers.size() == NUM_WORKERS) {
@@ -79,6 +79,10 @@ public class Player {
         return false;
     }
 
+    public void removeWorker(Worker worker) {
+        workers.remove(worker);
+    }
+
     public List<Worker> getWorkers() {
         /*@getter
          * it returns player's workers
@@ -93,6 +97,15 @@ public class Player {
          */
 
         return currentWorker;
+    }
+
+    public Worker getWorker(int id) {
+        for (Worker w : workers) {
+            if (w.getId() == id)
+                return w;
+        }
+
+        return null;
     }
 
     public void setCurrentWorker(Worker currentWorker) {

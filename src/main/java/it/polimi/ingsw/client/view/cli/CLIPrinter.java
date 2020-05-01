@@ -12,6 +12,8 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CLIPrinter<S> {
@@ -19,6 +21,7 @@ public class CLIPrinter<S> {
     private final ClientModel<S> clientModel;
     private final ClientView<S> clientView;
     private final PrintStream out;
+    private final Map<DemandType, Function<String, Boolean>> yourTurnMap;
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
     private final EnumMap<DemandType, Runnable> changesMap;
@@ -46,6 +49,16 @@ public class CLIPrinter<S> {
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
         changesMap = new EnumMap<>(DemandType.class);
+        yourTurnMap = new EnumMap<>(DemandType.class);
+
+        yourTurnMap.put(DemandType.CHOOSE_DECK, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.CHOOSE_CARD, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.PLACE_WORKERS, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.CHOOSE_WORKER, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.MOVE, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.BUILD, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.USE_POWER, clientModel::isYourTurn);
+        yourTurnMap.put(DemandType.CONFIRM, clientModel::isYourTurn);
 
         stringMap.put(DemandType.CONNECT, CONNECT);
         stringMap.put(DemandType.RELOAD, RELOAD);
@@ -104,7 +117,7 @@ public class CLIPrinter<S> {
         }
 
         for (int i = 4; i >= 0; i--) {
-            for (int j = 0; j <5; j++)
+            for (int j = 0; j < 5; j++)
                 printCell(board[i][j], opponents);
             out.print("\n");
         }
@@ -244,13 +257,19 @@ public class CLIPrinter<S> {
         out.println(player + context + "!");
     }
 
-    public void printChanges(DemandType demandType) {
+    public boolean printChanges(DemandType demandType) {
+        Function<String, Boolean> yourTurnFunct = yourTurnMap.get(demandType);
         Consumer<String> initlaFunct = initialMap.get(demandType);
 
         if (initlaFunct != null)
             initlaFunct.accept(stringMap.get(demandType));
         else
             changesMap.get(demandType).run();
+
+       if (yourTurnFunct != null)
+           return yourTurnFunct.apply(clientModel.getPlayer().getNickname());
+       else
+           return true;
     }
 }
 

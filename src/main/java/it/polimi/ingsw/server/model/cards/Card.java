@@ -65,8 +65,8 @@ public class Card implements Cloneable {
         this.god = newGod;
     }
 
-    private List<Power> getPowerList() {
-        return this.powerList;
+    public List<Power> getPowerList() {
+        return powerList;
     }
 
     private void setPowerList(List<Power> powerList) {

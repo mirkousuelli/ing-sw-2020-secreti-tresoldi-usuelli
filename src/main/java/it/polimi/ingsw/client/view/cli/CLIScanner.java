@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CLIScanner<S> {
@@ -44,6 +45,7 @@ public class CLIScanner<S> {
         indexMap = new EnumMap<>(DemandType.class);
         toUsePowerMap = new EnumMap<>(DemandType.class);
         payloadMap = new EnumMap<>(DemandType.class);
+
 
         messageMap.put(DemandType.CONNECT, CREATEJOINGAME);
         messageMap.put(DemandType.CREATE_GAME, CREATEGAME);
@@ -90,7 +92,7 @@ public class CLIScanner<S> {
     }
 
     private S parseStringReducedDemandCell(String string) {
-        int x = string.charAt(0) - 48;
+        int x = (int) (string.charAt(0) - 48);
         int y = string.charAt(2) - 48;
 
         return (S) (new ReducedDemandCell(x, y));

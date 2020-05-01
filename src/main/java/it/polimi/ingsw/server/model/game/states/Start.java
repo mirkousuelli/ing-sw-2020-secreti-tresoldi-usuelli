@@ -9,22 +9,26 @@
  */
 
 package it.polimi.ingsw.server.model.game.states;
+
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.Deck;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Start implements GameState {
-    /* @abstractClass
+    /* @Class
      * it represents the state that includes all the actions to initialize the game
      */
 
-    public Game game;
-    public Player Challenger;
-    public Player Starter;
+    private final Game game;
 
-    // TODO complete the missing actions to start the game
     public Start(Game game) {
         /* @constructor
          * it sets the game which the state is connected to
@@ -33,44 +37,28 @@ public class Start implements GameState {
         this.game = game;
     }
 
-    private void pickCards(Game game) {
-        /* @function
-         * the Challenger must choose the cards (based on the number of players) among which every player has to choose his own
-         */
-
-    }
-
-    private void distributeCard(Game game) {
-        /* @function
-         * every player chooses a card between the card picked by the Challenger
-         */
-    }
-
-    private Player pickStarter() {
-        /* @function
-         * the Challenger decides who starts first
-         */
-        return game.getCurrentPlayer();
-    }
-
     @Override
     public String getName() {
         return State.START.toString();
     }
 
     @Override
-    public State gameEngine(Game game) {
+    public ReturnContent gameEngine() {
+        //chooseDeck
+        ReturnContent returnContent = new ReturnContent();
 
-        // initialisation of the game
-        Challenger = game.getPlayerList().get(0);
-        Deck deck = game.getDeck();
-        distributeCard(game);
-        Starter = pickStarter();
+        //set challenger
+        Player currentPlayer = game.getPlayer(0);
+        game.setCurrentPlayer(currentPlayer);
+        List<God> choosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
 
-        // it sets the current player to the Starter (the one chosen by the Challenger)
-        game.setCurrentPlayer(Starter);
+        game.setChoosenGods(choosenGodList);
 
-        // After the initialisation of the game, it goes to ChooseWorker state
-        return State.CHOOSE_WORKER;
+        returnContent.setAnswerType(AnswerType.SUCCESS);
+        returnContent.setState(State.CHOOSE_CARD);
+        returnContent.setPayload(new ReduceDemandChoice(currentPlayer.nickName));
+
+
+        return returnContent;
     }
 }

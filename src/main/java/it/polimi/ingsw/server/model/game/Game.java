@@ -1,6 +1,12 @@
 package it.polimi.ingsw.server.model.game;
 
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.states.*;
@@ -11,26 +17,53 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Game {
+public class Game extends Observable<Answer> {
     /* @class
      * it contains all the information useful for the game that is being played
      */
     private List<Player> players;
     private Deck deck;
+    private List<God> choosenGods;
     private Board board;
     private GameState state;
     private int currentPlayer;
     private int numPlayers;
+    private ActionToPerform request;
 
     public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
          * it creates a new game, initialising its state to start
          */
         this.deck = new Deck();
+        this.choosenGods = new ArrayList<>();
         this.board = new Board();
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
         this.state = new Start(this);
+    }
+
+    public List<God> getChoosenGods() {
+        return choosenGods;
+    }
+
+    public void setChoosenGods(List<God> choosenGods) {
+        this.choosenGods = choosenGods;
+    }
+
+    public void removeGod(God god) {
+        choosenGods.remove(god);
+    }
+
+    public void addGod(God god) {
+        choosenGods.add(god);
+    }
+
+    public ActionToPerform getRequest() {
+        return request;
+    }
+
+    public void setRequest(ActionToPerform request) {
+        this.request = request;
     }
 
     public void setNumPlayers(int numPlayers) {
@@ -133,6 +166,15 @@ public class Game {
             case START:
                 this.state = new Start(this);
                 break;
+            case CHOOSE_CARD:
+                this.state = new ChooseCard(this);
+                break;
+            case CHOOSE_STARTER:
+                this.state = new ChooseStarter(this);
+                break;
+            case PLACE_WORKERS:
+                this.state = new PlaceWorkers(this);
+                break;
             case CHOOSE_WORKER:
                 this.state = new ChooseWorker(this);
                 break;
@@ -145,9 +187,6 @@ public class Game {
             case CHANGE_TURN:
                 this.state = new ChangeTurn(this);
                 break;
-            case DEFEAT:
-                this.state = new Defeat(this);
-                break;
             case VICTORY:
                 this.state = new Victory(this);
                 break;
@@ -156,10 +195,12 @@ public class Game {
         }
     }
 
-    public State gameEngine() {
-        /*
-         *
-         */
-        return null;
+    public ReturnContent gameEngine() {
+        ReturnContent returnContent = state.gameEngine();
+
+        if (!returnContent.getAnswerType().equals(AnswerType.ERROR))
+            notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
+
+        return  returnContent;
     }
 }

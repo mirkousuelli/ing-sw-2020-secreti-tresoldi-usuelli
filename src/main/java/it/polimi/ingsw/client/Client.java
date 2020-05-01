@@ -44,11 +44,11 @@ public class Client {
 
         switch (viewType) {
             case 1:
-                clientView = new CLI(name, clientModel);
+                clientView = new CLI(clientModel);
                 break;
 
             case 2:
-                clientView = new GUI(name, clientModel);
+                clientView = new GUI(clientModel);
                 break;
 
             default:

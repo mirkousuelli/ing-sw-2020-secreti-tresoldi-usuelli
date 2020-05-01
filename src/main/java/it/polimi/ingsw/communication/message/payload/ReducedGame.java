@@ -16,7 +16,7 @@ public class ReducedGame {
     private ReducedAnswerCell[][] reducedBoard;
     private List<ReducedPlayer> reducedPlayerList;
     private List<ReducedWorker> reducedWorkerList;
-    private int currentPlayerIndex;
+    private String currentPlayerIndex;
     private int currentWorkerIndex;
 
     public ReducedGame() {}
@@ -26,11 +26,9 @@ public class ReducedGame {
         Board board = loadedGame.getBoard();
         List<Player> playerList = loadedGame.getPlayerList();
         String state = loadedGame.getState().getName();
-        int currWork;
 
-        currentPlayerIndex = loadedGame.getPlayerList().indexOf(loadedGame.getCurrentPlayer());
-        currWork = loadedGame.getCurrentPlayer().getWorkers().indexOf(loadedGame.getCurrentPlayer().getCurrentWorker());
-        currentWorkerIndex = currentPlayerIndex * 2 + currWork;
+        currentPlayerIndex = loadedGame.getCurrentPlayer().getNickName();
+        currentWorkerIndex = loadedGame.getCurrentPlayer().getWorkers().indexOf(loadedGame.getCurrentPlayer().getCurrentWorker());
         lobbyId = lobby.getID();
         reducedBoard = new ReducedAnswerCell[5][5];
         reducedPlayerList = new ArrayList<>(lobby.getReducedPlayerList());
@@ -45,14 +43,15 @@ public class ReducedGame {
             }
         }
 
-        if (currWork > -1) {
-            Cell loc = playerList.get(currentPlayerIndex).getWorkers().get(currWork).getLocation();
+        if (currentWorkerIndex > -1) {
+            currentWorkerIndex = loadedGame.getCurrentPlayer().getCurrentWorker().getId();
+            Cell loc = loadedGame.getCurrentPlayer().getWorker(currentWorkerIndex);
             List<Cell> around = board.getAround(loc);
             List<Cell> action = null;
             if (state.equals("move"))
-                action = board.getPossibleMoves(playerList.get(currentPlayerIndex));
+                action = board.getPossibleMoves(loadedGame.getPlayer(currentPlayerIndex));
             if (state.equals("build"))
-                action = board.getPossibleBuilds(playerList.get(currentPlayerIndex).getWorkers().get(currWork));
+                action = board.getPossibleBuilds(loadedGame.getPlayer(currentPlayerIndex).getCurrentWorker());
 
             if (action != null) {
                 for (Cell c : around) {
@@ -110,11 +109,11 @@ public class ReducedGame {
         this.reducedWorkerList = reducedWorkerList;
     }
 
-    public int getCurrentPlayerIndex() {
+    public String getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
 
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+    public void setCurrentPlayerIndex(String currentPlayerIndex) {
         this.currentPlayerIndex = currentPlayerIndex;
     }
 

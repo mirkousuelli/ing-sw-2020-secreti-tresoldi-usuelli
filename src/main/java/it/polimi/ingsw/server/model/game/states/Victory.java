@@ -10,9 +10,11 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
 public class Victory implements GameState {
@@ -20,7 +22,7 @@ public class Victory implements GameState {
      * it means that the player that has entered the state has won the game
      */
 
-    public Game game;
+    private final Game game;
 
     public Victory(Game game) {
         /* @constructor
@@ -47,12 +49,16 @@ public class Victory implements GameState {
     }
 
     @Override
-    public State gameEngine(Game game) {
+    public ReturnContent gameEngine() {
+        ReturnContent returnContent = new ReturnContent();
+
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.START);
+
         Player winner = game.getCurrentPlayer();
-        endGame(game);
+        //endGame(game);
 
         // Start a new game (if the players want to)
-        // return State.START;
-        return null;
+        return returnContent;
     }
 }

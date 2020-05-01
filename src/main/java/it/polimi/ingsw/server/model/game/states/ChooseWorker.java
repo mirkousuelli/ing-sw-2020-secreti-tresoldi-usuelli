@@ -10,16 +10,26 @@
 
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Cell;
+import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.map.Worker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChooseWorker implements GameState {
      /* @abstractClass
      * it represents the state where a player must choose the worker he wants to move
      */
-    public Game game;
+    private final Game game;
 
     public ChooseWorker(Game game) {
         /* @constructor
@@ -29,11 +39,17 @@ public class ChooseWorker implements GameState {
         this.game = game;
     }
 
-    private boolean cannotMove(Player currentPlayer) {
+    private boolean cannotMoveAny() {
         /* @predicate
          * it checks if the current player cannot move any of his workers
          */
-        return (!game.getCurrentPlayer().getWorkers().get(0).isMovable() && !game.getCurrentPlayer().getWorkers().get(1).isMovable());
+        List<Worker> workerList = game.getCurrentPlayer().getWorkers();
+
+        return workerList.stream().allMatch(this::cannotMove);
+    }
+
+    private boolean cannotMove(Worker worker) {
+        return !worker.isMovable();
     }
 
     @Override
@@ -42,20 +58,75 @@ public class ChooseWorker implements GameState {
     }
 
     @Override
-    public State gameEngine(Game game) {
+    public ReturnContent gameEngine() {
+        ReturnContent returnContent = new ReturnContent();
+
+        Player currentPlayer = game.getCurrentPlayer();
+        ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
+        Cell choosenWorker = new Block(cell.getX(), cell.getY());
+
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.CHOOSE_WORKER);
+
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
-        if(cannotMove(game.getCurrentPlayer()))
-            return State.DEFEAT;
+        if(cannotMoveAny())
+            returnContent.setAnswerType(AnswerType.DEFEAT); //TODO DEFEAT
         else {
-            // the player has to pick a worker and the game goes to Move state
-            // TODO actual pick of the worker
-
-            /*it depends if we want to allow the player to try and move even if he chose a worker that cannot move
-            (in this case he is blocked in Move state and he goes back to choose a worker). */
-          //  if(game.getCurrentPlayer().getCurrentWorker().isMovable()) {
-                // System.out.println("The worker you chose cannot move, pick a different one");}
-            return State.MOVE;
+            for (Worker w : currentPlayer.getWorkers()) {
+                if (w.getX() == choosenWorker.getX() && w.getY() == choosenWorker.getY()) {
+                    if(!cannotMove(w)) {
+                        // the player has to pick a worker and the game goes to Move state
+                        currentPlayer.setCurrentWorker(w);
+                        returnContent.setAnswerType(AnswerType.SUCCESS);
+                        returnContent.setState(State.MOVE);
+                        returnContent.setPayload(preparePayload());
+                    }
+                    else {
+                        // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
+                        currentPlayer.removeWorker(currentPlayer.getCurrentWorker());
+                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName));
+                    }
+                    break;
+                }
+            }
         }
+
+        return returnContent;
+    }
+
+    private List<ReducedAnswerCell> preparePayload() {
+        List<Cell> possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
+        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation()));
+        List<ReducedAnswerCell> reducedAround = new ArrayList<>();
+
+        ReducedAnswerCell temp;
+        for (Cell c : possibleMoves) {
+            temp = new ReducedAnswerCell(c.getX(), c.getY());
+            temp.setAction(ReducedAction.MOVE);
+            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
+
+            if (!c.isFree()) {
+                Worker w = ((Worker) ((Block) c).getPawn());
+                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
+            }
+
+            reducedAround.add(temp);
+        }
+
+        for (Cell c : specialMoves) {
+            temp = new ReducedAnswerCell(c.getX(), c.getY());
+            temp.setAction(ReducedAction.USEPOWER);
+            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
+
+            if (!c.isFree()) {
+                Worker w = ((Worker) ((Block) c).getPawn());
+                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
+            }
+
+            reducedAround.add(temp);
+        }
+
+        return reducedAround;
     }
 }

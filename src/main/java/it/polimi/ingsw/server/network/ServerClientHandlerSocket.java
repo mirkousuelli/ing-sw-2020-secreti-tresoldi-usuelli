@@ -178,6 +178,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 //start
                                 asyncSend(new Answer(AnswerType.SUCCESS, DemandType.START, players));
                                 LOGGER.info(() -> "Names: " + players.get(0).getNickname() + ", " + players.get(1).getNickname());
+                                synchronized (lobby.lockLobby) {
+                                    if (lobby.isCurrentPlayerInGame(this)) {
+                                        synchronized (buffer) {
+                                            buffer.add(new Demand(DemandType.CHOOSE_CARD, ""));
+                                        }
+                                    }
+
+                                }
                             }
                             else {
                                 ReducedGame reducedGame;
@@ -197,7 +205,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 //resume game
                                 synchronized (lobby.lockLobby) {
                                     if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer<>(AnswerType.RESUME, DemandType.parseString(loadedGame.getState().getName()), new ReduceDemandChoice("resume")));
+                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), new ReduceDemandChoice("resume")));
                                 }
                             }
 
