@@ -26,7 +26,6 @@ public class RemoteView extends View {
     }
 
     private final ServerClientHandler serverClientHandler;
-    private final Logger logger = Logger.getLogger(RemoteView.class.getName());
 
     public RemoteView(String player, ServerClientHandler serverClientHandler){
         super(player);

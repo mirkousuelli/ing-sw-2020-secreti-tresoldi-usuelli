@@ -54,7 +54,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         boolean ret;
 
         synchronized (buffer) {
-            ret = buffer.size() > 0;
+            ret = buffer.isEmpty();
         }
 
         return ret;

@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.server.model.map;
 
-import it.polimi.ingsw.server.model.Player;
-
 import java.util.Arrays;
 
 public abstract class Pawn implements Cell {
@@ -121,7 +119,7 @@ public abstract class Pawn implements Cell {
      * it says if the pawn can change its location and it is not defined in here since it depends from the kind
      * of pawn (for instance token cannot move whereas workers yes instead)
      */
-    abstract public boolean isMovable();
+    public abstract boolean isMovable();
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 

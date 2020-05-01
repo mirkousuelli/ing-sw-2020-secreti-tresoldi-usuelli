@@ -109,7 +109,6 @@ public class Build implements GameState {
 
         chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
         // it shows the possible cells where the player can build and then allows him to choose one
-        // System.out.println(possibleBuilds);
         game.getBoard().build(game.getCurrentPlayer(), chosenCell);
 
         // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn

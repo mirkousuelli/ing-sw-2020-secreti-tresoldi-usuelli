@@ -19,7 +19,6 @@ import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Start implements GameState {

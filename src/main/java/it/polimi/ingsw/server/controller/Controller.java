@@ -7,7 +7,6 @@ import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
 import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
-import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.view.ActionToPerformView;
 
 public class Controller implements Observer<ActionToPerformView> {

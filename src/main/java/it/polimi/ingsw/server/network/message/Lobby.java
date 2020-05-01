@@ -14,7 +14,7 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class Lobby {
-    private final String ID;
+    private final String id;
     private final Game game;
     private final Controller controller;
     private final List<View> playerViewList;
@@ -34,7 +34,7 @@ public class Lobby {
     }
 
     public Lobby(Game game) {
-        ID = String.valueOf(randomLobby.nextInt());
+        id = String.valueOf(randomLobby.nextInt());
 
         this.game = game;
         controller = new Controller(game);
@@ -56,8 +56,8 @@ public class Lobby {
         return this.backupPath;
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
     public synchronized int getNumberOfPlayers() {

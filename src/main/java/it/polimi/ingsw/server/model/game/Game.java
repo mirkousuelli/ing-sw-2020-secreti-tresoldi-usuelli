@@ -6,7 +6,6 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.states.*;

@@ -19,7 +19,6 @@ import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
-import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;

@@ -1,17 +1,12 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
-
-import java.util.List;
 
 public class ChooseCard implements GameState {
 

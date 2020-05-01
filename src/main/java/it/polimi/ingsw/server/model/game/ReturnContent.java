@@ -10,6 +10,12 @@ public class ReturnContent<S> {
 
     public ReturnContent() {}
 
+    public ReturnContent(AnswerType answerType, S payload, State state) {
+        this.answerType = answerType;
+        this.payload = payload;
+        this.state = state;
+    }
+
     public AnswerType getAnswerType() {
         return answerType;
     }

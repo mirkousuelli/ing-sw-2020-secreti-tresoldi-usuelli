@@ -11,7 +11,6 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -38,8 +37,6 @@ public class Victory implements GameState {
          */
 
         // once there is a winner, it shows the name of the winner
-        // System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
-
         game.getBoard().clean(); // it cleans the whole board (and the pawns too)
     }
 
@@ -50,13 +47,11 @@ public class Victory implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
+        //TODO
         ReturnContent returnContent = new ReturnContent();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.START);
-
-        Player winner = game.getCurrentPlayer();
-        //endGame(game);
 
         // Start a new game (if the players want to)
         return returnContent;

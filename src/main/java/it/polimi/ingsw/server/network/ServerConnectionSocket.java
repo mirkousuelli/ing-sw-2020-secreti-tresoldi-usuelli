@@ -110,7 +110,7 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobby.addPlayer(waitingConnection.get(c), c);
                 waitingConnection.remove(c);
                 c.setLobby(lobby);
-                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReduceDemandChoice(lobby.getID())));
+                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReduceDemandChoice(lobby.getId())));
                 LOGGER.info("Success create game sent!");
                 return false;
 
@@ -179,7 +179,7 @@ public class ServerConnectionSocket implements ServerConnection {
         Lobby l = null;
 
         for (Lobby lobby : lobbyList) {
-            if (lobbyString.equals(lobby.getID())) {
+            if (lobbyString.equals(lobby.getId())) {
                 l = lobby;
                 break;
             }
