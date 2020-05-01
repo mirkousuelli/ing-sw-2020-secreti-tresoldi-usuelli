@@ -23,44 +23,41 @@ public class Build implements GameState {
      */
     public Game game;
     private Cell currentCell;
-    private Cell cellToBuildUp;
-    List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(currentCell);
+    private Cell chosenCell;
+    List<Cell> possibleBuilds;
 
     public Build(Game game) {
         /* @constructor
-         * it allows a player to build on a certain cell with a specific worker
+         * it sets the game which the state is connected to
          */
         this.game = game;
-        // it shows the possible cells where the worker can build and then allows him to build on one of them
-        // System.out.println(possibleBuilds);
-        game.getBoard().build(game.getCurrentPlayer(), cellToBuildUp);
-
-        // this.game.getBoard().build(game.getCurrentPlayer().getCurrentWorker(), cellToBuildUp);
-
-        // if the player builds on a possible cell, then the game proceed to change the turn
-        if(isBuildSuccessful(game))
-            game.setState(new ChangeTurn(game));
-        else
-        // if the player selects a cell where he cannot build,he has to build again
-            game.setState(new Build(game));
     }
 
-    private boolean isBuildSuccessful(Game game) {
+    private boolean isBuildPossible() {
         /* @predicate
          * it tells if a player picked a cell where he can actually build
          */
-        // boolean buildSuccessful = false;
-
-        return false;
+        return possibleBuilds.contains(chosenCell);
     }
 
+    @Override
     public String getName() {
         return State.BUILD.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+        possibleBuilds = game.getBoard().getPossibleBuilds(currentCell);
+        // it shows the possible cells where the player can build and then allows him to choose one
+        // System.out.println(possibleBuilds);
+        game.getBoard().build(game.getCurrentPlayer(), chosenCell);
+
+        // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
+        if(isBuildPossible()) {
+            game.getBoard().build(game.getCurrentPlayer(), chosenCell);
+            return State.CHANGE_TURN;
+        } else
+            // if the player selects a cell where he cannot build, he has to build again
+            return State.BUILD;
     }
 }

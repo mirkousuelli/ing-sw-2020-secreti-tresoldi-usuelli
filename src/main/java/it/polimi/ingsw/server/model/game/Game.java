@@ -15,7 +15,7 @@ public class Game {
     /* @class
      * it contains all the information useful for the game that is being played
      */
-    List<Player> players;
+    private List<Player> players;
     private Deck deck;
     private Board board;
     private GameState state;
@@ -24,13 +24,13 @@ public class Game {
 
     public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
-         * it is used to create a new game, initialising its state to start
+         * it creates a new game, initialising its state to start
          */
         this.deck = new Deck();
         this.board = new Board();
-        this.state = new Start(this);
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
+        this.state = new Start(this);
     }
 
     public void setNumPlayers(int numPlayers) {
@@ -156,9 +156,10 @@ public class Game {
         }
     }
 
-    public void gameEngine() {
+    public State gameEngine() {
         /*
          *
          */
+        return null;
     }
 }

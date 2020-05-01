@@ -23,34 +23,39 @@ public class ChooseWorker implements GameState {
 
     public ChooseWorker(Game game) {
         /* @constructor
-         * it lets the player choose the worker he wants to move
+         * it sets the game which the state is connected to
          */
 
-        /*this.game = game;
-
-        // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
-        if(cannotMove(game.getCurrentPlayer()))
-            game.setState(new Defeat(game));
-        else {
-            // the player has to pick a worker and the game goes to Move state
-            // + ACTUAL PICK OF THE WORKER
-            game.setState(new Move(game));
-        }*/
+        this.game = game;
     }
 
     private boolean cannotMove(Player currentPlayer) {
         /* @predicate
          * it checks if the current player cannot move any of his workers
          */
-        return false;
+        return (!game.getCurrentPlayer().getWorkers().get(0).isMovable() && !game.getCurrentPlayer().getWorkers().get(1).isMovable());
     }
 
+    @Override
     public String getName() {
         return State.CHOOSE_WORKER.toString();
     }
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+
+    @Override
+    public State gameEngine(Game game) {
+
+        // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
+        if(cannotMove(game.getCurrentPlayer()))
+            return State.DEFEAT;
+        else {
+            // the player has to pick a worker and the game goes to Move state
+            // TODO actual pick of the worker
+
+            /*it depends if we want to allow the player to try and move even if he chose a worker that cannot move
+            (in this case he is blocked in Move state and he goes back to choose a worker). */
+          //  if(game.getCurrentPlayer().getCurrentWorker().isMovable()) {
+                // System.out.println("The worker you chose cannot move, pick a different one");}
+            return State.MOVE;
+        }
     }
 }

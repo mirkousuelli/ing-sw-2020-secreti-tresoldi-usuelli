@@ -24,53 +24,43 @@ public class ChangeTurn implements GameState {
 
     public ChangeTurn(Game game) {
         /* @constructor
-         * it changes the turn and the new player has to move one of his worker
+         * it sets the game which the state is connected to
          */
 
         this.game = game;
-
-        // Check if any win condition is verified (or if only one player remains; if so the game goes to Victory state
-        if(controlWinCondition(game) || onePlayerRemaining(game))
-            game.setState(new Victory(game));
-         else {
-             // Otherwise the current player is changed and the game goes to ChooseWorker state
-            changeCurrentPlayer(game);
-            game.setState(new ChooseWorker(game));
-        }
     }
+
 
     private void changeCurrentPlayer(Game game) {
         /* @function
          * it switches the player that must play
          */
-        Player p1 = new Player(game.getPlayer(0).getNickName());
-        Player p2 = new Player(game.getPlayer(1).getNickName());
 
-
-        if (game.getNumPlayers() == 3) {
-            Player p3 = new Player(game.getPlayer(2).getNickName());
-
-            if (game.getCurrentPlayer().nickName.equals(game.getPlayer(0).getNickName())) {
-                game.setCurrentPlayer(p2);
-            } else if (game.getCurrentPlayer().nickName.equals(game.getPlayer(1).getNickName())) {
-                game.setCurrentPlayer(p3);
-            } else if (game.getCurrentPlayer().nickName.equals(game.getPlayer(2).getNickName())) {
-                game.setCurrentPlayer(p1);
-            }
-        } else { //which means that there are 2 players remaining
-            if (game.getCurrentPlayer().nickName.equals(game.getPlayer(0).getNickName())) {
-                game.setCurrentPlayer(p2);
-            } else if (game.getCurrentPlayer().nickName.equals(game.getPlayer(1).getNickName())) {
-                game.setCurrentPlayer(p1);
+        if(game.getNumPlayers() == 3) {
+            if (game.getCurrentPlayer() == game.getPlayerList().get(0))
+                game.setCurrentPlayer(game.getPlayerList().get(1));
+            else {
+                if (game.getCurrentPlayer() == game.getPlayerList().get(1))
+                    game.setCurrentPlayer(game.getPlayerList().get(2));
+                else //which means that the current player is the last one
+                    game.setCurrentPlayer(game.getPlayerList().get(0));
             }
 
+        } else { // which means that there are two players in the game
+            if (game.getCurrentPlayer() == game.getPlayerList().get(0))
+                game.setCurrentPlayer(game.getPlayerList().get(1));
+            else
+                game.setCurrentPlayer(game.getPlayerList().get(0));
         }
     }
+
 
     private boolean onePlayerRemaining(Game game){
         return game.getNumPlayers() == 1;
     }
 
+
+    // TODO actual check of win condition
     private boolean controlWinCondition(Game game) {
         /* @predicate
          * it checks if any win condition is verified (some God powers add a secondary win condition)
@@ -78,14 +68,20 @@ public class ChangeTurn implements GameState {
         return false;
     }
 
-
+    @Override
     public String getName() {
         return State.CHANGE_TURN.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+        // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
+        if(controlWinCondition(game) || onePlayerRemaining(game))
+            return State.VICTORY;
+        else {
+            // Otherwise the current player is changed and the game goes to ChooseWorker state
+            changeCurrentPlayer(game);
+            return State.CHOOSE_WORKER;
+        }
     }
 }

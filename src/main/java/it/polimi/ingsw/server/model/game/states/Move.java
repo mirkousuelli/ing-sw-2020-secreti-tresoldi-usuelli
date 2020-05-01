@@ -14,6 +14,9 @@ import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.map.Level;
+
+import java.util.List;
 
 public class Move implements GameState {
 
@@ -21,68 +24,55 @@ public class Move implements GameState {
      * it represents the state where a player has to move at least one of his worker
      */
     public Game game;
-    private Cell currentCell;
     private Cell cellToMoveTo;
-    //List<Cell> possibleMoves = game.getBoard().getPossibleMoves(currentCell);
+    List<Cell> possibleMoves;
 
     public Move(Game game) {
         /* @constructor
-         * it allows a player to move to a certain cell with a specific worker
+         * it sets the game which the state is connected to
          */
-
-        /*this.game = game;
-
-        // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
-        // ...
-        if (!game.getCurrentPlayer().getCurrentWorker().isMovable()) {
-            game.setState(new ChooseWorker(game));
-        } else { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
-           // System.out.println(possibleMoves);
-            game.getBoard().move(game.getCurrentPlayer(),cellToMoveTo);
-            // if the worker is moved to a third level (from a second one), the player that moved wins
-            // ...
-            if (reachedThirdLevel(game))
-                game.setState(new Victory(game));
-            else //if no one won in this turn
-                // if the move is made properly, the game switches to Build state
-                if (isMoveCorrect = true)
-                    game.setState(new Build(game));
-                else
-                    // if the move isn't possible, the player has to move again
-                    game.setState(new Move(game));
-        }*/
+        this.game = game;
     }
 
-    private boolean isMoveCorrect = true;
+    private boolean isMoveCorrect() {
+        /* @predicate
+         * it tells if the cell chosen by the player is a cell where he can actually move to
+         */
+        return possibleMoves.contains(cellToMoveTo);
+    }
 
     private boolean reachedThirdLevel(Game game) {
         /* @predicate
          * it tells if a worker reached the third level
          */
-        return false;
+        return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
     }
 
-    private boolean movedWorker(Game game) {
-        /* @predicate
-         * it tells whether or not the player moved at least a worker in this turn
-         */
-        return true;
-    }
-
-    private void removeWorker(Game game) {
-        /* @function
-         * it removes a worker from the game because of some God Power that can do it
-         */
-    }
 
     @Override
     public String getName() {
         return State.MOVE.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+        possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
+        // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
+        if (!game.getCurrentPlayer().getCurrentWorker().isMovable())
+            return State.CHOOSE_WORKER;
+        else { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
+            // System.out.println(possibleMoves);
+            // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
+            if(!isMoveCorrect())
+                return State.MOVE;
+            else {
+                game.getBoard().move(game.getCurrentPlayer(), cellToMoveTo);
+                //if the worker is moved to a third level (from a second one), the player that moved wins
+                if (reachedThirdLevel(game))
+                    return State.VICTORY;
+                else //which means that no one won in this turn, the game switches to Build state
+                    return State.BUILD;
+            }
+        }
     }
 }

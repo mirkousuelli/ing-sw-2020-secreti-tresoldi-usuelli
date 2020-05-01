@@ -84,7 +84,7 @@ public enum Level {
             case TOP:
                 return "3";
             case DOME:
-                return "X";
+                return "4";
             default:
                 return null;
         }
@@ -147,6 +147,27 @@ public enum Level {
                 return TOP;
             case "DOME":
                 return DOME;
+            default:
+                return null;
+        }
+    }
+
+    public String getName() {
+        /* @function
+         * it prints what string corresponds to each level
+         */
+
+        switch (this) {
+            case GROUND:
+                return "GROUND";
+            case BOTTOM:
+                return "BOTTOM";
+            case MIDDLE:
+                return "MIDDLE";
+            case TOP:
+                return "TOP";
+            case DOME:
+                return "DOME";
             default:
                 return null;
         }

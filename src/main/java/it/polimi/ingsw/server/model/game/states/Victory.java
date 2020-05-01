@@ -17,23 +17,17 @@ import it.polimi.ingsw.server.model.game.State;
 
 public class Victory implements GameState {
     /* @abstractClass
-     * it represents the state where a player wins
+     * it means that the player that has entered the state has won the game
      */
 
     public Game game;
 
     public Victory(Game game) {
         /* @constructor
-         * it shows the player that won and ends the game
+         * it sets the game which the state is connected to
          */
 
         this.game = game;
-
-        Player winner = game.getCurrentPlayer();
-        endGame(game);
-
-        //Start a new game (if the players want to)
-        // game.setState(new Start(game));
     }
 
     private void endGame(Game game) {
@@ -42,10 +36,9 @@ public class Victory implements GameState {
          */
 
         // once there is a winner, it shows the name of the winner
-       // System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
+        // System.out.println("Congratulations" + game.getCurrentPlayer() + "! You are the winner!");
 
-        // it cleans the whole board ( + probably needs to reset everything else?)
-        game.getBoard().clean();
+        game.getBoard().clean(); // it cleans the whole board (and the pawns too)
     }
 
     @Override
@@ -53,9 +46,13 @@ public class Victory implements GameState {
         return State.VICTORY.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+        Player winner = game.getCurrentPlayer();
+        endGame(game);
+
+        // Start a new game (if the players want to)
+        // return State.START;
+        return null;
     }
 }

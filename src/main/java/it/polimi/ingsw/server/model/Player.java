@@ -70,6 +70,9 @@ public class Player {
 
     public boolean addWorker(Worker newWorker) {
         if (this.workers.size() < NUM_WORKERS) {
+            if (this.workers.size() == 1) {
+                newWorker.setGender(!this.workers.get(0).isMale());
+            }
             this.workers.add(newWorker);
             return true;
         }

@@ -23,42 +23,33 @@ public class Defeat implements GameState {
 
     public Defeat(Game game) {
         /* @constructor
-         * it tells a player that he lost and then eliminates him
+         * it sets the game which the state is connected to
          */
 
         this.game = game;
-
-        //the current player is eliminated with his workers
-        removePlayer(game.getCurrentPlayer());
-        removeWorkers(game.getCurrentPlayer());
-        game.setNumPlayers(game.getNumPlayers() - 1);
-
-        // the game switches to ChangeTurn state (or maybe we could change here the current player and then go directly to ChooseWorker)
-        game.setState(new ChangeTurn(game));
-
     }
 
+    // TODO
     private void removePlayer(Player currentPlayer) {
         /* @function
-         * it eliminates the player that doesn't have any movable worker or cannot move with any of them
+         * it eliminates the player (with his workers) that doesn't have any movable worker or cannot build with any of them
          */
     }
 
-    private void removeWorkers(Player currentPlayer) {
-        /* @function
-         * it removes the workers of a player that lost
-         */
-    }
 
     @Override
     public String getName() {
         return State.DEFEAT.toString();
     }
 
-    public void gameEngine(Game game) {
-        /*
-         *
-         */
+    @Override
+    public State gameEngine(Game game) {
+        //the current player is eliminated with his workers
+        removePlayer(game.getCurrentPlayer());
+        game.setNumPlayers(game.getNumPlayers() - 1);
+
+        // the game switches to ChangeTurn state
+        return State.CHANGE_TURN;
     }
 
 }
