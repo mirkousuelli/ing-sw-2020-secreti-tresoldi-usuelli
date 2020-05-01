@@ -95,7 +95,7 @@ public class SaveGameTest {
         assertSame(game_2.getBoard().getCell(0,0).getLevel(), Level.DOME);
         assertSame(game_2.getBoard().getCell(0,0).getLevel(), game_1.getBoard().getCell(0,0).getLevel());
 
-        game_2.getBoard().getCell(0,0).setLevel(Level.BOTTOM);
+        game_2.getBoard().getCell(0,0).setLevel(Level.GROUND);
         GameMemory.save((Block) game_2.getBoard().getCell(0,0), pathFile);
     }
 
@@ -132,7 +132,7 @@ public class SaveGameTest {
 
         game_1.setCurrentPlayer(game_1.getPlayer("Fabio"));
         game_1.setState(State.MOVE);
-        GameMemory.save(game_1.getCurrentPlayer(), game_1.getState(), pathFile);
+        GameMemory.save(game_1.getCurrentPlayer(), State.MOVE, pathFile);
 
         Game game_2 = GameMemory.load(pathFile);
         assertEquals(State.MOVE.toString(), game_2.getState().getName());
@@ -140,11 +140,9 @@ public class SaveGameTest {
 
         game_2.setCurrentPlayer(game_2.getPlayer("Mirko"));
         game_2.setState(State.CHOOSE_WORKER);
-        GameMemory.save(game_2.getCurrentPlayer(), game_2.getState(), pathFile);
+        GameMemory.save(game_2.getCurrentPlayer(), State.CHOOSE_WORKER, pathFile);
         assertEquals(State.CHOOSE_WORKER.toString(), game_2.getState().getName());
         assertEquals("Mirko", game_2.getCurrentPlayer().getNickName());
-
-
     }
 
     @Test
@@ -182,5 +180,6 @@ public class SaveGameTest {
 
         list.add(0, toBeAdded);
         GameMemory.save(list, pathFile);
+        GameMemory.save(game_2.getPlayer("Mirko"), State.CHOOSE_WORKER, pathFile);
     }
 }

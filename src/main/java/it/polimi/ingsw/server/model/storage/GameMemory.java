@@ -257,7 +257,7 @@ public class GameMemory {
         }
     }
 
-    public static void save(Player currentPlayer, GameState state, String path) {
+    public static void save(Player currentPlayer, State state, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
@@ -280,7 +280,7 @@ public class GameMemory {
             while (!currentPlayer.getNickName().equals(playerNode.item(i).getChildNodes().item(NICKNAME).getTextContent())) {
                 i++;
             }
-            ((Element)playerNode.item(i)).setAttribute("state", state.getName());
+            ((Element)playerNode.item(i)).setAttribute("state", state.toString());
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
