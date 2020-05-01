@@ -33,11 +33,11 @@ public class LoadGameTest {
         /* malus */
         assertEquals(game.getCurrentPlayer().getMalusList().size(), 2);
         assertEquals(game.getCurrentPlayer().getMalusList().get(0).getMalusType(), MalusType.MOVE);
-        assertEquals(game.getCurrentPlayer().getMalusList().get(0).isPermanent(), true);
+        assertTrue(game.getCurrentPlayer().getMalusList().get(0).isPermanent());
         assertEquals(game.getCurrentPlayer().getMalusList().get(0).getNumberOfTurns(), 0);
         assertEquals(game.getCurrentPlayer().getMalusList().get(0).getDirection().get(0), MalusLevel.UP);
         assertEquals(game.getCurrentPlayer().getMalusList().get(1).getMalusType(), MalusType.BUILD);
-        assertEquals(game.getCurrentPlayer().getMalusList().get(1).isPermanent(), false);
+        assertFalse(game.getCurrentPlayer().getMalusList().get(1).isPermanent());
         assertEquals(game.getCurrentPlayer().getMalusList().get(1).getNumberOfTurns(), 5);
         assertEquals(game.getCurrentPlayer().getMalusList().get(1).getDirection().get(0), MalusLevel.DOWN);
 

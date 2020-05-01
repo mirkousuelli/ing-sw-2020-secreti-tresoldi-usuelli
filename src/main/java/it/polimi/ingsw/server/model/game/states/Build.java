@@ -24,13 +24,13 @@ public class Build implements GameState {
     public Game game;
     private Cell currentCell;
     private Cell cellToBuildUp;
-    List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(currentCell);
+    //List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(currentCell);
 
     public Build(Game game) {
         /* @constructor
          * it allows a player to build on a certain cell with a specific worker
          */
-        this.game = game;
+        /*this.game = game;
         // it shows the possible cells where the worker can build and then allows him to build on one of them
         // System.out.println(possibleBuilds);
         game.getBoard().build(game.getCurrentPlayer(), cellToBuildUp);
@@ -42,7 +42,7 @@ public class Build implements GameState {
             game.setState(new ChangeTurn(game));
         else
         // if the player selects a cell where he cannot build,he has to build again
-            game.setState(new Build(game));
+            game.setState(new Build(game));*/
     }
 
     private boolean isBuildSuccessful(Game game) {

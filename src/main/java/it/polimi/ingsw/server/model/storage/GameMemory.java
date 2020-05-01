@@ -19,6 +19,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -36,35 +38,37 @@ public class GameMemory {
     private static final int TYPE = 0;
     private static final int NUMTURN = 1;
     private static final int DIRECTION = 2;
+    private static final int MALE = 0;
+    private static final int FEMALE = 1;
 
     /* board */
     private static final int X = 0;
     private static final int Y = 1;
     private static final int LEVEL = 2;
 
-    private static void saveFile(Document doc, String path) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        DOMImplementation domImpl = doc.getImplementation();
-        DocumentType doctype = domImpl.createDocumentType("doctype",
-                "Santorini",
-                "game_grammar.dtd");
-        transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
-        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
-        DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(new File(path));
-        transformer.transform(source, result);
+    private static void write(Document doc, String path) throws TransformerException, FileNotFoundException {
+        Transformer tr = TransformerFactory.newInstance().newTransformer();
+        tr.setOutputProperty(OutputKeys.INDENT, "yes");
+        tr.setOutputProperty(OutputKeys.METHOD, "xml");
+        tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "game_grammar.dtd");
+
+        // send DOM to file
+        tr.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(path)));
     }
+
+    /*public static List<Player> readPlayers(String path){
+        List<Player> players;
+
+        for (int i = 0; i < )
+    }*/
 
     public static void save(Game game, String path) {
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(path);
+            Document doc = builder.newDocument();
 
             Element gameNode = doc.createElement("game");
 
@@ -75,86 +79,94 @@ public class GameMemory {
                 Element playerNode = doc.createElement("player");
                 Element nicknameNode = doc.createElement("nickname");
                 Element godNode = doc.createElement("god");
+                Player player = game.getPlayer(i);
 
-                nicknameNode.setNodeValue(game.getPlayer(i).getNickName());
+                if (player.equals(game.getCurrentPlayer())) {
+                    playerNode.setAttribute("state", game.getState().getName());
+                }
+
+                nicknameNode.setTextContent(player.getNickName());
                 playerNode.appendChild(nicknameNode);
 
-                godNode.setNodeValue(game.getPlayer(i).getCard().getName());
+                godNode.setTextContent(player.getCard().getName());
                 playerNode.appendChild(godNode);
 
+                Element pawnsNode = doc.createElement("pawns");
+                for (int j = 0; j < player.getWorkers().size(); j++) {
+                    Element workerNode = doc.createElement("worker");
+                    Element xNode = doc.createElement("x");
+                    Element yNode = doc.createElement("y");
+                    Worker worker = player.getWorkers().get(j);
+
+                    workerNode.setAttribute("gender", worker.isMale() ? "male" : "female");
+                    xNode.setTextContent(String.valueOf(worker.getX()));
+                    yNode.setTextContent(String.valueOf(worker.getY()));
+
+                    workerNode.appendChild(xNode);
+                    workerNode.appendChild(yNode);
+                    pawnsNode.appendChild(workerNode);
+                }
+                playerNode.appendChild(pawnsNode);
+
+                if (player.getMalusList().size() > 0) {
+                    Node malusListNode = doc.createElement("malusList");
+                    for (int k = 0; k < player.getMalusList().size(); k++) {
+                        Element malusNode = doc.createElement("malus");
+                        Element typeNode = doc.createElement("type");
+                        Element forbiddenNode = doc.createElement("forbidden");
+                        Malus malus = player.getMalusList().get(k);
+
+                        malusNode.setAttribute("permanent", malus.isPermanent() ? "true" : "false");
+                        typeNode.setTextContent(malus.getMalusType().toString());
+                        malusNode.appendChild(typeNode);
+
+                        if (!malus.isPermanent()) {
+                            Element numTurnNode = doc.createElement("numTurn");
+                            numTurnNode.setTextContent(String.valueOf(malus.getNumberOfTurns()));
+                            malusNode.appendChild(numTurnNode);
+                        }
+
+                        for (int l = 0; l < malus.getDirection().size(); l++) {
+                            Element directionNode = doc.createElement("direction");
+                            directionNode.setTextContent(malus.getDirection().get(l).toString());
+                            forbiddenNode.appendChild(directionNode);
+                        }
+                        malusNode.appendChild(forbiddenNode);
+                        malusListNode.appendChild(malusNode);
+                    }
+                    playerNode.appendChild(malusListNode);
+                }
                 lobbyNode.appendChild(playerNode);
             }
-
             gameNode.appendChild(lobbyNode);
-
-            /* turn */
-            Element turnNode = doc.createElement("turn");
-            Element currPlayerNode = doc.createElement("player");
-            Element currNicknameNode = doc.createElement("nickname");
-            Element stateNode = doc.createElement("state");
-
-            currNicknameNode.setNodeValue(game.getCurrentPlayer().getNickName());
-            currPlayerNode.appendChild(currNicknameNode);
-            turnNode.appendChild(currPlayerNode);
-
-            stateNode.setNodeValue(game.getState().toString());
-            turnNode.appendChild(stateNode);
-
-            gameNode.appendChild(turnNode);
 
             /* board */
             Element boardNode = doc.createElement("board");
 
-            for (int i = 0; i < game.getBoard().DIM; i++) {
-                for (int j = 0; j < game.getBoard().DIM; j++) {
+            for (int m = 0; m < game.getBoard().DIM; m++) {
+                for (int n = 0; n < game.getBoard().DIM; n++) {
                     Element cellNode = doc.createElement("cell");
                     Element xNode = doc.createElement("x");
                     Element yNode = doc.createElement("y");
                     Element levelNode = doc.createElement("level");
-                    Block cell = (Block) game.getBoard().getCell(i, j);
+                    Block cell = (Block) game.getBoard().getCell(m, n);
 
-                    xNode.setNodeValue(String.valueOf(i));
+                    xNode.setTextContent(String.valueOf(m));
                     cellNode.appendChild(xNode);
 
-                    yNode.setNodeValue(String.valueOf(j));
+                    yNode.setTextContent(String.valueOf(n));
                     cellNode.appendChild(yNode);
 
-                    levelNode.setNodeValue(cell.getLevel().toString());
+                    levelNode.setTextContent(cell.getLevel().getName());
                     cellNode.appendChild(levelNode);
+
+                    boardNode.appendChild(cellNode);
                 }
             }
-
-            for (int i = 0; i < game.getNumPlayers(); i++) {
-                Player player = game.getPlayer(i);
-                for (int j = 0; j < player.getNumWorkers(); j++) {
-                    Worker worker = player.getWorkers().get(j);
-                    int x = worker.getX();
-                    int y = worker.getY();
-
-                    Node workerBoardNode = gameNode.getLastChild();
-                    NodeList workerCellNode = workerBoardNode.getChildNodes();
-
-                    int k = 0;
-                    while (!(Integer.parseInt(workerCellNode.item(k).getChildNodes().item(X).getNodeValue()) == x && Integer.parseInt(workerCellNode.item(k).getChildNodes().item(Y).getNodeValue()) == y)) {
-                        k++;
-                    }
-
-                    Element workerNode = doc.createElement("worker");
-                    Element workerPlayerNode = doc.createElement("player");
-                    Element workerNicknameNode = doc.createElement("nickname");
-
-                    workerNicknameNode.setNodeValue(player.getNickName());
-                    workerPlayerNode.appendChild(workerNicknameNode);
-                    workerNode.appendChild(workerPlayerNode);
-                    workerNode.setAttribute("gender", (worker.isMale() ? "male" : "female"));
-
-                    workerCellNode.item(k).appendChild(workerNode);
-                }
-            }
-
             gameNode.appendChild(boardNode);
-
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+            doc.appendChild(gameNode);
+            GameMemory.write(doc, path);
+        } catch (ParserConfigurationException | TransformerException | FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -165,20 +177,30 @@ public class GameMemory {
             int y = block.getY();
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            Node boardNode = doc.getDocumentElement().getLastChild();
+            Node gameNode = doc.getDocumentElement();
+            Node boardNode = gameNode.getChildNodes().item(BOARD);
             NodeList cellNode = boardNode.getChildNodes();
 
             int k = 0;
-            while (!(Integer.parseInt(cellNode.item(k).getChildNodes().item(X).getNodeValue()) == x && Integer.parseInt(cellNode.item(k).getChildNodes().item(Y).getNodeValue()) == y)) {
+            while (!(Integer.parseInt(cellNode.item(k).getChildNodes().item(X).getTextContent()) == x && Integer.parseInt(cellNode.item(k).getChildNodes().item(Y).getTextContent()) == y)) {
                 k++;
             }
-
-            cellNode.item(k).getChildNodes().item(LEVEL).setNodeValue(block.getLevel().toString());
-
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+            cellNode.item(k).getChildNodes().item(LEVEL).setTextContent(block.getLevel().getName());
+            factory.setIgnoringElementContentWhitespace(false);
+            GameMemory.write(doc, path);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -186,47 +208,28 @@ public class GameMemory {
     public static void save(Worker worker, Player player, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            /* old position */
-            Block cell = worker.getPreviousLocation();
+            Node gameNode = doc.getDocumentElement();
+            NodeList playersNode = gameNode.getChildNodes().item(LOBBY).getChildNodes();
 
-            int x = cell.getX();
-            int y = cell.getY();
-
-            Node boardNode = doc.getDocumentElement().getLastChild();
-            NodeList cellNode = boardNode.getChildNodes();
-
-            int k = 0;
-            while (!(Integer.parseInt(cellNode.item(k).getChildNodes().item(X).getNodeValue()) == x && Integer.parseInt(cellNode.item(k).getChildNodes().item(Y).getNodeValue()) == y)) {
-                k++;
+            int i = 0;
+            while (!player.getNickName().equals(playersNode.item(i).getChildNodes().item(NICKNAME).getTextContent())) {
+                i++;
             }
 
-            cellNode.item(k).removeChild(cellNode.item(k).getLastChild());
+            Node playerNode = playersNode.item(i);
+            NodeList pawnsNode = playerNode.getChildNodes().item(PAWNS).getChildNodes();
+            int gender = worker.isMale() ? MALE : FEMALE;
+            NodeList workerNode = pawnsNode.item(gender).getChildNodes();
+            workerNode.item(X).setTextContent(String.valueOf(worker.getX()));
+            workerNode.item(Y).setTextContent(String.valueOf(worker.getY()));
 
-            /* new position */
-            x = worker.getX();
-            y = worker.getY();
-
-            k = 0;
-            while (!(Integer.parseInt(cellNode.item(k).getChildNodes().item(X).getNodeValue()) == x && Integer.parseInt(cellNode.item(k).getChildNodes().item(Y).getNodeValue()) == y)) {
-                k++;
-            }
-
-            Element workerNode = doc.createElement("worker");
-            Element workerPlayerNode = doc.createElement("player");
-            Element workerNicknameNode = doc.createElement("nickname");
-
-            workerNicknameNode.setNodeValue(player.getNickName());
-            workerPlayerNode.appendChild(workerNicknameNode);
-            workerNode.appendChild(workerPlayerNode);
-            workerNode.setAttribute("gender", (worker.isMale() ? "male" : "female"));
-
-            cellNode.item(k).appendChild(workerNode);
-
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            e.printStackTrace();
+            GameMemory.write(doc, path);
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException parserConfigurationException) {
+            parserConfigurationException.printStackTrace();
         }
     }
 
@@ -248,57 +251,118 @@ public class GameMemory {
                 }
                 i++;
             }
-
-            GameMemory.saveFile(doc, path);
-
+            GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
     }
 
-    public static void save(Player currentPlayer, String path) {
-        /*try {
+    public static void save(Player currentPlayer, GameState state, String path) {
+        try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            Node turnNode = doc.getDocumentElement().getChildNodes().item(TURN);
-            Node currNicknameNode = turnNode.getChildNodes().item(PLAYER).getChildNodes().item(NICKNAME);
-            currNicknameNode.setNodeValue(currentPlayer.getNickName());
+            NodeList confNodes = doc.getDocumentElement().getChildNodes();
+            Node lobbyNode = confNodes.item(LOBBY);
+            NodeList playerNode = lobbyNode.getChildNodes();
 
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+            int i = 0;
+            while (i < playerNode.getLength()) {
+                if (playerNode.item(i).getAttributes().getLength() > 0) {
+                    playerNode.item(i).getAttributes().removeNamedItem("state");
+                }
+                i++;
+            }
+
+            i = 0;
+            while (!currentPlayer.getNickName().equals(playerNode.item(i).getChildNodes().item(NICKNAME).getTextContent())) {
+                i++;
+            }
+            ((Element)playerNode.item(i)).setAttribute("state", state.getName());
+            GameMemory.write(doc, path);
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     public static void save(List<Player> players, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(path);
 
-            Node lobbyNode = doc.getDocumentElement().getFirstChild();
+            Node gameNode = doc.getDocumentElement();
+            gameNode.removeChild(gameNode.getFirstChild());
 
-            /* cleaning */
-            while (lobbyNode.getFirstChild() != null)
-                lobbyNode.removeChild(lobbyNode.getFirstChild());
+            Element lobbyNode = doc.createElement("lobby");
 
-            /* adding */
             for (int i = 0; i < players.size(); i++) {
                 Element playerNode = doc.createElement("player");
                 Element nicknameNode = doc.createElement("nickname");
                 Element godNode = doc.createElement("god");
 
-                nicknameNode.setNodeValue(players.get(i).getNickName());
+                nicknameNode.setTextContent(players.get(i).getNickName());
                 playerNode.appendChild(nicknameNode);
 
-                godNode.setNodeValue(players.get(i).getCard().getName());
+                godNode.setTextContent(players.get(i).getCard().getName());
                 playerNode.appendChild(godNode);
 
+                Element pawnsNode = doc.createElement("pawns");
+                for (int j = 0; j < players.get(i).getWorkers().size(); j++) {
+                    Element workerNode = doc.createElement("worker");
+                    Element xNode = doc.createElement("x");
+                    Element yNode = doc.createElement("y");
+                    Worker worker = players.get(i).getWorkers().get(j);
+
+                    workerNode.setAttribute("gender", worker.isMale() ? "male" : "female");
+                    xNode.setTextContent(String.valueOf(worker.getX()));
+                    yNode.setTextContent(String.valueOf(worker.getY()));
+
+                    workerNode.appendChild(xNode);
+                    workerNode.appendChild(yNode);
+                    pawnsNode.appendChild(workerNode);
+                }
+                playerNode.appendChild(pawnsNode);
+
+                if (players.get(i).getMalusList().size() > 0) {
+                    Node malusListNode = doc.createElement("malusList");
+                    for (int k = 0; k < players.get(i).getMalusList().size(); k++) {
+                        Element malusNode = doc.createElement("malus");
+                        Element typeNode = doc.createElement("type");
+                        Element forbiddenNode = doc.createElement("forbidden");
+                        Malus malus = players.get(i).getMalusList().get(k);
+
+                        malusNode.setAttribute("permanent", malus.isPermanent() ? "true" : "false");
+                        typeNode.setTextContent(malus.getMalusType().toString());
+                        malusNode.appendChild(typeNode);
+
+                        if (!malus.isPermanent()) {
+                            Element numTurnNode = doc.createElement("numTurn");
+                            numTurnNode.setTextContent(String.valueOf(malus.getNumberOfTurns()));
+                            malusNode.appendChild(numTurnNode);
+                        }
+
+                        for (int l = 0; l < malus.getDirection().size(); l++) {
+                            Element directionNode = doc.createElement("direction");
+                            directionNode.setTextContent(malus.getDirection().get(l).toString());
+                            forbiddenNode.appendChild(directionNode);
+                        }
+                        malusNode.appendChild(forbiddenNode);
+                        malusListNode.appendChild(malusNode);
+                    }
+                    playerNode.appendChild(malusListNode);
+                }
                 lobbyNode.appendChild(playerNode);
             }
-
-        } catch (SAXException | IOException | ParserConfigurationException e) {
+            Node boardNode = gameNode.getFirstChild().cloneNode(true);
+            gameNode.removeChild(gameNode.getFirstChild());
+            gameNode.appendChild(lobbyNode);
+            gameNode.appendChild(boardNode);
+            GameMemory.write(doc, path);
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
     }

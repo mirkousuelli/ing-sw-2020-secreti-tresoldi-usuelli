@@ -15,7 +15,7 @@ public class Game {
     /* @class
      * it contains all the information useful for the game that is being played
      */
-    List<Player> players;
+    private List<Player> players;
     private Deck deck;
     private Board board;
     private GameState state;
