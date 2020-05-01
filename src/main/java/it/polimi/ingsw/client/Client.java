@@ -4,7 +4,7 @@ import it.polimi.ingsw.client.network.ClientConnection;
 import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.GUI;
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.cli.CLI;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.client.view.cli.SantoriniPrintStream;
@@ -48,7 +48,7 @@ public class Client {
                 break;
 
             case 2:
-                clientView = new GUI(clientModel);
+                clientView = new CLI(clientModel);
                 break;
 
             default:
