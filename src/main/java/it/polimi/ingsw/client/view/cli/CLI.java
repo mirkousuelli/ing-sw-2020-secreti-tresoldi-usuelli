@@ -41,9 +41,13 @@ public class CLI<S> extends ClientView<S> {
                 break;
         }
 
-        if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
-            !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
-            startUI();
+        synchronized (clientModel) {
+            if (clientModel.isYourTurn()) {
+                if (!answer.getContext().equals(DemandType.WAIT) && !answer.getContext().equals(DemandType.RELOAD) &&
+                        !answer.getContext().equals(DemandType.JOIN_GAME) && !answer.getContext().equals(DemandType.START))
+                    startUI();
+            }
+        }
 
         synchronized (lockFree) {
             setFree(true);

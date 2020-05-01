@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
@@ -70,6 +71,7 @@ public class CLIScanner<S> {
 
         toUsePowerMap.put(DemandType.USE_POWER, clientModel::evalToUsePower);
 
+        payloadMap.put(DemandType.CONNECT, this::parseString);
         payloadMap.put(DemandType.CREATE_GAME, this::parseString);
         payloadMap.put(DemandType.ASK_LOBBY, this::parseString);
         payloadMap.put(DemandType.CHOOSE_DECK, this::parseStringGod);
@@ -82,8 +84,9 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.CONFIRM, this::parseString);
     }
 
+
     private S parseString(String string) {
-        return (S) string;
+        return (S) (new ReduceDemandChoice(string));
     }
 
     private S parseStringReducedDemandCell(String string) {
@@ -103,7 +106,7 @@ public class CLIScanner<S> {
         boolean incrementIndex = false;
         int i = 0;
         String value;
-        List<S> payloadList = new ArrayList<>();
+        S payload = null;
 
         Function <String, Boolean> toRepeatFunction;
         Function <Integer, Boolean> indexFunction;
@@ -134,13 +137,13 @@ public class CLIScanner<S> {
             else {
                 payloadFunction = payloadMap.get(demandType);
                 if (payloadFunction != null)
-                    payloadList.add(payloadMap.get(demandType).apply(value));
+                    payload = payloadMap.get(demandType).apply(value);
             }
         } while (toRepeat || incrementIndex);
 
         if (toUsePower)
-            return new Demand<>(DemandType.USE_POWER, (S) value);
+            return new Demand<>(DemandType.USE_POWER, payload);
 
-        return new Demand<>(demandType, (S) value);
+        return new Demand<>(demandType, payload);
     }
 }

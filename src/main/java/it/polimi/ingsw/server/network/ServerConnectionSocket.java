@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
@@ -91,17 +92,17 @@ public class ServerConnectionSocket implements ServerConnection {
         waitingConnection.put(c, name);
 
         LOGGER.info(() -> name + " put!");
-        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, ""));
+        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, new ReduceDemandChoice("success")));
         LOGGER.info("Connect answer sent!");
     }
 
     @Override
-    public boolean prelobby(Demand demand, ServerClientHandler c) throws ParserConfigurationException, SAXException {
+    public boolean prelobby(ServerClientHandler c, Demand demand) throws ParserConfigurationException, SAXException {
         Lobby lobby;
-        int value =  Integer.parseInt(demand.getPayload().toString());
+        String value = ((ReduceDemandChoice) demand.getPayload()).getChoice();
 
         switch (value) {
-            case 1:
+            case "1":
                 lobby = new Lobby();
 
                 lobbyList.add(lobby);
@@ -109,32 +110,32 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobby.addPlayer(waitingConnection.get(c), c);
                 waitingConnection.remove(c);
                 c.setLobby(lobby);
-                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, lobby.getID()));
+                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReduceDemandChoice(lobby.getID())));
                 LOGGER.info("Success create game sent!");
                 return false;
 
-            case 2:
-                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY, ""));
+            case "2":
+                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY, new ReduceDemandChoice("success")));
                     LOGGER.info("Success ask lobby sent!");
                 return false;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error preLobby!\n"));
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), new ReduceDemandChoice("Error")));
         }
 
         return true;
     }
 
     @Override
-    public boolean lobby(Demand demand, ServerClientHandler c) {
+    public boolean lobby(ServerClientHandler c, Demand demand) {
         Lobby lobby;
 
         switch ((DemandType) demand.getHeader()) {
             case CREATE_GAME:
                 lobby = c.getLobby();
 
-                lobby.setNumberOfPlayers(Integer.parseInt(demand.getPayload().toString()));
-                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.WAIT, ""));
+                lobby.setNumberOfPlayers(Integer.parseInt(((ReduceDemandChoice) demand.getPayload()).getChoice()));
+                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.WAIT, new ReduceDemandChoice("success")));
                 LOGGER.info("Success wait game sent!");
                 LOGGER.info(() -> "NumOfPl: " + lobby.getNumberOfPlayers());
                 return false;
@@ -151,23 +152,23 @@ public class ServerConnectionSocket implements ServerConnection {
                         lobby.addPlayer(waitingConnection.get(c), c);
                         c.setLobby(lobby);
                         waitingConnection.remove(c);
-                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, lobbyString));
+                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReduceDemandChoice(lobbyString)));
                         LOGGER.info("Success join game sent!");
                         return false;
                     }
                     else {
-                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby full!\n"));
+                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, new ReduceDemandChoice("Error!")));
                         LOGGER.info("Error lobby full!");
                         return true;
                     }
                 }
 
-                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, "Error lobby does not exists!\n"));
+                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY, new ReduceDemandChoice("Error!")));
                 LOGGER.info("Error lobby does not exists!");
                 return true;
 
             default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), "Error lobby!\n"));
+                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader(), new ReduceDemandChoice("Error!")));
                 LOGGER.info("Error lobby!");
         }
 

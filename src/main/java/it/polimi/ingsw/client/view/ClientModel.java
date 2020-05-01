@@ -177,7 +177,7 @@ public class ClientModel<S> implements Runnable {
 
             case CREATE_GAME:
             case JOIN_GAME:
-                lobbyId = answer.getPayload().toString();
+                lobbyId = ((ReduceDemandChoice) answer.getPayload()).getChoice();
                 break;
 
             case ASK_LOBBY:

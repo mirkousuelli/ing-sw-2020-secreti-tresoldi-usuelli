@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.observer.Observer;
@@ -11,7 +12,7 @@ public interface ServerClientHandler {
 
     void addObserver(Observer<Demand> observer);
 
-    void asyncSend(Message message);
+    void asyncSend(Answer message);
 
     Lobby getLobby();
 

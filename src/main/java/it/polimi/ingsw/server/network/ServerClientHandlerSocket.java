@@ -2,9 +2,9 @@ package it.polimi.ingsw.server.network;
 
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
 import it.polimi.ingsw.communication.message.payload.ReducedGame;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
@@ -70,7 +70,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return demand;
     }
 
-    private void send(Message message) {
+    private void send(Answer message) {
         synchronized (file.lockSend) {
             try {
                 file.send(message);    // INCAPSULATO
@@ -100,7 +100,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     @Override
-    public void asyncSend(final Message message) {
+    public void asyncSend(Answer message) {
         new Thread( () -> send(message) ).start();
     }
 
@@ -126,7 +126,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             //connect
                             demand = read();
                             synchronized (server) {
-                                server.connect(this, (String) demand.getPayload());
+                                server.connect(this, ((ReduceDemandChoice) demand.getPayload()).getChoice());
                             }
 
                             boolean reload = false;
@@ -141,7 +141,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 do {
                                     demand = read();
                                     synchronized (server) {
-                                        toRepeat = server.prelobby(demand, this);
+                                        toRepeat = server.prelobby(this, demand);
                                     }
                                 } while (toRepeat);
 
@@ -152,7 +152,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                     if (demand.getHeader().equals(DemandType.ASK_LOBBY))
                                         join = true;
                                     synchronized (server) {
-                                        toRepeat = server.lobby(demand, this);
+                                        toRepeat = server.lobby(this, demand);
                                     }
                                 } while (toRepeat);
 
@@ -162,7 +162,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                                 //send a wait to anyone except the last one
                                 if (join)
-                                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, ""));
+                                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, new ReduceDemandChoice("wait")));
 
                                 //wait
                                 List<ReducedPlayer> players;
@@ -197,7 +197,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 //resume game
                                 synchronized (lobby.lockLobby) {
                                     if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer<>(AnswerType.RESUME, DemandType.parseString(loadedGame.getState().getName()), ""));
+                                        asyncSend(new Answer<>(AnswerType.RESUME, DemandType.parseString(loadedGame.getState().getName()), new ReduceDemandChoice("resume")));
                                 }
                             }
 

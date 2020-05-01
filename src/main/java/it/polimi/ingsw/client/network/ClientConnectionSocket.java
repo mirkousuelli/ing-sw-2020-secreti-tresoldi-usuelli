@@ -25,10 +25,10 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     private final List<Answer<S>> buffer;
 
     private static final Random random = new SecureRandom();
+    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
-        String path = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
         socket = new Socket(ip, port);
         file = new FileXML(path, socket);
         this.clientView = clientView;
