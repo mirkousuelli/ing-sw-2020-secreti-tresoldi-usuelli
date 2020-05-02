@@ -12,7 +12,6 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CLIPrinter<S> {
@@ -20,14 +19,12 @@ public class CLIPrinter<S> {
     private final ClientModel<S> clientModel;
     private final ClientView<S> clientView;
     private final PrintStream out;
-    private final Map<DemandType, Function<String, Boolean>> yourTurnMap;
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
     private final EnumMap<DemandType, Runnable> changesMap;
 
     private static final String CONNECT = "Connected!\n";
     private static final String RELOAD = "Reloaded!\n";
-    private static final String CONFIRM = "Confirmed!\n";
     private static final String WAIT = "Waiting other players...\n";
     private static final String ASKLOBBY = "Ask your friend his lobby's id!\n";
 
@@ -48,25 +45,13 @@ public class CLIPrinter<S> {
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
         changesMap = new EnumMap<>(DemandType.class);
-        yourTurnMap = new EnumMap<>(DemandType.class);
-
-        yourTurnMap.put(DemandType.CHOOSE_DECK, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.CHOOSE_CARD, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.PLACE_WORKERS, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.CHOOSE_WORKER, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.MOVE, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.BUILD, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.USE_POWER, clientModel::isYourTurn);
-        yourTurnMap.put(DemandType.CONFIRM, clientModel::isYourTurn);
 
         stringMap.put(DemandType.CONNECT, CONNECT);
         stringMap.put(DemandType.RELOAD, RELOAD);
-        stringMap.put(DemandType.CONFIRM, CONFIRM);
         stringMap.put(DemandType.WAIT, WAIT);
         stringMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
 
         initialMap.put(DemandType.CONNECT, this::printString);
-        initialMap.put(DemandType.CONFIRM, this::printString);
         initialMap.put(DemandType.WAIT, this::printString);
         initialMap.put(DemandType.ASK_LOBBY, this::printString);
 
@@ -74,12 +59,14 @@ public class CLIPrinter<S> {
         changesMap.put(DemandType.CREATE_GAME, this::printLobby);
         changesMap.put(DemandType.JOIN_GAME, this::printLobby);
         changesMap.put(DemandType.START, this::printStart);
-        changesMap.put(DemandType.CHOOSE_DECK, this::printGods);
-        changesMap.put(DemandType.CHOOSE_CARD, this::printGods);
+        changesMap.put(DemandType.CHOOSE_DECK, this::printAvailableGods);
+        changesMap.put(DemandType.CHOOSE_CARD, this::printAvailableGods);
+        changesMap.put(DemandType.CHOOSE_STARTER, this::printGods);
         changesMap.put(DemandType.PLACE_WORKERS, this::printBoard);
         changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
         changesMap.put(DemandType.MOVE, this::printAll);
         changesMap.put(DemandType.BUILD, this::printAll);
+        changesMap.put(DemandType.CHANGE_TURN, this::printCurrentPlayer);
     }
 
     public void printLogo() {
@@ -167,6 +154,19 @@ public class CLIPrinter<S> {
         out.println("You: "+ Color.parseString(clientModel.getPlayer().getColor()) + clientModel.getPlayer().getNickname() + Color.RESET + "\n");
     }
 
+    private void printAvailableGods() {
+        out.print("Available Gods: ");
+
+        out.println((clientModel.getDeck()).stream()
+                .map(God::toString)
+                .map(String::toLowerCase)
+                .reduce(null, (a, b) -> a != null
+                        ? a + ", " + b
+                        : b
+                )
+        );
+    }
+
     private void printGods() {
         List<ReducedPlayer> playerList;
 
@@ -182,7 +182,7 @@ public class CLIPrinter<S> {
 
         out.println(playerList.stream()
                 .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getGod() + Color.RESET)
-                .reduce(null, (a, b) -> a != null
+                .reduce("none", (a, b) -> !a.equals("none")
                         ? a + ", " + b
                         : b
                 )
@@ -244,6 +244,13 @@ public class CLIPrinter<S> {
         printGods();
     }
 
+    private void printCurrentPlayer() {
+        if (clientModel.isYourTurn())
+            printString("It is your turn!\n");
+        else
+            printString(clientModel.getCurrentPlayer()+ " is the current player!\n");
+    }
+
     public void printError() {
         out.println("Error, try again");
     }
@@ -257,18 +264,16 @@ public class CLIPrinter<S> {
     }
 
     public boolean printChanges(DemandType demandType) {
-        Function<String, Boolean> yourTurnFunct = yourTurnMap.get(demandType);
         Consumer<String> initlaFunct = initialMap.get(demandType);
 
-        if (initlaFunct != null)
-            initlaFunct.accept(stringMap.get(demandType));
-        else
-            changesMap.get(demandType).run();
+           if (initlaFunct != null) {
+               initlaFunct.accept(stringMap.get(demandType));
+               return true;
+           }
 
-       if (yourTurnFunct != null)
-           return yourTurnFunct.apply(clientModel.getPlayer().getNickname());
-       else
-           return true;
+           changesMap.get(demandType).run();
+
+           return clientModel.isYourTurn();
     }
 }
 

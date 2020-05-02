@@ -78,7 +78,7 @@ public class ServerConnectionSocket implements ServerConnection {
 
     //Wait for another player
     @Override
-    public void connect(ServerClientHandler c, String name) {
+    public synchronized void connect(ServerClientHandler c, String name) {
 
         for (Lobby l : lobbyList) {
             if (l.isReloaded() && l.getGame().getPlayer(name) != null) {
@@ -97,7 +97,7 @@ public class ServerConnectionSocket implements ServerConnection {
     }
 
     @Override
-    public boolean prelobby(ServerClientHandler c, Demand demand) throws ParserConfigurationException, SAXException {
+    public synchronized boolean prelobby(ServerClientHandler c, Demand demand) throws ParserConfigurationException, SAXException {
         Lobby lobby;
         String value = ((ReduceDemandChoice) demand.getPayload()).getChoice();
 
@@ -108,6 +108,7 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobbyList.add(lobby);
 
                 lobby.addPlayer(waitingConnection.get(c), c);
+                lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
                 waitingConnection.remove(c);
                 c.setLobby(lobby);
                 c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReduceDemandChoice(lobby.getId())));
@@ -127,7 +128,7 @@ public class ServerConnectionSocket implements ServerConnection {
     }
 
     @Override
-    public boolean lobby(ServerClientHandler c, Demand demand) {
+    public synchronized boolean lobby(ServerClientHandler c, Demand demand) {
         Lobby lobby;
 
         switch ((DemandType) demand.getHeader()) {
@@ -137,13 +138,18 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobby.setNumberOfPlayers(Integer.parseInt(((ReduceDemandChoice) demand.getPayload()).getChoice()));
                 c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.WAIT, new ReduceDemandChoice("success")));
                 LOGGER.info("Success wait game sent!");
-                LOGGER.info(() -> "NumOfPl: " + lobby.getNumberOfPlayers());
                 return false;
 
             case ASK_LOBBY:
                 boolean spaceInLobby;
-                String lobbyString = demand.getPayload().toString();
-                lobby = findLobby(lobbyString);
+                String lobbyString = ((ReduceDemandChoice) demand.getPayload()).getChoice();
+
+                lobby = null;
+                for (Lobby l : lobbyList) {
+                    if (l.getId().equals(lobbyString)) {
+                        lobby = l;
+                    }
+                }
 
                 if (lobby != null) {
                     spaceInLobby = lobby.addPlayer(waitingConnection.get(c), c);

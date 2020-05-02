@@ -75,7 +75,7 @@ public abstract class ClientView<S> implements Runnable {
         }
     }
 
-    protected synchronized Answer<S> getAnswer() {
+    public synchronized Answer<S> getAnswer() {
         return answer;
     }
 

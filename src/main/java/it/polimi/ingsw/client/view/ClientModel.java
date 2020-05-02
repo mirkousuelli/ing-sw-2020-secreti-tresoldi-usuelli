@@ -40,6 +40,7 @@ public class ClientModel<S> implements Runnable {
     public ClientModel(String playerName, ClientConnection<S> clientConnection) {
         reducedBoard = new ReducedAnswerCell[5][5];
         deck = new ArrayList<>();
+        workers = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -56,6 +57,10 @@ public class ClientModel<S> implements Runnable {
 
         setActive(false);
         setChanged(false);
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public ReducedPlayer getPlayer() {
@@ -202,15 +207,22 @@ public class ClientModel<S> implements Runnable {
 
             case CHOOSE_DECK:
             case CHOOSE_CARD:
-            case USE_POWER: //TODO
                 deck = new ArrayList<>((List<God>) answer.getPayload());
                 break;
 
-            case PLACE_WORKERS:
-                workers = new ArrayList<>((List<ReducedWorker>) answer.getPayload());
+            case CHOOSE_STARTER:
+                //TODO only print?
+                break;
 
-                for (ReducedWorker w : workers)
-                    reducedBoard[w.getX()][w.getY()].setWorker(w);
+            case PLACE_WORKERS:
+                List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
+                if (reducedAnswerCellList.isEmpty()) return;
+
+                for (ReducedAnswerCell c : reducedAnswerCellList) {
+                    reducedBoard[c.getX()][c.getY()].setWorker(c.getWorker());
+                    workers.add(c.getWorker());
+                }
+
                 break;
 
             case CHOOSE_WORKER:
@@ -223,6 +235,7 @@ public class ClientModel<S> implements Runnable {
 
             case MOVE:
             case BUILD:
+            case USE_POWER: //TODO
                 updateReducedBoard((List<ReducedAnswerCell>) answer.getPayload());
 
                 workers = new ArrayList<>();
@@ -235,8 +248,8 @@ public class ClientModel<S> implements Runnable {
                 }
                 break;
 
-            case CONFIRM:
-                currentPlayer = answer.getPayload().toString();
+            case CHANGE_TURN:
+                currentPlayer = ((ReducedPlayer) answer.getPayload()).getNickname();
                 break;
 
             default:
@@ -250,8 +263,10 @@ public class ClientModel<S> implements Runnable {
         }
     }
 
-    public synchronized boolean isYourTurn(String nickName) {
-        return currentPlayer.equals(nickName);
+    public synchronized boolean isYourTurn() {
+       if (currentPlayer == null) return true;
+
+       return player.getNickname().equals(currentPlayer);
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {
@@ -275,7 +290,7 @@ public class ClientModel<S> implements Runnable {
         if (god == null) return true;
 
         return deck.stream()
-                             .noneMatch(g -> g.equals(god));
+                    .noneMatch(g -> g.equals(god));
     }
 
     public synchronized boolean checkWorker(String workerString) {
@@ -288,6 +303,15 @@ public class ClientModel<S> implements Runnable {
         return workers.stream()
                       .filter(w -> w.getOwner().equals(player.getNickname()))
                       .noneMatch(w -> w.getX() == x && w.getY() == y);
+    }
+
+    public synchronized boolean checkPlayer(String player) {
+        for (ReducedPlayer p : opponents) {
+            if (p.getNickname().equals(player))
+                return false;
+        }
+
+        return !currentPlayer.equals(player);
     }
 
     public synchronized boolean evalToRepeat(String string) {

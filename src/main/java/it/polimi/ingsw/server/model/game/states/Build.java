@@ -83,6 +83,7 @@ public class Build implements GameState {
                                 case DEFAULT:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
                                     returnContent.setState(State.CHANGE_TURN);
+                                    returnContent.setChangeTurn(true);
                                     chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
                                     changedCells.add(chosenCell);
                                     returnContent.setPayload(changedCells);
@@ -117,6 +118,7 @@ public class Build implements GameState {
 
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHANGE_TURN);
+            returnContent.setChangeTurn(true);
             chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
             changedCells.add(chosenCell);
             returnContent.setPayload(changedCells);

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
@@ -26,19 +27,24 @@ public class ChooseCard implements GameState {
         ReturnContent returnContent = new ReturnContent();
 
         Player currentPlayer = game.getCurrentPlayer();
-        God choosenGod = ((God) game.getRequest().getDemand().getPayload());
+        God chosenGod = ((God) game.getRequest().getDemand().getPayload());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_CARD);
 
         for (God g : game.getChoosenGods()) {
-            if (g.equals(choosenGod)) {
+            if (g.equals(chosenGod)) {
                 game.removeGod(g);
                 currentPlayer.setCard(game.getDeck().popCard(g));
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.CHANGE_TURN);
+                if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))
+                    returnContent.setState(State.CHOOSE_STARTER);
+                else
+                    returnContent.setChangeTurn(true);
                 returnContent.setPayload(game.getChoosenGods());
+
+                break;
             }
         }
 

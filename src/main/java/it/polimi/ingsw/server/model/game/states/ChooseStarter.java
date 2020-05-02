@@ -8,6 +8,8 @@ import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
+import java.util.ArrayList;
+
 public class ChooseStarter implements GameState {
     private final Game game;
 
@@ -35,11 +37,17 @@ public class ChooseStarter implements GameState {
 
         for (Player p : game.getPlayerList()) {
             if(p.nickName.equals(starter.getChoice())) {
-                game.setCurrentPlayer(p);
+                if (!p.nickName.equals(game.getCurrentPlayer().nickName)) {
+                    game.setStarter(game.getIndex(p));
+                    game.setCurrentPlayer(game.getPlayer(game.getStarter() - 1));
+                    returnContent.setChangeTurn(true);
+                }
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 returnContent.setState(State.PLACE_WORKERS);
-                returnContent.setPayload(p.nickName);
+                returnContent.setPayload(new ArrayList<>());
+
+                break;
             }
         }
 

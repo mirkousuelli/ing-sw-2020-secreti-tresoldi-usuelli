@@ -7,10 +7,14 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     private ReducedWorker worker;
 
     public ReducedAnswerCell(int x, int y) {
+        this(x, y , null);
+    }
+
+    public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
         super(x, y);
         level = ReducedLevel.GROUND;
         action = ReducedAction.DEFAULT;
-        worker = null;
+        this.worker = worker;
     }
 
     public ReducedAnswerCell() {}

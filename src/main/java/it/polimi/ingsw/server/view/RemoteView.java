@@ -17,7 +17,6 @@ public class RemoteView extends View {
         @Override
         public void update(Demand demand) {
             try {
-                logger.info(() -> "Received: " + demand.toString() + "\n");
                 processMessage(demand);
             } catch (Exception e) {
                 logger.log( Level.SEVERE, e.toString(), e);

@@ -9,6 +9,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedGame;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
@@ -17,11 +18,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ServerClientHandlerSocket extends Observable<Demand> implements ServerClientHandler, Runnable {
 
@@ -54,7 +54,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         boolean ret;
 
         synchronized (buffer) {
-            ret = buffer.isEmpty();
+            ret = !buffer.isEmpty();
         }
 
         return ret;
@@ -180,9 +180,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 LOGGER.info(() -> "Names: " + players.get(0).getNickname() + ", " + players.get(1).getNickname());
                                 synchronized (lobby.lockLobby) {
                                     if (lobby.isCurrentPlayerInGame(this)) {
-                                        synchronized (buffer) {
-                                            buffer.add(new Demand(DemandType.CHOOSE_CARD, ""));
-                                        }
+                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, Arrays.stream(God.values()).collect(Collectors.toList())));
+                                    }
+                                    else {
+                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
                                     }
 
                                 }

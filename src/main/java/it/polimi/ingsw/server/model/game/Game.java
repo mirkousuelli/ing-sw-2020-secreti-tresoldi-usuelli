@@ -28,6 +28,7 @@ public class Game extends Observable<Answer> {
     private int currentPlayer;
     private int numPlayers;
     private ActionToPerform request;
+    private int starter;
 
     public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
@@ -39,6 +40,16 @@ public class Game extends Observable<Answer> {
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
         this.state = new Start(this);
+
+        starter = -1;
+    }
+
+    public int getStarter() {
+        return starter;
+    }
+
+    public void setStarter(int starter) {
+        this.starter = starter;
     }
 
     public List<God> getChoosenGods() {
@@ -197,8 +208,16 @@ public class Game extends Observable<Answer> {
     public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
 
-        if (!returnContent.getAnswerType().equals(AnswerType.ERROR))
+        if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
+            if (returnContent.isChangeTurn()) {
+                state = new ChangeTurn(this);
+                ReturnContent rc = state.gameEngine();
+
+                notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));
+            }
+
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
+        }
 
         return  returnContent;
     }

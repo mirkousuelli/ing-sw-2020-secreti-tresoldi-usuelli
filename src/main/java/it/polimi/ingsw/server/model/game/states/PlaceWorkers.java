@@ -1,7 +1,9 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -35,36 +37,40 @@ public class PlaceWorkers implements GameState{
         //chooseDeck
         ReturnContent returnContent = new ReturnContent();
 
-        //set challenger
         Player currentPlayer = game.getCurrentPlayer();
-        game.setCurrentPlayer(currentPlayer);
         List<ReducedDemandCell> workersLocations = ((List<ReducedDemandCell>) game.getRequest().getDemand().getPayload());
-        Block choosenCell;
+        List<ReducedAnswerCell> modifiedCell = new ArrayList<>();
+        ReducedAnswerCell temp;
+        Block chosenCell;
         int id;
-        List<Cell> modifiedCell = new ArrayList<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.PLACE_WORKERS);
 
 
         for (ReducedDemandCell c : workersLocations) {
-            choosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
-            if (!choosenCell.isFree())
+            chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
+            if (!chosenCell.isFree())
                 return returnContent;
         }
 
         for (ReducedDemandCell c : workersLocations) {
-            choosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
-            id = workersLocations.indexOf(c);
+            chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
+            id = currentPlayer.getWorkers().size() + 1;
 
-            currentPlayer.initializeWorkerPosition(id, choosenCell);
-            choosenCell.addPawn(currentPlayer.getWorker(id));
+            System.out.println(id);
+            System.out.println(currentPlayer.initializeWorkerPosition(id, chosenCell));
+            chosenCell.addPawn(currentPlayer.getWorker(id));
 
-            modifiedCell.add(choosenCell);
+            temp = new ReducedAnswerCell(chosenCell.getX(), chosenCell.getY());
+            temp.setWorker(new ReducedWorker(currentPlayer.getWorker(id), currentPlayer.nickName));
+            modifiedCell.add(temp);
         }
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
-        returnContent.setState(State.CHANGE_TURN);
+        if (game.getIndex(game.getCurrentPlayer()) - 1 == game.getStarter())
+            returnContent.setState(State.CHOOSE_WORKER);
+        returnContent.setChangeTurn(true);
         returnContent.setPayload(modifiedCell);
 
 

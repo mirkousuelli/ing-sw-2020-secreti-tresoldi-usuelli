@@ -72,7 +72,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         boolean ret;
 
         synchronized (buffer) {
-            ret = buffer.isEmpty();
+            ret = !buffer.isEmpty();
         }
 
         return ret;

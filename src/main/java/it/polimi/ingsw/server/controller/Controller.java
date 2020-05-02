@@ -28,9 +28,8 @@ public class Controller implements Observer<ActionToPerformView> {
             return;
         }
 
-        ReturnContent returnContent;
         model.setRequest(actionToPerformView);
-        returnContent = model.gameEngine();
+        ReturnContent returnContent = model.gameEngine();
 
         if (returnContent == null || returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReduceDemandChoice("Error")));

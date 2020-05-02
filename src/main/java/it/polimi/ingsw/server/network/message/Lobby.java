@@ -87,7 +87,7 @@ public class Lobby {
     }
 
     public synchronized void setCurrentPlayer(String player) {
-        //TODO
+        game.setCurrentPlayer(game.getPlayer(player));
     }
 
     public boolean isReloaded() {
@@ -110,6 +110,8 @@ public class Lobby {
         v.addObserver(controller);
         game.addObserver(v);
 
+        game.addPlayer(player);
+
         return true;
     }
 
@@ -118,6 +120,6 @@ public class Lobby {
     }
 
     public synchronized boolean isCurrentPlayerInGame(ServerClientHandler c) {
-        return game.getCurrentPlayer().nickName.equals(playerColor.get(playingConnection.get(c)).getNickname());
+        return game.getCurrentPlayer().nickName.equals(playingConnection.get(c).getPlayer());
     }
 }

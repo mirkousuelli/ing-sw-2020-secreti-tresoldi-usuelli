@@ -7,13 +7,21 @@ public class ReturnContent<S> {
     private AnswerType answerType;
     private S payload;
     private State state;
+    private boolean changeTurn;
 
-    public ReturnContent() {}
+    public ReturnContent() {
+        this(null, null, null, false);
+    }
 
     public ReturnContent(AnswerType answerType, S payload, State state) {
+        this(answerType, payload, state, false);
+    }
+
+    public ReturnContent(AnswerType answerType, S payload, State state, boolean changeTurn) {
         this.answerType = answerType;
         this.payload = payload;
         this.state = state;
+        this.changeTurn = changeTurn;
     }
 
     public AnswerType getAnswerType() {
@@ -38,5 +46,13 @@ public class ReturnContent<S> {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public boolean isChangeTurn() {
+        return changeTurn;
+    }
+
+    public void setChangeTurn(boolean changeTurn) {
+        this.changeTurn = changeTurn;
     }
 }

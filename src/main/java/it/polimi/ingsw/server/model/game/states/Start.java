@@ -12,6 +12,7 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
@@ -49,14 +50,14 @@ public class Start implements GameState {
         //set challenger
         Player currentPlayer = game.getPlayer(0);
         game.setCurrentPlayer(currentPlayer);
-        List<God> choosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
+        List<God> chosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
 
-        game.setChoosenGods(choosenGodList);
+        game.setChoosenGods(chosenGodList);
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.CHOOSE_CARD);
-        returnContent.setPayload(new ReduceDemandChoice(currentPlayer.nickName));
-
+        returnContent.setPayload(chosenGodList);
+        returnContent.setChangeTurn(true);
 
         return returnContent;
     }
