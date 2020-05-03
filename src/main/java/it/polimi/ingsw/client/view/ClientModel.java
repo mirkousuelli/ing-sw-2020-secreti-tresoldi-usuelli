@@ -185,7 +185,7 @@ public class ClientModel<S> implements Runnable {
                 break;
 
             case ASK_LOBBY:
-                //TODO only print?
+                player.setColor((String) answer.getPayload());
                 break;
 
             case WAIT:

@@ -158,7 +158,7 @@ public class ServerConnectionSocket implements ServerConnection {
                         lobby.addPlayer(waitingConnection.get(c), c);
                         c.setLobby(lobby);
                         waitingConnection.remove(c);
-                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReduceDemandChoice(lobbyString)));
+                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, lobby.getColor(c)));
                         LOGGER.info("Success join game sent!");
                         return false;
                     }
@@ -179,19 +179,6 @@ public class ServerConnectionSocket implements ServerConnection {
         }
 
         return true;
-    }
-
-    private Lobby findLobby(String lobbyString) {
-        Lobby l = null;
-
-        for (Lobby lobby : lobbyList) {
-            if (lobbyString.equals(lobby.getId())) {
-                l = lobby;
-                break;
-            }
-        }
-
-        return l;
     }
 
     private void loadLobby() {

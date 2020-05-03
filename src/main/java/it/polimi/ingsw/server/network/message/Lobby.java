@@ -60,38 +60,62 @@ public class Lobby {
         return id;
     }
 
-    public synchronized int getNumberOfPlayers() {
-        return numberOfPlayers;
+    public int getNumberOfPlayers() {
+        int ret;
+
+        synchronized (lockLobby) {
+            ret = numberOfPlayers;
+        }
+
+        return ret;
     }
 
-    public synchronized List<ReducedPlayer> getReducedPlayerList() {
+    public List<ReducedPlayer> getReducedPlayerList() {
         List<ReducedPlayer> reducedPlayerList = new ArrayList<>();
         ReducedPlayer reducedPlayer;
 
-        for (View v : playerViewList) {
-            reducedPlayer = new ReducedPlayer(v.getPlayer());
-            reducedPlayer.setColor(playerColor.get(v).getColor());
-            reducedPlayerList.add(reducedPlayer);
+        synchronized (playerViewList) {
+            synchronized (playerColor) {
+                for (View v : playerViewList) {
+                    reducedPlayer = new ReducedPlayer(v.getPlayer());
+                    reducedPlayer.setColor(playerColor.get(v).getColor());
+                    reducedPlayerList.add(reducedPlayer);
+                }
+            }
         }
 
         return reducedPlayerList;
     }
 
-    public synchronized void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        synchronized (lockLobby) {
+            this.numberOfPlayers = numberOfPlayers;
+        }
     }
 
-    public synchronized void deletePlayer(ServerClientHandler player) {
-        playerViewList.remove(playingConnection.get(player));
-        playingConnection.remove(player);
+    public void deletePlayer(ServerClientHandler player) {
+        synchronized (playerViewList) {
+            synchronized (playingConnection) {
+                playerViewList.remove(playingConnection.get(player));
+                playingConnection.remove(player);
+            }
+        }
     }
 
-    public synchronized void setCurrentPlayer(String player) {
-        game.setCurrentPlayer(game.getPlayer(player));
+    public void setCurrentPlayer(String player) {
+        synchronized (game) {
+            game.setCurrentPlayer(game.getPlayer(player));
+        }
     }
 
     public boolean isReloaded() {
-        return reloaded;
+        boolean ret;
+
+        synchronized (lockLobby) {
+            ret = reloaded;
+        }
+
+        return ret;
     }
 
     public Game getGame() {
@@ -115,11 +139,42 @@ public class Lobby {
         return true;
     }
 
-    public synchronized boolean canStart() {
-        return playerViewList.size() == numberOfPlayers;
+    public boolean canStart() {
+        int numOfPl;
+        int size;
+
+        synchronized (lockLobby) {
+            numOfPl = numberOfPlayers;
+        }
+
+        synchronized (playerViewList) {
+            size = playerViewList.size();
+        }
+
+        return size == numOfPl;
     }
 
-    public synchronized boolean isCurrentPlayerInGame(ServerClientHandler c) {
-        return game.getCurrentPlayer().nickName.equals(playingConnection.get(c).getPlayer());
+    public boolean isCurrentPlayerInGame(ServerClientHandler c) {
+        boolean ret;
+
+        synchronized (game) {
+            synchronized (playingConnection) {
+                ret = game.getCurrentPlayer().nickName.equals(playingConnection.get(c).getPlayer());
+            }
+        }
+
+        return ret;
+    }
+
+    public String getColor(ServerClientHandler c) {
+        String color;
+
+        synchronized (playerColor) {
+            synchronized (playingConnection) {
+                color = playerColor.get(playingConnection.get(c)).getColor();
+            }
+        }
+
+        return color;
     }
 }
