@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 public abstract class ClientView<S> implements Runnable {
 
@@ -89,7 +89,7 @@ public abstract class ClientView<S> implements Runnable {
 
     protected void setInitialRequest() {
         synchronized (this) {
-            setDemand(new Demand<S>(DemandType.CONNECT, (S) (new ReduceDemandChoice(clientModel.getPlayer().getNickname()))));
+            setDemand(new Demand<S>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
             setChanged(true);
         }
 

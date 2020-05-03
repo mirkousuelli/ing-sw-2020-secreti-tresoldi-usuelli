@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
@@ -88,7 +88,7 @@ public class CLIScanner<S> {
 
 
     private S parseString(String string) {
-        return (S) (new ReduceDemandChoice(string));
+        return (S) (new ReducedMessage(string));
     }
 
     private S parseStringReducedDemandCell(String string) {

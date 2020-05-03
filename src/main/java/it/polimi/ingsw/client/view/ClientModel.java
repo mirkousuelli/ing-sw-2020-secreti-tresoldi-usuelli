@@ -181,11 +181,12 @@ public class ClientModel<S> implements Runnable {
 
             case CREATE_GAME:
             case JOIN_GAME:
-                lobbyId = ((ReduceDemandChoice) answer.getPayload()).getChoice();
+                lobbyId = ((ReducedMessage) answer.getPayload()).getMessage();
+                player.setColor(((ReducedMessage) answer.getPayload()).getColor());
                 break;
 
             case ASK_LOBBY:
-                player.setColor((String) answer.getPayload());
+                //TODO only print?
                 break;
 
             case WAIT:

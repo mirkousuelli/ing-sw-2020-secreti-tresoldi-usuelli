@@ -4,7 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedGame;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
@@ -126,7 +126,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             //connect
                             demand = read();
                             synchronized (server) {
-                                server.connect(this, ((ReduceDemandChoice) demand.getPayload()).getChoice());
+                                server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
                             }
 
                             boolean reload = false;
@@ -162,7 +162,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                                 //send a wait to anyone except the last one
                                 if (join)
-                                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT, new ReduceDemandChoice("wait")));
+                                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT));
 
                                 //wait
                                 List<ReducedPlayer> players;
@@ -206,7 +206,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 //resume game
                                 synchronized (lobby.lockLobby) {
                                     if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), new ReduceDemandChoice("resume")));
+                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), new ReducedMessage("resume")));
                                 }
                             }
 
@@ -230,7 +230,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return t;
     }
 
-    private Thread notifierThred() {
+    private Thread notifierThread() {
         Thread t = new Thread(
                 () -> {
                     try {
@@ -260,7 +260,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
         try {
             Thread reader = asyncReadFromSocket();
-            Thread notifier = notifierThred();
+            Thread notifier = notifierThread();
             reader.join();
             notifier.join();
         } catch (InterruptedException | NoSuchElementException e) {
