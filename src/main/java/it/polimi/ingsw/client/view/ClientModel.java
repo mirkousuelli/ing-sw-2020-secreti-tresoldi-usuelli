@@ -34,6 +34,8 @@ public class ClientModel<S> implements Runnable {
     private boolean isActive;
     private boolean isChanged;
 
+    private boolean isReloaded;
+
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
 
 
@@ -57,6 +59,7 @@ public class ClientModel<S> implements Runnable {
 
         setActive(false);
         setChanged(false);
+        isReloaded = false;
     }
 
     public String getCurrentPlayer() {
@@ -146,6 +149,10 @@ public class ClientModel<S> implements Runnable {
     }
 
     private void updateModel() {
+        if (isReloaded) {
+            isReloaded = false;
+            return;
+        }
         synchronized (lockAnswer) {
             if (answer.getHeader().equals(AnswerType.SUCCESS))
                 updateReduceObjects(answer);
@@ -179,6 +186,8 @@ public class ClientModel<S> implements Runnable {
                         break;
                     }
                 }
+
+                isReloaded = true;
                 break;
 
             case CREATE_GAME:
