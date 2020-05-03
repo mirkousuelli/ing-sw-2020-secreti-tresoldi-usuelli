@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientModel;
-import it.polimi.ingsw.client.view.gui.windows.StartWindow;
+import it.polimi.ingsw.client.view.gui.frame.SantoriniFrame;
 
 import javax.swing.*;
 
@@ -21,7 +21,7 @@ public class GUI<S>/* extends ClientView<S>*/ {
 
     public void createAndStartGUI() {
         JFrame.setDefaultLookAndFeelDecorated(true);
-        JFrame frame = new StartWindow("Santorini");
+        JFrame frame = new SantoriniFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
