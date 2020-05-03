@@ -34,6 +34,6 @@ public class RemoteView extends View {
 
     @Override
     protected void showAnswer(Answer answer) {
-        serverClientHandler.asyncSend(answer);
+        serverClientHandler.send(answer);
     }
 }

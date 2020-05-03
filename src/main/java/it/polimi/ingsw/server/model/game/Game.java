@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
@@ -207,6 +209,7 @@ public class Game extends Observable<Answer> {
 
     public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
+        boolean availableGods = returnContent.isAvailableGods();
 
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             if (returnContent.isChangeTurn()) {
@@ -216,9 +219,12 @@ public class Game extends Observable<Answer> {
                 notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));
             }
 
+            if (availableGods)
+                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, choosenGods));
+
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }
 
-        return  returnContent;
+        return returnContent;
     }
 }

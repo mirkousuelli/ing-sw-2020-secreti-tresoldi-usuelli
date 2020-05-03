@@ -10,7 +10,7 @@ public class Demand<S> extends Message<DemandType, S> {
     }
 
     public Demand(DemandType header) {
-        this(header, (S) new ReducedMessage(""));
+        this(header, (S) new ReducedMessage("null"));
     }
 
     public Demand(Demand<S> msg) {

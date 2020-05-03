@@ -13,6 +13,8 @@ public interface ServerClientHandler {
 
     void asyncSend(Answer message);
 
+    void send(Answer message);
+
     Lobby getLobby();
 
     void setLobby(Lobby lobby);

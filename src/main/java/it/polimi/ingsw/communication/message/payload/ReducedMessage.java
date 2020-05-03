@@ -8,7 +8,7 @@ public class ReducedMessage {
     public ReducedMessage() {}
 
     public ReducedMessage(String message) {
-        this(message, "");
+        this(message, "null");
     }
 
     public ReducedMessage(String message, String color) {

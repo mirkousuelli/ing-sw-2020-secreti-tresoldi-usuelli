@@ -155,6 +155,8 @@ public class ClientModel<S> implements Runnable {
     private synchronized void updateReduceObjects(Answer<S> answer) {
         switch (answer.getContext()) {
             case CONNECT:
+            case ASK_LOBBY:
+            case WAIT:
                 //TODO only print?
                 break;
 
@@ -185,14 +187,6 @@ public class ClientModel<S> implements Runnable {
                 player.setColor(((ReducedMessage) answer.getPayload()).getColor());
                 break;
 
-            case ASK_LOBBY:
-                //TODO only print?
-                break;
-
-            case WAIT:
-                //TODO only print?
-                break;
-
             case START:
                 currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
 
@@ -207,15 +201,28 @@ public class ClientModel<S> implements Runnable {
                 break;
 
             case CHOOSE_DECK:
-            case CHOOSE_CARD:
+            case AVAILABLE_GODS:
                 deck = new ArrayList<>((List<God>) answer.getPayload());
                 break;
 
+            case CHOOSE_CARD:
             case CHOOSE_STARTER:
-                //TODO only print?
+                ReducedPlayer rp = ((ReducedPlayer) answer.getPayload());
+                if (rp.getGod() == null) return;
+
+                deck.remove(rp.getGod());
+
+                for (ReducedPlayer p : opponents) {
+                    if (p.getNickname().equals(rp.getNickname())) {
+                        p.setGod(rp.getGod());
+                        return;
+                    }
+                }
+                player.setGod(rp.getGod());
                 break;
 
             case PLACE_WORKERS:
+            case CHOOSE_WORKER:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
                 if (reducedAnswerCellList.isEmpty()) return;
 
@@ -224,14 +231,6 @@ public class ClientModel<S> implements Runnable {
                     workers.add(c.getWorker());
                 }
 
-                break;
-
-            case CHOOSE_WORKER:
-                /*currentPlayer = player.getNickname();
-                workers.addAll((List<ReducedWorker>) answer.getPayload());
-
-                for (ReducedWorker w : (List<ReducedWorker>) answer.getPayload())
-                    reducedBoard[w.getX()][w.getY()].setWorker(w);*/
                 break;
 
             case MOVE:

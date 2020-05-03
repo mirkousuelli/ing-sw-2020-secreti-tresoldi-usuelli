@@ -70,7 +70,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return demand;
     }
 
-    private void send(Answer message) {
+    public void send(Answer message) {
         synchronized (file.lockSend) {
             try {
                 file.send(message);    // INCAPSULATO
@@ -146,23 +146,15 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 } while (toRepeat);
 
                                 //wait or join game
-                                boolean join = false;
                                 do {
                                     demand = read();
-                                    if (demand.getHeader().equals(DemandType.ASK_LOBBY))
-                                        join = true;
                                     synchronized (server) {
                                         toRepeat = server.lobby(this, demand);
                                     }
                                 } while (toRepeat);
 
-                                synchronized (lobby.lockLobby) {
-                                    join = !lobby.canStart() && join;
-                                }
-
-                                //send a wait to anyone except the last one
-                                if (join)
-                                    asyncSend(new Answer(AnswerType.SUCCESS, DemandType.WAIT));
+                                send(new Answer(AnswerType.SUCCESS, DemandType.WAIT));
+                                LOGGER.info("Success wait game sent!");
 
                                 //wait
                                 List<ReducedPlayer> players;
@@ -171,21 +163,15 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                     synchronized (lobby.lockLobby) {
                                         lobby.lockLobby.notifyAll();
                                         players = lobby.getReducedPlayerList();
-                                        lobby.setCurrentPlayer(players.get(0).getNickname());
                                     }
                                 }
 
                                 //start
-                                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.START, players));
-                                LOGGER.info(() -> "Names: " + players.get(0).getNickname() + ", " + players.get(1).getNickname());
+                                send(new Answer(AnswerType.SUCCESS, DemandType.START, players));
                                 synchronized (lobby.lockLobby) {
-                                    if (lobby.isCurrentPlayerInGame(this)) {
+                                    send(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
+                                    if (lobby.isCurrentPlayerInGame(this))
                                         asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, Arrays.stream(God.values()).collect(Collectors.toList())));
-                                    }
-                                    else {
-                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
-                                    }
-
                                 }
                             }
                             else {
@@ -201,12 +187,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 }
 
                                 //reload
-                                asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
+                                send(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
 
                                 //resume game
                                 synchronized (lobby.lockLobby) {
                                     if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), new ReducedMessage("resume")));
+                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName())));
                                 }
                             }
 

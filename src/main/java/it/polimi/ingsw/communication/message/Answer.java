@@ -14,7 +14,7 @@ public class Answer<S> extends Message<AnswerType, S> {
     }
 
     public Answer(AnswerType header, DemandType context) {
-        this(header, context, (S) new ReducedMessage(""));
+        this(header, context, (S) new ReducedMessage("null"));
     }
 
     public Answer(Answer<S> msg) {

@@ -42,7 +42,8 @@ public class ChooseCard implements GameState {
                     returnContent.setState(State.CHOOSE_STARTER);
                 else
                     returnContent.setChangeTurn(true);
-                returnContent.setPayload(game.getChoosenGods());
+
+                returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), g));
 
                 break;
             }

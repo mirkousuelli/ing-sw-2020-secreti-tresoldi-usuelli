@@ -9,6 +9,7 @@ public enum DemandType {
     WAIT,
     START,
     CHOOSE_DECK,
+    AVAILABLE_GODS,
     CHOOSE_CARD,
     CHOOSE_STARTER,
     PLACE_WORKERS,
@@ -32,6 +33,8 @@ public enum DemandType {
                 return START;
             case "chooseDeck":
                 return CHOOSE_DECK;
+            case "availableGods":
+                return AVAILABLE_GODS;
             case "chooseCard":
                 return CHOOSE_CARD;
             case "chooseStarter":
@@ -72,6 +75,8 @@ public enum DemandType {
                 return "start";
             case CHOOSE_DECK:
                 return "chooseDeck";
+            case AVAILABLE_GODS:
+                return "availableGods";
             case CHOOSE_CARD:
                 return "chooseCard";
             case CHOOSE_STARTER:

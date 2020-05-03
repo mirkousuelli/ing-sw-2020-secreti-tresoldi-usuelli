@@ -43,6 +43,7 @@ public class PlaceWorkers implements GameState{
         ReducedAnswerCell temp;
         Block chosenCell;
         int id;
+        int nextPlayer;
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.PLACE_WORKERS);
@@ -68,7 +69,8 @@ public class PlaceWorkers implements GameState{
         }
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
-        if (game.getIndex(game.getCurrentPlayer()) - 1 == game.getStarter())
+        nextPlayer = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
+        if (!game.getPlayer(nextPlayer).getWorkers().isEmpty())
             returnContent.setState(State.CHOOSE_WORKER);
         returnContent.setChangeTurn(true);
         returnContent.setPayload(modifiedCell);

@@ -117,6 +117,7 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
                         }
                     }
         );
+
         t.start();
         return t;
     }

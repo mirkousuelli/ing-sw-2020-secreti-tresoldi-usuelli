@@ -22,6 +22,7 @@ public class CLIPrinter<S> {
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
     private final EnumMap<DemandType, Runnable> changesMap;
+    private final EnumMap<DemandType, Boolean> allowScanner;
 
     private static final String CONNECT = "Connected!\n";
     private static final String RELOAD = "Reloaded!\n";
@@ -45,6 +46,7 @@ public class CLIPrinter<S> {
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
         changesMap = new EnumMap<>(DemandType.class);
+        allowScanner = new EnumMap<>(DemandType.class);
 
         stringMap.put(DemandType.CONNECT, CONNECT);
         stringMap.put(DemandType.RELOAD, RELOAD);
@@ -61,12 +63,22 @@ public class CLIPrinter<S> {
         changesMap.put(DemandType.START, this::printStart);
         changesMap.put(DemandType.CHOOSE_DECK, this::printAvailableGods);
         changesMap.put(DemandType.CHOOSE_CARD, this::printAvailableGods);
+        changesMap.put(DemandType.AVAILABLE_GODS, this::printAvailableGods);
         changesMap.put(DemandType.CHOOSE_STARTER, this::printGods);
         changesMap.put(DemandType.PLACE_WORKERS, this::printBoard);
         changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
         changesMap.put(DemandType.MOVE, this::printAll);
         changesMap.put(DemandType.BUILD, this::printAll);
         changesMap.put(DemandType.CHANGE_TURN, this::printCurrentPlayer);
+
+        allowScanner.put(DemandType.CONNECT, true);
+        allowScanner.put(DemandType.ASK_LOBBY, true);
+        allowScanner.put(DemandType.WAIT, false);
+        allowScanner.put(DemandType.RELOAD, false);
+        allowScanner.put(DemandType.START, false);
+        allowScanner.put(DemandType.JOIN_GAME, false);
+        allowScanner.put(DemandType.CHANGE_TURN, false);
+        allowScanner.put(DemandType.AVAILABLE_GODS, false);
     }
 
     public void printLogo() {
@@ -118,7 +130,6 @@ public class CLIPrinter<S> {
                     .filter(opponent -> opponent.getNickname().equals(cell.getWorker().getOwner()))
                     .map(ReducedPlayer::getColor)
                     .map(Color::parseString)
-                    .filter(Objects::nonNull)
                     .reduce(Color.RESET, (a, b) -> !a.equals(Color.RESET)
                             ? a
                             : b
@@ -264,16 +275,19 @@ public class CLIPrinter<S> {
     }
 
     public boolean printChanges(DemandType demandType) {
+        Boolean ret;
         Consumer<String> initlaFunct = initialMap.get(demandType);
 
-           if (initlaFunct != null) {
+           if (initlaFunct != null)
                initlaFunct.accept(stringMap.get(demandType));
-               return true;
-           }
+           else
+               changesMap.get(demandType).run();
 
-           changesMap.get(demandType).run();
-
-           return clientModel.isYourTurn();
+           ret = allowScanner.get(demandType);
+           if (ret == null)
+               return clientModel.isYourTurn();
+           else
+               return ret;
     }
 }
 

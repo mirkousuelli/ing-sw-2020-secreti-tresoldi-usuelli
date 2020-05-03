@@ -137,15 +137,8 @@ public class Move implements GameState {
 
         ReducedAnswerCell temp;
         for (Cell c : possibleBuilds) {
-            temp = new ReducedAnswerCell(c.getX(), c.getY());
+            temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
             temp.setAction(ReducedAction.BUILD);
-            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
-
-            if (!c.isFree()) {
-                Worker w = ((Worker) ((Block) c).getPawn());
-                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
-            }
-
             reducedAround.add(temp);
         }
 

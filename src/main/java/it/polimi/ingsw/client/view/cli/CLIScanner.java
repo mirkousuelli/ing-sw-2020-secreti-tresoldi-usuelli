@@ -16,7 +16,7 @@ public class CLIScanner<S> {
     private final Scanner in;
     private final CLIPrinter<S> out;
 
-    private static final String CREATEJOINGAME = "Do you want to create a lobby or join an existing one: 1-create, 2-join\n";
+    private static final String CONNECT = "Do you want to create a lobby or join an existing one: 1-create, 2-join\n";
     private static final String CREATEGAME = "Insert the number of players:\n";
     private static final String ASKLOBBY = "Insert a lobby's id:\n";
     private static final String CHOOSEDECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
@@ -46,7 +46,7 @@ public class CLIScanner<S> {
         payloadMap = new EnumMap<>(DemandType.class);
 
 
-        messageMap.put(DemandType.CONNECT, CREATEJOINGAME);
+        messageMap.put(DemandType.CONNECT, CONNECT);
         messageMap.put(DemandType.CREATE_GAME, CREATEGAME);
         messageMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
         messageMap.put(DemandType.CHOOSE_DECK, CHOOSEDECK);

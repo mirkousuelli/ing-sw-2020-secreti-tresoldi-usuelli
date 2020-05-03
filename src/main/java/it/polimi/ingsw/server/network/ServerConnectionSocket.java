@@ -92,7 +92,7 @@ public class ServerConnectionSocket implements ServerConnection {
         waitingConnection.put(c, name);
 
         LOGGER.info(() -> name + " put!");
-        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT));
+        c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT));
         LOGGER.info("Connect answer sent!");
     }
 
@@ -111,12 +111,12 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
                 waitingConnection.remove(c);
                 c.setLobby(lobby);
-                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
+                c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
                 LOGGER.info("Success create game sent!");
                 return false;
 
             case "2":
-                    c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY));
+                    c.send(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY));
                     LOGGER.info("Success ask lobby sent!");
                 return false;
 
@@ -137,8 +137,6 @@ public class ServerConnectionSocket implements ServerConnection {
                 lobby = c.getLobby();
 
                 lobby.setNumberOfPlayers(Integer.parseInt(value));
-                c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.WAIT));
-                LOGGER.info("Success wait game sent!");
                 return false;
 
             case ASK_LOBBY:
@@ -158,8 +156,8 @@ public class ServerConnectionSocket implements ServerConnection {
                         lobby.addPlayer(waitingConnection.get(c), c);
                         c.setLobby(lobby);
                         waitingConnection.remove(c);
-                        c.asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
-                        LOGGER.info("Success join game sent! COLOR: " + lobby.getColor(c));
+                        c.send(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
+                        LOGGER.info("Success join game sent!");
                         return false;
                     }
                     else {

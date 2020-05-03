@@ -62,7 +62,7 @@ public class ChooseWorker implements GameState {
 
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
-        Cell choosenWorker = new Block(cell.getX(), cell.getY());
+        Cell chosenWorker = new Block(cell.getX(), cell.getY());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_WORKER);
@@ -73,7 +73,7 @@ public class ChooseWorker implements GameState {
             returnContent.setAnswerType(AnswerType.DEFEAT); //TODO DEFEAT
         else {
             for (Worker w : currentPlayer.getWorkers()) {
-                if (w.getX() == choosenWorker.getX() && w.getY() == choosenWorker.getY()) {
+                if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
                     if(!cannotMove(w)) {
                         // the player has to pick a worker and the game goes to Move state
                         currentPlayer.setCurrentWorker(w);
@@ -101,31 +101,30 @@ public class ChooseWorker implements GameState {
 
         ReducedAnswerCell temp;
         for (Cell c : possibleMoves) {
-            temp = new ReducedAnswerCell(c.getX(), c.getY());
+            temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
             temp.setAction(ReducedAction.MOVE);
-            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
-
-            if (!c.isFree()) {
-                Worker w = ((Worker) ((Block) c).getPawn());
-                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
-            }
-
             reducedAround.add(temp);
         }
 
+        ReducedAnswerCell found;
         for (Cell c : specialMoves) {
-            temp = new ReducedAnswerCell(c.getX(), c.getY());
-            temp.setAction(ReducedAction.USEPOWER);
-            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
-
-            if (!c.isFree()) {
-                Worker w = ((Worker) ((Block) c).getPawn());
-                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
+            found = null;
+            for (ReducedAnswerCell reducedCell : reducedAround) {
+                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
+                    found = reducedCell;
+                    break;
+                }
             }
-
-            reducedAround.add(temp);
+            if (found == null) {
+                temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
+                temp.setAction(ReducedAction.USEPOWER);
+                reducedAround.add(temp);
+            }
+            else
+                found.setAction(ReducedAction.USEPOWER);
         }
 
         return reducedAround;
     }
+    //TODO rewrite specialMoves
 }
