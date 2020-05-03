@@ -134,7 +134,8 @@ public class Lobby {
         v.addObserver(controller);
         game.addObserver(v);
 
-        game.addPlayer(player);
+        if (!reloaded)
+            game.addPlayer(player);
 
         return true;
     }
