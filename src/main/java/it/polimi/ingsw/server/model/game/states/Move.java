@@ -77,11 +77,7 @@ public class Move implements GameState {
         List<Cell> specialMoves = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker());
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = new Block(cell.getX(), cell.getY());
-        List<ReducedAnswerCell> reducedCells;
 
-
-        Cell currLoc;
-        List<Cell> changedCells;
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.MOVE);
 
@@ -117,10 +113,9 @@ public class Move implements GameState {
 
         // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
         if (currentPlayer.getCurrentWorker().isMovable()) { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
-            // System.out.println(possibleMoves);
             // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
             if(isMoveCorrect(cellToMoveTo)) {
-                boolean b = game.getBoard().move(currentPlayer, game.getBoard().getCell(cellToMoveTo.getX(), cellToMoveTo.getY()));
+                game.getBoard().move(currentPlayer, game.getBoard().getCell(cellToMoveTo.getX(), cellToMoveTo.getY()));
                 //if the worker is moved to a third level (from a second one), the player that moved wins
                 if (reachedThirdLevel(game))
                     returnContent.setAnswerType(AnswerType.VICTORY);
@@ -142,15 +137,8 @@ public class Move implements GameState {
 
         ReducedAnswerCell temp;
         for (Cell c : possibleBuilds) {
-            temp = new ReducedAnswerCell(c.getX(), c.getY());
+            temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
             temp.setAction(ReducedAction.BUILD);
-            temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
-
-            if (!c.isFree()) {
-                Worker w = ((Worker) ((Block) c).getPawn());
-                temp.setWorker(new ReducedWorker(w, game.getCurrentPlayer().nickName));
-            }
-
             reducedAround.add(temp);
         }
 

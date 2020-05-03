@@ -14,7 +14,7 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class Lobby {
-    private final String ID;
+    private final String id;
     private final Game game;
     private final Controller controller;
     private final List<View> playerViewList;
@@ -34,7 +34,7 @@ public class Lobby {
     }
 
     public Lobby(Game game) {
-        ID = String.valueOf(randomLobby.nextInt());
+        id = String.valueOf(randomLobby.nextInt());
 
         this.game = game;
         controller = new Controller(game);
@@ -56,42 +56,66 @@ public class Lobby {
         return this.backupPath;
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
-    public synchronized int getNumberOfPlayers() {
-        return numberOfPlayers;
+    public int getNumberOfPlayers() {
+        int ret;
+
+        synchronized (lockLobby) {
+            ret = numberOfPlayers;
+        }
+
+        return ret;
     }
 
-    public synchronized List<ReducedPlayer> getReducedPlayerList() {
+    public List<ReducedPlayer> getReducedPlayerList() {
         List<ReducedPlayer> reducedPlayerList = new ArrayList<>();
         ReducedPlayer reducedPlayer;
 
-        for (View v : playerViewList) {
-            reducedPlayer = new ReducedPlayer(v.getPlayer());
-            reducedPlayer.setColor(playerColor.get(v).getColor());
-            reducedPlayerList.add(reducedPlayer);
+        synchronized (playerViewList) {
+            synchronized (playerColor) {
+                for (View v : playerViewList) {
+                    reducedPlayer = new ReducedPlayer(v.getPlayer());
+                    reducedPlayer.setColor(playerColor.get(v).getColor());
+                    reducedPlayerList.add(reducedPlayer);
+                }
+            }
         }
 
         return reducedPlayerList;
     }
 
-    public synchronized void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        synchronized (lockLobby) {
+            this.numberOfPlayers = numberOfPlayers;
+        }
     }
 
-    public synchronized void deletePlayer(ServerClientHandler player) {
-        playerViewList.remove(playingConnection.get(player));
-        playingConnection.remove(player);
+    public void deletePlayer(ServerClientHandler player) {
+        synchronized (playerViewList) {
+            synchronized (playingConnection) {
+                playerViewList.remove(playingConnection.get(player));
+                playingConnection.remove(player);
+            }
+        }
     }
 
-    public synchronized void setCurrentPlayer(String player) {
-        //TODO
+    public void setCurrentPlayer(String player) {
+        synchronized (game) {
+            game.setCurrentPlayer(game.getPlayer(player));
+        }
     }
 
     public boolean isReloaded() {
-        return reloaded;
+        boolean ret;
+
+        synchronized (lockLobby) {
+            ret = reloaded;
+        }
+
+        return ret;
     }
 
     public Game getGame() {
@@ -110,14 +134,47 @@ public class Lobby {
         v.addObserver(controller);
         game.addObserver(v);
 
+        game.addPlayer(player);
+
         return true;
     }
 
-    public synchronized boolean canStart() {
-        return playerViewList.size() == numberOfPlayers;
+    public boolean canStart() {
+        int numOfPl;
+        int size;
+
+        synchronized (lockLobby) {
+            numOfPl = numberOfPlayers;
+        }
+
+        synchronized (playerViewList) {
+            size = playerViewList.size();
+        }
+
+        return size == numOfPl;
     }
 
-    public synchronized boolean isCurrentPlayerInGame(ServerClientHandler c) {
-        return game.getCurrentPlayer().nickName.equals(playerColor.get(playingConnection.get(c)).getNickname());
+    public boolean isCurrentPlayerInGame(ServerClientHandler c) {
+        boolean ret;
+
+        synchronized (game) {
+            synchronized (playingConnection) {
+                ret = game.getCurrentPlayer().nickName.equals(playingConnection.get(c).getPlayer());
+            }
+        }
+
+        return ret;
+    }
+
+    public String getColor(ServerClientHandler c) {
+        String color;
+
+        synchronized (playerColor) {
+            synchronized (playingConnection) {
+                color = playerColor.get(playingConnection.get(c)).getColor();
+            }
+        }
+
+        return color;
     }
 }

@@ -54,7 +54,7 @@ public enum God {
             case ZEUS:
                 return "ZEUS";
             default:
-                return null;
+                return "";
         }
     }
 

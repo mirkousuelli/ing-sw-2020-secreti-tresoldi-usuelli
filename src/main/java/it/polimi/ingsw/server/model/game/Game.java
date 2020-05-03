@@ -3,10 +3,11 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.states.*;
@@ -29,6 +30,7 @@ public class Game extends Observable<Answer> {
     private int currentPlayer;
     private int numPlayers;
     private ActionToPerform request;
+    private int starter;
 
     public Game() throws ParserConfigurationException, SAXException {
         /* @constructor
@@ -40,6 +42,16 @@ public class Game extends Observable<Answer> {
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
         this.state = new Start(this);
+
+        starter = -1;
+    }
+
+    public int getStarter() {
+        return starter;
+    }
+
+    public void setStarter(int starter) {
+        this.starter = starter;
     }
 
     public List<God> getChoosenGods() {
@@ -197,10 +209,22 @@ public class Game extends Observable<Answer> {
 
     public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
+        boolean availableGods = returnContent.isAvailableGods();
 
-        if (!returnContent.getAnswerType().equals(AnswerType.ERROR))
+        if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
+            if (returnContent.isChangeTurn()) {
+                state = new ChangeTurn(this);
+                ReturnContent rc = state.gameEngine();
+
+                notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));
+            }
+
+            if (availableGods)
+                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, choosenGods));
+
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
+        }
 
-        return  returnContent;
+        return returnContent;
     }
 }

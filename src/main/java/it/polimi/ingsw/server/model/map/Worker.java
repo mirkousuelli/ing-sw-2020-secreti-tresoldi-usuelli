@@ -10,8 +10,6 @@
 
 package it.polimi.ingsw.server.model.map;
 
-import it.polimi.ingsw.server.model.Player;
-
 public class Worker extends Pawn {
     /* @class
      * it represents the pawn 'worker' which can be moved to one cell distance from its current location (default),
@@ -87,7 +85,7 @@ public class Worker extends Pawn {
          */
 
         if ((prevBuild.getX() < 5 && prevBuild.getX() >= 0) && (prevBuild.getY() < 5 && prevBuild.getY() >= 0)) {
-            this.prevBuild = (Block) prevBuild;;
+            this.prevBuild = (Block) prevBuild;
         }
     }
 

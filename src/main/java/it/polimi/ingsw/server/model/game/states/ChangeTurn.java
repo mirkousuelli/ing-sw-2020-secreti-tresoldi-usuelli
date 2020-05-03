@@ -11,14 +11,11 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
-import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
 
 public class ChangeTurn implements GameState {
     /* @Class
@@ -41,7 +38,7 @@ public class ChangeTurn implements GameState {
          * it switches the player that must play
          */
 
-        int index = (game.getIndex(game.getCurrentPlayer()) + 1) % 3;
+        int index = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
 
         game.setCurrentPlayer(game.getPlayerList().get(index));
     }
@@ -80,7 +77,7 @@ public class ChangeTurn implements GameState {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
             changeCurrentPlayer();
             returnContent.setAnswerType(AnswerType.SUCCESS);
-            returnContent.setState(State.CHOOSE_WORKER);
+            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
         }
 
         return returnContent;

@@ -15,10 +15,6 @@ public class ReducedDeck {
 
     public ReducedDeck(){}
 
-    public List<God> getList() {
-        return reducedGodList;
-    }
-
     public void setList(List<God> list) {
         this.reducedGodList = list;
     }

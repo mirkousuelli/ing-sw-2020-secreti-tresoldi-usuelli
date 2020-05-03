@@ -18,7 +18,7 @@ public enum State {
          */
         switch (this) {
             case START:
-                return "start";
+                return "chooseDeck";
             case CHOOSE_CARD:
                 return "chooseCard";
             case CHOOSE_STARTER:
@@ -41,7 +41,7 @@ public enum State {
     }
 
     public static State parseString(String str) {
-        if (str.equalsIgnoreCase("start"))
+        if (str.equalsIgnoreCase("chooseDeck"))
             return START;
         if (str.equalsIgnoreCase("chooseCard"))
             return CHOOSE_CARD;

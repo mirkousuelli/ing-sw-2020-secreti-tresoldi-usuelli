@@ -5,14 +5,17 @@ import it.polimi.ingsw.server.model.map.Worker;
 public class ReducedWorker {
 
     private String owner;
+    private int id;
     private int x;
     private int y;
 
     public ReducedWorker(Worker worker, String player) {
         this.owner = player;
+        this.id = worker.getId();
         this.x = worker.getX();
         this.y = worker.getY();
     }
+
 
     public ReducedWorker() {}
 
@@ -40,4 +43,11 @@ public class ReducedWorker {
         this.y = y;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

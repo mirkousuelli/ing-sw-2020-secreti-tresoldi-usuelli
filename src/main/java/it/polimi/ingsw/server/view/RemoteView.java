@@ -17,7 +17,6 @@ public class RemoteView extends View {
         @Override
         public void update(Demand demand) {
             try {
-                logger.info(() -> "Received: " + demand.toString() + "\n");
                 processMessage(demand);
             } catch (Exception e) {
                 logger.log( Level.SEVERE, e.toString(), e);
@@ -26,7 +25,6 @@ public class RemoteView extends View {
     }
 
     private final ServerClientHandler serverClientHandler;
-    private final Logger logger = Logger.getLogger(RemoteView.class.getName());
 
     public RemoteView(String player, ServerClientHandler serverClientHandler){
         super(player);
@@ -36,6 +34,6 @@ public class RemoteView extends View {
 
     @Override
     protected void showAnswer(Answer answer) {
-        serverClientHandler.asyncSend(answer);
+        serverClientHandler.send(answer);
     }
 }

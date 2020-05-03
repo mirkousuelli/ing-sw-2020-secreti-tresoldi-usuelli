@@ -29,7 +29,7 @@ public class ReducedGame {
 
         currentPlayerIndex = loadedGame.getCurrentPlayer().getNickName();
         currentWorkerIndex = loadedGame.getCurrentPlayer().getWorkers().indexOf(loadedGame.getCurrentPlayer().getCurrentWorker());
-        lobbyId = lobby.getID();
+        lobbyId = lobby.getId();
         reducedBoard = new ReducedAnswerCell[5][5];
         reducedPlayerList = new ArrayList<>(lobby.getReducedPlayerList());
         reducedWorkerList = new ArrayList<>();

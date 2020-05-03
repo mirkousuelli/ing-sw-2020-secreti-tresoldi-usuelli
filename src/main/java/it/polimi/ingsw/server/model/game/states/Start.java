@@ -11,7 +11,8 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.payload.ReduceDemandChoice;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
@@ -19,7 +20,6 @@ import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Start implements GameState {
@@ -50,14 +50,24 @@ public class Start implements GameState {
         //set challenger
         Player currentPlayer = game.getPlayer(0);
         game.setCurrentPlayer(currentPlayer);
-        List<God> choosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
+        List<God> chosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
 
-        game.setChoosenGods(choosenGodList);
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.START);
+        returnContent.setPayload(new ReducedMessage("null"));
+        //validate gods
+        for (God g : chosenGodList) {
+            if (God.parseString(g.toString()) == null)
+                return returnContent;
+        }
+
+        game.setChoosenGods(chosenGodList);
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.CHOOSE_CARD);
-        returnContent.setPayload(new ReduceDemandChoice(currentPlayer.nickName));
-
+        returnContent.setPayload(new ReducedPlayer(null, null, null));
+        returnContent.setChangeTurn(true);
+        returnContent.setAvailableGods(true);
 
         return returnContent;
     }

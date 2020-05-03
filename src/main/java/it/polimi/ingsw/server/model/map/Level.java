@@ -25,7 +25,7 @@ public enum Level {
              */
 
             return this;
-        };
+        }
     },
 
     // level 1
@@ -47,7 +47,7 @@ public enum Level {
              */
 
             return this;
-        };
+        }
     };
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
@@ -58,7 +58,7 @@ public enum Level {
          */
 
         return values()[ordinal() + 1];
-    };
+    }
 
     public Level buildDown() {
         /* @function
@@ -86,7 +86,7 @@ public enum Level {
             case DOME:
                 return "4";
             default:
-                return null;
+                return "";
         }
     }
 
@@ -169,7 +169,7 @@ public enum Level {
             case DOME:
                 return "DOME";
             default:
-                return null;
+                return "";
         }
     }
 }

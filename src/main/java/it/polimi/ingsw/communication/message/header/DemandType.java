@@ -9,14 +9,15 @@ public enum DemandType {
     WAIT,
     START,
     CHOOSE_DECK,
+    AVAILABLE_GODS,
     CHOOSE_CARD,
+    CHOOSE_STARTER,
     PLACE_WORKERS,
     CHOOSE_WORKER,
     MOVE,
     BUILD,
     USE_POWER,
-    CONFIRM,
-    UNDO;
+    CHANGE_TURN;
 
     public static DemandType parseString(String str) {
         switch (str) {
@@ -32,8 +33,12 @@ public enum DemandType {
                 return START;
             case "chooseDeck":
                 return CHOOSE_DECK;
+            case "availableGods":
+                return AVAILABLE_GODS;
             case "chooseCard":
                 return CHOOSE_CARD;
+            case "chooseStarter":
+                return CHOOSE_STARTER;
             case "placeWorkers":
                 return PLACE_WORKERS;
             case "chooseWorker":
@@ -44,10 +49,8 @@ public enum DemandType {
                 return BUILD;
             case "usePower":
                 return USE_POWER;
-            case "confirm":
-                return CONFIRM;
-            case "undo":
-                return UNDO;
+            case "changeTurn":
+                return CHANGE_TURN;
             default:
                 return null;
         }
@@ -72,8 +75,12 @@ public enum DemandType {
                 return "start";
             case CHOOSE_DECK:
                 return "chooseDeck";
+            case AVAILABLE_GODS:
+                return "availableGods";
             case CHOOSE_CARD:
                 return "chooseCard";
+            case CHOOSE_STARTER:
+                return "chooseStarter";
             case PLACE_WORKERS:
                 return "placeWorkers";
             case CHOOSE_WORKER:
@@ -84,10 +91,8 @@ public enum DemandType {
                 return "build";
             case USE_POWER:
                 return "usePower";
-            case CONFIRM:
-                return "confirm";
-            case UNDO:
-                return "undo";
+            case CHANGE_TURN:
+                return "changeTurn";
             default:
                 return "";
         }

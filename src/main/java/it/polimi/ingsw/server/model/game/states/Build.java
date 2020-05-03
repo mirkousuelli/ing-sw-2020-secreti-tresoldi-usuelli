@@ -83,6 +83,7 @@ public class Build implements GameState {
                                 case DEFAULT:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
                                     returnContent.setState(State.CHANGE_TURN);
+                                    returnContent.setChangeTurn(true);
                                     chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
                                     changedCells.add(chosenCell);
                                     returnContent.setPayload(changedCells);
@@ -109,7 +110,6 @@ public class Build implements GameState {
 
         chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
         // it shows the possible cells where the player can build and then allows him to choose one
-        // System.out.println(possibleBuilds);
         game.getBoard().build(game.getCurrentPlayer(), chosenCell);
 
         // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
@@ -118,6 +118,7 @@ public class Build implements GameState {
 
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHANGE_TURN);
+            returnContent.setChangeTurn(true);
             chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
             changedCells.add(chosenCell);
             returnContent.setPayload(changedCells);
