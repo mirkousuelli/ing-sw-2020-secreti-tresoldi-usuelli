@@ -48,7 +48,7 @@ public class Client {
                 break;
 
             case 2:
-                clientView = new CLI(clientModel);
+                clientView = new CLI(clientModel); // da mettere GUI, adesso non c'è la struttura
                 break;
 
             default:
