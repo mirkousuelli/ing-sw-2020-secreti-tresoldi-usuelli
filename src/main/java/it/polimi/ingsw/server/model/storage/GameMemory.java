@@ -57,12 +57,6 @@ public class GameMemory {
         tr.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(path)));
     }
 
-    /*public static List<Player> readPlayers(String path){
-        List<Player> players;
-
-        for (int i = 0; i < )
-    }*/
-
     public static void save(Game game, String path) {
 
         try {
@@ -192,15 +186,7 @@ public class GameMemory {
             cellNode.item(k).getChildNodes().item(LEVEL).setTextContent(block.getLevel().getName());
             factory.setIgnoringElementContentWhitespace(false);
             GameMemory.write(doc, path);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | TransformerException | IOException | SAXException e) {
             e.printStackTrace();
         }
     }
