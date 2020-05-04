@@ -50,7 +50,7 @@ public class Victory implements GameState {
         //TODO
         ReturnContent returnContent = new ReturnContent();
 
-        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setAnswerType(AnswerType.VICTORY);
         returnContent.setState(State.START);
 
         // Start a new game (if the players want to)

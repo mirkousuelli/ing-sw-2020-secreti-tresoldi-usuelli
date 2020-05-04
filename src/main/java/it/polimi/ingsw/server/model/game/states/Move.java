@@ -16,6 +16,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
@@ -74,13 +75,20 @@ public class Move implements GameState {
         ReturnContent returnContent = new ReturnContent();
 
         Player currentPlayer = game.getCurrentPlayer();
-        List<Cell> specialMoves = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker());
+        List<Cell> specialMoves = new ArrayList<>();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = new Block(cell.getX(), cell.getY());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.MOVE);
 
+
+        List<Cell> specialMovesDef = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker().getLocation(), currentPlayer, Timing.DEFAULT);
+        if (specialMovesDef != null)
+            specialMoves.addAll(specialMovesDef);
+        List<Cell> specialMovesAdd = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker().getLocation(), currentPlayer, Timing.ADDITIONAL);
+        if (specialMovesAdd != null)
+            specialMoves.addAll(specialMovesAdd);
 
         for (Cell c: specialMoves) {
             if (c.getX() == cellToMoveTo.getX() && c.getY() == cellToMoveTo.getY()) {
@@ -91,10 +99,12 @@ public class Move implements GameState {
                                 case DEFAULT:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
                                     returnContent.setState(State.BUILD);
+                                    returnContent.setPayload(preparePayloadBuild(Timing.DEFAULT));
                                     break;
 
                                 case ADDITIONAL:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
+                                    returnContent.setPayload(preparePayloadBuild(Timing.ADDITIONAL));
                                     break;
 
                                 default:
@@ -102,7 +112,6 @@ public class Move implements GameState {
                             }
                         }
 
-                        returnContent.setPayload(preparePayloadBuild());
                         return returnContent;
                     }
                 }
@@ -117,22 +126,26 @@ public class Move implements GameState {
             if(isMoveCorrect(cellToMoveTo)) {
                 game.getBoard().move(currentPlayer, game.getBoard().getCell(cellToMoveTo.getX(), cellToMoveTo.getY()));
                 //if the worker is moved to a third level (from a second one), the player that moved wins
-                if (reachedThirdLevel(game))
+                if (reachedThirdLevel(game)) {
                     returnContent.setAnswerType(AnswerType.VICTORY);
+                    returnContent.setState(State.VICTORY);
+                }
                 else { //which means that no one won in this turn, the game switches to Build state
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.BUILD);
                 }
 
-                returnContent.setPayload(preparePayloadBuild());
+                returnContent.setPayload(preparePayloadBuild(Timing.DEFAULT));
+                ((List<ReducedAnswerCell>) returnContent.getPayload()).addAll(preparePayloadBuild(Timing.ADDITIONAL));
             }
         }
 
         return returnContent;
     }
 
-    private List<ReducedAnswerCell> preparePayloadBuild() {
+    private List<ReducedAnswerCell> preparePayloadBuild(Timing timing) {
         List<Cell> possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
+        List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         List<ReducedAnswerCell> reducedAround = new ArrayList<>();
 
         ReducedAnswerCell temp;
@@ -142,10 +155,30 @@ public class Move implements GameState {
             reducedAround.add(temp);
         }
 
-        temp = new ReducedAnswerCell(game.getCurrentPlayer().getCurrentWorker().getX(), game.getCurrentPlayer().getCurrentWorker().getY());
+        ReducedAnswerCell found;
+        for (Cell c : specialBuilds) {
+            found = null;
+            for (ReducedAnswerCell reducedCell : reducedAround) {
+                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
+                    found = reducedCell;
+                    break;
+                }
+            }
+            if (found == null) {
+                temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
+                temp.setAction(ReducedAction.USEPOWER);
+                reducedAround.add(temp);
+            }
+            else
+                found.setAction(ReducedAction.USEPOWER);
+        }
+
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
         temp.setAction(ReducedAction.DEFAULT);
-        temp.setLevel(ReducedLevel.parseInt(game.getCurrentPlayer().getCurrentWorker().getLevel().toInt()));
-        temp.setWorker(new ReducedWorker(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer().nickName));
+        reducedAround.add(temp);
+
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+        temp.setAction(ReducedAction.DEFAULT);
         reducedAround.add(temp);
 
         return reducedAround;

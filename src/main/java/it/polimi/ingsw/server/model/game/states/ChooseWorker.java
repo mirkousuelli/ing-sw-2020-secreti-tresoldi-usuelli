@@ -13,6 +13,8 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -96,7 +98,7 @@ public class ChooseWorker implements GameState {
 
     private List<ReducedAnswerCell> preparePayload() {
         List<Cell> possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
-        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation()));
+        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), Timing.DEFAULT));
         List<ReducedAnswerCell> reducedAround = new ArrayList<>();
 
         ReducedAnswerCell temp;
@@ -126,5 +128,4 @@ public class ChooseWorker implements GameState {
 
         return reducedAround;
     }
-    //TODO rewrite specialMoves
 }

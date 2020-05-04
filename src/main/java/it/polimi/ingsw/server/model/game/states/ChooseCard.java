@@ -35,7 +35,9 @@ public class ChooseCard implements GameState {
         for (God g : game.getChoosenGods()) {
             if (g.equals(chosenGod)) {
                 game.removeGod(g);
+                game.getDeck().fetchCard(g);
                 currentPlayer.setCard(game.getDeck().popCard(g));
+                System.out.println("Card: " + currentPlayer.getCard().getName());
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))

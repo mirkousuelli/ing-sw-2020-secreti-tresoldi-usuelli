@@ -23,10 +23,8 @@ public class ClientModel<S> implements Runnable {
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
-    private int currentWorker;
     private final ReducedPlayer player;
     private String lobbyId;
-
 
     private final Object lockAnswer;
     private Answer<S> answer;
@@ -154,7 +152,7 @@ public class ClientModel<S> implements Runnable {
             return;
         }
         synchronized (lockAnswer) {
-            if (answer.getHeader().equals(AnswerType.SUCCESS))
+            if (!answer.getHeader().equals(AnswerType.ERROR))
                 updateReduceObjects(answer);
         }
     }
@@ -175,7 +173,6 @@ public class ClientModel<S> implements Runnable {
                 opponents = reducedGame.getReducedPlayerList();
                 currentPlayer = reducedGame.getCurrentPlayerIndex();
                 workers = reducedGame.getReducedWorkerList();
-                currentWorker = reducedGame.getCurrentWorkerIndex();
 
                 for (ReducedPlayer o : opponents) {
                     deck.add(o.getGod());
@@ -230,21 +227,18 @@ public class ClientModel<S> implements Runnable {
                 player.setGod(rp.getGod());
                 break;
 
-            case PLACE_WORKERS:
-            case CHOOSE_WORKER:
-                List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
-                if (reducedAnswerCellList.isEmpty()) return;
-
-                for (ReducedAnswerCell c : reducedAnswerCellList) {
-                    reducedBoard[c.getX()][c.getY()].setWorker(c.getWorker());
-                    workers.add(c.getWorker());
-                }
-
-                break;
-
             case MOVE:
             case BUILD:
-            case USE_POWER: //TODO
+            case USE_POWER:
+            case PLACE_WORKERS:
+            case CHOOSE_WORKER:
+                //reset board
+                for (int i = 0; i < 5; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
+                    }
+                }
+
                 updateReducedBoard((List<ReducedAnswerCell>) answer.getPayload());
 
                 workers = new ArrayList<>();
@@ -366,10 +360,6 @@ public class ClientModel<S> implements Runnable {
 
     public synchronized List<ReducedWorker> getWorkers() {
         return new ArrayList<>(workers);
-    }
-
-    public synchronized int getCurrentWorker() {
-        return currentWorker;
     }
 
     public String getLobbyId() {

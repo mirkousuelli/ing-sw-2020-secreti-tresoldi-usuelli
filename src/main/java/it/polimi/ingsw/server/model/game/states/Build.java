@@ -11,6 +11,8 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
@@ -82,18 +84,16 @@ public class Build implements GameState {
                             switch (p.getTiming()) {
                                 case DEFAULT:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
-                                    returnContent.setState(State.CHANGE_TURN);
+                                    returnContent.setState(State.CHOOSE_WORKER);
                                     returnContent.setChangeTurn(true);
                                     chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
                                     changedCells.add(chosenCell);
-                                    returnContent.setPayload(changedCells);
                                     break;
 
                                 case ADDITIONAL:
                                     returnContent.setAnswerType(AnswerType.SUCCESS);
                                     chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
                                     changedCells.add(chosenCell);
-                                    returnContent.setPayload(changedCells);
                                     break;
 
                                 default:
@@ -101,7 +101,7 @@ public class Build implements GameState {
                             }
                         }
 
-                        return returnContent;
+                        break;
                     }
                 }
             }
@@ -109,22 +109,29 @@ public class Build implements GameState {
 
 
         chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
-        // it shows the possible cells where the player can build and then allows him to choose one
-        game.getBoard().build(game.getCurrentPlayer(), chosenCell);
 
         // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
         if (isBuildPossible(chosenCell)) {
             game.getBoard().build(game.getCurrentPlayer(), chosenCell);
 
             returnContent.setAnswerType(AnswerType.SUCCESS);
-            returnContent.setState(State.CHANGE_TURN);
+            returnContent.setState(State.CHOOSE_WORKER);
             returnContent.setChangeTurn(true);
             chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
             changedCells.add(chosenCell);
-            returnContent.setPayload(changedCells);
         }
         // if the player selects a cell where he cannot build, he has to build again
 
+        List<ReducedAnswerCell> ret = new ArrayList<>();
+        for (Cell c : changedCells)
+            ret.add(ReducedAnswerCell.prepareCell(c, game.getPlayerList()));
+
+        ReducedAnswerCell temp;
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+        temp.setAction(ReducedAction.DEFAULT);
+        ret.add(temp);
+
+        returnContent.setPayload(ret);
         return returnContent;
     }
 }

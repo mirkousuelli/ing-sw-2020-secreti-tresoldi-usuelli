@@ -36,7 +36,8 @@ public abstract class ActivePower<S> extends Power<S> {
         numberOfActionsRemaining = constraints.getNumberOfAdditional();
     }
 
-    private boolean preamble(Player currentPlayer, Cell cellToUse) {
+    public boolean preamble(Player currentPlayer, Cell cellToUse) {
+        workerToUse = null;
         Worker currentWorker = currentPlayer.getCurrentWorker();
 
         if (workerType.equals(WorkerType.DEFAULT))
@@ -68,10 +69,6 @@ public abstract class ActivePower<S> extends Power<S> {
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
-
-        if (timing.equals(Timing.DEFAULT)) {
-            //----------------------------------------------------
-        }
 
         if (constraints.isUnderItself())
             return workerToUse.getLocation().equals(cellToUse);

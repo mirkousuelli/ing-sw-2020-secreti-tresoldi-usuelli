@@ -122,6 +122,10 @@ public class Lobby {
         return game;
     }
 
+    public synchronized Controller getController() {
+        return controller;
+    }
+
     public synchronized boolean addPlayer(String player, ServerClientHandler serverClientHandler) {
         if (playingConnection.size() == numberOfPlayers) return false;
 

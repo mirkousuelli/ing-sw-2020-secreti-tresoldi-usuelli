@@ -11,10 +11,19 @@
 package it.polimi.ingsw.server.model.map;
 
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.ActivePower;
+import it.polimi.ingsw.server.model.cards.powers.BuildPower;
+import it.polimi.ingsw.server.model.cards.powers.MovePower;
+import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board implements Cloneable {
     /* @class
@@ -164,19 +173,63 @@ public class Board implements Cloneable {
         return null;
     }
 
-    public List<Cell> getSpecialMoves(Cell cell) {
+    public List<Cell> getSpecialMoves(Cell cell, Player player, Timing timing) {
         /* @function
          * returns all special moves that can be activated by some gods where
          * around cell are busy from other players' workers
          */
 
-        List<Cell> toReturn = getAround(cell);
+        List<Cell> around = getAround(cell);
+        List<Cell> toReturn = new ArrayList<>();
+        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.MOVE)).collect(Collectors.toList());
 
-        for (Cell around : getAround(cell)) {
-            // if it is busy or complete or higher than allowed
-            if (around.isFree()) {
-                // then remove it from the list
-                toReturn.remove(around);
+        for (Cell c : around) {
+            for (Power mp : activePowerList) {
+                if (((MovePower) mp).preamble(player, c)) {
+                    if (c.isFree()) {
+                        if (mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing))
+                            toReturn.add(c);
+                    }
+                    else if (!player.getWorkers().contains((Worker) (((Block) c).getPawn()))) {
+                        if (!mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing))
+                            toReturn.add(c);
+                    }
+                }
+            }
+        }
+
+        return toReturn;
+    }
+
+    public List<Cell> getSpecialBuilds(Cell cell, Player player, Timing timing) {
+        /* @function
+         * returns all special moves that can be activated by some gods where
+         * around cell are busy from other players' workers
+         */
+
+        List<Cell> around = getAround(cell);
+        List<Cell> toReturn = new ArrayList<>();
+        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).collect(Collectors.toList());
+
+        for (Cell c : around) {
+            for (Power bp : activePowerList) {
+                if (((BuildPower) bp).preamble(player, c)) {
+                    switch ((BlockType) bp.getAllowedAction()) {
+                        case DEFAULT:
+                            toReturn.add(c);
+                            break;
+
+                        case DOME:
+                            if (c.getLevel().equals(Level.TOP))
+                                toReturn.add(c);
+                            break;
+
+                        case NOT_DOME:
+                            if (!c.getLevel().equals(Level.TOP))
+                                toReturn.add(c);
+                            break;
+                    }
+                }
             }
         }
 
@@ -276,7 +329,16 @@ public class Board implements Cloneable {
          */
 
         // in this case, since no gods have consequence on it, it doesn't change
-        return getAround(cell);
+        List<Cell> toReturn = getAround(cell);
+
+        for (Cell c : getAround(cell)) {
+            if (!c.isFree())
+                toReturn.remove(c);
+            else if (c.getLevel().equals(Level.DOME))
+                toReturn.remove(c);
+        }
+
+        return toReturn;
     }
 
     public boolean move(Player player, Cell newCell) {

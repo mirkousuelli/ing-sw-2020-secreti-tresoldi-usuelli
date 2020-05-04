@@ -228,7 +228,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             }
 
                             LOGGER.info("Notifying...");
-                            notify(demand);
+                            synchronized (lobby.getController()) {
+                                notify(demand);
+                            }
                             LOGGER.info("Notified");
                         }
                     } catch (InterruptedException e){
