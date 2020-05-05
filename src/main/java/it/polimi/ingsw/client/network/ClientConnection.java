@@ -13,8 +13,6 @@ public interface ClientConnection<S> {
 
     void closeConnection() throws IOException;
 
-    boolean isActive();
-
     boolean isChanged();
 
     boolean hasAnswer();

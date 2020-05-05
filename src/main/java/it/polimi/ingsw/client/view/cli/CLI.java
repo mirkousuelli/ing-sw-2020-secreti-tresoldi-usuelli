@@ -4,9 +4,7 @@ import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.header.DemandType;
 
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +31,7 @@ public class CLI<S> extends ClientView<S> {
 
             case DEFEAT:
             case VICTORY:
-                out.printEnd(answer.getPayload().toString(), answer.getHeader().toString());
+                out.printEnd(answer.getHeader().toString());
                 if(clientModel.isYourTurn())
                     endGame();
                 return;
@@ -101,18 +99,9 @@ public class CLI<S> extends ClientView<S> {
     }
 
     @Override
-    public void run() {
-        setActive(true);
-        setChanged(false);
-
-        try {
-            setInitialRequest();
-            Thread read = asyncReadFromModel();
-            read.join();
-        } catch (InterruptedException | NoSuchElementException e) {
-            LOGGER.log(Level.SEVERE, "CLI closed", e);
-        } finally {
-            setActive(false);
-        }
+    protected void startThreads() throws InterruptedException {
+        setInitialRequest();
+        Thread read = asyncReadFromModel();
+        read.join();
     }
 }

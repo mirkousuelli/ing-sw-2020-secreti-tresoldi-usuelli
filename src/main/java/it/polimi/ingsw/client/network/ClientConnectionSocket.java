@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.network;
 
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.xml.FileXML;
@@ -10,18 +11,15 @@ import java.net.Socket;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable {
+public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements ClientConnection<S> {
     private final Socket socket;
     private final FileXML file;
 
     private ClientView<S> clientView;
-    private boolean isActive;
-    private boolean isChanged;
     private final List<Answer<S>> buffer;
 
     private static final Random random = new SecureRandom();
@@ -29,13 +27,11 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
+        super();
         socket = new Socket(ip, port);
         file = new FileXML(path, socket);
         this.clientView = clientView;
         buffer = new LinkedList<>();
-
-        setActive(false);
-        setChanged(false);
     }
 
     public ClientConnectionSocket(String ip, int port) throws IOException {
@@ -45,15 +41,6 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     @Override
     public void setClientView(ClientView<S> clientView) {
         this.clientView = clientView;
-    }
-
-    @Override
-    public synchronized boolean isActive() {
-        return isActive;
-    }
-
-    private synchronized void setActive(boolean active) {
-        isActive = active;
     }
 
     @Override
@@ -76,16 +63,6 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
         }
 
         return ret;
-    }
-
-    @Override
-    public synchronized boolean isChanged() {
-        return isChanged;
-    }
-
-    @Override
-    public synchronized void setChanged(boolean changed) {
-        isChanged = changed;
     }
 
     private Thread asyncReadFromSocket() {
@@ -197,23 +174,13 @@ public class ClientConnectionSocket<S> implements ClientConnection<S>, Runnable 
     }
 
     @Override
-    public void run() {
-        setActive(true);
-        setChanged(false);
-
-        try {
-            Thread read = asyncReadFromSocket();
-            Thread write = asyncWriteToSocket();
-            Thread consumer = consumerThread();
-            read.join();
-            write.join();
-            consumer.join();
-        } catch (InterruptedException | NoSuchElementException e) {
-            LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
-        } finally {
-            setActive(false);
-            closeConnection();
-        }
+    protected void startThreads() throws InterruptedException {
+        Thread read = asyncReadFromSocket();
+        Thread write = asyncWriteToSocket();
+        Thread consumer = consumerThread();
+        read.join();
+        write.join();
+        consumer.join();
     }
 
     @Override

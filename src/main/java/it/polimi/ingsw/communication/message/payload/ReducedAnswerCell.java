@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReducedAnswerCell extends ReducedDemandCell {
@@ -71,6 +72,37 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         }
 
         return temp;
+    }
+
+    public static List<ReducedAnswerCell> prepareList(ReducedAction reducedAction, List<Player> playerList, List<Cell> possibleAction, List<Cell> specialAction) {
+        List<ReducedAnswerCell> toReturn = new ArrayList<>();
+        ReducedAnswerCell temp;
+
+        for (Cell c : possibleAction) {
+            temp = ReducedAnswerCell.prepareCell(c, playerList);
+            temp.setAction(reducedAction);
+            toReturn.add(temp);
+        }
+
+        ReducedAnswerCell found;
+        for (Cell c : specialAction) {
+            found = null;
+            for (ReducedAnswerCell reducedCell : toReturn) {
+                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
+                    found = reducedCell;
+                    break;
+                }
+            }
+            if (found == null) {
+                temp = ReducedAnswerCell.prepareCell(c, playerList);
+                temp.setAction(ReducedAction.USEPOWER);
+                toReturn.add(temp);
+            }
+            else
+                found.setAction(ReducedAction.USEPOWER);
+        }
+
+        return toReturn;
     }
 
 }

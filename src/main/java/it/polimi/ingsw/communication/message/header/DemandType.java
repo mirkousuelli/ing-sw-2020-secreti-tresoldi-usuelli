@@ -17,7 +17,9 @@ public enum DemandType {
     MOVE,
     BUILD,
     USE_POWER,
-    CHANGE_TURN;
+    CHANGE_TURN,
+    VICTORY,
+    DEFEAT;
 
     public static DemandType parseString(String str) {
         switch (str) {
@@ -51,6 +53,10 @@ public enum DemandType {
                 return USE_POWER;
             case "changeTurn":
                 return CHANGE_TURN;
+            case "victory":
+                return VICTORY;
+            case "defeat":
+                return DEFEAT;
             default:
                 return null;
         }
@@ -93,6 +99,10 @@ public enum DemandType {
                 return "usePower";
             case CHANGE_TURN:
                 return "changeTurn";
+            case VICTORY:
+                return "victory";
+            case DEFEAT:
+                return "defeat";
             default:
                 return "";
         }

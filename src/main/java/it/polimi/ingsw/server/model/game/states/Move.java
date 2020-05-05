@@ -146,32 +146,8 @@ public class Move implements GameState {
     private List<ReducedAnswerCell> preparePayloadBuild(Timing timing) {
         List<Cell> possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
         List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
-        List<ReducedAnswerCell> reducedAround = new ArrayList<>();
-
+        List<ReducedAnswerCell> reducedAround = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
         ReducedAnswerCell temp;
-        for (Cell c : possibleBuilds) {
-            temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
-            temp.setAction(ReducedAction.BUILD);
-            reducedAround.add(temp);
-        }
-
-        ReducedAnswerCell found;
-        for (Cell c : specialBuilds) {
-            found = null;
-            for (ReducedAnswerCell reducedCell : reducedAround) {
-                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
-                    found = reducedCell;
-                    break;
-                }
-            }
-            if (found == null) {
-                temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
-                temp.setAction(ReducedAction.USEPOWER);
-                reducedAround.add(temp);
-            }
-            else
-                found.setAction(ReducedAction.USEPOWER);
-        }
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
         temp.setAction(ReducedAction.DEFAULT);
