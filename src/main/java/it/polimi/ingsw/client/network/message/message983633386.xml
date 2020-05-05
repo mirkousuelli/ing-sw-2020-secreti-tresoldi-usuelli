@@ -4,11 +4,18 @@
   <void property="header">
    <object class="java.lang.Enum" method="valueOf">
     <class>it.polimi.ingsw.communication.message.header.DemandType</class>
-    <string>DEFEAT</string>
+    <string>ASK_LOBBY</string>
    </object>
   </void>
   <void property="payload">
-   <string>1234</string>
+   <object class="it.polimi.ingsw.communication.message.payload.ReducedMessage">
+    <void property="color">
+     <string>null</string>
+    </void>
+    <void property="message">
+     <string>269112503</string>
+    </void>
+   </object>
   </void>
  </object>
 </java>

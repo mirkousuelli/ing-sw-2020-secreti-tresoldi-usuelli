@@ -1,45 +1,30 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class GamePanel extends JPanel implements SantoriniPanel {
-    private final String imgPath = "map.png";
-    private final Image img;
+public class GamePanel extends SantoriniPanel {
+    private static final String imgPath = "map.png";
+    private JPanel map;
+    private JButton[][] cellButton;
+    private final static int DIM = 5;
 
     public GamePanel() {
-        Dimension firstSize = new Dimension(SantoriniPanel.WIDTH, SantoriniPanel.HEIGHT);
-        int maxWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int maxHeight = maxWidth * firstSize.height / firstSize.width;
+        super(imgPath);
 
-        img = SantoriniPanel.getScaledImage(new ImageIcon(SantoriniPanel.BACKGROUND + imgPath),
-                maxWidth, maxHeight).getImage();
+        map = new JPanel(new GridLayout(DIM, DIM));
+        map.setOpaque(false);
+        map.setBorder(new EmptyBorder(10,100,22,20));
+        add(map);
 
-        setLayout(new GridBagLayout());
-        setPreferredSize(firstSize);
-        setSize(firstSize);
-        setOpaque(false);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-
-        super.paintComponent(g);
-
-        double scaleFactor = Math.min(1d, SantoriniPanel.getScaleFactorToFit(
-                new Dimension(img.getWidth(null), img.getHeight(null)), getSize()));
-
-        int scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
-        int scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
-
-        Image scaled = img.getScaledInstance(scaleWidth, scaleHeight, Image.SCALE_SMOOTH);
-
-        int width = getWidth() - 1;
-        int height = getHeight() - 1;
-
-        int x = (width - scaled.getWidth(this)) / 2;
-        int y = (height - scaled.getHeight(this)) / 2;
-
-        g.drawImage(scaled, x, y, this);
+        cellButton = new JButton[DIM][DIM];
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                cellButton[i][j] = new JButton("(" + i + ", " + j + ")");
+                cellButton[i][j].setPreferredSize(new Dimension(90,90));
+                map.add(cellButton[i][j]);
+            }
+        }
     }
 }

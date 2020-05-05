@@ -2,45 +2,45 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public interface SantoriniPanel {
-    String BACKGROUND = "img/background/";
-    int WIDTH = 1067;
-    int HEIGHT = 600;
+public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
+    private final String imgPath;
+    private final Image img;
 
-    static ImageIcon getScaledImage(ImageIcon srcImg, int w, int h) {
-        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = resizedImg.createGraphics();
+    public SantoriniPanel(String imgPath) {
+        this.imgPath = imgPath;
+        Dimension firstSize = new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
+        int maxWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        int maxHeight = maxWidth * firstSize.height / firstSize.width;
 
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(srcImg.getImage(), 0, 0, w, h, null);
-        g2.dispose();
+        img = BackgroundPanel.getScaledImage(new ImageIcon(BackgroundPanel.BACKGROUND + this.imgPath),
+                maxWidth, maxHeight).getImage();
 
-        return new ImageIcon(resizedImg);
+        setLayout(new GridBagLayout());
+        setPreferredSize(firstSize);
+        setSize(firstSize);
+        setOpaque(false);
     }
 
-    static double getScaleFactor(int iMasterSize, int iTargetSize) {
-        double dScale = 1;
+    @Override
+    protected void paintComponent(Graphics g) {
 
-        if (iMasterSize > iTargetSize)
-            dScale = (double) iTargetSize / (double) iMasterSize;
-        else
-            dScale = (double) iTargetSize / (double) iMasterSize;
+        super.paintComponent(g);
 
-        return dScale;
-    }
+        double scaleFactor = Math.min(1d, BackgroundPanel.getScaleFactorToFit(
+                new Dimension(img.getWidth(null), img.getHeight(null)), getSize()));
 
-    static double getScaleFactorToFit(Dimension original, Dimension toFit) {
-        double dScale = 1d;
+        int scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
+        int scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
 
-        if (original != null && toFit != null) {
-            double dScaleWidth = getScaleFactor(original.width, toFit.width);
-            double dScaleHeight = getScaleFactor(original.height, toFit.height);
+        Image scaled = img.getScaledInstance(scaleWidth, scaleHeight, Image.SCALE_SMOOTH);
 
-            dScale = Math.min(dScaleHeight, dScaleWidth);
-        }
+        int width = getWidth() - 1;
+        int height = getHeight() - 1;
 
-        return dScale;
+        int x = (width - scaled.getWidth(null)) / 2;
+        int y = (height - scaled.getHeight(null)) / 2;
+
+        g.drawImage(scaled, x, y, this);
     }
 }

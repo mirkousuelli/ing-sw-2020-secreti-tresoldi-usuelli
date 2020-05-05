@@ -1,19 +1,11 @@
 package it.polimi.ingsw.client.view.gui.frame;
 
-import it.polimi.ingsw.Santorini;
 import it.polimi.ingsw.client.view.gui.panels.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Objects;
 
 public class SantoriniFrame extends JFrame implements ActionListener {
     private final String TITLE = "Santorini";
@@ -36,7 +28,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         setTitle(TITLE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        setMinimumSize(new Dimension(SantoriniPanel.WIDTH, SantoriniPanel.HEIGHT));
+        setMinimumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
 
         button1 = new JButton("NEXT");
         button2 = new JButton("NEXT");

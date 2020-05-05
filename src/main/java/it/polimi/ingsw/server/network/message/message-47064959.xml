@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="14.0.1" class="java.beans.XMLDecoder">
+ <object class="it.polimi.ingsw.communication.message.Answer">
+  <void property="context">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>it.polimi.ingsw.communication.message.header.DemandType</class>
+    <string>CHOOSE_DECK</string>
+   </object>
+  </void>
+  <void property="header">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>it.polimi.ingsw.communication.message.header.AnswerType</class>
+    <string>SUCCESS</string>
+   </object>
+  </void>
+  <void property="payload">
+   <object class="java.util.ArrayList">
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>APOLLO</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>ARTEMIS</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>ATHENA</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>ATLAS</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>CHRONUS</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>DEMETER</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>HEPHAESTUS</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>HESTIA</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>MINOTAUR</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>PAN</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>PERSEPHONE</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>POSEIDON</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>PROMETHEUS</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>TRITON</string>
+     </object>
+    </void>
+    <void method="add">
+     <object class="java.lang.Enum" method="valueOf">
+      <class>it.polimi.ingsw.server.model.cards.gods.God</class>
+      <string>ZEUS</string>
+     </object>
+    </void>
+   </object>
+  </void>
+ </object>
+</java>
