@@ -36,7 +36,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         button4 = new JButton("NEXT");
         button5 = new JButton("NEXT");
         button6 = new JButton("NEXT");
-        button7 = new JButton("NEXT");
+        //button7 = new JButton("NEXT");
         button8 = new JButton("NEXT");
         button9 = new JButton("NEXT");
         button10 = new JButton("NEXT");
@@ -47,7 +47,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         button4.addActionListener(this);
         button5.addActionListener(this);
         button6.addActionListener(this);
-        button7.addActionListener(this);
+        //button7.addActionListener(this);
         button8.addActionListener(this);
         button9.addActionListener(this);
         button10.addActionListener(this);
@@ -72,7 +72,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         card6.add(button6);
 
         JPanel card7 = new GamePanel();
-        card7.add(button7);
+        //card7.add(button7);
 
         JPanel card8 = new EndPanel(EndPanel.DEFEAT);
         card8.add(button8);

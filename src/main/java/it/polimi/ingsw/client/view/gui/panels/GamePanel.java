@@ -13,6 +13,7 @@ public class GamePanel extends SantoriniPanel {
     public GamePanel() {
         super(imgPath);
 
+        setLayout(new BorderLayout());
         map = new JPanel(new GridLayout(DIM, DIM));
         map.setOpaque(false);
         map.setBorder(new EmptyBorder(10,100,22,20));

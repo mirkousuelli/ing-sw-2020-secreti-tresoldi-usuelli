@@ -2,6 +2,7 @@ package it.polimi.ingsw.communication.message.xml.network.serialization;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class SerializerXML {
     private final int EOF = -1;
@@ -10,6 +11,7 @@ public class SerializerXML {
     private FileInputStream fis;
     private BufferedInputStream bis;
     private OutputStream os;
+    //private OutputStream os;
     private final Socket sock;
 
     public SerializerXML(String pathFile, Socket sock) throws FileNotFoundException {
@@ -27,10 +29,15 @@ public class SerializerXML {
         try {
             do {
                 end = bis.read(myByteArray,0,myByteArray.length);
+                System.out.println("SERIALIZER Byte read: " + end);
                 if (end != this.EOF) {
                     try {
                         // send file
+                        //os = new DataOutputStream((sock.getOutputStream()));
                         os = sock.getOutputStream();
+                        //System.out.println("SERIALIZER length: " + myByteArray.length);
+                        //os.writeInt(myByteArray.length);
+                        //os.flush();
 
                         os.write(myByteArray,0,myByteArray.length);
                         os.flush();
@@ -42,6 +49,7 @@ public class SerializerXML {
             } while (end != this.EOF);
         }
         finally {
+            sock.shutdownInput();
             bis.close();
             fis.close();
         }
