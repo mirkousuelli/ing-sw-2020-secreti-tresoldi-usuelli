@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
 public enum WorkerPosition {
-    //Initial position a worker must have to activete the power
+    //Initial position a worker must have to activate the power
     GROUND, BOTTOM, MIDDLE, TOP, DEFAULT;
 
     public static WorkerPosition parseString(String str) {

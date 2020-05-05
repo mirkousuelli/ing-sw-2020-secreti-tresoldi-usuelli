@@ -32,7 +32,7 @@ public class ChooseCard implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_CARD);
 
-        for (God g : game.getChoosenGods()) {
+        for (God g : game.getChosenGods()) {
             if (g.equals(chosenGod)) {
                 game.removeGod(g);
                 game.getDeck().fetchCard(g);

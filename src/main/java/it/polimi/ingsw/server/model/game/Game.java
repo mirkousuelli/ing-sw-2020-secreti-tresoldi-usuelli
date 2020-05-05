@@ -24,7 +24,7 @@ public class Game extends Observable<Answer> {
      */
     private List<Player> players;
     private Deck deck;
-    private List<God> choosenGods;
+    private List<God> chosenGods;
     private Board board;
     private GameState state;
     private int currentPlayer;
@@ -37,7 +37,7 @@ public class Game extends Observable<Answer> {
          * it creates a new game, initialising its state to start
          */
         this.deck = new Deck();
-        this.choosenGods = new ArrayList<>();
+        this.chosenGods = new ArrayList<>();
         this.board = new Board();
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
@@ -54,20 +54,20 @@ public class Game extends Observable<Answer> {
         this.starter = starter;
     }
 
-    public List<God> getChoosenGods() {
-        return choosenGods;
+    public List<God> getChosenGods() {
+        return chosenGods;
     }
 
-    public void setChoosenGods(List<God> choosenGods) {
-        this.choosenGods = choosenGods;
+    public void setChosenGods(List<God> choosenGods) {
+        this.chosenGods = choosenGods;
     }
 
     public void removeGod(God god) {
-        choosenGods.remove(god);
+        chosenGods.remove(god);
     }
 
     public void addGod(God god) {
-        choosenGods.add(god);
+        chosenGods.add(god);
     }
 
     public ActionToPerform getRequest() {
@@ -220,7 +220,7 @@ public class Game extends Observable<Answer> {
             }
 
             if (availableGods)
-                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, choosenGods));
+                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, chosenGods));
 
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }

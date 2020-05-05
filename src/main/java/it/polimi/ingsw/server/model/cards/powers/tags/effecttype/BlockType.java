@@ -1,10 +1,10 @@
 package it.polimi.ingsw.server.model.cards.powers.tags.effecttype;
 
 public enum BlockType {
-    // Cosa posso costruire
-    DOME, // Posso costruire solo DOME
-    NOT_DOME, // Posso costruire tutto tranne DOME
-    DEFAULT; // Posso costruire tutto
+    // What I can build
+    DOME, // that means I can build only a dome
+    NOT_DOME, // that means I can build anything but a dome
+    DEFAULT; // that means I can build anything
 
     public static BlockType parseString(String str) {
         if (str.equalsIgnoreCase("DOME"))

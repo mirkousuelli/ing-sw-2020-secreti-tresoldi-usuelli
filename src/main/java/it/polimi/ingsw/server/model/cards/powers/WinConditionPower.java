@@ -21,9 +21,9 @@ public class WinConditionPower<S> extends Power<S> {
 
     public boolean usePower(Game game) {
         switch ((WinType) getAllowedAction()) {
-            case FIVETOWER:
+            case FIVE_TOWER:
                 return true;
-            case DOWNTOFROMTWO:
+            case DOWN_TO_FROM_TWO:
                 return game.getCurrentPlayer().getCurrentWorker().getPreviousLocation().getLevel().toInt() -
                        game.getCurrentPlayer().getCurrentWorker().getLocation().getLevel().toInt() >= 2;
             default:

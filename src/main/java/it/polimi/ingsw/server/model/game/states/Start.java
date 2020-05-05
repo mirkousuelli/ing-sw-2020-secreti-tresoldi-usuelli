@@ -61,7 +61,7 @@ public class Start implements GameState {
                 return returnContent;
         }
 
-        game.setChoosenGods(chosenGodList);
+        game.setChosenGods(chosenGodList);
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.CHOOSE_CARD);
