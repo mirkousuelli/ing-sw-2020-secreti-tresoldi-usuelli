@@ -1,56 +1,83 @@
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedDeck;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.ReturnContent;
+import it.polimi.ingsw.server.model.game.State;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StartTest {
 
-    //@Test
-    void correctSetUpTest() throws ParserConfigurationException, SAXException {
-        /*@function
-         * it checks whether all the action to initialise the game are made correctly
-         */
+    @Test
+    void correctSwitchToChooseCardTest() throws ParserConfigurationException, SAXException {
+
+        Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
-
-        Game game = new Game();
         game.addPlayer(p1);
         game.addPlayer(p2);
         game.addPlayer(p3);
 
-        assertTrue(game.getState() instanceof Start);
-        assertEquals(3, game.getNumPlayers());
+        List<God> chosenGods = new ArrayList<>();
+        chosenGods.add(God.APOLLO);
+        chosenGods.add(God.HESTIA);
+        chosenGods.add(God.ZEUS);
 
-        //game.setState(game.getState().gameEngine(game));
+        game.getDeck().fetchCards(chosenGods);
 
-        // check if the Challenger and the Starter are initialised properly
 
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.CHOOSE_CARD, returnContent.getState());
     }
 
-
-    //@Test
-    void switchToChooseWorkerTest() throws ParserConfigurationException, SAXException {
-        /*@function
-         * it checks that the state changes to ChooseWorker after all the actions are finished
-         */
+    @Test
+    void creationDeckTest() throws ParserConfigurationException, SAXException {
+        Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
-
-        Game game = new Game();
         game.addPlayer(p1);
         game.addPlayer(p2);
         game.addPlayer(p3);
 
-        // it checks the state before and after the actions to initialise the game
-        assertTrue(game.getState() instanceof Start);
-        //game.setState(game.getState().gameEngine(game));
-        assertTrue(game.getState() instanceof ChooseWorker); // the state is changed correctly
+        List<God> chosenGods = new ArrayList<>();
+        chosenGods.add(God.APOLLO);
+        chosenGods.add(God.HESTIA);
+        chosenGods.add(God.ZEUS);
+
+        game.getDeck().fetchCards(chosenGods);
+
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
+        ReturnContent returnContent = game.gameEngine();
+
+        // it checks that the operation is made successfully and then changes to ChooseCard state
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.CHOOSE_CARD, returnContent.getState());
+        assertEquals(God.APOLLO.toString(),game.getDeck().popCard(God.APOLLO).getName());
+        assertEquals(God.HESTIA.toString(),game.getDeck().popCard(God.HESTIA).getName());
+        assertEquals(God.ZEUS.toString(),game.getDeck().popCard(God.ZEUS).getName());
+
+        // if the god isn't in the deck it throws a NullPointerException
+        assertThrows(NullPointerException.class , () -> game.getDeck().popCard(God.ATLAS).getName());
+        assertThrows(NullPointerException.class , () -> game.getDeck().popCard(God.DEMETER).getName());
     }
 }

@@ -1,7 +1,12 @@
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -10,26 +15,27 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VictoryTest {
-
-    //@Test
-    void correctCleanUpTest() throws ParserConfigurationException, SAXException {
+    @Test
+    void startNewGameAfterVictoryTest() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that after a player enters the Victory state, the board is cleaned
+         *  it checks that after a player won, the state is set back to start
          */
+        Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
-
-        Game game = new Game();
         game.addPlayer(p1);
         game.addPlayer(p2);
         game.addPlayer(p3);
 
-        game.setState(State.VICTORY);
         game.setCurrentPlayer(p1);
-        assertNotNull(game.getBoard());
+        game.setState(State.VICTORY);
 
-        //    game.setState(game.getState().gameEngine(game)); //NullPointer because after the victory, gameEngine returns null for the moment
-        //    assertNull(game.getBoard());
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.START)));
+        ReturnContent returnContent = game.gameEngine();
+
+        // it checks that it correctly goes to the start
+        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType()); // the operation is made successfully
+        assertEquals(State.START, returnContent.getState());
     }
 }
