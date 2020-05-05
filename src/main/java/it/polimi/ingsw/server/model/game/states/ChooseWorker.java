@@ -71,8 +71,13 @@ public class ChooseWorker implements GameState {
 
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
-        if(cannotMoveAny())
-            returnContent.setAnswerType(AnswerType.DEFEAT); //TODO DEFEAT
+        if(cannotMoveAny()) {
+            returnContent.setAnswerType(AnswerType.DEFEAT);
+            int newCur = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
+            game.getPlayerList().remove(game.getCurrentPlayer());
+            game.setCurrentPlayer(game.getPlayer(newCur));
+            returnContent.setChangeTurn(true);
+        }
         else {
             for (Worker w : currentPlayer.getWorkers()) {
                 if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
@@ -99,32 +104,7 @@ public class ChooseWorker implements GameState {
     private List<ReducedAnswerCell> preparePayload() {
         List<Cell> possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
         List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), Timing.DEFAULT));
-        List<ReducedAnswerCell> reducedAround = new ArrayList<>();
-
-        ReducedAnswerCell temp;
-        for (Cell c : possibleMoves) {
-            temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
-            temp.setAction(ReducedAction.MOVE);
-            reducedAround.add(temp);
-        }
-
-        ReducedAnswerCell found;
-        for (Cell c : specialMoves) {
-            found = null;
-            for (ReducedAnswerCell reducedCell : reducedAround) {
-                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
-                    found = reducedCell;
-                    break;
-                }
-            }
-            if (found == null) {
-                temp = ReducedAnswerCell.prepareCell(c, game.getPlayerList());
-                temp.setAction(ReducedAction.USEPOWER);
-                reducedAround.add(temp);
-            }
-            else
-                found.setAction(ReducedAction.USEPOWER);
-        }
+        List<ReducedAnswerCell> reducedAround = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
         return reducedAround;
     }

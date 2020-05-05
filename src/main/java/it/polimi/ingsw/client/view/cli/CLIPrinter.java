@@ -270,8 +270,11 @@ public class CLIPrinter<S> {
         out.println("Done!");
     }
 
-    public void printEnd(String player, String context) {
-        out.println(player + context + "!");
+    public void printEnd(String context) {
+        if (clientModel.isYourTurn())
+            out.println("It is your " + context + "!");
+        else
+            out.println("It is" + clientModel.getCurrentPlayer() + context + "!");
     }
 
     public boolean printChanges(DemandType demandType) {

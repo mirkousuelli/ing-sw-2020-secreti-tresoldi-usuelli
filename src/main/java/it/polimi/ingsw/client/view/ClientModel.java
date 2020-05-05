@@ -10,11 +10,10 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientModel<S> implements Runnable {
+public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private final ClientConnection<S> clientConnection;
 
@@ -26,18 +25,13 @@ public class ClientModel<S> implements Runnable {
     private final ReducedPlayer player;
     private String lobbyId;
 
-    private final Object lockAnswer;
-    private Answer<S> answer;
-
-    private boolean isActive;
-    private boolean isChanged;
-
     private boolean isReloaded;
 
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
 
 
     public ClientModel(String playerName, ClientConnection<S> clientConnection) {
+        super();
         reducedBoard = new ReducedAnswerCell[5][5];
         deck = new ArrayList<>();
         workers = new ArrayList<>();
@@ -53,10 +47,6 @@ public class ClientModel<S> implements Runnable {
 
         this.clientConnection = clientConnection;
 
-        lockAnswer = new Object();
-
-        setActive(false);
-        setChanged(false);
         isReloaded = false;
     }
 
@@ -66,38 +56,6 @@ public class ClientModel<S> implements Runnable {
 
     public ReducedPlayer getPlayer() {
         return player;
-    }
-
-    public Answer<S> getAnswer() {
-        Answer<S> temp;
-
-        synchronized (lockAnswer) {
-            temp = answer;
-        }
-
-        return temp;
-    }
-
-    private void setAnswer(Answer<S> answer) {
-        synchronized (lockAnswer) {
-            this.answer = answer;
-        }
-    }
-
-    private synchronized boolean isActive() {
-        return isActive;
-    }
-
-    private synchronized void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public synchronized boolean isChanged() {
-        return isChanged;
-    }
-
-    public synchronized void setChanged(boolean isChanged) {
-        this.isChanged = isChanged;
     }
 
     private Thread asyncReadFromConnection() {
@@ -132,18 +90,9 @@ public class ClientModel<S> implements Runnable {
     }
 
     @Override
-    public void run() {
-        setActive(true);
-        setChanged(false);
-
-        try {
-            Thread read = asyncReadFromConnection();
-            read.join();
-        } catch (InterruptedException | NoSuchElementException e) {
-            LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
-        } finally {
-            setActive(false);
-        }
+    protected void startThreads() throws InterruptedException {
+        Thread read = asyncReadFromConnection();
+        read.join();
     }
 
     private void updateModel() {
@@ -232,6 +181,8 @@ public class ClientModel<S> implements Runnable {
             case USE_POWER:
             case PLACE_WORKERS:
             case CHOOSE_WORKER:
+            case VICTORY:
+            case DEFEAT:
                 //reset board
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {

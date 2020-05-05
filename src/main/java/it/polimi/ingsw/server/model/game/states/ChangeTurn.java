@@ -71,8 +71,10 @@ public class ChangeTurn implements GameState {
 
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        if(controlWinCondition() || onePlayerRemaining())
+        if(controlWinCondition() || onePlayerRemaining()) {
             returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setState(State.VICTORY);
+        }
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
             changeCurrentPlayer();
