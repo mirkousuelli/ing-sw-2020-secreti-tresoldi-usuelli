@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
@@ -34,7 +35,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     private boolean isActive;
 
-    public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws FileNotFoundException {
+    public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws IOException, ParserConfigurationException, SAXException {
         this.socket = socket;
         this.server = server;
         file = new FileXML(pathFile, socket);
@@ -74,7 +75,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         synchronized (file.lockSend) {
             try {
                 file.send(message);    // INCAPSULATO
-            } catch (IOException e) {
+            } catch (IOException | TransformerConfigurationException | SAXException e) {
                 LOGGER.log(Level.SEVERE, "Got an IOException", e);
             }
         }
@@ -104,7 +105,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         new Thread( () -> send(message) ).start();
     }
 
-    private Demand read() throws IOException {
+    private Demand read() throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException {
         Demand demand;
 
         synchronized (file.lockReceive) {
@@ -206,7 +207,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 }
                                 LOGGER.info("Consumed!");
                             }
-                        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException e) {
+                        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException | TransformerConfigurationException e) {
                             LOGGER.log(Level.SEVERE, e, () -> "Failed to receive!!" + e.getMessage());
                             setActive(false);
                         }
