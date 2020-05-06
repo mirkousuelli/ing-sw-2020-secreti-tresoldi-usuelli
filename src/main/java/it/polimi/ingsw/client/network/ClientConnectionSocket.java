@@ -40,7 +40,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
 
     @Override
     public void setClientView(ClientView<S> clientView) {
-        this.clientView = clientView;
+        synchronized (this) {
+            this.clientView = clientView;
+        }
     }
 
     @Override

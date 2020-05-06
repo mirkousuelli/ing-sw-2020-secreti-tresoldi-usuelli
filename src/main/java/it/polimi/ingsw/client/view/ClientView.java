@@ -44,10 +44,14 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     protected void setInitialRequest() {
+        setFree(false);
+
         synchronized (this) {
             setDemand(new Demand<S>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
             setChanged(true);
         }
+
+        setFree(true);
 
         synchronized (lockDemand) {
             lockDemand.notifyAll();

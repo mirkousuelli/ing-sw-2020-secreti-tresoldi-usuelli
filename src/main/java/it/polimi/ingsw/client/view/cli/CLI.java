@@ -20,10 +20,11 @@ public class CLI<S> extends ClientView<S> {
         in = new CLIScanner<>(System.in, out, clientModel);
     }
 
-    private synchronized void update() {
+    private void update() {
         boolean isYourTurn = false;
+        Answer<S> answerTemp = getAnswer();
 
-        switch (answer.getHeader()) {
+        switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
                 isYourTurn = true;
@@ -31,7 +32,7 @@ public class CLI<S> extends ClientView<S> {
 
             case DEFEAT:
             case VICTORY:
-                out.printEnd(answer.getHeader().toString());
+                out.printEnd(answerTemp.getHeader().toString());
                 if(clientModel.isYourTurn())
                     endGame();
                 return;
@@ -39,25 +40,25 @@ public class CLI<S> extends ClientView<S> {
             case SUCCESS:
                 out.printSuccess();
                 synchronized (clientModel) {
-                    isYourTurn = out.printChanges(answer.getContext());
+                    isYourTurn = out.printChanges(answerTemp.getContext());
                 }
                 break;
         }
 
         if (isYourTurn)
-            startUI();
+            startUI(answerTemp);
 
+        setFree(true);
         synchronized (lockFree) {
-            setFree(true);
             lockFree.notifyAll();
         }
     }
 
-    private synchronized void startUI() {
+    private void startUI(Answer<S> answerTemp) {
         Demand<S> demand;
 
         synchronized (clientModel) {
-            demand = in.requestInput(answer.getContext());
+            demand = in.requestInput(answerTemp.getContext());
         }
 
         setDemand(demand);

@@ -50,12 +50,18 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isReloaded = false;
     }
 
-    public String getCurrentPlayer() {
+    public synchronized String getCurrentPlayer() {
         return currentPlayer;
     }
 
     public ReducedPlayer getPlayer() {
-        return player;
+        ReducedPlayer ret;
+
+        synchronized (player) {
+            ret = player;
+        }
+
+        return ret;
     }
 
     private Thread asyncReadFromConnection() {
@@ -223,11 +229,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
        return player.getNickname().equals(currentPlayer);
     }
 
-    public ReducedAnswerCell[][] getReducedBoard() {
+    public synchronized ReducedAnswerCell[][] getReducedBoard() {
         return reducedBoard;
     }
 
-    public ReducedAnswerCell getReducedCell(String cellString) {
+    public synchronized ReducedAnswerCell getReducedCell(String cellString) {
         List<Integer> coord = stringToInt(cellString);
         int x = coord.get(0);
         int y = coord.get(1);
@@ -235,7 +241,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
-    public boolean checkCell(int x, int y) {
+    public synchronized boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
     }
 
@@ -313,11 +319,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return new ArrayList<>(workers);
     }
 
-    public String getLobbyId() {
+    public synchronized String getLobbyId() {
         return lobbyId;
     }
 
-    private List<Integer> stringToInt(String string) {
+    private synchronized List<Integer> stringToInt(String string) {
         if (string.length() != 3) return new ArrayList<>();
 
         List<Integer> ret = new ArrayList<>();

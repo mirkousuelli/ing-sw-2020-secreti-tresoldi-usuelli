@@ -136,7 +136,6 @@ public class Move implements GameState {
                 }
 
                 returnContent.setPayload(preparePayloadBuild(Timing.DEFAULT));
-                ((List<ReducedAnswerCell>) returnContent.getPayload()).addAll(preparePayloadBuild(Timing.ADDITIONAL));
             }
         }
 
@@ -147,15 +146,26 @@ public class Move implements GameState {
         List<Cell> possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
         List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         List<ReducedAnswerCell> reducedAround = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
+        List<ReducedAnswerCell> tempList = new ArrayList<>();
         ReducedAnswerCell temp;
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
         temp.setAction(ReducedAction.DEFAULT);
-        reducedAround.add(temp);
+        tempList.add(temp);
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
         temp.setAction(ReducedAction.DEFAULT);
-        reducedAround.add(temp);
+        tempList.add(temp);
+
+
+        for (ReducedAnswerCell rc : reducedAround) {
+            for (ReducedAnswerCell c : tempList) {
+                if (rc.getX() != c.getX() || rc.getY() != c.getY()) {
+                    reducedAround.add(temp);
+                }
+            }
+        }
+
 
         return reducedAround;
     }
