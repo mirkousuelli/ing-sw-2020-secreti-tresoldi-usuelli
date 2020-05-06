@@ -16,7 +16,6 @@ public class ReducedWorker {
         this.y = worker.getY();
     }
 
-
     public ReducedWorker() {}
 
     public String getOwner() {

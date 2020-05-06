@@ -56,12 +56,16 @@ public class ServerConnectionSocket implements ServerConnection {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
+                handler = new ServerClientHandlerSocket(socket, this, PATH + "-franco_server.xml");
                 executor.submit(handler);
             }
             catch(IOException e) {
                 LOGGER.log(Level.SEVERE, "Got an IOException, serverSocket closed", e);
                 break;//In case the serverSocket gets closed
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
             }
         }
 

@@ -15,9 +15,9 @@ public class ReducedDeck {
 
     public ReducedDeck(){}
 
-    public void setList(List<God> list) {
+    /*public void setList(List<God> list) {
         this.reducedGodList = list;
-    }
+    }*/
 
     public God getReducedGod(int index) {
         if (index < 0 || index >= reducedGodList.size()) return null;

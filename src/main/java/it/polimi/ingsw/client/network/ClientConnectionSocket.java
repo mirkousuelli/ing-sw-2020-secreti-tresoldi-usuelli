@@ -5,7 +5,9 @@ import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.xml.FileXML;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.SecureRandom;
@@ -23,10 +25,10 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
     private final List<Answer<S>> buffer;
 
     private static final Random random = new SecureRandom();
-    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
+    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message-franco_client.xml";
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
-    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
+    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException, ParserConfigurationException, SAXException {
         super();
         socket = new Socket(ip, port);
         file = new FileXML(path, socket);
@@ -34,7 +36,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
         buffer = new LinkedList<>();
     }
 
-    public ClientConnectionSocket(String ip, int port) throws IOException {
+    public ClientConnectionSocket(String ip, int port) throws IOException, ParserConfigurationException, SAXException {
         this(ip, port, null);
     }
 
