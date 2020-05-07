@@ -80,6 +80,8 @@ public class ChangeTurn implements GameState {
             changeCurrentPlayer();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+
+            game.getCurrentPlayer().removeMalus();
         }
 
         return returnContent;

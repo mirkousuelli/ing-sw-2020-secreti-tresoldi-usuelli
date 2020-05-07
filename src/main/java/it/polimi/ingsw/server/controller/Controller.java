@@ -23,9 +23,11 @@ public class Controller implements Observer<ActionToPerformView> {
             return;
         }
 
-        if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString())) {
-            actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReducedMessage("Not permitted")));
-            return;
+        if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER)) {
+            if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString())) {
+                actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReducedMessage("Not permitted")));
+                return;
+            }
         }
 
         model.setRequest(actionToPerformView);

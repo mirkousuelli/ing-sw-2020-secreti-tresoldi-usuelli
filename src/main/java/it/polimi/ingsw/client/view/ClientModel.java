@@ -117,7 +117,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CONNECT:
             case ASK_LOBBY:
             case WAIT:
-                //TODO only print?
                 break;
 
             case RELOAD:
@@ -185,18 +184,22 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case MOVE:
             case BUILD:
             case USE_POWER:
+            case ASK_ADDITIONAL_POWER:
             case PLACE_WORKERS:
             case CHOOSE_WORKER:
             case VICTORY:
             case DEFEAT:
+                List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
+                if (reducedAnswerCellList.isEmpty()) break;
+
                 //reset board
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
-                        reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
+                        reducedBoard[i][j].resetAction();
                     }
                 }
 
-                updateReducedBoard((List<ReducedAnswerCell>) answer.getPayload());
+                updateReducedBoard(reducedAnswerCellList);
 
                 workers = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
@@ -235,6 +238,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     public synchronized ReducedAnswerCell getReducedCell(String cellString) {
         List<Integer> coord = stringToInt(cellString);
+
+        if (coord.isEmpty()) return null;
+
         int x = coord.get(0);
         int y = coord.get(1);
 
@@ -275,36 +281,45 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     public synchronized boolean evalToRepeat(String string) {
-        List<Integer> coord = stringToInt(string);
+        String[] input = string.split(" ");
+        if (input.length > 2) return true;
+
+        List<Integer> coord = stringToInt(input[1]);
         int x = coord.get(0);
         int y = coord.get(1);
 
         if (checkCell(x, y)) return true;
 
-        switch (reducedBoard[x][y].getAction()) {
-            case BUILD:
-            case MOVE:
-                return !reducedBoard[x][y].isFree();
+        for (ReducedAction ra : reducedBoard[x][y].getActionList()) {
+            if (input[0].equals(ra.getName())) {
+                switch (ra) {
+                    case BUILD:
+                    case MOVE:
+                        return !reducedBoard[x][y].isFree();
 
-            case DEFAULT:
-                return true;
+                    case DEFAULT:
+                        return true;
 
-            case USEPOWER:
-                return false;
+                    case USEPOWER:
+                        return false;
 
-            default:
-                throw  new NotAValidInputRunTimeException("Not a valid turn");
+                    default:
+                        throw new NotAValidInputRunTimeException("Not a valid turn");
+                }
+            }
         }
+
+        return true;
     }
 
     public synchronized boolean evalToUsePower(String string) {
-        List<Integer> coord = stringToInt(string);
+        String[] input = string.split(" ");
+
+        List<Integer> coord = stringToInt(input[1]);
         int x = coord.get(0);
         int y = coord.get(1);
 
-        if (checkCell(x, y)) return false;
-
-        return reducedBoard[x][y].getAction().equals(ReducedAction.USEPOWER);
+        return reducedBoard[x][y].getActionList().contains(ReducedAction.USEPOWER) && ReducedAction.USEPOWER.getName().equals(input[0]);
     }
 
     public synchronized List<God> getDeck() {

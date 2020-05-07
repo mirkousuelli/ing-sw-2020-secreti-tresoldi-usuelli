@@ -56,7 +56,7 @@ public class ServerConnectionSocket implements ServerConnection {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this, PATH + "-franco_server.xml");
+                handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
                 executor.submit(handler);
             }
             catch(IOException e) {

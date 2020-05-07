@@ -3,8 +3,6 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
@@ -17,6 +15,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game extends Observable<Answer> {
     /* @class
@@ -27,6 +26,7 @@ public class Game extends Observable<Answer> {
     private List<God> chosenGods;
     private Board board;
     private GameState state;
+    private State prevState;
     private int currentPlayer;
     private int numPlayers;
     private ActionToPerform request;
@@ -42,6 +42,7 @@ public class Game extends Observable<Answer> {
         this.currentPlayer = 0;
         this.players = new ArrayList<>();
         this.state = new Start(this);
+        prevState = null;
 
         starter = -1;
     }
@@ -173,7 +174,13 @@ public class Game extends Observable<Answer> {
         this.state = state;
     }
 
+    public State getPrevState() {
+        return prevState;
+    }
+
     public void setState(State state) {
+        prevState = State.parseString(this.state.getName());
+
         switch (state) {
             case START:
                 this.state = new Start(this);
@@ -196,6 +203,9 @@ public class Game extends Observable<Answer> {
             case BUILD:
                 this.state = new Build(this);
                 break;
+            case ADDITIONAL_POWER:
+                this.state = new AdditionalPower(this);
+                break;
             case CHANGE_TURN:
                 this.state = new ChangeTurn(this);
                 break;
@@ -205,6 +215,10 @@ public class Game extends Observable<Answer> {
             default:
                 break;
         }
+    }
+
+    public List<Player> getOpponents() {
+        return players.stream().filter(p -> !getCurrentPlayer().equals(p)).collect(Collectors.toList());
     }
 
     public ReturnContent gameEngine() {

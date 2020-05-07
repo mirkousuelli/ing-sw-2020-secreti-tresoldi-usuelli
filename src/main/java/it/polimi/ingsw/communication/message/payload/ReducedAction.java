@@ -1,7 +1,5 @@
 package it.polimi.ingsw.communication.message.payload;
 
-import it.polimi.ingsw.server.model.game.State;
-
 public enum ReducedAction {
     /* @enum
      * it standardize possible actions for a better reading.

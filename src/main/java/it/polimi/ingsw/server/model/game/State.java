@@ -8,6 +8,7 @@ public enum State {
     CHOOSE_WORKER,
     MOVE,
     BUILD,
+    ADDITIONAL_POWER,
     CHANGE_TURN,
     VICTORY;
 
@@ -31,6 +32,8 @@ public enum State {
                 return "move";
             case BUILD:
                 return "build";
+            case ADDITIONAL_POWER:
+                return "askAdditionalPower";
             case CHANGE_TURN:
                 return "changeTurn";
             case VICTORY:
@@ -53,6 +56,8 @@ public enum State {
             return MOVE;
         else if (str.equalsIgnoreCase("build"))
             return BUILD;
+        else if (str.equalsIgnoreCase("askAdditionalPower"))
+            return ADDITIONAL_POWER;
         else if (str.equalsIgnoreCase("changeTurn"))
             return CHANGE_TURN;
         else if (str.equalsIgnoreCase("victory"))

@@ -11,7 +11,7 @@ import java.util.List;
 public class ReducedAnswerCell extends ReducedDemandCell {
 
     private ReducedLevel level;
-    private ReducedAction action;
+    private List<ReducedAction> actionList;
     private ReducedWorker worker;
 
     public ReducedAnswerCell(int x, int y) {
@@ -21,18 +21,36 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
         super(x, y);
         level = ReducedLevel.GROUND;
-        action = ReducedAction.DEFAULT;
+        actionList = new ArrayList<>();
+        actionList.add(ReducedAction.DEFAULT);
         this.worker = worker;
     }
 
     public ReducedAnswerCell() {}
 
+    public List<ReducedAction> getActionList() {
+        return actionList;
+    }
+
+    public void setActionList(List<ReducedAction> actionList) {
+        this.actionList = actionList;
+    }
+
+    public void replaceDefaultAction(ReducedAction action) {
+        actionList = new ArrayList<>();
+        actionList.add(action);
+    }
+
+    public void resetAction() {
+        replaceDefaultAction(ReducedAction.DEFAULT);
+    }
+
     public ReducedLevel getLevel() {
         return level;
     }
 
-    public ReducedAction getAction() {
-        return action;
+    public ReducedAction getAction(int i) {
+        return actionList.get(i);
     }
 
     public ReducedWorker getWorker() {
@@ -48,7 +66,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     }
 
     public void setAction(ReducedAction action) {
-        this.action = action;
+        actionList.add(action);
     }
 
     public void setWorker(ReducedWorker worker) {
@@ -80,7 +98,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
 
         for (Cell c : possibleAction) {
             temp = ReducedAnswerCell.prepareCell(c, playerList);
-            temp.setAction(reducedAction);
+            temp.replaceDefaultAction(reducedAction);
             toReturn.add(temp);
         }
 
@@ -95,11 +113,11 @@ public class ReducedAnswerCell extends ReducedDemandCell {
             }
             if (found == null) {
                 temp = ReducedAnswerCell.prepareCell(c, playerList);
-                temp.setAction(ReducedAction.USEPOWER);
+                temp.replaceDefaultAction(ReducedAction.USEPOWER);
                 toReturn.add(temp);
             }
-            else
-                found.setAction(ReducedAction.USEPOWER);
+            else if (!found.getActionList().contains(ReducedAction.DEFAULT))
+                found.getActionList().add(ReducedAction.USEPOWER);
         }
 
         return toReturn;

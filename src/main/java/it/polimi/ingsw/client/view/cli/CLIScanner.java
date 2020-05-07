@@ -21,10 +21,12 @@ public class CLIScanner<S> {
     private static final String ASKLOBBY = "Insert a lobby's id:\n";
     private static final String CHOOSEDECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
     private static final String CHOOSECARD = "Insert the name of the chosen god [godName]\n";
-    private static final String CHOOSESTARTER = "Insert the name of the starter: [playerName]";
+    private static final String CHOOSESTARTER = "Insert the name of the starter: [playerName]\n";
     private static final String PLACEWORKERS = "Insert the initial locations of your worker: [x,y]\n";
     private static final String CHOOSEWORKERS = "Select a worker: [x,y]\n";
-    private static final String ACTION = "Make your action [x,y]\n";
+    private static final String ACTION = "Make your action [action x,y]\n";
+    private static final String ADDITIONALPOWER  = "Do you want to use the additional power of your god? [y/n]\n";
+    private static final String ADDITIONALPOWERREQ  = "Select a cell: [action x,y]\n";
 
     private final Map<DemandType, String> messageMap;
     private final Map<DemandType, Function<String, Boolean>> toRepeatMap;
@@ -57,6 +59,7 @@ public class CLIScanner<S> {
         messageMap.put(DemandType.MOVE, ACTION);
         messageMap.put(DemandType.BUILD, ACTION);
         messageMap.put(DemandType.USE_POWER, ACTION);
+        messageMap.put(DemandType.ASK_ADDITIONAL_POWER, ADDITIONALPOWER);
 
         toRepeatMap.put(DemandType.CREATE_GAME, index -> Integer.parseInt(index) < 2 || Integer.parseInt(index) > 3);
         toRepeatMap.put(DemandType.CHOOSE_DECK, clientModel::checkGod);
@@ -71,6 +74,8 @@ public class CLIScanner<S> {
         indexMap.put(DemandType.CHOOSE_DECK, index -> index < clientModel.getOpponents().size());
         indexMap.put(DemandType.PLACE_WORKERS, index -> index < 1);
 
+        toUsePowerMap.put(DemandType.MOVE, clientModel::evalToUsePower);
+        toUsePowerMap.put(DemandType.BUILD, clientModel::evalToUsePower);
         toUsePowerMap.put(DemandType.USE_POWER, clientModel::evalToUsePower);
 
         payloadMap.put(DemandType.CONNECT, this::parseString);
@@ -81,9 +86,9 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.CHOOSE_STARTER, this::parseString);
         payloadMap.put(DemandType.PLACE_WORKERS, this::parseStringReducedDemandCell);
         payloadMap.put(DemandType.CHOOSE_WORKER, this::parseStringReducedDemandCell);
-        payloadMap.put(DemandType.MOVE, this::parseStringReducedDemandCell);
-        payloadMap.put(DemandType.BUILD, this::parseStringReducedDemandCell);
-        payloadMap.put(DemandType.USE_POWER, this::parseStringReducedDemandCell);
+        payloadMap.put(DemandType.MOVE, this::parseCommand);
+        payloadMap.put(DemandType.BUILD, this::parseCommand);
+        payloadMap.put(DemandType.USE_POWER, this::parseCommand);
     }
 
 
@@ -95,7 +100,17 @@ public class CLIScanner<S> {
         int x = string.charAt(0) - 48;
         int y = string.charAt(2) - 48;
 
+        if(clientModel.checkCell(x, y)) return null;
+
         return (S) (new ReducedDemandCell(x, y));
+    }
+
+    private S parseCommand(String string) {
+        String[] input = string.split(" ");
+
+        if (input.length != 2) return null;
+
+        return parseStringReducedDemandCell(input[1]);
     }
 
     private S parseStringGod(String string) {
@@ -109,7 +124,7 @@ public class CLIScanner<S> {
         int i = 0;
         String value;
         List<S> payloadList = new ArrayList<>();
-        S payload = null;
+        S payload;
 
         Function <String, Boolean> toRepeatFunction;
         Function <Integer, Boolean> indexFunction;
@@ -120,6 +135,7 @@ public class CLIScanner<S> {
             toRepeat = false;
             toUsePower = false;
             incrementIndex = false;
+            payload = null;
 
             out.printString(messageMap.get(demandType));
             value = in.nextLine();
@@ -127,6 +143,19 @@ public class CLIScanner<S> {
             toRepeatFunction = toRepeatMap.get(demandType);
             if (toRepeatFunction != null)
                 toRepeat = toRepeatFunction.apply(value);
+
+            if (demandType.equals(DemandType.ASK_ADDITIONAL_POWER)) {
+                if (value.equals("y")) {
+                    out.printString(ADDITIONALPOWERREQ);
+                    value = in.nextLine();
+                    payload = parseCommand(value);
+                }
+                else if (value.equals("n")) {
+                    payload = (S) new ReducedDemandCell(-1, -1);
+                }
+                else
+                    toRepeat = true;
+            }
 
             if (toRepeat)
                 out.printError();
@@ -141,12 +170,16 @@ public class CLIScanner<S> {
                     payloadList.add(payload);
                 }
 
-                indexFunction = indexMap.get(demandType);
-                if (indexFunction != null)
-                    incrementIndex = indexMap.get(demandType).apply(i);
+                if (payload == null)
+                    toRepeat = true;
+                else {
+                    indexFunction = indexMap.get(demandType);
+                    if (indexFunction != null)
+                        incrementIndex = indexMap.get(demandType).apply(i);
 
-                if (incrementIndex)
-                    i++;
+                    if (incrementIndex)
+                        i++;
+                }
             }
         } while (toRepeat || incrementIndex);
 

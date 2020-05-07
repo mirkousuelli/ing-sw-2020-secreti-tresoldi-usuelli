@@ -4,6 +4,10 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.MalusPower;
+import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -37,7 +41,6 @@ public class ChooseCard implements GameState {
                 game.removeGod(g);
                 game.getDeck().fetchCard(g);
                 currentPlayer.setCard(game.getDeck().popCard(g));
-                System.out.println("Card: " + currentPlayer.getCard().getName());
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))
@@ -46,6 +49,12 @@ public class ChooseCard implements GameState {
                     returnContent.setChangeTurn(true);
 
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), g));
+
+
+                Power p = game.getCurrentPlayer().getCard().getPower(0);
+                if (p.getEffect().equals(Effect.MALUS) && p.getTiming().equals(Timing.START_TURN)) {
+                    ((MalusPower) p).usePower(game.getOpponents());
+                }
 
                 break;
             }

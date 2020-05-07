@@ -159,10 +159,6 @@ public class Block implements Cell {
         return this.getLevel() == Level.DOME;
     }
 
-    public boolean isPerimCell() {
-        return this.getX() == 0 || this.getX() == 4 || this.getY() == 0 || this.getY() == 4;
-    }
-
     @Override
     public void clean() {
         /* @function

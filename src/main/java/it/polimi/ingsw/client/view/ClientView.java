@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
@@ -33,10 +32,6 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         synchronized (lockFree) {
             isFree = free;
         }
-    }
-
-    protected synchronized void setAnswer(Answer<S> answer) {
-        this.answer = answer;
     }
 
     protected void endGame() {

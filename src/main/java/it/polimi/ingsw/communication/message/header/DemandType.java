@@ -17,6 +17,7 @@ public enum DemandType {
     MOVE,
     BUILD,
     USE_POWER,
+    ASK_ADDITIONAL_POWER,
     CHANGE_TURN,
     VICTORY,
     DEFEAT;
@@ -51,6 +52,8 @@ public enum DemandType {
                 return BUILD;
             case "usePower":
                 return USE_POWER;
+            case "askAdditionalPower":
+                return ASK_ADDITIONAL_POWER;
             case "changeTurn":
                 return CHANGE_TURN;
             case "victory":
@@ -97,6 +100,8 @@ public enum DemandType {
                 return "build";
             case USE_POWER:
                 return "usePower";
+            case ASK_ADDITIONAL_POWER:
+                return "askAdditionalPower";
             case CHANGE_TURN:
                 return "changeTurn";
             case VICTORY:

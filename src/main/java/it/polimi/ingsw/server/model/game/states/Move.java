@@ -11,6 +11,7 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
@@ -19,27 +20,26 @@ import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.map.Level;
-import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Move implements GameState {
-
-    /* @abstractClass
+    /* @Class
      * it represents the state where a player has to move at least one of his worker
      */
+
     private final Game game;
 
     public Move(Game game) {
         /* @constructor
          * it sets the game which the state is connected to
          */
+
         this.game = game;
     }
 
@@ -47,6 +47,7 @@ public class Move implements GameState {
         /* @predicate
          * it tells if the cell chosen by the player is a cell where he can actually move to
          */
+
         List<Cell> possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
 
         for (Cell c: possibleMoves) {
@@ -61,6 +62,7 @@ public class Move implements GameState {
         /* @predicate
          * it tells if a worker reached the third level
          */
+
         return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
     }
 
@@ -75,98 +77,89 @@ public class Move implements GameState {
         ReturnContent returnContent = new ReturnContent();
 
         Player currentPlayer = game.getCurrentPlayer();
-        List<Cell> specialMoves = new ArrayList<>();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
-        Cell cellToMoveTo = new Block(cell.getX(), cell.getY());
+        Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.MOVE);
 
+        if (cellToMoveTo == null)
+            return returnContent;
 
-        List<Cell> specialMovesDef = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker().getLocation(), currentPlayer, Timing.DEFAULT);
-        if (specialMovesDef != null)
-            specialMoves.addAll(specialMovesDef);
-        List<Cell> specialMovesAdd = game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker().getLocation(), currentPlayer, Timing.ADDITIONAL);
-        if (specialMovesAdd != null)
-            specialMoves.addAll(specialMovesAdd);
 
-        for (Cell c: specialMoves) {
-            if (c.getX() == cellToMoveTo.getX() && c.getY() == cellToMoveTo.getY()) {
-                for (Power p: currentPlayer.getCard().getPowerList()) {
-                    if (p.getEffect().equals(Effect.MOVE)) {
-                        if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
-                            switch (p.getTiming()) {
-                                case DEFAULT:
-                                    returnContent.setAnswerType(AnswerType.SUCCESS);
-                                    returnContent.setState(State.BUILD);
-                                    returnContent.setPayload(preparePayloadBuild(Timing.DEFAULT));
-                                    break;
+        if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
+            Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-                                case ADDITIONAL:
-                                    returnContent.setAnswerType(AnswerType.SUCCESS);
-                                    returnContent.setPayload(preparePayloadBuild(Timing.ADDITIONAL));
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                        }
-
-                        return returnContent;
-                    }
-                }
+            if (((MovePower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
+                returnContent.setAnswerType(AnswerType.SUCCESS);
+                returnContent.setState(State.BUILD);
+                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
             }
         }
+        else {
+            // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
+            //if (currentPlayer.getCurrentWorker().isMovable()) { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
+                // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
+                if (isMoveCorrect(cellToMoveTo)) {
+                    game.getBoard().move(currentPlayer, cellToMoveTo);
+                    //if the worker is moved to a third level (from a second one), the player that moved wins
+                    if (reachedThirdLevel(game)) {
+                        returnContent.setAnswerType(AnswerType.VICTORY);
+                        returnContent.setState(State.VICTORY);
+                    } else { //which means that no one won in this turn, the game switches to UsePower state
+                        returnContent.setAnswerType(AnswerType.SUCCESS);
 
+                        Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
+                        if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) {
+                            returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
+                            returnContent.setState(State.ADDITIONAL_POWER);
 
+                            return returnContent;
+                        }
 
-        // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
-        if (currentPlayer.getCurrentWorker().isMovable()) { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
-            // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
-            if(isMoveCorrect(cellToMoveTo)) {
-                game.getBoard().move(currentPlayer, game.getBoard().getCell(cellToMoveTo.getX(), cellToMoveTo.getY()));
-                //if the worker is moved to a third level (from a second one), the player that moved wins
-                if (reachedThirdLevel(game)) {
-                    returnContent.setAnswerType(AnswerType.VICTORY);
-                    returnContent.setState(State.VICTORY);
+                        returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                        returnContent.setState(State.BUILD);
+                    }
                 }
-                else { //which means that no one won in this turn, the game switches to Build state
-                    returnContent.setAnswerType(AnswerType.SUCCESS);
-                    returnContent.setState(State.BUILD);
-                }
-
-                returnContent.setPayload(preparePayloadBuild(Timing.DEFAULT));
-            }
+            //}
         }
 
         return returnContent;
     }
 
-    private List<ReducedAnswerCell> preparePayloadBuild(Timing timing) {
-        List<Cell> possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
-        List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
-        List<ReducedAnswerCell> reducedAround = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
-        List<ReducedAnswerCell> tempList = new ArrayList<>();
+    public static List<ReducedAnswerCell> preparePayloadBuild(Game game, Timing timing, State state) {
+        List<Cell> possibleBuilds;
         ReducedAnswerCell temp;
+        List<ReducedAnswerCell> tempList = new ArrayList<>();
 
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
-        temp.setAction(ReducedAction.DEFAULT);
-        tempList.add(temp);
+        if (state.equals(State.MOVE)) {
+            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
+            temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+            tempList.add(temp);
 
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
-        temp.setAction(ReducedAction.DEFAULT);
-        tempList.add(temp);
+            temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+            tempList.add(temp);
+        }
+        else
+            possibleBuilds = new ArrayList<>();
 
+        List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
+        List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
 
-        for (ReducedAnswerCell rc : reducedAround) {
-            for (ReducedAnswerCell c : tempList) {
-                if (rc.getX() != c.getX() || rc.getY() != c.getY()) {
-                    reducedAround.add(temp);
+        boolean found;
+        for (ReducedAnswerCell tc : tempList) {
+            found = false;
+            for (ReducedAnswerCell rc : toReturn) {
+                if (rc.getX() == tc.getX() && rc.getY() == tc.getY()) {
+                    found = true;
+                    break;
                 }
             }
+
+            if (!found)
+                toReturn.add(tc);
         }
 
-
-        return reducedAround;
+        return toReturn;
     }
 }

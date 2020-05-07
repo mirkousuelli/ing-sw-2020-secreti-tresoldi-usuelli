@@ -13,7 +13,6 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -77,6 +76,7 @@ public class ChooseWorker implements GameState {
             game.getPlayerList().remove(game.getCurrentPlayer());
             game.setCurrentPlayer(game.getPlayer(newCur));
             returnContent.setChangeTurn(true);
+            //TODO
         }
         else {
             for (Worker w : currentPlayer.getWorkers()) {
@@ -86,12 +86,12 @@ public class ChooseWorker implements GameState {
                         currentPlayer.setCurrentWorker(w);
                         returnContent.setAnswerType(AnswerType.SUCCESS);
                         returnContent.setState(State.MOVE);
-                        returnContent.setPayload(preparePayload());
+                        returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
                     }
                     else {
                         // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
                         currentPlayer.removeWorker(currentPlayer.getCurrentWorker());
-                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName));
+                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName)); //TODO
                     }
                     break;
                 }
@@ -101,11 +101,29 @@ public class ChooseWorker implements GameState {
         return returnContent;
     }
 
-    private List<ReducedAnswerCell> preparePayload() {
-        List<Cell> possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
-        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), Timing.DEFAULT));
-        List<ReducedAnswerCell> reducedAround = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
+    public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
+        List<Cell> possibleMoves;
+        if (state.equals(State.CHOOSE_WORKER))
+            possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
+        else
+            possibleMoves = new ArrayList<>();
+        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
+        List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
-        return reducedAround;
+        ReducedAnswerCell temp;
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+
+        boolean found = false;
+        for (ReducedAnswerCell rc : toReturn) {
+            if (rc.getX() == temp.getX() && rc.getY() == temp.getY()) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            toReturn.add(temp);
+
+        return toReturn;
     }
 }

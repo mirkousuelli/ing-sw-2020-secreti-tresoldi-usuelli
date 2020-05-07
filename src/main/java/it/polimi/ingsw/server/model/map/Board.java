@@ -11,10 +11,10 @@
 package it.polimi.ingsw.server.model.map;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.ActivePower;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Constraints;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
@@ -181,7 +181,7 @@ public class Board implements Cloneable {
 
         List<Cell> around = getAround(cell);
         List<Cell> toReturn = new ArrayList<>();
-        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.MOVE)).collect(Collectors.toList());
+        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.MOVE)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
 
         for (Cell c : around) {
             for (Power mp : activePowerList) {
@@ -207,28 +207,18 @@ public class Board implements Cloneable {
          * around cell are busy from other players' workers
          */
 
-        List<Cell> around = getAround(cell);
+        List<Cell> around = getAround(cell).stream().filter(Cell::isWalkable).filter(Cell::isFree).collect(Collectors.toList());
         List<Cell> toReturn = new ArrayList<>();
-        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).collect(Collectors.toList());
+        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
+
+       if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
+           around.add(player.getCurrentWorker().getPreviousBuild());
 
         for (Cell c : around) {
             for (Power bp : activePowerList) {
                 if (((BuildPower) bp).preamble(player, c)) {
-                    switch ((BlockType) bp.getAllowedAction()) {
-                        case DEFAULT:
-                            toReturn.add(c);
-                            break;
-
-                        case DOME:
-                            if (c.getLevel().equals(Level.TOP))
-                                toReturn.add(c);
-                            break;
-
-                        case NOT_DOME:
-                            if (!c.getLevel().equals(Level.TOP))
-                                toReturn.add(c);
-                            break;
-                    }
+                    if (!(bp.getAllowedAction().equals(BlockType.NOT_DOME) && c.getLevel().equals(Level.TOP)))
+                        toReturn.add(c);
                 }
             }
         }
@@ -332,9 +322,7 @@ public class Board implements Cloneable {
         List<Cell> toReturn = getAround(cell);
 
         for (Cell c : getAround(cell)) {
-            if (!c.isFree())
-                toReturn.remove(c);
-            else if (c.getLevel().equals(Level.DOME))
+            if (!c.isFree() || c.getLevel().equals(Level.DOME))
                 toReturn.remove(c);
         }
 

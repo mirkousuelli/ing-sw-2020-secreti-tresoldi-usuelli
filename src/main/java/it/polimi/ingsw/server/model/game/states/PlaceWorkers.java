@@ -10,7 +10,6 @@ import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +58,7 @@ public class PlaceWorkers implements GameState{
             chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
             id = currentPlayer.getWorkers().size() + 1;
 
-            System.out.println(id);
-            System.out.println(currentPlayer.initializeWorkerPosition(id, chosenCell));
+            currentPlayer.initializeWorkerPosition(id, chosenCell);
             chosenCell.addPawn(currentPlayer.getWorker(id));
 
             temp = new ReducedAnswerCell(chosenCell.getX(), chosenCell.getY());

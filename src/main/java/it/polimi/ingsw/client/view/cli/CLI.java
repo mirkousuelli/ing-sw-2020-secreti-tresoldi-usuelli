@@ -21,7 +21,7 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private void update() {
-        boolean isYourTurn = false;
+        boolean isYourTurn;
         Answer<S> answerTemp = getAnswer();
 
         switch (answerTemp.getHeader()) {
@@ -43,6 +43,9 @@ public class CLI<S> extends ClientView<S> {
                     isYourTurn = out.printChanges(answerTemp.getContext());
                 }
                 break;
+
+            default:
+                throw new NotAValidInputRunTimeException("Not a valid answer");
         }
 
         if (isYourTurn)

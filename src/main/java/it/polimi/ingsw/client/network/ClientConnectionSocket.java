@@ -25,7 +25,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
     private final List<Answer<S>> buffer;
 
     private static final Random random = new SecureRandom();
-    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message-franco_client.xml";
+    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException, ParserConfigurationException, SAXException {

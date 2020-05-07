@@ -69,6 +69,7 @@ public class CLIPrinter<S> {
         changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
         changesMap.put(DemandType.MOVE, this::printAll);
         changesMap.put(DemandType.BUILD, this::printAll);
+        changesMap.put(DemandType.ASK_ADDITIONAL_POWER, this::printAll);
         changesMap.put(DemandType.CHANGE_TURN, this::printCurrentPlayer);
 
         allowScanner.put(DemandType.CONNECT, true);
@@ -223,13 +224,16 @@ public class CLIPrinter<S> {
 
         List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard)
                                                  .flatMap(Arrays::stream)
-                                                 .filter(x -> x.getAction() != ReducedAction.DEFAULT)
+                                                 .filter(x -> !x.getActionList().contains(ReducedAction.DEFAULT))
                                                  .collect(Collectors.toList());
 
-        List<ReducedAction> reducedActions = cellList.stream()
-                                                     .map(ReducedAnswerCell::getAction)
-                                                     .distinct()
-                                                     .collect(Collectors.toList());
+        List<ReducedAction> reducedActions = new ArrayList<>();
+        for (ReducedAnswerCell c : cellList) {
+            for (ReducedAction ra : c.getActionList()) {
+                if (!reducedActions.contains(ra))
+                    reducedActions.add(ra);
+            }
+        }
 
         out.print("Action");
         if (reducedActions.size() >= 2) out.print("s");
@@ -237,9 +241,10 @@ public class CLIPrinter<S> {
         for (ReducedAction action : reducedActions) {
             out.print(action.toString() + ": ");
 
+
             out.println(
                     cellList.stream()
-                            .filter(c -> c.getAction().equals(action))
+                            .filter(c -> c.getActionList().contains(action))
                             .map(c -> "(" + c.getX() + ", " +c.getY() + ")")
                             .reduce(null, (a, b) -> a != null
                                     ? a + ", " + b
