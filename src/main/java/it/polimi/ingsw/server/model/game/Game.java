@@ -245,7 +245,7 @@ public class Game extends Observable<Answer> {
 
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             if (returnContent.isChangeTurn()) {
-                state = new ChangeTurn(this);
+                setState(new ChangeTurn(this));
                 ReturnContent rc = state.gameEngine();
 
                 notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));

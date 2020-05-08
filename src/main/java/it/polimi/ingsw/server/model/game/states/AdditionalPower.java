@@ -25,7 +25,7 @@ public class AdditionalPower implements GameState {
 
     @Override
     public String getName() {
-        return "askAdditionalPower";
+        return State.ADDITIONAL_POWER.toString();
     }
 
     @Override

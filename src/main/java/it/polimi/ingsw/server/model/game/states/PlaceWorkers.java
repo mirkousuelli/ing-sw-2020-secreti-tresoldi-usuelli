@@ -28,7 +28,7 @@ public class PlaceWorkers implements GameState{
 
     @Override
     public String getName() {
-        return "placeWorkers";
+        return State.PLACE_WORKERS.toString();
     }
 
     @Override

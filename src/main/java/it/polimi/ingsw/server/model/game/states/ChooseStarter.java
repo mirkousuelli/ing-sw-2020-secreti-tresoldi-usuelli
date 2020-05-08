@@ -23,7 +23,7 @@ public class ChooseStarter implements GameState {
 
     @Override
     public String getName() {
-        return "chooseStarter";
+        return State.CHOOSE_STARTER.toString();
     }
 
     @Override

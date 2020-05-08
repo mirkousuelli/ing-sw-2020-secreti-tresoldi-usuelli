@@ -15,6 +15,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -57,6 +58,9 @@ public class ChangeTurn implements GameState {
          * it checks if any win condition is verified (some God powers add a secondary win condition)
          */
 
+        if (game.getPrevState() == null ||
+            game.getCurrentPlayer().getCard() == null) return false;
+
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
         return p.getEffect().equals(Effect.WIN_COND) && ((WinConditionPower) p).usePower(game);
@@ -88,6 +92,9 @@ public class ChangeTurn implements GameState {
 
             game.getCurrentPlayer().removeMalus();
         }
+
+        if (game.getPrevState() != null && game.getPrevState().equals(State.BUILD))
+            ChooseCard.applyMalus(game, Timing.END_TURN);
 
         return returnContent;
     }

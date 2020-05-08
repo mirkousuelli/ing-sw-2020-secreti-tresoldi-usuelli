@@ -23,7 +23,7 @@ public class ChooseCard implements GameState {
 
     @Override
     public String getName() {
-        return "chooseCard";
+        return State.CHOOSE_CARD.toString();
     }
 
     @Override
@@ -51,10 +51,7 @@ public class ChooseCard implements GameState {
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), g));
 
 
-                Power p = game.getCurrentPlayer().getCard().getPower(0);
-                if (p.getEffect().equals(Effect.MALUS) && p.getTiming().equals(Timing.START_TURN)) {
-                    ((MalusPower) p).usePower(game.getOpponents());
-                }
+                ChooseCard.applyMalus(game, Timing.DEFAULT);
 
                 break;
             }
@@ -62,5 +59,12 @@ public class ChooseCard implements GameState {
 
 
         return returnContent;
+    }
+
+    public static void applyMalus(Game game, Timing timing) {
+        Power p = game.getCurrentPlayer().getCard().getPower(0);
+        if (p.getEffect().equals(Effect.MALUS) && p.getTiming().equals(timing)) {
+            ((MalusPower) p).usePower(game.getOpponents());
+        }
     }
 }
