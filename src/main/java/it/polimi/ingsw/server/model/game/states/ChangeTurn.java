@@ -77,7 +77,10 @@ public class ChangeTurn implements GameState {
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
+        game.getCurrentPlayer().removeMalus();
 
+        if (game.getPrevState() != null && game.getPrevState().equals(State.BUILD))
+            ChooseCard.applyMalus(game, Timing.END_TURN);
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
         if(controlWinCondition() || onePlayerRemaining()) {
@@ -86,15 +89,14 @@ public class ChangeTurn implements GameState {
         }
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
+
             changeCurrentPlayer();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
 
-            game.getCurrentPlayer().removeMalus();
         }
 
-        if (game.getPrevState() != null && game.getPrevState().equals(State.BUILD))
-            ChooseCard.applyMalus(game, Timing.END_TURN);
+
 
         return returnContent;
     }
