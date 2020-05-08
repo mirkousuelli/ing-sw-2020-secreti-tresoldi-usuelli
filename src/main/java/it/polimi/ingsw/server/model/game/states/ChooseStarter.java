@@ -38,7 +38,7 @@ public class ChooseStarter implements GameState {
         for (Player p : game.getPlayerList()) {
             if(p.nickName.equals(starter)) {
                     game.setStarter(game.getIndex(p));
-                    int newCur = (game.getStarter() + 1) % game.getNumPlayers();
+                    int newCur = (game.getStarter() + game.getNumPlayers() - 1) % game.getNumPlayers();
                     game.setCurrentPlayer(game.getPlayer(newCur));
                     returnContent.setChangeTurn(true);
 

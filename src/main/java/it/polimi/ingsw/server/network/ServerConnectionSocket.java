@@ -157,7 +157,6 @@ public class ServerConnectionSocket implements ServerConnection {
                     spaceInLobby = lobby.addPlayer(waitingConnection.get(c), c);
 
                     if (spaceInLobby) {
-                        lobby.addPlayer(waitingConnection.get(c), c);
                         c.setLobby(lobby);
                         waitingConnection.remove(c);
                         c.send(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
