@@ -26,8 +26,6 @@ public class BuildPower<S> extends ActivePower<S> {
     }
 
     protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
-        if (constraints.isSameCell() && !cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
-        if (constraints.isNotSameCell() && cellToBuild.equals(workerToUse.getPreviousBuild())) return false;
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
 

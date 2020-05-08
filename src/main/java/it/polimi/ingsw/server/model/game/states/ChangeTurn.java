@@ -12,6 +12,10 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -49,12 +53,17 @@ public class ChangeTurn implements GameState {
     }
 
 
-    // TODO actual check of win condition
     private boolean controlWinCondition() {
         /* @predicate
          * it checks if any win condition is verified (some God powers add a secondary win condition)
          */
-        return false;
+
+        if (game.getPrevState() == null ||
+            game.getCurrentPlayer().getCard() == null) return false;
+
+        Power p = game.getCurrentPlayer().getCard().getPower(0);
+
+        return p.getEffect().equals(Effect.WIN_COND) && ((WinConditionPower) p).usePower(game);
     }
 
     @Override
@@ -68,7 +77,10 @@ public class ChangeTurn implements GameState {
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
+        game.getCurrentPlayer().removeMalus();
 
+        if (game.getPrevState() != null && game.getPrevState().equals(State.BUILD))
+            ChooseCard.applyMalus(game, Timing.END_TURN);
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
         if(controlWinCondition() || onePlayerRemaining()) {
@@ -77,12 +89,14 @@ public class ChangeTurn implements GameState {
         }
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
+
             changeCurrentPlayer();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
 
-            game.getCurrentPlayer().removeMalus();
         }
+
+
 
         return returnContent;
     }

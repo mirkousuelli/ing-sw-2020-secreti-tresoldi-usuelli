@@ -103,6 +103,9 @@ public class ChooseWorker implements GameState {
 
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         List<Cell> possibleMoves;
+        List<ReducedAnswerCell> tempList = new ArrayList<>();
+        ReducedAnswerCell temp;
+
         if (state.equals(State.CHOOSE_WORKER))
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
         else
@@ -110,19 +113,25 @@ public class ChooseWorker implements GameState {
         List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
-        ReducedAnswerCell temp;
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+        tempList.add(temp);
 
-        boolean found = false;
-        for (ReducedAnswerCell rc : toReturn) {
-            if (rc.getX() == temp.getX() && rc.getY() == temp.getY()) {
-                found = true;
-                break;
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+        tempList.add(temp);
+
+        boolean found;
+        for (ReducedAnswerCell tc : tempList) {
+            found = false;
+            for (ReducedAnswerCell rc : toReturn) {
+                if (rc.getX() == tc.getX() && rc.getY() == tc.getY()) {
+                    found = true;
+                    break;
+                }
             }
-        }
 
-        if (!found)
-            toReturn.add(temp);
+            if (!found)
+                toReturn.add(tc);
+        }
 
         return toReturn;
     }

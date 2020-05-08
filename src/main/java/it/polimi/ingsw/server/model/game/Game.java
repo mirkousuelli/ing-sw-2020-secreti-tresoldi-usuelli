@@ -9,7 +9,10 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.states.*;
+import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
+import it.polimi.ingsw.server.model.map.Cell;
+import it.polimi.ingsw.server.model.map.Level;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -221,13 +224,28 @@ public class Game extends Observable<Answer> {
         return players.stream().filter(p -> !getCurrentPlayer().equals(p)).collect(Collectors.toList());
     }
 
+    public int getNumberOfCompleteTower() {
+        Cell c;
+        int numberOfCompleteTowers = 0;
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                c = board.getCell(i, j);
+                if (c.getLevel().equals(Level.DOME) && ((Block) c).getPreviousLevel().equals(Level.TOP))
+                    i++;
+            }
+        }
+
+        return numberOfCompleteTowers;
+    }
+
     public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
         boolean availableGods = returnContent.isAvailableGods();
 
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             if (returnContent.isChangeTurn()) {
-                state = new ChangeTurn(this);
+                setState(new ChangeTurn(this));
                 ReturnContent rc = state.gameEngine();
 
                 notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));
