@@ -31,6 +31,7 @@ public class GodHandler extends DefaultHandler {
     private boolean numadd;
     private boolean numturns;
     private boolean personal;
+    private boolean player;
 
     public GodHandler(Deck deck) {
         super();
@@ -43,6 +44,7 @@ public class GodHandler extends DefaultHandler {
         this.description = false;
         this.numadd = false;
         this.numturns = false;
+        this.player = false;
     }
 
     public void setGods(List<God> gods) {
@@ -78,6 +80,10 @@ public class GodHandler extends DefaultHandler {
 
                 case "DESCRIPTION":
                     this.description = true;
+                    break;
+
+                case "PLAYER":
+                    this.player = true;
                     break;
 
                 case "EFFECT":
@@ -214,6 +220,9 @@ public class GodHandler extends DefaultHandler {
         } else if (description) {
             currCard.setDescription(str);
             description = false;
+        } else if (player) {
+            this.currCard.setNumPlayer(Integer.parseInt(str));
+            player = false;
         } else if (numadd) {
             this.currCard.getPower(indexPower).getConstraints().setNumberOfAdditional(Integer.parseInt(str));
             numadd = false;

@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.frame;
 import it.polimi.ingsw.client.view.gui.panels.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +29,8 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         setTitle(TITLE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        setMinimumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
+        //setMinimumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
+        //setMaximumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
 
         button1 = new JButton("NEXT");
         button2 = new JButton("NEXT");
@@ -36,7 +38,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         button4 = new JButton("NEXT");
         button5 = new JButton("NEXT");
         button6 = new JButton("NEXT");
-        //button7 = new JButton("NEXT");
+        button7 = new JButton("NEXT");
         button8 = new JButton("NEXT");
         button9 = new JButton("NEXT");
         button10 = new JButton("NEXT");
@@ -47,7 +49,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         button4.addActionListener(this);
         button5.addActionListener(this);
         button6.addActionListener(this);
-        //button7.addActionListener(this);
+        button7.addActionListener(this);
         button8.addActionListener(this);
         button9.addActionListener(this);
         button10.addActionListener(this);
@@ -83,8 +85,6 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         JPanel card10 = new EndPanel(EndPanel.VICTORY);
         card10.add(button10);
 
-        //Create the panel that contains the "cards".
-
         cards = new JPanel(new CardLayout());
 
         cards.add(card1, BorderLayout.CENTER);
@@ -98,14 +98,15 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         cards.add(card9, BorderLayout.CENTER);
         cards.add(card10, BorderLayout.CENTER);
 
-        getContentPane().add(cards, BorderLayout.CENTER);
-
         cardLayout = (CardLayout) cards.getLayout();
         cardLayout.show(cards, "Card 1");
+
+        getContentPane().add(cards);
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        setResizable(false);
     }
 
     public void actionPerformed(ActionEvent e) {

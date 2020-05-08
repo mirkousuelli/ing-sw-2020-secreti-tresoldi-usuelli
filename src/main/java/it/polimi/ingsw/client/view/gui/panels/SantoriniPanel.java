@@ -18,7 +18,6 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
         setLayout(new GridBagLayout());
         setPreferredSize(firstSize);
-        setSize(firstSize);
         setOpaque(false);
     }
 
@@ -42,5 +41,10 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         int y = (height - scaled.getHeight(null)) / 2;
 
         g.drawImage(scaled, x, y, this);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
     }
 }

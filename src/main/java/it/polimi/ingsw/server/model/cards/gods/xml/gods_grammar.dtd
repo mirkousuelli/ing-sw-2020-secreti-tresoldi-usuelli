@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!ELEMENT cards (god*)>
-    <!ELEMENT god (name, description, power+)>
+    <!ELEMENT god (name, description, player, power+)>
             <!ATTLIST god
                 id ID #REQUIRED
             >
         <!ELEMENT name (#PCDATA)>
         <!ELEMENT description (#PCDATA)>
+        <!ELEMENT player (#PCDATA)>
 
         <!ELEMENT power (effect, worker, workerpos, timing, constraints, (move | build | malus | win), personalMalus?)>
             <!-- what -->

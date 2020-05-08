@@ -23,6 +23,7 @@ public class Card implements Cloneable {
 
     private God god;
     private String description;
+    private int numPlayer;
     private List<Power> powerList;
 
     public Card() {
@@ -47,6 +48,14 @@ public class Card implements Cloneable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getNumPlayer() {
+        return numPlayer;
+    }
+
+    public void setNumPlayer(int numPlayer) {
+        this.numPlayer = numPlayer;
     }
 
     public Power getPower(int i) {

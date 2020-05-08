@@ -6,6 +6,7 @@
     <god id="APOLLO">
         <name>Apollo</name>
         <description>Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="move"/>
@@ -26,6 +27,7 @@
     <god id="ARTEMIS">
         <name>Artemis</name>
         <description>Your Worker may move one additional time, but not back to its initial space</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="move"/>
@@ -48,6 +50,7 @@
     <god id="ATHENA">
         <name>Athena</name>
         <description>If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="malus"/>
@@ -73,6 +76,7 @@
     <god id="ATLAS">
         <name>Atlas</name>
         <description>Your Worker may build a dome at any level</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
@@ -93,6 +97,7 @@
     <god id="CHRONUS">
         <name>Chronus</name>
         <description>You also win when there are at least five Complete Towers on the board</description>
+        <player>2</player>
         <power>
             <!-- what -->
             <effect what="win"/>
@@ -113,6 +118,7 @@
     <god id="DEMETER">
         <name>Demeter</name>
         <description>Your Worker may build one additional time, but not on the same space</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
@@ -135,6 +141,7 @@
     <god id="HEPHAESTUS">
         <name>Hephaestus</name>
         <description>Your Worker may build one additional block (not dome) on top of your first block</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
@@ -157,6 +164,7 @@
     <god id="HESTIA">
         <name>Hestia</name>
         <description>Your Worker may build one additional time, but this cannot be on a perimeter space</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
@@ -179,6 +187,7 @@
     <god id="MINOTAUR">
         <name>Minotaur</name>
         <description>Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="move"/>
@@ -199,6 +208,7 @@
     <god id="PAN">
         <name>Pan</name>
         <description>You also win if your Worker moves down two or more levels</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="win"/>
@@ -219,6 +229,7 @@
     <god id="PERSEPHONE">
         <name>Persephone</name>
         <description>If possible, at least one Worker must move up this turn</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="malus"/>
@@ -244,6 +255,7 @@
     <god id="POSEIDON">
         <name>Poseidon</name>
         <description>If your unmoved Worker is on the ground level, it may build up to three times</description>
+        <player>3</player>
         <power>
             <effect what="build"/>
             <!-- who -->
@@ -265,6 +277,7 @@
     <god id="PROMETHEUS">
         <name>Prometheus</name>
         <description>If your Worker does not move up, it may build both before and after moving</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
@@ -291,6 +304,7 @@
     <god id="TRITON">
         <name>Triton</name>
         <description>Each time your Worker moves into a perimeter space, it may immediately move again</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="move"/>
@@ -311,6 +325,7 @@
     <god id="ZEUS">
         <name>Zeus</name>
         <description>Your Worker may build a block under itself</description>
+        <player>3</player>
         <power>
             <!-- what -->
             <effect what="build"/>
