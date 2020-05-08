@@ -11,6 +11,7 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
@@ -18,7 +19,10 @@ import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  *
@@ -27,9 +31,14 @@ public abstract class ActivePower<S> extends Power<S> {
 
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
+    private final Map<Effect, Function<Worker, Cell>> constraintsMap;
 
     public ActivePower() {
         super();
+        constraintsMap = new EnumMap<>(Effect.class);
+
+        constraintsMap.put(Effect.MOVE, Worker::getPreviousLocation);
+        constraintsMap.put(Effect.BUILD, Worker::getPreviousBuild);
     }
 
     public void setNumberOfActionsRemaining() {
@@ -69,6 +78,9 @@ public abstract class ActivePower<S> extends Power<S> {
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
+
+        if (constraints.isSameCell() && !cellToUse.equals(constraintsMap.get(effect).apply(workerToUse))) return false;
+        if (constraints.isNotSameCell() && cellToUse.equals(constraintsMap.get(effect).apply(workerToUse))) return false;
 
         if (constraints.isUnderItself())
             return workerToUse.getLocation().equals(cellToUse);

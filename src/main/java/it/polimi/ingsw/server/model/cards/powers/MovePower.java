@@ -27,9 +27,6 @@ public class MovePower<S> extends ActivePower<S> {
 
     @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
-        if (constraints.isSameCell() && !cellToMove.equals(workerToUse.getPreviousLocation())) return false;
-        if (constraints.isNotSameCell() && cellToMove.equals(workerToUse.getPreviousLocation())) return false;
-
         Block newPos;
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 

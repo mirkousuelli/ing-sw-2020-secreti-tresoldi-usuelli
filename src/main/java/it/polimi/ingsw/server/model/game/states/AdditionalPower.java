@@ -43,13 +43,15 @@ public class AdditionalPower implements GameState {
 
         if (response.getX() == -1 && response.getY() == -1) {
             returnContent.setAnswerType(AnswerType.SUCCESS);
-            if (prevState.equals(State.MOVE))
+            if (prevState.equals(State.MOVE)) {
                 returnContent.setState(State.BUILD);
+                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+            }
             else if (prevState.equals(State.BUILD)) {
                 returnContent.setState(State.CHOOSE_WORKER);
                 returnContent.setChangeTurn(true);
+                returnContent.setPayload(new ArrayList<ReducedAnswerCell>());
             }
-            returnContent.setPayload(new ArrayList<ReducedAnswerCell>());
         }
         else {
             if (prevState.equals(State.MOVE)) {
