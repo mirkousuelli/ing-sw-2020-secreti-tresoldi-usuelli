@@ -31,6 +31,8 @@ public class BuildPower<S> extends ActivePower<S> {
 
         if (getAllowedAction().equals(BlockType.DOME))
             return build(cellToBuild, 4);
+        else if (getAllowedAction().equals(BlockType.NOT_DOME) && cellToBuild.getLevel().equals(Level.TOP))
+            return false;
 
         return build(cellToBuild, cellToBuild.getLevel().toInt() + 1);
     }

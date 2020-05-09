@@ -92,8 +92,16 @@ public class Move implements GameState {
 
             if (((MovePower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
                 returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.BUILD);
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+
+                if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) {
+                    returnContent.setAnswerType(AnswerType.SUCCESS);
+                    returnContent.setState(State.MOVE);
+                    returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
+                }
+                else {
+                    returnContent.setState(State.BUILD);
+                    returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                }
             }
         }
         else {

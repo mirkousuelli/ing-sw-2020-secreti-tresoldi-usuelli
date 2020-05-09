@@ -225,6 +225,7 @@ public class GodHandler extends DefaultHandler {
             player = false;
         } else if (numadd) {
             this.currCard.getPower(indexPower).getConstraints().setNumberOfAdditional(Integer.parseInt(str));
+            ((ActivePower) this.currCard.getPower(indexPower)).setNumberOfActionsRemaining();
             numadd = false;
         } else if (numturns) {
             if (personal)

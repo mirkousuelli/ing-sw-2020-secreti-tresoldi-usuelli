@@ -315,7 +315,9 @@
             <!-- when -->
             <timing/>
             <!-- why -->
-            <constraints perimcell="true"/>
+            <constraints perimcell="true">
+                <numadd>-1</numadd>
+            </constraints>
             <!-- how -->
             <move/>
         </power>
