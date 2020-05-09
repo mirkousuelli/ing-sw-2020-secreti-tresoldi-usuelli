@@ -66,7 +66,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         card4.add(button4);
 
         JPanel card5 = new ChooseCardsPanel();
-        card5.add(button5);
+        //card5.add(button5);
 
         JPanel card6 = new ChooseGodPanel();
         card6.add(button6);

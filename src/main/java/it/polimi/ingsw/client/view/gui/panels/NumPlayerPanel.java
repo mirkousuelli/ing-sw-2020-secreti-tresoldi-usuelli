@@ -1,9 +1,6 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 
 public class NumPlayerPanel extends SantoriniPanel {
     private static final String imgPath = "menu.png";
@@ -27,7 +24,6 @@ public class NumPlayerPanel extends SantoriniPanel {
     }
 
     private void create3PlayerButton() {
-        _3playersButton = new JButton("3 PLAYERS");
         _3playersButton = new JButton(BackgroundPanel.getScaledImage(
                 new ImageIcon("img/buttons/3_player_button.png"), BUTTON_SIZE, BUTTON_SIZE));
         _3playersButton.setOpaque(false);

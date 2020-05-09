@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
@@ -17,9 +16,6 @@ public class GamePanel extends SantoriniPanel {
     private JPanel firstMalus;
     private JPanel secondMalus;
 
-    private static final Insets WEST_INSETS = new Insets(5, 0, 5, 5);
-    private static final Insets EAST_INSETS = new Insets(5, 5, 5, 0);
-
     public GamePanel() {
         super(imgPath);
 
@@ -32,8 +28,6 @@ public class GamePanel extends SantoriniPanel {
         GridBagConstraints mapCon = new GridBagConstraints();
 
         mapCon.anchor = GridBagConstraints.CENTER;
-        //mapCon.ipadx = 10;
-        //mapCon.ipady = 10;
         mapCon.gridx = 1;
         mapCon.gridy = 0;
 
@@ -80,19 +74,15 @@ public class GamePanel extends SantoriniPanel {
         right = new JPanel(new GridLayout(2,1));
         right.setVisible(true);
         right.setOpaque(true);
-        //right.setPreferredSize(new Dimension((int) (getWidth() * 0.25), getHeight()));
 
         lobby = new JPanel(new BorderLayout());
         lobby.setBackground(Color.YELLOW);
         lobby.setVisible(true);
-        //lobby.add(new JButton());
-        //lobby.setPreferredSize(new Dimension(right.getWidth(), getHeight()/2));
         right.add(lobby);
 
         card = new JPanel(new BorderLayout());
         card.setBackground(Color.MAGENTA);
         card.setVisible(true);
-        //card.setPreferredSize(new Dimension(right.getWidth(), getHeight()/2));
         right.add(card);
 
         add(right, rightCon);
@@ -113,18 +103,15 @@ public class GamePanel extends SantoriniPanel {
         left = new JPanel(new GridLayout(2,1));
         left.setVisible(true);
         left.setOpaque(true);
-        //left.setPreferredSize(new Dimension((int) (getWidth() * 0.25), getHeight()));
 
         firstMalus = new JPanel(new BorderLayout());
         firstMalus.setBackground(Color.BLUE);
         firstMalus.setVisible(true);
-        //firstMalus.setPreferredSize(new Dimension(left.getWidth(), getHeight()/2));
         left.add(firstMalus);
 
         secondMalus = new JPanel(new BorderLayout());
         secondMalus.setBackground(Color.RED);
         secondMalus.setVisible(true);
-        //secondMalus.setPreferredSize(new Dimension(left.getWidth(), getHeight()/2));
         left.add(secondMalus);
 
         add(left, leftCon);
