@@ -172,7 +172,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 synchronized (lobby.lockLobby) {
                                     send(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
                                     if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, Arrays.stream(God.values()).collect(Collectors.toList())));
+                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
                                 }
                             }
                             else {

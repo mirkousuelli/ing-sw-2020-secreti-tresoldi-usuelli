@@ -60,7 +60,9 @@ public class ChangeTurn implements GameState {
          */
 
         if (game.getPrevState() == null ||
-            game.getCurrentPlayer().getCard() == null) return false;
+            game.getCurrentPlayer().getCard() == null ||
+            game.getCurrentPlayer().getCurrentWorker() == null ||
+            game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return false;
 
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 

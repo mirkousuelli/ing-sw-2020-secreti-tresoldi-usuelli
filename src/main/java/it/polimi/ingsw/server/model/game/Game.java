@@ -252,7 +252,7 @@ public class Game extends Observable<Answer> {
             }
 
             if (availableGods)
-                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, chosenGods));
+                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, deck.popChosenGods(chosenGods)));
 
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }

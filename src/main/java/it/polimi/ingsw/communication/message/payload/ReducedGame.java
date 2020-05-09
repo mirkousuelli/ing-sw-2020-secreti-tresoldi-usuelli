@@ -72,7 +72,7 @@ public class ReducedGame {
 
             for (ReducedPlayer rp : reducedPlayerList) {
                 if (rp.getNickname().equals(p.nickName))
-                    rp.setGod(p.getCard().getGod());
+                    rp.setCard(new ReducedCard(p.getCard()));
             }
         }
     }
