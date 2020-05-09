@@ -56,11 +56,8 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         button10.addActionListener(this);
 
         //Create the cards
-        JPanel card1 = new GamePanel();
-        //card1.add(button1);
-
-        JPanel card2 = new NicknamePanel();
-        card2.add(button2);
+        JPanel card1 = new StartPanel();
+        card1.add(button1);
 
         JPanel card3 = new NumPlayerPanel();
         card3.add(button3);
@@ -89,7 +86,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         cards = new JPanel(new CardLayout());
 
         cards.add(card1, BorderLayout.CENTER);
-        cards.add(card2, BorderLayout.CENTER);
+        //cards.add(card2, BorderLayout.CENTER);
         cards.add(card3, BorderLayout.CENTER);
         cards.add(card4, BorderLayout.CENTER);
         cards.add(card5, BorderLayout.CENTER);
