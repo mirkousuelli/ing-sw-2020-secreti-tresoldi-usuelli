@@ -6,10 +6,14 @@ import java.awt.*;
 public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
     private final String imgPath;
     private final Image img;
+    private int scaleWidth;
+    private int scaleHeight;
 
     public SantoriniPanel(String imgPath) {
         this.imgPath = imgPath;
-        Dimension firstSize = new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
+        this.scaleWidth = BackgroundPanel.WIDTH;
+        this.scaleHeight = BackgroundPanel.HEIGHT;
+        Dimension firstSize = new Dimension(scaleWidth, scaleHeight);
         int maxWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         int maxHeight = maxWidth * firstSize.height / firstSize.width;
 
@@ -29,8 +33,8 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         double scaleFactor = Math.min(1d, BackgroundPanel.getScaleFactorToFit(
                 new Dimension(img.getWidth(null), img.getHeight(null)), getSize()));
 
-        int scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
-        int scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
+        this.scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
+        this.scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
 
         Image scaled = img.getScaledInstance(scaleWidth, scaleHeight, Image.SCALE_SMOOTH);
 
@@ -45,6 +49,6 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
+        return new Dimension(this.scaleWidth, this.scaleHeight);
     }
 }
