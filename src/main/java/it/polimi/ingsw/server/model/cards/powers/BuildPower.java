@@ -47,8 +47,4 @@ public class BuildPower<S> extends ActivePower<S> {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "BUILD";
-    }
 }

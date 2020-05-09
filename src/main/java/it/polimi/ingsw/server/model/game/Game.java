@@ -231,8 +231,8 @@ public class Game extends Observable<Answer> {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 c = board.getCell(i, j);
-                if (c.getLevel().equals(Level.DOME) && ((Block) c).getPreviousLevel().equals(Level.TOP))
-                    i++;
+                if (c.isFree() && c.getLevel().equals(Level.DOME) && ((Block) c).getPreviousLevel().equals(Level.TOP))
+                    numberOfCompleteTowers++;
             }
         }
 
