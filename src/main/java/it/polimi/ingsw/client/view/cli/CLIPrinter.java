@@ -256,7 +256,8 @@ public class CLIPrinter<S> {
 
     private void printAll() {
         printBoard();
-        printPossibleActions();
+        if (clientModel.isYourTurn())
+            printPossibleActions();
         printGods();
     }
 
