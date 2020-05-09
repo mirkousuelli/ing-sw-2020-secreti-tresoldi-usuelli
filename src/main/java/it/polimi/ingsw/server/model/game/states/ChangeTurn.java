@@ -12,6 +12,7 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
@@ -74,12 +75,13 @@ public class ChangeTurn implements GameState {
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent();
+        Player currentPlayer = game.getCurrentPlayer();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
-        game.getCurrentPlayer().removeMalus();
 
-        if (game.getPrevState() != null && game.getPrevState().equals(State.BUILD))
+        currentPlayer.removeMalus();
+        if (currentPlayer.getCard() != null && currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS))
             ChooseCard.applyMalus(game, Timing.END_TURN);
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
@@ -89,14 +91,10 @@ public class ChangeTurn implements GameState {
         }
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
-
             changeCurrentPlayer();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
-
         }
-
-
 
         return returnContent;
     }

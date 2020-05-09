@@ -59,4 +59,15 @@ public class Malus {
         direction.add(malusDirectionElement);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Malus)) return false;
+
+        Malus malus = (Malus) obj;
+
+        return malusType.equals(malus.getMalusType()) &&
+               permanent == malus.isPermanent() &&
+               numberOfTurns == malus.getNumberOfTurns() &&
+               direction.containsAll(malus.getDirection());
+    }
 }
