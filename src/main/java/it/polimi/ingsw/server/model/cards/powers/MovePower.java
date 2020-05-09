@@ -27,6 +27,8 @@ public class MovePower<S> extends ActivePower<S> {
 
     @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
+        if (cellToMove.getLevel().toInt() - currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > 1) return false;
+
         Block newPos;
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
@@ -121,10 +123,5 @@ public class MovePower<S> extends ActivePower<S> {
 
 
         return null;
-    }
-
-    @Override
-    public String toString() {
-        return "MOVE";
     }
 }

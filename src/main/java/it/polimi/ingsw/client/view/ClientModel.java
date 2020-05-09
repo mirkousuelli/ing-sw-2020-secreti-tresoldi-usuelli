@@ -18,7 +18,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private final ClientConnection<S> clientConnection;
 
     private ReducedAnswerCell[][] reducedBoard;
-    private List<God> deck;
+    private List<ReducedCard> deck;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
@@ -129,9 +129,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 workers = reducedGame.getReducedWorkerList();
 
                 for (ReducedPlayer o : opponents) {
-                    deck.add(o.getGod());
+                    deck.add(o.getCard());
                     if (o.getNickname().equals(player.getNickname())) {
-                        player.setGod(o.getGod());
+                        player.setCard(o.getCard());
                         player.setColor(o.getColor());
                         opponents.remove(o);
                         break;
@@ -162,23 +162,23 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
             case CHOOSE_DECK:
             case AVAILABLE_GODS:
-                deck = new ArrayList<>((List<God>) answer.getPayload());
+                deck = new ArrayList<>((List<ReducedCard>) answer.getPayload());
                 break;
 
             case CHOOSE_CARD:
             case CHOOSE_STARTER:
                 ReducedPlayer rp = ((ReducedPlayer) answer.getPayload());
-                if (rp.getGod() == null) return;
+                if (rp.getCard() == null) return;
 
-                deck.remove(rp.getGod());
+                deck.removeIf(card -> card.getGod().equals(rp.getCard().getGod()));
 
                 for (ReducedPlayer p : opponents) {
                     if (p.getNickname().equals(rp.getNickname())) {
-                        p.setGod(rp.getGod());
+                        p.setCard(rp.getCard());
                         return;
                     }
                 }
-                player.setGod(rp.getGod());
+                player.setCard(rp.getCard());
                 break;
 
             case MOVE:
@@ -256,7 +256,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         if (god == null) return true;
 
         return deck.stream()
-                    .noneMatch(g -> g.equals(god));
+                    .noneMatch(g -> g.getGod().equals(god));
     }
 
     public synchronized boolean checkWorker(String workerString) {
@@ -322,7 +322,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return reducedBoard[x][y].getActionList().contains(ReducedAction.USEPOWER) && ReducedAction.USEPOWER.getName().equals(input[0]);
     }
 
-    public synchronized List<God> getDeck() {
+    public synchronized List<ReducedCard> getDeck() {
         return new ArrayList<>(deck);
     }
 

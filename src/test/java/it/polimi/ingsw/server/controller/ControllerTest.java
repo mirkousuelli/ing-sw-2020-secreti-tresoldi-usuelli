@@ -1,61 +1,58 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.states.Build;
-import it.polimi.ingsw.server.model.game.states.Move;
-import it.polimi.ingsw.server.network.ServerClientHandler;
+import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.view.ActionToPerformView;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
 
-    //@Test
-    void testMessage() throws FileNotFoundException {
-        List<View> playerViews = new ArrayList<>();
-        List<Player> players = new ArrayList<>();
-        List<ServerClientHandler> connections = new ArrayList<>();
-        Game model = null;//new Game(3);
-        Controller controller = new Controller(model);
+    @Test
+    void testMessage() throws ParserConfigurationException, SAXException {
+        Game game = new Game();
+        Controller controller = new Controller(game);
 
-        players.add(new Player("Pl1"));
-        players.add(new Player("Pl2"));
-        players.add(new Player("Pl3"));
+        Player player1 = new Player("Pl1");
+        Player player2 = new Player("Pl2");
 
-        /*connections.add(new ServerClientHandlerSocket());
-        connections.add(new ServerClientHandlerSocket());
-        connections.add(new ServerClientHandlerSocket());*/
+        Block worker1player1 = (Block) game.getBoard().getCell(0, 0);
 
-        playerViews.add(new RemoteView(players.get(0).nickName, connections.get(0)));
-        playerViews.add(new RemoteView(players.get(1).nickName, connections.get(1)));
-        playerViews.add(new RemoteView(players.get(2).nickName, connections.get(2)));
+        player1.initializeWorkerPosition(1, worker1player1);
+        player1.setCurrentWorker(player1.getWorker(1));
 
-        /*for (Player p : players)
-            model.addPlayer(p.getNickName());
+        ServerStub serverStub = new ServerStub();
+        View player1View = new RemoteView(player1.nickName, serverStub);
 
-        for (View p : playerViews) {
-            model.addObserver(p);
-            p.addObserver(controller);
-        }*/
+        player1View.addObserver(controller);
+        game.addObserver(player1View);
 
-        //model.setCurrentPlayer(model.getPlayers().get(0));
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+        game.setCurrentPlayer(player1);
+        game.assignCard(God.DEMETER);
+        game.setState(new Build(game));
 
-        //unicast - ko currentState
-        model.setState(new Move(model));
-        playerViews.get(0).processMessage(new Demand(DemandType.BUILD,"Pl1"));
+        player1View.processMessage(new Demand(DemandType.BUILD, new ReducedDemandCell(1,1)));
 
-        //unicast - ko currentPlayer
-        model.setState(new Move(model));
-        playerViews.get(2).processMessage(new Demand(DemandType.MOVE,"Pl2"));
-
-        //broadcast - ok
-        model.setState(new Build(model));
-        playerViews.get(0).processMessage(new Demand(DemandType.BUILD,"Pl3"));
+        assertEquals(player1, game.getCurrentPlayer());
+        assertEquals(Level.BOTTOM, game.getBoard().getCell(1, 1).getLevel());
+        assertEquals(Level.GROUND, ((Block) game.getBoard().getCell(1, 1)).getPreviousLevel());
+        assertEquals(AnswerType.SUCCESS, serverStub.answer.getHeader());
+        assertEquals(DemandType.ASK_ADDITIONAL_POWER, serverStub.answer.getContext());
     }
 }

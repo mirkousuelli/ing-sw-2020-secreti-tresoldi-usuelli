@@ -377,8 +377,8 @@ ________________________________________________________________________________
     }
 
 
-    // TOFIX ZEUS: Your Worker may build a block under itself.
-    //  @Test
+    // ZEUS: Your Worker may build a block under itself.
+    @Test
     void buildingUnderWithZeusTest() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
@@ -404,14 +404,14 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.ZEUS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
 
         ReturnContent returnContent = game.gameEngine();
 
-        //it checks that the player  build under itself since he has zeus
+        //it checks that the player build under itself since he has zeus
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.BUILD, returnContent.getState());
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
+        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
         assertEquals(Level.MIDDLE, w1p1.getLevel());
     }
 }

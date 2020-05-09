@@ -39,8 +39,9 @@ public class ChooseCard implements GameState {
         for (God g : game.getChosenGods()) {
             if (g.equals(chosenGod)) {
                 game.removeGod(g);
-                game.getDeck().fetchCard(g);
-                currentPlayer.setCard(game.getDeck().popCard(g));
+                currentPlayer.setCard(game.getDeck().getCard(g));
+                System.out.println(currentPlayer.getCard());
+                System.out.println(currentPlayer.getCard().getGod());
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))
@@ -48,7 +49,7 @@ public class ChooseCard implements GameState {
                 else
                     returnContent.setChangeTurn(true);
 
-                returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), g));
+                returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), currentPlayer.getCard()));
 
 
                 ChooseCard.applyMalus(game, Timing.DEFAULT);

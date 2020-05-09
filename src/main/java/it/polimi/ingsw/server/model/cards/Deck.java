@@ -10,12 +10,14 @@
 
 package it.polimi.ingsw.server.model.cards;
 
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.gods.GodParser;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Deck {
     /*@class
@@ -54,6 +56,10 @@ public class Deck {
         this.cards.add(newCard);
     }
 
+    public Card getCard(God god) {
+        return cards.stream().filter(c -> c.getGod().equals(god)).reduce(null, (a,b) -> a != null ? a : b);
+    }
+
     public void fetchCard(God god) {
         parser.parseCards(Collections.singletonList(god));
     }
@@ -83,5 +89,26 @@ public class Deck {
         }
 
         return pickedCard;
+    }
+
+    public List<ReducedCard> popAllGods(int numberOfPlayers) {
+        fetchDeck();
+
+        return cards.stream().filter(c -> c.getNumPlayer() >= numberOfPlayers).map(ReducedCard::new).collect(Collectors.toList());
+    }
+
+    public List<ReducedCard> popChosenGods(List<God> chosenGods) {
+        List<ReducedCard> reducedCardList = new ArrayList<>();
+
+        for (Card c : cards) {
+            for (God g : chosenGods) {
+                if (c.getGod().equals(g)) {
+                    reducedCardList.add(new ReducedCard(c));
+                    break;
+                }
+            }
+        }
+
+        return reducedCardList;
     }
 }

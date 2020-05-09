@@ -282,7 +282,7 @@ ________________________________________________________________________________
 
     }
 
-    // TOFIX: It works also if the chosen cell isn't reachable (which shouldn't)
+    
     // APOLLO: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated.
     @Test
     void movingWithApolloTest() throws ParserConfigurationException, SAXException {
@@ -308,7 +308,7 @@ ________________________________________________________________________________
         p1.setCurrentWorker(p1.getWorkers().get(0));
 
         w1p1.setLevel(Level.GROUND);
-        w1p2.setLevel(Level.MIDDLE);
+        w1p2.setLevel(Level.BOTTOM);
 
         game.setState(State.MOVE);
         game.setCurrentPlayer(p1);
@@ -321,12 +321,11 @@ ________________________________________________________________________________
         assertEquals(State.BUILD, returnContent.getState());
         assertEquals(w1p1.getPawn(), p2.getWorker(1));
         assertEquals(w1p2.getPawn(), p1.getWorker(1));
-        assertEquals(Level.MIDDLE, p1.getWorker(1).getLevel());
+        assertEquals(Level.BOTTOM, p1.getWorker(1).getLevel());
         assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
     }
 
 
-    // TOFIX: It works also if the chosen cell isn't reachable (which shouldn't)
     // Minotaur: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level.
     @Test
     void movingWithMinotaurTest() throws ParserConfigurationException, SAXException {
@@ -369,7 +368,8 @@ ________________________________________________________________________________
         assertNull(w1p1.getPawn());
         assertEquals(w1p2.getPawn(), p1.getWorker(1));
         assertEquals(pushed.getPawn(), p2.getWorker(1));
-
+        assertEquals(Level.BOTTOM, p1.getWorker(1).getLevel());
+        assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
     }
 
     // TODO

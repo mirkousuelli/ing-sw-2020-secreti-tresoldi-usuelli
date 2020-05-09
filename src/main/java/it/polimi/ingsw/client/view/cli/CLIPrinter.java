@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CLIPrinter<S> {
 
@@ -167,16 +168,20 @@ public class CLIPrinter<S> {
     }
 
     private void printAvailableGods() {
-        out.print("Available Gods: ");
+        Map<Integer, String> numberedDeck = IntStream
+                .range(0, clientModel.getDeck().size()) // IntStream
+                .boxed() // Stream<Integer>
+                .collect(Collectors.toMap(i -> i, i -> clientModel.getDeck().get(i).getGod().toString().toLowerCase() + ": " + clientModel.getDeck().get(i).getDescription()));
 
-        out.println((clientModel.getDeck()).stream()
-                .map(God::toString)
-                .map(String::toLowerCase)
+        out.print("Available Gods: \n");
+
+        out.println(numberedDeck.entrySet().stream()
+                .map(g -> g.getKey() + ") " + g.getValue())
                 .reduce(null, (a, b) -> a != null
-                        ? a + ", " + b
-                        : b
+                ? a + ".\n" + b
+                : b
                 )
-        );
+         + "\n");
     }
 
     private void printGods() {
@@ -193,7 +198,7 @@ public class CLIPrinter<S> {
         out.print(": ");
 
         out.println(playerList.stream()
-                .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getGod() + Color.RESET)
+                .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getCard().getGod().toString() + Color.RESET)
                 .reduce("none", (a, b) -> !a.equals("none")
                         ? a + ", " + b
                         : b
@@ -208,7 +213,7 @@ public class CLIPrinter<S> {
         String color;
 
         synchronized (clientModel) {
-            god = clientModel.getPlayer().getGod();
+            god = clientModel.getPlayer().getCard().getGod();
             color = Color.parseString(clientModel.getPlayer().getColor());
         }
 
@@ -256,7 +261,8 @@ public class CLIPrinter<S> {
 
     private void printAll() {
         printBoard();
-        printPossibleActions();
+        if (clientModel.isYourTurn())
+            printPossibleActions();
         printGods();
     }
 

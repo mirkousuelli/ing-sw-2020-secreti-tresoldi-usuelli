@@ -29,9 +29,4 @@ public class MalusPower<S> extends Power<S> {
 
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "MALUS";
-    }
 }
