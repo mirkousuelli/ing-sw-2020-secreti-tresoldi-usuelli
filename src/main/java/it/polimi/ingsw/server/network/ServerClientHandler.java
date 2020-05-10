@@ -18,4 +18,6 @@ public interface ServerClientHandler {
     Lobby getLobby();
 
     void setLobby(Lobby lobby);
+
+    void setCreator(boolean creator);
 }

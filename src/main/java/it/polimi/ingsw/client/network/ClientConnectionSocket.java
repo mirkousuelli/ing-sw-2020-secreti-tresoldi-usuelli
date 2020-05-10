@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import org.xml.sax.SAXException;
 
@@ -84,6 +85,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
                                         break;
                                     }
                                 }
+
+                                if(temp.getHeader().equals(AnswerType.CLOSE))
+                                    setActive(false);
 
                                 LOGGER.info("Queueing...");
                                 synchronized (buffer) {

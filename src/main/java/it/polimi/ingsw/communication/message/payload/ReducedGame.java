@@ -12,7 +12,6 @@ import java.util.List;
 
 public class ReducedGame {
 
-    private String lobbyId;
     private ReducedAnswerCell[][] reducedBoard;
     private List<ReducedPlayer> reducedPlayerList;
     private List<ReducedWorker> reducedWorkerList;
@@ -29,7 +28,6 @@ public class ReducedGame {
 
         currentPlayerIndex = loadedGame.getCurrentPlayer().getNickName();
         currentWorkerIndex = loadedGame.getCurrentPlayer().getWorkers().indexOf(loadedGame.getCurrentPlayer().getCurrentWorker());
-        lobbyId = lobby.getId();
         reducedBoard = new ReducedAnswerCell[5][5];
         reducedPlayerList = new ArrayList<>(lobby.getReducedPlayerList());
         reducedWorkerList = new ArrayList<>();
@@ -75,14 +73,6 @@ public class ReducedGame {
                     rp.setCard(new ReducedCard(p.getCard()));
             }
         }
-    }
-
-    public String getLobbyId() {
-        return lobbyId;
-    }
-
-    public void setLobbyId(String lobbyId) {
-        this.lobbyId = lobbyId;
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {

@@ -5,7 +5,8 @@ public enum AnswerType {
     SUCCESS,
     DEFEAT,
     VICTORY,
-    RESUME;
+    RESUME,
+    CLOSE;
 
     public AnswerType parseString(String str) {
         switch (str) {
@@ -19,6 +20,8 @@ public enum AnswerType {
                 return VICTORY;
             case "resume":
                 return RESUME;
+            case "close":
+                return CLOSE;
             default:
                 return null;
         }
@@ -37,6 +40,8 @@ public enum AnswerType {
                 return "victory";
             case RESUME:
                 return "resume";
+            case CLOSE:
+                return "close";
             default:
                 return "";
         }

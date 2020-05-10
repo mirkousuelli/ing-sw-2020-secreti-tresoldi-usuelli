@@ -45,4 +45,9 @@ public class ServerStub implements ServerClientHandler {
     public void setLobby(Lobby lobby) {
         //stub
     }
+
+    @Override
+    public void setCreator(boolean creator) {
+        //stub
+    }
 }

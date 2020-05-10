@@ -4,9 +4,6 @@ public enum DemandType {
     CONNECT,
     RELOAD,
     CREATE_GAME,
-    JOIN_GAME,
-    ASK_LOBBY,
-    WAIT,
     START,
     CHOOSE_DECK,
     AVAILABLE_GODS,
@@ -30,8 +27,6 @@ public enum DemandType {
                 return RELOAD;
             case "createGame":
                 return CREATE_GAME;
-            case "joinGame":
-                return JOIN_GAME;
             case "start":
                 return START;
             case "chooseDeck":
@@ -74,12 +69,6 @@ public enum DemandType {
                 return "reload";
             case CREATE_GAME:
                 return "createGame";
-            case JOIN_GAME:
-                return "joinGame";
-            case ASK_LOBBY:
-                return "askLobby";
-            case WAIT:
-                return "wait";
             case START:
                 return "start";
             case CHOOSE_DECK:

@@ -28,12 +28,12 @@ public class ServerConnectionSocket implements ServerConnection {
     private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
-    private final Map<ServerClientHandler, String> waitingConnection = new HashMap<>();
-    private final List<Lobby> lobbyList = new ArrayList<>();
+    private Lobby lobby;
 
     public ServerConnectionSocket(int port) {
         this.port = port;
 
+        lobby = null;
         loadLobby();
     }
 
@@ -59,13 +59,9 @@ public class ServerConnectionSocket implements ServerConnection {
                 handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
                 executor.submit(handler);
             }
-            catch(IOException e) {
-                LOGGER.log(Level.SEVERE, "Got an IOException, serverSocket closed", e);
-                break;//In case the serverSocket gets closed
-            } catch (SAXException e) {
-                e.printStackTrace();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
+            catch(Exception e) {
+                LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
+                break; //In case the serverSocket gets closed
             }
         }
 
@@ -82,103 +78,58 @@ public class ServerConnectionSocket implements ServerConnection {
 
     //Wait for another player
     @Override
-    public synchronized void connect(ServerClientHandler c, String name) {
+    public synchronized boolean connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
+        if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
+            lobby.addPlayer(name, c);
+            c.setLobby(lobby);
+            LOGGER.info("Reloaded!");
+            return false;
+        }
+        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null)) {
+            lobby = new Lobby();
+            lobby.addPlayer(name, c);
+            lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
+            c.setLobby(lobby);
+            c.setCreator(true);
 
-        for (Lobby l : lobbyList) {
-            if (l.isReloaded() && l.getGame().getPlayer(name) != null) {
-                l.addPlayer(name, c);
-                c.setLobby(l);
-                LOGGER.info("Reloaded!");
-                return;
-            }
+            c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getColor(c))));
+            return false;
+        }
+        else if (!lobby.isReloaded() && lobby.getGame().getPlayer(name) == null &&
+                 lobby.getNumberOfPlayers() != -1 && lobby.getNumberOfPlayers() > lobby.getReducedPlayerList().size()) {
+            lobby.addPlayer(name, c);
+            c.setLobby(lobby);
+            c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, new ReducedMessage(lobby.getColor(c))));
+            return false;
         }
 
-        waitingConnection.put(c, name);
-
-        LOGGER.info(() -> name + " put!");
-        c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT));
-        LOGGER.info("Connect answer sent!");
-    }
-
-    @Override
-    public synchronized boolean prelobby(ServerClientHandler c, Demand demand) throws ParserConfigurationException, SAXException {
-        Lobby lobby;
-        String value = ((ReducedMessage) demand.getPayload()).getMessage();
-
-        switch (value) {
-            case "1":
-                lobby = new Lobby();
-
-                lobbyList.add(lobby);
-
-                lobby.addPlayer(waitingConnection.get(c), c);
-                lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
-                waitingConnection.remove(c);
-                c.setLobby(lobby);
-                c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
-                LOGGER.info("Success create game sent!");
-                return false;
-
-            case "2":
-                    c.send(new Answer<>(AnswerType.SUCCESS, DemandType.ASK_LOBBY));
-                    LOGGER.info("Success ask lobby sent!");
-                return false;
-
-            default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader()));
-        }
+        if (lobby.getNumberOfPlayers() != -1)
+            c.send(new Answer<>(AnswerType.ERROR, DemandType.CONNECT, new ReducedMessage("null")));
+        else
+            c.setLobby(lobby);
 
         return true;
     }
 
     @Override
-    public synchronized boolean lobby(ServerClientHandler c, Demand demand) {
+    public synchronized boolean numOfPlayers(ServerClientHandler c, Demand demand) {
         Lobby lobby;
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
+        int numOfPls = Integer.parseInt(value);
 
-        switch ((DemandType) demand.getHeader()) {
-            case CREATE_GAME:
-                lobby = c.getLobby();
+        if (demand.getHeader() == DemandType.CREATE_GAME) {
+            lobby = c.getLobby();
 
-                lobby.setNumberOfPlayers(Integer.parseInt(value));
+            if (numOfPls == 2 || numOfPls == 3) {
+                lobby.setNumberOfPlayers(numOfPls);
+                synchronized (lobby.lockLobby) {
+                    lobby.lockLobby.notifyAll();
+                }
                 return false;
-
-            case ASK_LOBBY:
-                boolean spaceInLobby;
-
-                lobby = null;
-                for (Lobby l : lobbyList) {
-                    if (l.getId().equals(value)) {
-                        lobby = l;
-                    }
-                }
-
-                if (lobby != null) {
-                    spaceInLobby = lobby.addPlayer(waitingConnection.get(c), c);
-
-                    if (spaceInLobby) {
-                        c.setLobby(lobby);
-                        waitingConnection.remove(c);
-                        c.send(new Answer<>(AnswerType.SUCCESS, DemandType.JOIN_GAME, new ReducedMessage(lobby.getId(), lobby.getColor(c))));
-                        LOGGER.info("Success join game sent!");
-                        return false;
-                    }
-                    else {
-                        c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY));
-                        LOGGER.info("Error lobby full!");
-                        return true;
-                    }
-                }
-
-                c.asyncSend(new Answer<>(AnswerType.ERROR, DemandType.ASK_LOBBY));
-                LOGGER.info("Error lobby does not exists!");
-                return true;
-
-            default:
-                c.asyncSend(new Answer<>(AnswerType.ERROR, (DemandType) demand.getHeader()));
-                LOGGER.info("Error lobby!");
+            }
         }
 
+        c.send(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, new ReducedMessage("null")));
         return true;
     }
 
@@ -195,7 +146,8 @@ public class ServerConnectionSocket implements ServerConnection {
         if (loadedGame != null) {
             loadedLobby = new Lobby(loadedGame);
             loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
-            lobbyList.add(loadedLobby);
+            //lobbyList.add(loadedLobby);
+            lobby = loadedLobby;
         }
     }
 }

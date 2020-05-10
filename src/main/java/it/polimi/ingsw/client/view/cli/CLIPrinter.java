@@ -27,8 +27,7 @@ public class CLIPrinter<S> {
 
     private static final String CONNECT = "Connected!\n";
     private static final String RELOAD = "Reloaded!\n";
-    private static final String WAIT = "Waiting other players...\n";
-    private static final String ASKLOBBY = "Ask your friend his lobby's id!\n";
+    private static final String CREATEGAME = "Waiting other players...\n";
 
     private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
@@ -51,16 +50,11 @@ public class CLIPrinter<S> {
 
         stringMap.put(DemandType.CONNECT, CONNECT);
         stringMap.put(DemandType.RELOAD, RELOAD);
-        stringMap.put(DemandType.WAIT, WAIT);
-        stringMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
+        stringMap.put(DemandType.CREATE_GAME, CREATEGAME);
 
         initialMap.put(DemandType.CONNECT, this::printString);
-        initialMap.put(DemandType.WAIT, this::printString);
-        initialMap.put(DemandType.ASK_LOBBY, this::printString);
 
         changesMap.put(DemandType.RELOAD, this::printAll);
-        changesMap.put(DemandType.CREATE_GAME, this::printLobby);
-        changesMap.put(DemandType.JOIN_GAME, this::printLobby);
         changesMap.put(DemandType.START, this::printStart);
         changesMap.put(DemandType.CHOOSE_DECK, this::printAvailableGods);
         changesMap.put(DemandType.CHOOSE_CARD, this::printAvailableGods);
@@ -73,12 +67,9 @@ public class CLIPrinter<S> {
         changesMap.put(DemandType.ASK_ADDITIONAL_POWER, this::printAll);
         changesMap.put(DemandType.CHANGE_TURN, this::printCurrentPlayer);
 
-        allowScanner.put(DemandType.CONNECT, true);
-        allowScanner.put(DemandType.ASK_LOBBY, true);
-        allowScanner.put(DemandType.WAIT, false);
+        allowScanner.put(DemandType.CONNECT, false);
         allowScanner.put(DemandType.RELOAD, false);
         allowScanner.put(DemandType.START, false);
-        allowScanner.put(DemandType.JOIN_GAME, false);
         allowScanner.put(DemandType.CHANGE_TURN, false);
         allowScanner.put(DemandType.AVAILABLE_GODS, false);
     }
@@ -89,16 +80,6 @@ public class CLIPrinter<S> {
 
     public void printString(String message) {
         out.print(message);
-    }
-
-    public void printLobby() {
-        String id;
-
-        synchronized (clientModel) {
-            id = clientModel.getLobbyId();
-        }
-
-        out.println("Your lobby number is: " + id);
     }
 
     public void printStart() {
@@ -126,7 +107,7 @@ public class CLIPrinter<S> {
         for (int i = 0; i < 5; i++) {
             out.print(" " + i + " ");
         }
-        out.print("\n");
+        out.print("\n\n");
 
         printOpponents();
     }
@@ -296,11 +277,13 @@ public class CLIPrinter<S> {
     public boolean printChanges(DemandType demandType) {
         Boolean ret;
         Consumer<String> initlaFunct = initialMap.get(demandType);
+        Runnable changesMapFunct = changesMap.get(demandType);
 
            if (initlaFunct != null)
                initlaFunct.accept(stringMap.get(demandType));
-           else
-               changesMap.get(demandType).run();
+           else if (changesMapFunct != null) {
+               changesMapFunct.run();
+           }
 
            ret = allowScanner.get(demandType);
            if (ret == null)
