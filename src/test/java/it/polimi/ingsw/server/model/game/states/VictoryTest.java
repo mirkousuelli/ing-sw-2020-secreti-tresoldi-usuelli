@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VictoryTest {
+
     @Test
     void startNewGameAfterVictoryTest() throws ParserConfigurationException, SAXException {
         /*@function
@@ -30,6 +31,9 @@ public class VictoryTest {
 
         game.setCurrentPlayer(p1);
         game.setState(State.VICTORY);
+
+        //it checks that the state is actually victory
+        assertEquals("victory",game.getState().getName());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.START)));
         ReturnContent returnContent = game.gameEngine();

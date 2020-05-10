@@ -66,8 +66,8 @@ public class ChangeTurnTest {
     @Test
     void switchToVictoryTest() throws ParserConfigurationException, SAXException {
         /*@function
-        *  it checks that if there is only one player left, the state is set to Victory
-        */
+         *  it checks that if there is only one player left, the state is set to Victory
+         */
         Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
@@ -80,6 +80,9 @@ public class ChangeTurnTest {
         game.setCurrentPlayer(p1);
         game.setState(State.CHANGE_TURN);
         game.setNumPlayers(1);
+
+        //it checks that the state is correctly set to change turn
+        assertEquals("changeTurn",game.getState().getName());
 
         // it enters change Turn state with only one player, so it goes to victory state
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));

@@ -31,14 +31,12 @@ public class Victory implements GameState {
         this.game = game;
     }
 
-    private void endGame(Game game) {
-        /* @function
-         * it shows the player that won and ends the current game
-         */
+   /* private void endGame(Game game) {
+         // it shows the player that won and ends the current game
 
         // once there is a winner, it shows the name of the winner
         game.getBoard().clean(); // it cleans the whole board (and the pawns too)
-    }
+    }*/
 
     @Override
     public String getName() {

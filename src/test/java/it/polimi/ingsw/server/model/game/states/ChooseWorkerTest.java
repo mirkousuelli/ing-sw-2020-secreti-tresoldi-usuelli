@@ -1,7 +1,16 @@
 package it.polimi.ingsw.server.model.game.states;
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Board;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -11,58 +20,64 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ChooseWorkerTest {
 
-    //@Test
-    void correctEnteringToStateTest() throws ParserConfigurationException, SAXException {
-        /*@function
-         * it checks whether if the game enters in the ChooseWorker state after everything is set up in Start state
-         */
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
+    @Test
+    void correctChosenWorkerTest() throws ParserConfigurationException, SAXException {
 
         Game game = new Game();
-        game.getPlayerList().add(p1);
-        game.getPlayerList().add(p2);
-        game.getPlayerList().add(p3);
+        Player p1 = new Player("Pl2");
+        Player p2 = new Player("Pl1");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
 
-        game.setCurrentPlayer(p1);
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(3, 4);
+        Block worker2Player1 = (Block) board.getCell(0, 1);
 
-        assertTrue(game.getState()instanceof Start);
-        game.setState(new ChooseWorker(game));
-        assertTrue(game.getState()instanceof ChooseWorker);
-    }
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
 
-
-    //@Test
-    void switchToMoveTest() throws ParserConfigurationException, SAXException {
-        /*@function
-         * it checks if the state changes to Move after the player has chosen the worker he wants to move
-         */
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
-
-        Game game = new Game();
-        game.getPlayerList().add(p1);
-        game.getPlayerList().add(p2);
-        game.getPlayerList().add(p3);
-
-        game.setCurrentPlayer(p1);
         game.setState(State.CHOOSE_WORKER);
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ARTEMIS);
 
-        /*
-        Block w1p1 = (Block) game.getBoard().getCell(4, 1);
-        Block w2p1 = (Block) game.getBoard().getCell(0, 2);
-        p1.initializeWorkerPosition(1, w1p1);
-        p2.initializeWorkerPosition(2, w2p1);
+        assertEquals("chooseWorker",game.getState().getName());
 
-        assertEquals(p1.getWorkers().get(0).getLocation(), w1p1);
-        assertEquals(p1.getWorkers().get(1).getLocation(), w2p1);
-         */
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 1))));
+        ReturnContent returnContent = game.gameEngine();
 
-        // it checks that the state changes correctly to Move
-        assertTrue(game.getState()instanceof ChooseWorker);
-   //     game.getState().gameEngine(game);
-   //     assertTrue(game.getState()instanceof Move);
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.MOVE,returnContent.getState());
+        assertEquals(p1.getCurrentWorker(), game.getCurrentPlayer().getWorker(2));
+        assertEquals(worker2Player1, p1.getCurrentWorker().getLocation());
     }
+
+    @Test
+    void pickedWrongCellTest() throws ParserConfigurationException, SAXException {
+        // if the player picks a cell where there's not one of his workers, he has to pick again
+        Game game = new Game();
+        Player p1 = new Player("Pl2");
+        Player p2 = new Player("Pl1");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(3, 4);
+        Block worker2Player1 = (Block) board.getCell(0, 1);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+
+        game.setState(State.CHOOSE_WORKER);
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ARTEMIS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_WORKER, new ReducedDemandCell(4, 0))));
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.CHOOSE_WORKER,returnContent.getState());
+        assertNull(p1.getCurrentWorker());
+    }
+
+    // TODO cases where the player cannot move any of his workers or if he chooses one that cannot be moved
 }
