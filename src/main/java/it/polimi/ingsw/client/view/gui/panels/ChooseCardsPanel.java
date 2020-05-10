@@ -1,5 +1,4 @@
 package it.polimi.ingsw.client.view.gui.panels;
-
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -9,25 +8,46 @@ import java.util.ArrayList;
 public class ChooseCardsPanel extends SantoriniPanel {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 200;
-    private static final int GOD_X = 70;
-    private static final int GOD_Y = 100;
+    private static final int GOD_X = 45;
+    private static final int GOD_Y = 65;
     private JButton sendButton;
     private JButton removeButton;
     private JButton chooseButton;
-    private JPanel godsList;
+    private JLayeredPane godsList;
     private JPanel choice;
-    private JPanel choosenList;
+    private JLayeredPane choosenList;
     private JButton[] gods;
+    JLabel godsBack;
+
+    JLayeredPane layers;
 
 
     public ChooseCardsPanel() {
         super(imgPath);
 
-        createChosenList();
-        createChoice();
-        createGodsList();
+        GridBagConstraints c = new GridBagConstraints();
 
-        //loadGods();
+        c.anchor = GridBagConstraints.CENTER;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.fill = GridBagConstraints.BOTH;
+
+        layers = new JLayeredPane();
+        layers.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
+        layers.setOpaque(false);
+        layers.setVisible(true);
+        layers.setLayout(new GridBagLayout());
+        add(layers, c);
+
+        createChosenList();
+        createGodsList();
+        createChoice();
+
+        loadGods();
     }
 
     void createChosenList() {
@@ -42,18 +62,23 @@ public class ChooseCardsPanel extends SantoriniPanel {
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
 
-        choosenList = new JPanel(new BorderLayout());
+        choosenList = new JLayeredPane();
+        choosenList.setLayout(new GridBagLayout());
         choosenList.setVisible(true);
+        //choosenList.setBackground(Color.GREEN);
         choosenList.setOpaque(false);
-        choosenList.setBackground(Color.BLUE);
+        choosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 150));
 
-        add(choosenList, c);
+        layers.add(choosenList, c, 0);
 
-        JLabel background = new JLabel(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/labels/clouds.png"), BackgroundPanel.WIDTH, 120));
-        background.setOpaque(false);
+        ImageIcon icon = new ImageIcon("img/labels/clouds.png");
+        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 150, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+        JLabel cloudBack = new JLabel(icon);
+        cloudBack.setOpaque(false);
 
-        choosenList.add(background, BorderLayout.NORTH);
+        choosenList.add(cloudBack, 0);
+        cloudBack.setSize(new Dimension(img.getWidth(null), img.getHeight(null)));
     }
 
     void createChoice() {
@@ -73,7 +98,7 @@ public class ChooseCardsPanel extends SantoriniPanel {
         choice.setOpaque(false);
         choice.setBackground(Color.GREEN);
 
-        add(choice, c);
+        layers.add(choice, c, 1);
     }
 
     void createGodsList() {
@@ -88,31 +113,59 @@ public class ChooseCardsPanel extends SantoriniPanel {
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
 
-        choosenList = new JPanel(new BorderLayout());
-        choosenList.setVisible(true);
-        choosenList.setOpaque(false);
-        choosenList.setBackground(Color.RED);
+        godsList = new JLayeredPane();
+        godsList.setLayout(new OverlayLayout(godsList));
+        godsList.setVisible(true);
+        //godsList.setBackground(Color.RED);
+        godsList.setOpaque(false);
+        godsList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 180));
 
-        add(choosenList, c);
+        layers.add(godsList, c, 0);
 
-        JLabel background = new JLabel(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/labels/gods_menu.png"), BackgroundPanel.WIDTH, 120));
-        background.setOpaque(false);
+        ImageIcon icon = new ImageIcon("img/labels/gods_menu.png");
+        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 180, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+        godsBack = new JLabel(icon);
+        godsBack.setOpaque(false);
+        godsBack.setLayout(new GridBagLayout());
 
-        choosenList.add(background, BorderLayout.SOUTH);
+        godsList.add(godsBack);
     }
 
-    /*void loadGods() {
+    void loadGods() {
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.anchor = GridBagConstraints.SOUTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 1;
+        c.weighty = 0f;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(0,0,-15,0);
+
+        JPanel miniGods = new JPanel(new FlowLayout());
         gods = new JButton[God.values().length];
         God[] array = God.values();
         for (int i = 0; i < array.length; i++) {
-            String path = "img/cards/" + array[i].toString().toLowerCase() + "/mini.png";
-            System.out.println(path);
-            //gods[i] = new JButton("CIAO");//new JButton(BackgroundPanel.getScaledImage(new ImageIcon(path), GOD_X, GOD_Y));
+            if (!array[i].toString().toLowerCase().equals("poseidon")) {
+                ImageIcon icon = new ImageIcon("img/cards/" + array[i].toString().toLowerCase() + "/mini.png");
+                Image img = icon.getImage().getScaledInstance( GOD_X, GOD_Y, Image.SCALE_SMOOTH);
+                icon = new ImageIcon( img );
 
-            godsList.add(new JButton("CIAO"));
+                gods[i] = new JButton(icon);
+                gods[i].setOpaque(false);
+                gods[i].setContentAreaFilled(false);
+                gods[i].setBorderPainted(false);
+
+                miniGods.add(gods[i]);
+            }
         }
-    }*/
+        miniGods.setOpaque(false);
+
+        godsBack.add(miniGods, c);
+    }
 
     /*private void createSendButton() {
         sendButton = new JButton(BackgroundPanel.getScaledImage(

@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class StartPanel extends SantoriniPanel {
     private final static String imgPath = "intro.png";
-    private final static int BUTTON_SIZE = 200;
+    private final static int BUTTON_SIZE = 150;
     private JButton playButton;
 
     public StartPanel() {
@@ -16,7 +16,10 @@ public class StartPanel extends SantoriniPanel {
 
     private void createPlayButton() {
         GridBagConstraints c = new GridBagConstraints();
-        JPanel button = new JPanel(new BorderLayout());
+
+        ImageIcon icon = new ImageIcon("img/buttons/play_button.png");
+        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
 
         c.gridy = 2;
         c.gridx = 0;
@@ -26,8 +29,7 @@ public class StartPanel extends SantoriniPanel {
         c.weighty = 1;
         c.insets = new Insets(0,0,-450,0);
 
-        playButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/play_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+        playButton = new JButton(icon);
         playButton.setOpaque(false);
         playButton.setContentAreaFilled(false);
         playButton.setBorderPainted(false);
