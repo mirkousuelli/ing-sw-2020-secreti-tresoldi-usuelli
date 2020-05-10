@@ -9,8 +9,8 @@ public class EndPanel extends SantoriniPanel {
     public static final String LOST = "lost.png";
     private String type;
 
-    public EndPanel(String type) {
-        super(type);
+    public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
+        super(type, panelIndex, panels);
         this.type = type;
     }
 }

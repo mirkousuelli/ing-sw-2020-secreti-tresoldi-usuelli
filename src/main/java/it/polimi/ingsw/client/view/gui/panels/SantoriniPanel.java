@@ -8,9 +8,14 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
     private final Image img;
     private int scaleWidth;
     private int scaleHeight;
+    protected CardLayout panelIndex;
+    protected JPanel panels;
 
-    public SantoriniPanel(String imgPath) {
+    public SantoriniPanel(String imgPath, CardLayout panelIndex, JPanel panels) {
         this.imgPath = imgPath;
+        this.panelIndex = panelIndex;
+        this.panels = panels;
+
         this.scaleWidth = BackgroundPanel.WIDTH;
         this.scaleHeight = BackgroundPanel.HEIGHT;
         Dimension firstSize = new Dimension(scaleWidth, scaleHeight);

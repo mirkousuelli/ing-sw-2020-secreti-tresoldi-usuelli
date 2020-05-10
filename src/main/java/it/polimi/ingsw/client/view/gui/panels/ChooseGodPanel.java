@@ -6,7 +6,7 @@ import java.awt.*;
 public class ChooseGodPanel extends SantoriniPanel {
     private static final String imgPath = "menu.png";
 
-    public ChooseGodPanel() {
-        super(imgPath);
+    public ChooseGodPanel(CardLayout panelIndex, JPanel panels) {
+        super(imgPath, panelIndex, panels);
     }
 }

@@ -2,14 +2,16 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class StartPanel extends SantoriniPanel {
+public class StartPanel extends SantoriniPanel implements ActionListener {
     private final static String imgPath = "intro.png";
     private final static int BUTTON_SIZE = 150;
     private JButton playButton;
 
-    public StartPanel() {
-        super(imgPath);
+    public StartPanel(CardLayout panelIndex, JPanel panels) {
+        super(imgPath, panelIndex, panels);
 
         createPlayButton();
     }
@@ -34,6 +36,11 @@ public class StartPanel extends SantoriniPanel {
         playButton.setContentAreaFilled(false);
         playButton.setBorderPainted(false);
 
+        playButton.addActionListener(this);
         add(playButton, c);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        this.panelIndex.next(this.panels);
     }
 }

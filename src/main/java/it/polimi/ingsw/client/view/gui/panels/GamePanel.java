@@ -16,8 +16,8 @@ public class GamePanel extends SantoriniPanel {
     private JPanel firstMalus;
     private JPanel secondMalus;
 
-    public GamePanel() {
-        super(imgPath);
+    public GamePanel(CardLayout panelIndex, JPanel panels) {
+        super(imgPath, panelIndex, panels);
 
         createRightSection();
         createMap();

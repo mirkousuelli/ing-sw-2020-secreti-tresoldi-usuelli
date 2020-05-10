@@ -22,8 +22,8 @@ public class ChooseCardsPanel extends SantoriniPanel {
     JLayeredPane layers;
 
 
-    public ChooseCardsPanel() {
-        super(imgPath);
+    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels) {
+        super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
 
