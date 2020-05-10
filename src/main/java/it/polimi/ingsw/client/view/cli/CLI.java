@@ -44,6 +44,10 @@ public class CLI<S> extends ClientView<S> {
                 }
                 break;
 
+            case CLOSE:
+                setActive(false);
+                return;
+
             default:
                 throw new NotAValidInputRunTimeException("Not a valid answer");
         }

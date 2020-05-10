@@ -16,9 +16,7 @@ public class CLIScanner<S> {
     private final Scanner in;
     private final CLIPrinter<S> out;
 
-    private static final String CONNECT = "Do you want to create a lobby or join an existing one: 1-create, 2-join\n";
     private static final String CREATEGAME = "Insert the number of players:\n";
-    private static final String ASKLOBBY = "Insert a lobby's id:\n";
     private static final String CHOOSEDECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
     private static final String CHOOSECARD = "Insert the name of the chosen god [godName]\n";
     private static final String CHOOSESTARTER = "Insert the name of the starter: [playerName]\n";
@@ -48,9 +46,7 @@ public class CLIScanner<S> {
         payloadMap = new EnumMap<>(DemandType.class);
 
 
-        messageMap.put(DemandType.CONNECT, CONNECT);
         messageMap.put(DemandType.CREATE_GAME, CREATEGAME);
-        messageMap.put(DemandType.ASK_LOBBY, ASKLOBBY);
         messageMap.put(DemandType.CHOOSE_DECK, CHOOSEDECK);
         messageMap.put(DemandType.CHOOSE_CARD, CHOOSECARD);
         messageMap.put(DemandType.CHOOSE_STARTER, CHOOSESTARTER);
@@ -78,9 +74,7 @@ public class CLIScanner<S> {
         toUsePowerMap.put(DemandType.BUILD, clientModel::evalToUsePower);
         toUsePowerMap.put(DemandType.USE_POWER, clientModel::evalToUsePower);
 
-        payloadMap.put(DemandType.CONNECT, this::parseString);
         payloadMap.put(DemandType.CREATE_GAME, this::parseString);
-        payloadMap.put(DemandType.ASK_LOBBY, this::parseString);
         payloadMap.put(DemandType.CHOOSE_DECK, this::parseStringGod);
         payloadMap.put(DemandType.CHOOSE_CARD, this::parseStringGod);
         payloadMap.put(DemandType.CHOOSE_STARTER, this::parseString);

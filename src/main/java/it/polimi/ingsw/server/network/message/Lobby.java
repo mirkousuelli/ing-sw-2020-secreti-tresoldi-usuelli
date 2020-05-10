@@ -43,7 +43,7 @@ public class Lobby {
         playerColor = new HashMap<>();
 
         lockLobby = new Object();
-        numberOfPlayers = 2; //default
+        numberOfPlayers = -1;
 
         reloaded = true;
     }
@@ -169,6 +169,10 @@ public class Lobby {
         }
 
         return ret;
+    }
+
+    public boolean isPresentInGame(ServerClientHandler c) {
+        return playingConnection.get(c) != null;
     }
 
     public String getColor(ServerClientHandler c) {

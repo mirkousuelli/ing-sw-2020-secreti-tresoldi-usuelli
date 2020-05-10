@@ -23,7 +23,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private List<ReducedWorker> workers;
     private String currentPlayer;
     private final ReducedPlayer player;
-    private String lobbyId;
 
     private boolean isReloaded;
 
@@ -107,6 +106,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             return;
         }
         synchronized (lockAnswer) {
+            if (answer.getHeader().equals(AnswerType.CLOSE)) {
+                setActive(false);
+                return;
+            }
+
             if (!answer.getHeader().equals(AnswerType.ERROR))
                 updateReduceObjects(answer);
         }
@@ -114,16 +118,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private synchronized void updateReduceObjects(Answer<S> answer) {
         switch (answer.getContext()) {
-            case CONNECT:
-            case ASK_LOBBY:
-            case WAIT:
-                break;
-
             case RELOAD:
                 ReducedGame reducedGame = ((ReducedGame) answer.getPayload());
 
                 reducedBoard = reducedGame.getReducedBoard();
-                lobbyId = reducedGame.getLobbyId();
                 opponents = reducedGame.getReducedPlayerList();
                 currentPlayer = reducedGame.getCurrentPlayerIndex();
                 workers = reducedGame.getReducedWorkerList();
@@ -142,9 +140,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case CREATE_GAME:
-            case JOIN_GAME:
-                lobbyId = ((ReducedMessage) answer.getPayload()).getMessage();
-                player.setColor(((ReducedMessage) answer.getPayload()).getColor());
+            case CONNECT:
+                player.setColor(((ReducedMessage) answer.getPayload()).getMessage());
                 break;
 
             case START:
@@ -332,10 +329,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     public synchronized List<ReducedWorker> getWorkers() {
         return new ArrayList<>(workers);
-    }
-
-    public synchronized String getLobbyId() {
-        return lobbyId;
     }
 
     private synchronized List<Integer> stringToInt(String string) {
