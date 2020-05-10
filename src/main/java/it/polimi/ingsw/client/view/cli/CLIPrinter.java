@@ -117,9 +117,14 @@ public class CLIPrinter<S> {
         }
 
         for (int j = 4; j >= 0; j--) {
+            System.out.print(4-j + " ");
             for (int i = 0; i < 5; i++)
                 printCell(board[i][j], opponents);
             out.print("\n");
+        }
+        out.print("  ");
+        for (int i = 0; i < 5; i++) {
+            out.print(" " + i + " ");
         }
         out.print("\n");
 
