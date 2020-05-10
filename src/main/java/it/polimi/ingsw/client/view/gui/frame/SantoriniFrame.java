@@ -1,9 +1,10 @@
 package it.polimi.ingsw.client.view.gui.frame;
 
 import it.polimi.ingsw.client.view.gui.panels.*;
+import it.polimi.ingsw.server.model.game.Game;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         //setMinimumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
-        //setMaximumSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
+        //setMaximumSize(new Dimension(1920, 1080));
 
         button1 = new JButton("NEXT");
         button2 = new JButton("NEXT");
@@ -58,9 +59,6 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         JPanel card1 = new StartPanel();
         card1.add(button1);
 
-        JPanel card2 = new NicknamePanel();
-        card2.add(button2);
-
         JPanel card3 = new NumPlayerPanel();
         card3.add(button3);
 
@@ -68,7 +66,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         card4.add(button4);
 
         JPanel card5 = new ChooseCardsPanel();
-        card5.add(button5);
+        //card5.add(button5);
 
         JPanel card6 = new ChooseGodPanel();
         card6.add(button6);
@@ -88,7 +86,7 @@ public class SantoriniFrame extends JFrame implements ActionListener {
         cards = new JPanel(new CardLayout());
 
         cards.add(card1, BorderLayout.CENTER);
-        cards.add(card2, BorderLayout.CENTER);
+        //cards.add(card2, BorderLayout.CENTER);
         cards.add(card3, BorderLayout.CENTER);
         cards.add(card4, BorderLayout.CENTER);
         cards.add(card5, BorderLayout.CENTER);

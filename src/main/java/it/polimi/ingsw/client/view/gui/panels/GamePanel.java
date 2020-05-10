@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
@@ -10,74 +9,111 @@ public class GamePanel extends SantoriniPanel {
     private final static int DIM = 5;
     private JPanel map;
     private JButton[][] cellButton;
-    private JPanel player;
+    private JPanel right;
     private JPanel lobby;
     private JPanel card;
-    private JPanel malus;
+    private JPanel left;
     private JPanel firstMalus;
     private JPanel secondMalus;
 
     public GamePanel() {
         super(imgPath);
 
-        createMap();
         createRightSection();
+        createMap();
         createLeftSection();
     }
 
     void createMap() {
-        map = new JPanel(new GridLayout(DIM, DIM, DIM, DIM));
+        GridBagConstraints mapCon = new GridBagConstraints();
+
+        mapCon.anchor = GridBagConstraints.CENTER;
+        mapCon.gridx = 1;
+        mapCon.gridy = 0;
+
+        mapCon.gridwidth = 1;
+        mapCon.gridheight = 2;
+
+        mapCon.weightx = 0.5;
+        mapCon.weighty = 1;
+        mapCon.fill = GridBagConstraints.BOTH;
+        mapCon.insets = new Insets(70,10,85,10);
+        map = new JPanel(new GridBagLayout());
         map.setOpaque(false);
         map.setVisible(true);
 
         cellButton = new JButton[DIM][DIM];
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = j;
+                c.gridy = i;
+                c.fill = GridBagConstraints.BOTH;
+                c.weighty = 1;
+                c.weightx = 1;
                 cellButton[i][j] = new JButton("(" + i + ", " + j + ")");
-                cellButton[i][j].setSize(new Dimension(40,40));
-                map.add(cellButton[i][j]);
+                map.add(cellButton[i][j], c);
             }
         }
-
-        map.setBorder(new EmptyBorder(72,50,85,45));
-        add(map);
+        map.setBorder(new EmptyBorder(0,20,0,10));
+        add(map, mapCon);
     }
 
     void createRightSection() {
-        player = new JPanel(new GridLayout(2,1));
-        player.setVisible(true);
-        player.setPreferredSize(new Dimension((int) (getWidth() * 0.25), getHeight()));
-        add(player);
+        GridBagConstraints rightCon = new GridBagConstraints();
+
+        rightCon.anchor = GridBagConstraints.WEST;
+        rightCon.gridx = 0;
+        rightCon.gridy = 0;
+        rightCon.gridwidth = 1;
+        rightCon.gridheight = 2;
+        rightCon.weightx = 2;
+        rightCon.weighty = 1;
+        rightCon.fill = GridBagConstraints.BOTH;
+
+        right = new JPanel(new GridLayout(2,1));
+        right.setVisible(true);
+        right.setOpaque(true);
 
         lobby = new JPanel(new BorderLayout());
         lobby.setBackground(Color.YELLOW);
         lobby.setVisible(true);
-        lobby.setPreferredSize(new Dimension(player.getWidth(), getHeight()/2));
-        add(lobby);
+        right.add(lobby);
 
         card = new JPanel(new BorderLayout());
         card.setBackground(Color.MAGENTA);
         card.setVisible(true);
-        card.setPreferredSize(new Dimension(player.getWidth(), getHeight()/2));
-        player.add(card);
+        right.add(card);
+
+        add(right, rightCon);
     }
 
     void createLeftSection() {
-        malus = new JPanel(new GridLayout(2,1));
-        malus.setVisible(true);
-        malus.setPreferredSize(new Dimension((int) (getWidth() * 0.25), getHeight()));
-        add(malus);
+        GridBagConstraints leftCon = new GridBagConstraints();
+
+        leftCon.anchor = GridBagConstraints.EAST;
+        leftCon.gridx = 2;
+        leftCon.gridy = 0;
+        leftCon.gridwidth = 1;
+        leftCon.gridheight = 2;
+        leftCon.weightx = 2;
+        leftCon.weighty = 1;
+        leftCon.fill = GridBagConstraints.BOTH;
+
+        left = new JPanel(new GridLayout(2,1));
+        left.setVisible(true);
+        left.setOpaque(true);
 
         firstMalus = new JPanel(new BorderLayout());
         firstMalus.setBackground(Color.BLUE);
         firstMalus.setVisible(true);
-        firstMalus.setPreferredSize(new Dimension(malus.getWidth(), getHeight()/2));
-        malus.add(firstMalus);
+        left.add(firstMalus);
 
         secondMalus = new JPanel(new BorderLayout());
         secondMalus.setBackground(Color.RED);
         secondMalus.setVisible(true);
-        secondMalus.setPreferredSize(new Dimension(malus.getWidth(), getHeight()/2));
-        malus.add(secondMalus);
+        left.add(secondMalus);
+
+        add(left, leftCon);
     }
 }
