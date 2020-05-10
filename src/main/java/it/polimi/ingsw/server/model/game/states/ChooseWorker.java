@@ -13,7 +13,11 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -103,6 +107,8 @@ public class ChooseWorker implements GameState {
 
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         List<Cell> possibleMoves;
+        List<Cell> possibleBuilds;
+        List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
         ReducedAnswerCell temp;
 
@@ -113,12 +119,26 @@ public class ChooseWorker implements GameState {
         List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
+        Power power = game.getCurrentPlayer().getCard().getPower(0);
+        Malus malus = power.getPersonalMalus();
+        if (malus !=  null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) {
+            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation()));
+            toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, new ArrayList<>());
+
+            toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
+
+        }
+
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
         tempList.add(temp);
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
         tempList.add(temp);
 
+        return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
+    }
+
+    public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
         for (ReducedAnswerCell tc : tempList) {
             found = false;
@@ -131,7 +151,7 @@ public class ChooseWorker implements GameState {
 
             if (!found)
                 toReturn.add(tc);
-        }
+            }
 
         return toReturn;
     }

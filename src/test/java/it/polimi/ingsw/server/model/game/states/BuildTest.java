@@ -370,6 +370,110 @@ ________________________________________________________________________________
         assertEquals(p1,game.getCurrentPlayer()); // the current player is still p1
     }
 
+    @Test
+    void buildingWithPrometheus() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         */
+
+        Game game = new Game();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block cellToBuildOn1 = (Block) board.getCell(1, 1);
+        Block cellToBuildOn2 = (Block) board.getCell(0, 1);
+        Block cellToMoveOn = (Block) board.getCell(0, 0);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PROMETHEUS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToBuildOn1.getLevel());
+        assertEquals(State.MOVE, returnContent.getState());
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 0))));
+
+        returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.GROUND, cellToMoveOn.getLevel());
+        assertEquals(worker1Player1, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(cellToMoveOn, p1.getCurrentWorker().getLocation());
+        assertEquals(State.BUILD, returnContent.getState());
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(0, 1))));
+
+        game.setState(State.BUILD);
+        ReturnContent rc = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToBuildOn2.getLevel());
+        assertEquals(State.CHOOSE_WORKER, rc.getState());
+        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+    }
+
+    @Test
+    void wrongBuildingWithPrometheus() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         */
+
+        Game game = new Game();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block cellToDoActions = (Block) board.getCell(1, 1);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PROMETHEUS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
+        assertEquals(State.MOVE, returnContent.getState());
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+
+        returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
+        assertEquals(worker1Player1, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, p1.getCurrentWorker().getLocation());
+        assertEquals(State.MOVE, returnContent.getState());
+    }
+
 
     // Hestia: Can build a second time but not on a perimeter cell
   //  @Test
