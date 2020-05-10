@@ -13,6 +13,7 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.ActivePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
@@ -65,6 +66,8 @@ public class ChangeTurn implements GameState {
             game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return false;
 
         Power p = game.getCurrentPlayer().getCard().getPower(0);
+
+        if (p.getEffect().equals(Effect.BUILD) || p.getEffect().equals(Effect.MOVE)) ((ActivePower) p).setNumberOfActionsRemaining();
 
         return p.getEffect().equals(Effect.WIN_COND) && ((WinConditionPower) p).usePower(game);
     }

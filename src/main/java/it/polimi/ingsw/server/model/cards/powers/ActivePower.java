@@ -41,6 +41,10 @@ public abstract class ActivePower<S> extends Power<S> {
         constraintsMap.put(Effect.BUILD, Worker::getPreviousBuild);
     }
 
+    public int getNumberOfActionsRemaining() {
+        return numberOfActionsRemaining;
+    }
+
     public void setNumberOfActionsRemaining() {
         numberOfActionsRemaining = constraints.getNumberOfAdditional();
     }
@@ -58,8 +62,6 @@ public abstract class ActivePower<S> extends Power<S> {
 
         if (verifyMalus(currentPlayer, cellToUse)) return false;
 
-        setNumberOfActionsRemaining();
-
         //verify constraints
         return verifyConstraints(cellToUse);
     }
@@ -74,7 +76,7 @@ public abstract class ActivePower<S> extends Power<S> {
     }
 
     private boolean verifyConstraints(Cell cellToUse) {
-        if (constraints.isPerimCell() && !isPerim(cellToUse))  return false;
+        if (constraints.isPerimCell() && !isPerim(cellToUse) && numberOfActionsRemaining > 0)  return false;
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
@@ -89,11 +91,14 @@ public abstract class ActivePower<S> extends Power<S> {
     }
 
     public boolean usePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency) {
-        if(!preamble(currentPlayer, cellToUse)) return false;
+        if (!preamble(currentPlayer, cellToUse)) return false;
+        if (timing.equals(Timing.ADDITIONAL) && numberOfActionsRemaining == 0 && constraints.getNumberOfAdditional() >= 1) return false;
+        if (numberOfActionsRemaining == 0 && constraints.getNumberOfAdditional() == -1) return false;
+        if (!useActivePower(currentPlayer, cellToUse, adjacency)) return false;
 
-        if(!useActivePower(currentPlayer, cellToUse, adjacency)) return false;
+        if (numberOfActionsRemaining > 0)
+            numberOfActionsRemaining--;
 
-        numberOfActionsRemaining--;
         addPersonalMalus(currentPlayer);
 
         return true;
@@ -102,7 +107,7 @@ public abstract class ActivePower<S> extends Power<S> {
     //Overload
     protected abstract boolean useActivePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency);
 
-    private boolean isPerim(Cell cellToUse) {
+    protected boolean isPerim(Cell cellToUse) {
         return (cellToUse.getX() == 0 || cellToUse.getY() == 0 || cellToUse.getX() == 4 || cellToUse.getY() == 4);
     }
 

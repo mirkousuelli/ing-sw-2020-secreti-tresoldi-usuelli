@@ -417,7 +417,7 @@ ________________________________________________________________________________
 
     //
     // Triton: Each time your Worker moves into a perimeter space, it may immediately move again.
-    // @Test
+    @Test
     void movingWithTritonTest() throws ParserConfigurationException, SAXException {
         /*@function
          *
@@ -458,7 +458,7 @@ ________________________________________________________________________________
 
         // check that the move is made correctly and the state is set to build
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+        assertEquals(State.MOVE, returnContent.getState());
         assertNull(worker1Player1.getPawn());
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
     }

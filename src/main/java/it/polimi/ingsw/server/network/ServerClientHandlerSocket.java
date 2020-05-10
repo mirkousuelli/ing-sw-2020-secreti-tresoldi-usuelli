@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedGame;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
@@ -34,6 +35,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private final List<Demand> buffer;
 
     private boolean isActive;
+    private boolean creator;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws IOException, ParserConfigurationException, SAXException {
         this.socket = socket;
@@ -41,6 +43,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         file = new FileXML(pathFile, socket);
         lobby = null;
         buffer = new LinkedList<>();
+        creator = false;
     }
 
     private synchronized boolean isActive(){
@@ -121,42 +124,45 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         Thread t = new Thread(
                 () -> {
                         try {
-                            Demand demand;
+                            Demand demand = null;
                             boolean toRepeat;
+                            boolean reload;
 
                             //connect
-                            demand = read();
-                            synchronized (server) {
-                                server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
+                            do {
+                                if (demand == null)
+                                    demand = read();
+                                synchronized (server) {
+                                    toRepeat = server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
+                                }
+                                if (!creator) {
+                                    synchronized (lobby.lockLobby) {
+                                        while (lobby.getNumberOfPlayers() == -1) lobby.lockLobby.wait();
+
+                                        if (lobby.getNumberOfPlayers() == lobby.getReducedPlayerList().size() && !lobby.isPresentInGame(this)) {
+                                            send(new Answer(AnswerType.CLOSE, DemandType.CONNECT, new ReducedMessage("null")));
+                                            setActive(false);
+                                            return;
+                                        }
+                                    }
+                                }
+                            } while (toRepeat);
+
+                            //createGame
+                            if (creator) {
+                                do {
+                                    demand = read();
+                                    synchronized (server) {
+                                        toRepeat = server.numOfPlayers(this, demand);
+                                    }
+                                } while (toRepeat);
                             }
 
-                            boolean reload = false;
-                            if (lobby != null) {
-                                synchronized (lobby.lockLobby) {
-                                    reload = lobby.isReloaded();
-                                }
+                            synchronized (lobby.lockLobby) {
+                                reload = lobby.isReloaded();
                             }
 
                             if(!reload) {
-                                //createGame or askLobby
-                                do {
-                                    demand = read();
-                                    synchronized (server) {
-                                        toRepeat = server.prelobby(this, demand);
-                                    }
-                                } while (toRepeat);
-
-                                //wait or join game
-                                do {
-                                    demand = read();
-                                    synchronized (server) {
-                                        toRepeat = server.lobby(this, demand);
-                                    }
-                                } while (toRepeat);
-
-                                send(new Answer(AnswerType.SUCCESS, DemandType.WAIT));
-                                LOGGER.info("Success wait game sent!");
-
                                 //wait
                                 List<ReducedPlayer> players;
                                 synchronized (lobby.lockLobby) {
@@ -268,5 +274,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     @Override
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
+    }
+
+    @Override
+    public void setCreator(boolean creator) {
+        this.creator = creator;
     }
 }

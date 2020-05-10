@@ -14,10 +14,12 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Cell;
@@ -90,10 +92,25 @@ public class Move implements GameState {
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
             Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-            if (((MovePower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
+            if (p.getEffect().equals(Effect.MOVE) && ((MovePower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
                 returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.BUILD);
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+
+                if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) {
+                    returnContent.setAnswerType(AnswerType.SUCCESS);
+                    returnContent.setState(State.MOVE);
+                    returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
+                }
+                else {
+                    returnContent.setState(State.BUILD);
+                    returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                }
+            }
+            else if (p.getEffect().equals(Effect.BUILD) && p.getPersonalMalus() != null && p.getPersonalMalus().getMalusType().equals(MalusType.MOVE) &&
+                    ((BuildPower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
+
+                returnContent.setAnswerType(AnswerType.SUCCESS);
+                returnContent.setState(State.MOVE);
+                returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
             }
         }
         else {
@@ -146,20 +163,6 @@ public class Move implements GameState {
         List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
 
-        boolean found;
-        for (ReducedAnswerCell tc : tempList) {
-            found = false;
-            for (ReducedAnswerCell rc : toReturn) {
-                if (rc.getX() == tc.getX() && rc.getY() == tc.getY()) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found)
-                toReturn.add(tc);
-        }
-
-        return toReturn;
+        return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
     }
 }
