@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 
+
 import javax.swing.*;
 
 public class Santorini {
