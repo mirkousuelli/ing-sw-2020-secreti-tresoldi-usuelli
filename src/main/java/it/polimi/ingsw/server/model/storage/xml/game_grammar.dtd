@@ -16,6 +16,8 @@
                 <!ELEMENT worker (x, y)>
                 <!ATTLIST worker
                         gender (male | female) #REQUIRED>
+                <!ATTLIST worker
+                        current (true | false) #REQUIRED>
                     <!ELEMENT x (#PCDATA)>
                     <!ELEMENT y (#PCDATA)>
             <!ELEMENT malusList (malus*)>

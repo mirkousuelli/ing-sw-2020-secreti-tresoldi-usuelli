@@ -92,7 +92,9 @@ public class GameMemory {
                     Element yNode = doc.createElement("y");
                     Worker worker = player.getWorkers().get(j);
 
+                    workerNode.setAttribute("current", player.getCurrentWorker().equals(worker) ? "true" : "false");
                     workerNode.setAttribute("gender", worker.isMale() ? "male" : "female");
+
                     xNode.setTextContent(String.valueOf(worker.getX()));
                     yNode.setTextContent(String.valueOf(worker.getY()));
 
@@ -210,6 +212,7 @@ public class GameMemory {
             NodeList pawnsNode = playerNode.getChildNodes().item(PAWNS).getChildNodes();
             int gender = worker.isMale() ? MALE : FEMALE;
             NodeList workerNode = pawnsNode.item(gender).getChildNodes();
+            pawnsNode.item(gender).getAttributes().getNamedItem("current").setTextContent(player.getCurrentWorker().equals(worker) ? "true" : "false");
             workerNode.item(X).setTextContent(String.valueOf(worker.getX()));
             workerNode.item(Y).setTextContent(String.valueOf(worker.getY()));
 
@@ -303,6 +306,7 @@ public class GameMemory {
                     Element yNode = doc.createElement("y");
                     Worker worker = players.get(i).getWorkers().get(j);
 
+                    workerNode.setAttribute("current", players.get(i).getCurrentWorker().equals(worker) ? "true" : "false");
                     workerNode.setAttribute("gender", worker.isMale() ? "male" : "female");
                     xNode.setTextContent(String.valueOf(worker.getX()));
                     yNode.setTextContent(String.valueOf(worker.getY()));
@@ -353,6 +357,57 @@ public class GameMemory {
         }
     }
 
+    public static void save(Player player, String path) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(path);
+
+            Node gameNode = doc.getDocumentElement();
+            Node lobbyNode = gameNode.getChildNodes().item(LOBBY);
+            Node playerNode = lobbyNode.getChildNodes().item(-1);
+            Node pawnsNode = playerNode.getChildNodes().item(PAWNS);
+
+            for (int j = 0; j < player.getWorkers().size(); j++) {
+                Node workerNode = pawnsNode.getChildNodes().item(j);
+                Worker worker = player.getWorkers().get(j);
+
+                workerNode.getAttributes().getNamedItem("current").setTextContent(player.getCurrentWorker().equals(worker) ? "true" : "false");
+                workerNode.getAttributes().getNamedItem("gender").setTextContent(worker.isMale() ? "male" : "female");
+                workerNode.getChildNodes().item(X).setTextContent(String.valueOf(worker.getX()));
+                workerNode.getChildNodes().item(Y).setTextContent(String.valueOf(worker.getY()));
+            }
+
+            if (!player.getMalusList().isEmpty()) {
+                Node malusListNode = playerNode.getChildNodes().item(MALUS);
+                for (int k = 0; k < player.getMalusList().size(); k++) {
+                    NodeList malusNode = malusListNode.getChildNodes();
+                    Node typeNode = malusNode.item(TYPE);
+                    Node forbiddenNode = malusNode.item(DIRECTION);
+                    Malus malus = player.getMalusList().get(k);
+
+                    malusListNode.getAttributes().getNamedItem("permanent").setTextContent(malus.isPermanent() ? "true" : "false");
+                    typeNode.setTextContent(malus.getMalusType().toString());
+
+                    if (!malus.isPermanent()) {
+                        Node numTurnNode = malusNode.item(NUMTURN);
+                        numTurnNode.setTextContent(String.valueOf(malus.getNumberOfTurns()));
+                    }
+
+                    for (int l = 0; l < malus.getDirection().size(); l++) {
+                        Node directionNode = forbiddenNode.getChildNodes().item(l);
+                        directionNode.setTextContent(malus.getDirection().get(l).toString());
+                    }
+                }
+            }
+
+            GameMemory.write(doc, path);
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Game load(String path) throws ParserConfigurationException, SAXException {
         Game game = new Game();
         String currentPlayer = "";
@@ -392,6 +447,10 @@ public class GameMemory {
                     worker.setGender(workerNode.item(j).getAttributes().getNamedItem("gender").getTextContent().equals("male"));
 
                     player.addWorker(worker);
+
+                    if (workerNode.item(j).getAttributes().getNamedItem("current").getTextContent().equals("true")) {
+                        player.setCurrentWorker(worker);
+                    }
                 }
 
                 if (playerNode.item(i).getChildNodes().getLength() > MALUS) {

@@ -6,11 +6,11 @@
             <nickname>Riccardo</nickname>
             <god>PERSEPHONE</god>
             <pawns>
-                <worker gender="male">
+                <worker current="true" gender="male">
                     <x>1</x>
                     <y>2</y>
                 </worker>
-                <worker gender="female">
+                <worker current="false" gender="female">
                     <x>4</x>
                     <y>1</y>
                 </worker>
@@ -20,11 +20,11 @@
             <nickname>Fabio</nickname>
             <god>ATHENA</god>
             <pawns>
-                <worker gender="male">
+                <worker current="true" gender="male">
                     <x>0</x>
                     <y>2</y>
                 </worker>
-                <worker gender="female">
+                <worker current="false" gender="female">
                     <x>4</x>
                     <y>4</y>
                 </worker>
@@ -34,11 +34,11 @@
             <nickname>Mirko</nickname>
             <god>ZEUS</god>
             <pawns>
-                <worker gender="male">
+                <worker current="false" gender="male">
                     <x>0</x>
                     <y>0</y>
                 </worker>
-                <worker gender="female">
+                <worker current="true" gender="female">
                     <x>0</x>
                     <y>1</y>
                 </worker>

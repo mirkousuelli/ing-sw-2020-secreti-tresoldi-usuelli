@@ -74,6 +74,9 @@ public class SaveGameTest {
         player_3.addMalus(malus_23);
 
         game.setCurrentPlayer(player_3);
+        player_1.setCurrentWorker(player_1.getWorkers().get(0));
+        player_2.setCurrentWorker(player_2.getWorkers().get(0));
+        player_3.setCurrentWorker(player_3.getWorkers().get(1));
         game.setState(State.CHOOSE_WORKER);
 
         game.getBoard().getCell(0,1).setLevel(Level.BOTTOM);
@@ -110,6 +113,7 @@ public class SaveGameTest {
             Worker worker = player.getWorkers().get(i);
             int x = worker.getLocation().getX();
             int y = worker.getLocation().getY();
+            player.setCurrentWorker(player.getWorkers().get(0));
             worker.setLocation((Block) game_1.getBoard().getCell(3,3));
             GameMemory.save(worker, player, pathFile);
 
@@ -120,6 +124,7 @@ public class SaveGameTest {
             assertFalse(game_2.getBoard().getCell(3,3).isFree());
 
             worker.setLocation((Block) game_1.getBoard().getCell(x,y));
+            player.setCurrentWorker(player.getWorkers().get(1));
             GameMemory.save(worker, player, pathFile);
         }
     }
@@ -181,5 +186,24 @@ public class SaveGameTest {
         list.add(0, toBeAdded);
         GameMemory.save(list, pathFile);
         GameMemory.save(game_2.getPlayer("Mirko"), State.CHOOSE_WORKER, pathFile);
+    }
+
+    @Test
+    public void SavePlayerTest() throws ParserConfigurationException, SAXException {
+        Game game_1 = GameMemory.load(pathFile);
+
+        assertEquals(game_1.getCurrentPlayer().getCurrentWorker(), game_1.getPlayer("Mirko").getWorkers().get(1));
+        game_1.getCurrentPlayer().setCurrentWorker(game_1.getCurrentPlayer().getWorkers().get(0));
+        assertEquals(game_1.getCurrentPlayer().getCurrentWorker(), game_1.getPlayer("Mirko").getWorkers().get(0));
+
+        GameMemory.save(game_1, pathFile);
+
+        Game game_2 = GameMemory.load(pathFile);
+
+        assertEquals(game_2.getCurrentPlayer().getCurrentWorker(), game_2.getPlayer("Mirko").getWorkers().get(0));
+        game_2.getCurrentPlayer().setCurrentWorker(game_2.getCurrentPlayer().getWorkers().get(1));
+        assertEquals(game_2.getCurrentPlayer().getCurrentWorker(), game_2.getPlayer("Mirko").getWorkers().get(1));
+
+        GameMemory.save(game_2, pathFile);
     }
 }

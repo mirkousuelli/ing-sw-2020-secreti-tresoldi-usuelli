@@ -3,11 +3,12 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ChooseCardsPanel extends SantoriniPanel {
+public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
-    private static final int BUTTON_SIZE = 200;
+    private static final int BUTTON_SIZE = 175;
     private static final int GOD_X = 45;
     private static final int GOD_Y = 65;
     private JButton sendButton;
@@ -17,7 +18,8 @@ public class ChooseCardsPanel extends SantoriniPanel {
     private JPanel choice;
     private JLayeredPane choosenList;
     private JButton[] gods;
-    JLabel godsBack;
+    private JLabel godsBack;
+    private JLabel cloudBack;
 
     JLayeredPane layers;
 
@@ -48,6 +50,10 @@ public class ChooseCardsPanel extends SantoriniPanel {
         createChoice();
 
         loadGods();
+
+        createSendButton();
+        createRemoveButton();
+        createChooseButton();
     }
 
     void createChosenList() {
@@ -65,7 +71,6 @@ public class ChooseCardsPanel extends SantoriniPanel {
         choosenList = new JLayeredPane();
         choosenList.setLayout(new GridBagLayout());
         choosenList.setVisible(true);
-        //choosenList.setBackground(Color.GREEN);
         choosenList.setOpaque(false);
         choosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 150));
 
@@ -74,7 +79,8 @@ public class ChooseCardsPanel extends SantoriniPanel {
         ImageIcon icon = new ImageIcon("img/labels/clouds.png");
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 150, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
-        JLabel cloudBack = new JLabel(icon);
+        cloudBack = new JLabel(icon);
+        cloudBack.setLayout(new GridBagLayout());
         cloudBack.setOpaque(false);
 
         choosenList.add(cloudBack, 0);
@@ -116,7 +122,6 @@ public class ChooseCardsPanel extends SantoriniPanel {
         godsList = new JLayeredPane();
         godsList.setLayout(new OverlayLayout(godsList));
         godsList.setVisible(true);
-        //godsList.setBackground(Color.RED);
         godsList.setOpaque(false);
         godsList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 180));
 
@@ -167,53 +172,69 @@ public class ChooseCardsPanel extends SantoriniPanel {
         godsBack.add(miniGods, c);
     }
 
-    /*private void createSendButton() {
-        sendButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/send_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+    private void createSendButton() {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.NORTHEAST;
+        c.weightx = 0.2;
+        c.weighty = 1;
+
+        ImageIcon icon = new ImageIcon("img/buttons/send_button.png");
+        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+
+        sendButton = new JButton(icon);
         sendButton.setOpaque(false);
         sendButton.setContentAreaFilled(false);
         sendButton.setBorderPainted(false);
+        sendButton.addActionListener(this);
 
-        choosenList.add(sendButton, BorderLayout.NORTH);
+        cloudBack.add(sendButton, c);
     }
 
     private void createRemoveButton() {
         GridBagConstraints c = new GridBagConstraints();
-
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1;
+        c.weightx = 0.2;
         c.weighty = 1;
-        c.insets = new Insets(0,-300,0,0);
 
-        removeButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/remove_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+        ImageIcon icon = new ImageIcon("img/buttons/remove_button.png");
+        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+
+        removeButton = new JButton(icon);
         removeButton.setOpaque(false);
         removeButton.setContentAreaFilled(false);
         removeButton.setBorderPainted(false);
 
-        add(removeButton, c);
+        cloudBack.add(removeButton, c);
     }
 
     private void createChooseButton() {
         GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 1;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.EAST;
-        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.SOUTH;
         c.weightx = 1;
         c.weighty = 1;
-        c.insets = new Insets(0,0,0,-300);
 
-        chooseButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/choose_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+
+        chooseButton = new JButton(icon);
         chooseButton.setOpaque(false);
         chooseButton.setContentAreaFilled(false);
         chooseButton.setBorderPainted(false);
 
-        add(chooseButton, c);
-    }*/
+        choice.add(chooseButton, c);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.panelIndex.next(this.panels);
+    }
 }

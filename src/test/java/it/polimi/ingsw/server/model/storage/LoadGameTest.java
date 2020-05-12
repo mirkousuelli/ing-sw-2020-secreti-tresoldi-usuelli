@@ -49,6 +49,10 @@ public class LoadGameTest {
         assertSame(game.getPlayer(2).getWorkers().get(0).getLocation(), game.getBoard().getCell(0,0));
         assertSame(game.getPlayer(2).getWorkers().get(1).getLocation(), game.getBoard().getCell(0,1));
 
+        assertEquals(game.getPlayer("Riccardo").getCurrentWorker(), game.getPlayer("Riccardo").getWorkers().get(0));
+        assertEquals(game.getPlayer("Fabio").getCurrentWorker(), game.getPlayer("Fabio").getWorkers().get(0));
+        assertEquals(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer().getWorkers().get(1));
+
         assertSame(game.getPlayer(0).getWorkers().get(0), ((Block)game.getBoard().getCell(1,2)).getPawn());
         assertSame(game.getPlayer(0).getWorkers().get(1), ((Block)game.getBoard().getCell(4,1)).getPawn());
         assertSame(game.getPlayer(1).getWorkers().get(0), ((Block)game.getBoard().getCell(0,2)).getPawn());
