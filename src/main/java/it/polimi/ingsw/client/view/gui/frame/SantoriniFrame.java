@@ -4,7 +4,7 @@ import it.polimi.ingsw.client.view.gui.panels.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class SantoriniFrame extends JFrame /*implements ActionListener*/ {
+public class SantoriniFrame extends JFrame {
     private final String TITLE = "Santorini";
     private JPanel main;
 
