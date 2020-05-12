@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -22,7 +23,8 @@ public class ChangeTurnTest {
          * it checks after this turn the current player is changed correctly
          */
 
-        Game game1 = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game1 = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -46,7 +48,8 @@ public class ChangeTurnTest {
 
 
         // now check if it works in a game with 2 players
-        Game game2 = new Game();
+        lobby = new Lobby(new Game());
+        Game game2 = lobby.getGame();
         game2.addPlayer(p1);
         game2.addPlayer(p2);
 
@@ -68,7 +71,9 @@ public class ChangeTurnTest {
         /*@function
          *  it checks that if there is only one player left, the state is set to Victory
          */
-        Game game = new Game();
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");

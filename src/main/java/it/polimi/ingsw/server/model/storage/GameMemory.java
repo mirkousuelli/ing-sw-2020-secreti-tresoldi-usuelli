@@ -366,7 +366,13 @@ public class GameMemory {
 
             Node gameNode = doc.getDocumentElement();
             Node lobbyNode = gameNode.getChildNodes().item(LOBBY);
-            Node playerNode = lobbyNode.getChildNodes().item(-1);
+
+            int i = 0;
+            while (!(lobbyNode.getChildNodes().item(i).getChildNodes().item(NICKNAME).getTextContent().equals(player.getNickName()))) {
+                i++;
+            }
+
+            Node playerNode = lobbyNode.getChildNodes().item(i);
             Node pawnsNode = playerNode.getChildNodes().item(PAWNS);
 
             for (int j = 0; j < player.getWorkers().size(); j++) {

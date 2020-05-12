@@ -93,10 +93,13 @@ public class ChooseWorker implements GameState {
                     if(!cannotMove(w)) {
                         // the player has to pick a worker and the game goes to Move state
                         currentPlayer.setCurrentWorker(w);
-                        System.out.println("CURRRRRRR: " + currentPlayer.getCurrentWorker().getId());
                         returnContent.setAnswerType(AnswerType.SUCCESS);
                         returnContent.setState(State.MOVE);
                         returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
+
+                        GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+                        GameMemory.save(currentPlayer, Lobby.backupPath);
+                        GameMemory.save(game, Lobby.backupPath);
                     }
                     else {
                         // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
@@ -108,9 +111,7 @@ public class ChooseWorker implements GameState {
             }
         }
 
-        GameMemory.save(game, Lobby.backupPath);
-        GameMemory.save(game.getPlayerList(), Lobby.backupPath);
-        GameMemory.save(currentPlayer, State.CHOOSE_WORKER, Lobby.backupPath);
+        GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;

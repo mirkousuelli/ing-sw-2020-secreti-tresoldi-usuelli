@@ -103,7 +103,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private void updateModel() {
         if (isReloaded) {
             isReloaded = false;
-            return;
         }
         synchronized (lockAnswer) {
             if (answer.getHeader().equals(AnswerType.CLOSE)) {

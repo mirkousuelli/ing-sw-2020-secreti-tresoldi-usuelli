@@ -60,6 +60,9 @@ public class Player {
 
         this.addWorker(new Worker(id, position));
 
+        if  (id == 1)
+            setCurrentWorker(getWorker(id));
+
         // setting male and female
         if (this.workers.size() == NUM_WORKERS) {
             this.workers.get(0).setGender(!this.workers.get(1).isMale());

@@ -152,7 +152,7 @@ public class Move implements GameState {
 
         if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
-            GameMemory.save(currentPlayer.getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
+            //GameMemory.save(currentPlayer.getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
         }
 

@@ -75,6 +75,8 @@ public class PlaceWorkers implements GameState{
         returnContent.setChangeTurn(true);
         returnContent.setPayload(modifiedCell);
 
+        GameMemory.save(currentPlayer, Lobby.backupPath);
+
         return returnContent;
     }
 }

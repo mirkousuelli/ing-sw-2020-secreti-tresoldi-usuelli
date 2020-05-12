@@ -14,6 +14,8 @@ import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -29,7 +31,8 @@ public class BuildTest {
          * it checks that if the player picked a cell where he can build, the
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -47,13 +50,19 @@ public class BuildTest {
         cellToBuildOn.setLevel(Level.MIDDLE);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
         assertEquals(Level.MIDDLE, cellToBuildOn.getLevel()); // the level of the cell before the build is correct
 
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(2, 3))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -70,7 +79,9 @@ public class BuildTest {
         /*@function
          * it checks that if the player picked a cell where he can't build, he has to build again
          */
-        Game game = new Game();
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -88,11 +99,18 @@ public class BuildTest {
         cellToBuildOn.setLevel(Level.TOP);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(2, 3))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the impossible build is actually not allowed
@@ -109,7 +127,8 @@ public class BuildTest {
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -127,11 +146,17 @@ public class BuildTest {
         cellToBuildOn.setLevel(Level.TOP);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player cannot build under itself (only zeus can)

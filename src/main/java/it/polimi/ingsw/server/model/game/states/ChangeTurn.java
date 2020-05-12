@@ -107,7 +107,7 @@ public class ChangeTurn implements GameState {
             GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
         }
 
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+        //GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }
