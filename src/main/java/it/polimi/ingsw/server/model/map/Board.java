@@ -212,7 +212,7 @@ public class Board implements Cloneable {
         List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
 
        if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
-           around.add(player.getCurrentWorker().getPreviousBuild());
+           around.add(player.getCurrentWorker().getLocation());
 
         for (Cell c : around) {
             for (Power bp : activePowerList) {

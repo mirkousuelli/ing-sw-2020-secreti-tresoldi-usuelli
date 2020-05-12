@@ -25,6 +25,8 @@ import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ public class ChooseWorker implements GameState {
      /* @abstractClass
      * it represents the state where a player must choose the worker he wants to move
      */
+
     private final Game game;
 
     public ChooseWorker(Game game) {
@@ -76,11 +79,13 @@ public class ChooseWorker implements GameState {
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMoveAny()) {
             returnContent.setAnswerType(AnswerType.DEFEAT);
-            int newCur = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
+            //int newCur = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
             game.getPlayerList().remove(game.getCurrentPlayer());
-            game.setCurrentPlayer(game.getPlayer(newCur));
+            //game.setCurrentPlayer(game.getPlayer(newCur));
             returnContent.setChangeTurn(true);
             //TODO
+
+            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
         else {
             for (Worker w : currentPlayer.getWorkers()) {
@@ -88,6 +93,7 @@ public class ChooseWorker implements GameState {
                     if(!cannotMove(w)) {
                         // the player has to pick a worker and the game goes to Move state
                         currentPlayer.setCurrentWorker(w);
+                        System.out.println("CURRRRRRR: " + currentPlayer.getCurrentWorker().getId());
                         returnContent.setAnswerType(AnswerType.SUCCESS);
                         returnContent.setState(State.MOVE);
                         returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
@@ -101,6 +107,11 @@ public class ChooseWorker implements GameState {
                 }
             }
         }
+
+        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+        GameMemory.save(currentPlayer, State.CHOOSE_WORKER, Lobby.backupPath);
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }

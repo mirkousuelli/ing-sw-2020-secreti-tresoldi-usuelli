@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,7 +26,7 @@ public class ServerConnectionSocket implements ServerConnection {
     private final int port;
     private static final Random random = new SecureRandom();
     private static final String PATH = "src/main/java/it/polimi/ingsw/server/network/message/message";
-    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
+    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private Lobby lobby;
@@ -138,7 +139,9 @@ public class ServerConnectionSocket implements ServerConnection {
         Lobby loadedLobby;
 
         try {
-            loadedGame = GameMemory.load(BACKUPPATH);
+            File f = new File(BACKUPPATH);
+            if (f.exists())
+                loadedGame = GameMemory.load(BACKUPPATH);
         } catch (ParserConfigurationException | SAXException e) {
             LOGGER.log(Level.SEVERE, "Cannot load backup", e);
         }

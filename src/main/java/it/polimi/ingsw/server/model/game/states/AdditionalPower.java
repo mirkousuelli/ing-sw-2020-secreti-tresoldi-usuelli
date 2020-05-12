@@ -11,7 +11,10 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 
@@ -40,7 +43,6 @@ public class AdditionalPower implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ADDITIONAL_POWER);
 
-
         if (response.getX() == -1 && response.getY() == -1) {
             returnContent.setAnswerType(AnswerType.SUCCESS);
             if (prevState.equals(State.MOVE)) {
@@ -59,6 +61,10 @@ public class AdditionalPower implements GameState {
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.BUILD);
                     returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+
+                    GameMemory.save((Block) c, Lobby.backupPath);
+                    GameMemory.save(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
+                    GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.backupPath);
                 }
             }
             else if (prevState.equals(State.BUILD)) {
@@ -67,9 +73,13 @@ public class AdditionalPower implements GameState {
                     returnContent.setState(State.CHOOSE_WORKER);
                     returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
                     returnContent.setChangeTurn(true);
+
+                    GameMemory.save((Block) c, Lobby.backupPath);
                 }
             }
         }
+
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }

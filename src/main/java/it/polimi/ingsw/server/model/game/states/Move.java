@@ -22,10 +22,13 @@ import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +107,8 @@ public class Move implements GameState {
                     returnContent.setState(State.BUILD);
                     returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
                 }
+
+                GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
             }
             else if (p.getEffect().equals(Effect.BUILD) && p.getPersonalMalus() != null && p.getPersonalMalus().getMalusType().equals(MalusType.MOVE) &&
                     ((BuildPower) p).usePower(game.getCurrentPlayer(), cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
@@ -111,6 +116,9 @@ public class Move implements GameState {
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 returnContent.setState(State.MOVE);
                 returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
+
+                GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
+                GameMemory.save(game.parseState(State.MOVE), Lobby.backupPath);
             }
         }
         else {
@@ -131,6 +139,7 @@ public class Move implements GameState {
                             returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
                             returnContent.setState(State.ADDITIONAL_POWER);
 
+                            GameMemory.save(game.parseState(State.ADDITIONAL_POWER), Lobby.backupPath);
                             return returnContent;
                         }
 
@@ -140,6 +149,14 @@ public class Move implements GameState {
                 }
             //}
         }
+
+        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
+            GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
+            GameMemory.save(currentPlayer.getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+        }
+
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }

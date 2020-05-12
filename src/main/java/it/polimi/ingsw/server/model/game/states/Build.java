@@ -27,6 +27,8 @@ import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,34 +78,34 @@ public class Build implements GameState {
         Cell chosenCell;
         List<Cell> changedCells = new ArrayList<>();
 
-
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.BUILD);
 
         List<ReducedAnswerCell> toReturn = new ArrayList<>();
+        chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
 
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
-            Power p = game.getCurrentPlayer().getCard().getPower(0);
-            Cell c = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
+            Power p = currentPlayer.getCard().getPower(0);
 
-            if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
-                ReducedAnswerCell temp = new ReducedAnswerCell(c.getX(), c.getY());
-                temp.setAction(ReducedAction.DEFAULT);
-                temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
+            if (((BuildPower) p).usePower(currentPlayer, chosenCell, game.getBoard().getAround(chosenCell))) {
+                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
                 toReturn.add(temp);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 returnContent.setState(State.CHOOSE_WORKER);
                 returnContent.setChangeTurn(true);
                 returnContent.setPayload(toReturn);
+
+
+                GameMemory.save((Block) chosenCell, Lobby.backupPath);
+                GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
             }
         }
         else {
-            chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
-
             // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
             if (isBuildPossible(chosenCell)) {
-                game.getBoard().build(game.getCurrentPlayer(), chosenCell);
+                game.getBoard().build(currentPlayer, chosenCell);
+                //changedCells.add(chosenCell);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
@@ -120,13 +122,20 @@ public class Build implements GameState {
                     toReturn = new ArrayList<>();
                 }
 
-                for (Cell c : changedCells)
+                for (Cell c : changedCells) {
                     toReturn.add(ReducedAnswerCell.prepareCell(c, game.getPlayerList()));
+                    GameMemory.save((Block) c, Lobby.backupPath);
+                }
+
+                GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
 
                 returnContent.setPayload(toReturn);
             }
 
         }
+
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+
         return returnContent;
     }
 }

@@ -15,6 +15,8 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 public class Victory implements GameState {
     /* @abstractClass
@@ -51,7 +53,8 @@ public class Victory implements GameState {
         returnContent.setAnswerType(AnswerType.VICTORY);
         returnContent.setState(State.START);
 
-        // Start a new game (if the players want to)
+        GameMemory.save(this, Lobby.backupPath);
+
         return returnContent;
     }
 }

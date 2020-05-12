@@ -4,14 +4,20 @@ import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.ServerClientHandler;
+import it.polimi.ingsw.server.network.ServerConnectionSocket;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Lobby {
     private final String id;
@@ -19,14 +25,14 @@ public class Lobby {
     private final Controller controller;
     private final List<View> playerViewList;
     private String messagePath;
-    private String backupPath;
+    public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
     private final Map<ServerClientHandler, View> playingConnection;
     private final Map<View, ReducedPlayer> playerColor;
     private static final Random randomLobby = new SecureRandom();
     private int numberOfPlayers;
     private boolean reloaded;
-
     public final Object lockLobby;
+    private static final Logger LOGGER = Logger.getLogger(Lobby.class.getName());
 
     public Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
@@ -46,14 +52,18 @@ public class Lobby {
         numberOfPlayers = -1;
 
         reloaded = true;
+
+        File f = new File(backupPath);
+        boolean isCreated;
+        try {
+            isCreated = f.createNewFile();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an exception", e);
+        }
     }
 
     public String getMessagePath() {
         return this.messagePath;
-    }
-
-    public String getBackupPath() {
-        return this.backupPath;
     }
 
     public String getId() {

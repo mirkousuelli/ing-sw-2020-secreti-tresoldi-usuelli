@@ -183,41 +183,52 @@ public class Game extends Observable<Answer> {
 
     public void setState(State state) {
         prevState = State.parseString(this.state.getName());
+        System.out.print("Prev: " + prevState.toString());
+        System.out.print("State: " + state.toString());
 
-        switch (state) {
+        this.state = parseState(state);
+    }
+
+    public GameState parseState(State st) {
+        GameState state;
+
+        switch (st) {
             case START:
-                this.state = new Start(this);
+                state = new Start(this);
                 break;
             case CHOOSE_CARD:
-                this.state = new ChooseCard(this);
+                state = new ChooseCard(this);
                 break;
             case CHOOSE_STARTER:
-                this.state = new ChooseStarter(this);
+                state = new ChooseStarter(this);
                 break;
             case PLACE_WORKERS:
-                this.state = new PlaceWorkers(this);
+                state = new PlaceWorkers(this);
                 break;
             case CHOOSE_WORKER:
-                this.state = new ChooseWorker(this);
+                state = new ChooseWorker(this);
                 break;
             case MOVE:
-                this.state = new Move(this);
+                state = new Move(this);
                 break;
             case BUILD:
-                this.state = new Build(this);
+                state = new Build(this);
                 break;
             case ADDITIONAL_POWER:
-                this.state = new AdditionalPower(this);
+                state = new AdditionalPower(this);
                 break;
             case CHANGE_TURN:
-                this.state = new ChangeTurn(this);
+                state = new ChangeTurn(this);
                 break;
             case VICTORY:
-                this.state = new Victory(this);
+                state = new Victory(this);
                 break;
             default:
+                state = null;
                 break;
         }
+
+        return state;
     }
 
     public List<Player> getOpponents() {

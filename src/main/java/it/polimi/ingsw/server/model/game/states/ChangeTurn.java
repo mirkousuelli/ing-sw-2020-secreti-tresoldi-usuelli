@@ -22,6 +22,9 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
+
 
 public class ChangeTurn implements GameState {
     /* @Class
@@ -38,7 +41,6 @@ public class ChangeTurn implements GameState {
         this.game = game;
     }
 
-
     private void changeCurrentPlayer() {
         /* @function
          * it switches the player that must play
@@ -49,11 +51,9 @@ public class ChangeTurn implements GameState {
         game.setCurrentPlayer(game.getPlayerList().get(index));
     }
 
-
     private boolean onePlayerRemaining(){
         return game.getNumPlayers() == 1;
     }
-
 
     private boolean controlWinCondition() {
         /* @predicate
@@ -100,6 +100,14 @@ public class ChangeTurn implements GameState {
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
         }
+
+        if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&
+            !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&
+            !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
+            GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
+        }
+
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }

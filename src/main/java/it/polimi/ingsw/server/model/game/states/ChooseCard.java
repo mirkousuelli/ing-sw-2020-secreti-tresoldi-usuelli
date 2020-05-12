@@ -12,6 +12,8 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 
 public class ChooseCard implements GameState {
 
@@ -51,13 +53,11 @@ public class ChooseCard implements GameState {
 
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), currentPlayer.getCard()));
 
-
                 ChooseCard.applyMalus(game, Timing.DEFAULT);
 
                 break;
             }
         }
-
 
         return returnContent;
     }

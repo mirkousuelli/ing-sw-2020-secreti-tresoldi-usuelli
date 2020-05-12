@@ -4,14 +4,15 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
-import it.polimi.ingsw.communication.message.payload.ReducedMessage;
-import it.polimi.ingsw.communication.message.payload.ReducedGame;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.game.states.ChooseWorker;
+import it.polimi.ingsw.server.model.game.states.Move;
 import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
@@ -198,8 +199,24 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                                 //resume game
                                 synchronized (lobby.lockLobby) {
-                                    if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName())));
+                                    if (lobby.isCurrentPlayerInGame(this)) {
+                                        List<ReducedAnswerCell> payload = new ArrayList<>();
+
+                                        if (loadedGame.getState().getName().equals(State.MOVE.toString()))
+                                            payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
+
+                                        if (loadedGame.getState().getName().equals(State.BUILD.toString()))
+                                            payload = Move.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
+
+                                        if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
+                                            if (loadedGame.getPrevState().equals(State.MOVE))
+                                                payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
+                                            if (loadedGame.getPrevState().equals(State.BUILD))
+                                                payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
+                                        }
+
+                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), payload));
+                                    }
                                 }
                             }
 
