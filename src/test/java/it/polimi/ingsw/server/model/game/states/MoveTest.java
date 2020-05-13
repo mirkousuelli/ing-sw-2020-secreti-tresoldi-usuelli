@@ -15,6 +15,8 @@ import it.polimi.ingsw.server.model.map.Block;
 
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -30,7 +32,8 @@ public class MoveTest {
          * it checks that if the player picked a cell where he can move, his worker is actually moved there
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -49,10 +52,17 @@ public class MoveTest {
         worker1Player1.setLevel(Level.GROUND);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the move is made correctly and the state is set to build
@@ -69,7 +79,8 @@ public class MoveTest {
          * it checks that if the player moved to a third level, he wins
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -88,10 +99,17 @@ public class MoveTest {
         worker1Player1.setLevel(Level.MIDDLE);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the player moved to a third level and the state is set to victory
@@ -108,7 +126,8 @@ public class MoveTest {
          * it checks that if the player picks a cell that is too high, he has to move again
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -127,9 +146,17 @@ public class MoveTest {
         cellToMoveTo.setLevel(Level.TOP);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
+
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(Level.GROUND, game.getCurrentPlayer().getCurrentWorker().getLevel());
@@ -146,7 +173,8 @@ public class MoveTest {
          * it checks that if the player picks a cell where he can't move, he has to move again
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -165,9 +193,17 @@ public class MoveTest {
         cellToMoveTo.setLevel(Level.BOTTOM);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
+
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(2, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the worker isn't moved and the player has to pick a different cell
@@ -184,7 +220,8 @@ public class MoveTest {
          * it checks that if the player picks a cell that is already occupied by another worker, he has to move again
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -200,15 +237,23 @@ public class MoveTest {
         p2.initializeWorkerPosition(2, w1p2);
 
         p1.setCurrentWorker(p1.getWorkers().get(0));
+        p2.setCurrentWorker(p2.getWorkers().get(0));
 
         w1p1.setLevel(Level.BOTTOM);
         w1p2.setLevel(Level.GROUND);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.ZEUS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the worker isn't moved and the player has to pick a different cell
@@ -238,7 +283,8 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell where he can move, his worker is actually moved there
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -259,10 +305,17 @@ ________________________________________________________________________________
         worker1Player1.setLevel(Level.GROUND);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.TRITON);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the state is still move since Artemis power allows the player to move a second time
@@ -290,7 +343,8 @@ ________________________________________________________________________________
          * it checks that if the player has Apollo as God, he can move to an occupied cell and the workers ae swapped
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -311,10 +365,18 @@ ________________________________________________________________________________
         w1p2.setLevel(Level.BOTTOM);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -333,7 +395,8 @@ ________________________________________________________________________________
          * it checks that if the player has Minotaur as God, he can move to an occupied cell and the opponent's worker is pushed back (if possible)
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -356,10 +419,18 @@ ________________________________________________________________________________
         w1p2.setLevel(Level.BOTTOM);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.TRITON);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.MINOTAUR);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that the move is possible and that the workers are correctly moved
@@ -423,7 +494,8 @@ ________________________________________________________________________________
          *
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -447,13 +519,20 @@ ________________________________________________________________________________
         worker1Player1.setLevel(Level.GROUND);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.TRITON);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
         //     game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
         //      game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the move is made correctly and the state is set to build

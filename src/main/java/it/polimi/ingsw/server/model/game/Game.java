@@ -183,8 +183,6 @@ public class Game extends Observable<Answer> {
 
     public void setState(State state) {
         prevState = State.parseString(this.state.getName());
-        System.out.print("Prev: " + prevState.toString());
-        System.out.print("State: " + state.toString());
 
         this.state = parseState(state);
     }
