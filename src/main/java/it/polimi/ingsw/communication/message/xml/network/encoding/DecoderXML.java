@@ -7,27 +7,19 @@ import java.beans.XMLDecoder;
 import java.io.*;
 
 public class DecoderXML {
-
-    private final String XML_FILE;
-
-    public DecoderXML(String path) {
-        XML_FILE = path;
-    }
-
-    public Message decode() {
-
+    public static Message decode(ObjectInputStream in) {
         try {
-            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(XML_FILE)));
-            Message decoded = (Message) decoder.readObject();
+            String xmlString = (String) in.readObject();
+            XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
+            Message message = (Message) decoder.readObject();
 
-            if (decoded.getHeader() instanceof DemandType) {
-                return new Demand((Demand) decoded);
-            } else if (decoded.getHeader() instanceof AnswerType){
-                return new Answer((Answer) decoded);
+            if (message.getHeader() instanceof DemandType) {
+                return new Demand((Demand) message);
+            } else if (message.getHeader() instanceof AnswerType){
+                return new Answer((Answer) message);
             }
-
-        } catch (FileNotFoundException e) {
-            System.out.println("ERROR: File " + XML_FILE + ".xml not found");
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
         }
 
         return null;

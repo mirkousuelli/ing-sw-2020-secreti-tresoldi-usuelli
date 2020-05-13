@@ -41,7 +41,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws IOException, ParserConfigurationException, SAXException {
         this.socket = socket;
         this.server = server;
-        file = new FileXML(pathFile, socket);
+        file = new FileXML(socket);
         lobby = null;
         buffer = new LinkedList<>();
         creator = false;
@@ -79,7 +79,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         synchronized (file.lockSend) {
             try {
                 file.send(message);    // INCAPSULATO
-            } catch (IOException | TransformerConfigurationException | SAXException e) {
+            } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Got an IOException", e);
             }
         }

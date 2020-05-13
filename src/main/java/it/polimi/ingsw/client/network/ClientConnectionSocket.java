@@ -32,7 +32,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException, ParserConfigurationException, SAXException {
         super();
         socket = new Socket(ip, port);
-        file = new FileXML(path, socket);
+        file = new FileXML(socket);
         this.clientView = clientView;
         buffer = new LinkedList<>();
     }
@@ -77,13 +77,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
                             Answer<S> temp;
                             while (isActive()) {
                                 synchronized (file.lockReceive) {
-                                    try {
-                                        temp = (Answer<S>) file.receive();
-                                    }
-                                    catch(IOException e) {
-                                        LOGGER.log(Level.SEVERE, "Got an IOException", e);
-                                        break;
-                                    }
+                                    temp = (Answer<S>) file.receive();
                                 }
 
                                 if(temp.getHeader().equals(AnswerType.CLOSE))
