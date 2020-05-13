@@ -10,6 +10,8 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.message.Lobby;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.junit.jupiter.api.Test;
@@ -24,8 +26,10 @@ class ControllerTest {
     @Test
     void testMessage() throws ParserConfigurationException, SAXException {
         // if the current player makes a possible action, it is actually made
-        Game game = new Game();
-        Controller controller = new Controller(game);
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Controller controller = lobby.getController();
 
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
@@ -43,9 +47,15 @@ class ControllerTest {
 
         game.addPlayer(player1);
         game.addPlayer(player2);
+
+        game.setCurrentPlayer(player2);
+        game.assignCard(God.APOLLO);
+
         game.setCurrentPlayer(player1);
         game.assignCard(God.DEMETER);
         game.setState(State.BUILD);
+
+        GameMemory.save(game, Lobby.backupPath);
 
         player1View.processMessage(new Demand(DemandType.BUILD, new ReducedDemandCell(1,1)));
 
@@ -97,6 +107,7 @@ class ControllerTest {
     @Test
     void wrongActionTest() throws ParserConfigurationException, SAXException {
         // if a player has to make a specific action but tries to do another one, he is notified with an error (for example if he has to build but tries to move his worker)
+
         Game game = new Game();
         Controller controller = new Controller(game);
 
@@ -135,8 +146,10 @@ class ControllerTest {
     @Test
     void impossibleActionTest() throws ParserConfigurationException, SAXException {
         // if a player make an impossible action (like moving too far from the current cell) he is notified with an error
-        Game game = new Game();
-        Controller controller = new Controller(game);
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Controller controller = lobby.getController();
 
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
@@ -155,8 +168,15 @@ class ControllerTest {
 
         game.addPlayer(player1);
         game.addPlayer(player2);
+
+        game.setCurrentPlayer(player2);
+        game.assignCard(God.APOLLO);
+
         game.setCurrentPlayer(player1);
+        game.assignCard(God.DEMETER);
         game.setState(State.MOVE);
+
+        GameMemory.save(game, Lobby.backupPath);
 
         player1View.processMessage(new Demand(DemandType.MOVE, new ReducedDemandCell(2,2)));
 

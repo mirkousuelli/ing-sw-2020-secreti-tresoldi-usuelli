@@ -54,9 +54,11 @@ public class Lobby {
         reloaded = true;
 
         File f = new File(backupPath);
-        boolean isCreated;
+        boolean b;
         try {
-            isCreated = f.createNewFile();
+            if (f.exists())
+                b = f.delete();
+            b = f.createNewFile();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an exception", e);
         }

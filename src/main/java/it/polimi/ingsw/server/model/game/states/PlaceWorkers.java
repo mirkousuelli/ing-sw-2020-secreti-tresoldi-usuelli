@@ -10,8 +10,6 @@ import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.storage.GameMemory;
-import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +72,6 @@ public class PlaceWorkers implements GameState{
             returnContent.setState(State.CHOOSE_WORKER);
         returnContent.setChangeTurn(true);
         returnContent.setPayload(modifiedCell);
-
-        GameMemory.save(currentPlayer, Lobby.backupPath);
 
         return returnContent;
     }

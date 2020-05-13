@@ -82,6 +82,7 @@ public class BuildTest {
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -129,6 +130,7 @@ public class BuildTest {
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -171,7 +173,10 @@ public class BuildTest {
         /*@function
          * it checks that if the player picked a cell where there's a dome, he has to choose a different one
          */
-        Game game = new Game();
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -189,11 +194,17 @@ public class BuildTest {
         cellToBuildOn.setLevel(Level.DOME);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(2, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that it's not possible to build on a dome
@@ -216,7 +227,9 @@ ________________________________________________________________________________
     @Test
     void buildingWithAtlas() throws ParserConfigurationException, SAXException {
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -235,12 +248,19 @@ ________________________________________________________________________________
         cellToBuildOn.setLevel(Level.BOTTOM);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.APOLLO);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.ATLAS);
         assertEquals(Level.BOTTOM, cellToBuildOn.getLevel()); // the level of the cell before the build is correct
 
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(2, 3))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -260,7 +280,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell where he can build, the
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -279,12 +301,17 @@ ________________________________________________________________________________
         cell1.setLevel(Level.MIDDLE);
         cell2.setLevel(Level.GROUND);
 
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.APOLLO);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setState(State.BUILD);
         game.setCurrentPlayer(p1);
         game.assignCard(God.DEMETER);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(2, 2))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -295,6 +322,7 @@ ________________________________________________________________________________
         game.setState(State.ADDITIONAL_POWER);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.ASK_ADDITIONAL_POWER, new ReducedDemandCell(-1, -1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
         // it checks that if the player picked a different cell, the block is built and the turn is changed
@@ -313,7 +341,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -331,11 +361,17 @@ ________________________________________________________________________________
         cellToBuildOn.setLevel(Level.BOTTOM);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.HEPHAESTUS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -344,6 +380,7 @@ ________________________________________________________________________________
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
@@ -357,7 +394,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -375,11 +414,17 @@ ________________________________________________________________________________
         cellToBuildOn.setLevel(Level.MIDDLE);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.HEPHAESTUS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -388,6 +433,7 @@ ________________________________________________________________________________
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
         assertEquals(AnswerType.ERROR, rc.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
@@ -401,7 +447,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -419,6 +467,12 @@ ________________________________________________________________________________
         p1.setCurrentWorker(p1.getWorkers().get(0));
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.PROMETHEUS);
 
@@ -432,7 +486,7 @@ ________________________________________________________________________________
         assertEquals(State.MOVE, returnContent.getState());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 0))));
-
+        GameMemory.save(game, Lobby.backupPath);
         returnContent = game.gameEngine();
 
         //it checks that the player
@@ -445,6 +499,7 @@ ________________________________________________________________________________
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(0, 1))));
 
         game.setState(State.BUILD);
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
@@ -459,7 +514,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -475,6 +532,12 @@ ________________________________________________________________________________
         p1.setCurrentWorker(p1.getWorkers().get(0));
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.PROMETHEUS);
 
@@ -488,7 +551,7 @@ ________________________________________________________________________________
         assertEquals(State.MOVE, returnContent.getState());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         returnContent = game.gameEngine();
 
         //it checks that the player
@@ -557,7 +620,9 @@ ________________________________________________________________________________
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
 
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -574,11 +639,17 @@ ________________________________________________________________________________
         w1p1.setLevel(Level.BOTTOM);
 
         game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.ZEUS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player build under itself since he has zeus
