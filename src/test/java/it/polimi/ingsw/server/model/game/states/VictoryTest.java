@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -21,7 +22,8 @@ public class VictoryTest {
         /*@function
          *  it checks that after a player won, the state is set back to start
          */
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");

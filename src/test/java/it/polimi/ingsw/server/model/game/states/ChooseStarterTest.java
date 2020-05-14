@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -20,7 +21,8 @@ public class ChooseStarterTest {
     @Test
     void correctChosenStarterTest() throws ParserConfigurationException, SAXException {
         // if the Challenger picks a correct name, the state changes to place workers and the current player is the starter
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -45,7 +47,8 @@ public class ChooseStarterTest {
     @Test
     void choosingWrongNicknameTest() throws ParserConfigurationException, SAXException {
         // if the Challenger picks the nickname of someone not in the game, he has to choose again
-        Game game = new Game();
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");

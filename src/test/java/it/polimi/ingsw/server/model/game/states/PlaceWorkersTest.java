@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 
+import it.polimi.ingsw.server.network.message.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,7 +25,9 @@ public class PlaceWorkersTest {
 
     @Test
     void correctWorkersPlacedTest() throws ParserConfigurationException, SAXException {
-        Game game = new Game();
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("pl1");
         Player p2 = new Player("pl2");
         game.addPlayer(p1);
@@ -79,7 +82,9 @@ public class PlaceWorkersTest {
 
     @Test
     void pickingBusyCellTest() throws ParserConfigurationException, SAXException {
-        Game game = new Game();
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
         Player p1 = new Player("pl1");
         Player p2 = new Player("pl2");
         game.addPlayer(p1);

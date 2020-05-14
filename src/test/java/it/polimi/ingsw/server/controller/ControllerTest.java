@@ -72,8 +72,9 @@ class ControllerTest {
     void wrongPlayerMakingActionTest() throws ParserConfigurationException, SAXException {
         // A player cannot make an action (for example a move) while it's not his turn
 
-        Game game = new Game();
-        Controller controller = new Controller(game);
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Controller controller = lobby.getController();
 
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
@@ -108,8 +109,9 @@ class ControllerTest {
     void wrongActionTest() throws ParserConfigurationException, SAXException {
         // if a player has to make a specific action but tries to do another one, he is notified with an error (for example if he has to build but tries to move his worker)
 
-        Game game = new Game();
-        Controller controller = new Controller(game);
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Controller controller = lobby.getController();
 
         Player player1 = new Player("Pl1");
         Player player2 = new Player("Pl2");
