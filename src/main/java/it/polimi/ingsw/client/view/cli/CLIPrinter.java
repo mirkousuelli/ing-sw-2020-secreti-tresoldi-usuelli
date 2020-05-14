@@ -1,11 +1,11 @@
 package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
-import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
@@ -17,8 +17,7 @@ import java.util.stream.IntStream;
 
 public class CLIPrinter<S> {
 
-    private final ClientModel<S> clientModel;
-    private final ClientView<S> clientView;
+    private ClientModel<S> clientModel;
     private final PrintStream out;
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
@@ -38,10 +37,9 @@ public class CLIPrinter<S> {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    public CLIPrinter(PrintStream out, ClientModel<S> clientModel, ClientView<S> clientView) {
+    public CLIPrinter(PrintStream out, ClientModel<S> clientModel) {
         this.out = out;
         this.clientModel = clientModel;
-        this.clientView = clientView;
 
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
@@ -74,6 +72,10 @@ public class CLIPrinter<S> {
         allowScanner.put(DemandType.AVAILABLE_GODS, false);
     }
 
+    public void setClientModel(ClientModel<S> clientModel) {
+        this.clientModel = clientModel;
+    }
+
     public void printLogo() {
         out.println(LOGO);
     }
@@ -91,7 +93,7 @@ public class CLIPrinter<S> {
         ReducedAnswerCell[][] board;
         List<ReducedPlayer> opponents;
 
-        synchronized (clientModel) {
+        synchronized (clientModel.lock) {
             board = clientModel.getReducedBoard();
             opponents = clientModel.getOpponents();
             opponents.add(clientModel.getPlayer());
@@ -130,9 +132,11 @@ public class CLIPrinter<S> {
 
     private void printOpponents() {
         List<ReducedPlayer> opponents;
+        ReducedPlayer player;
 
-        synchronized (clientModel) {
+        synchronized (clientModel.lock) {
             opponents = clientModel.getOpponents();
+            player = clientModel.getPlayer();
         }
 
         if (opponents.isEmpty()) return;
@@ -142,7 +146,7 @@ public class CLIPrinter<S> {
         out.print(": ");
 
         out.println(opponents.stream()
-                .filter(p -> !p.getNickname().equals(clientModel.getPlayer().getColor()))
+                .filter(p -> !p.getNickname().equals(player.getColor()))
                 .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getNickname() + Color.RESET)
                 .reduce(null, (a, b) -> a != null
                         ? a + ", " + b
@@ -150,14 +154,20 @@ public class CLIPrinter<S> {
                 )
         );
 
-        out.println("You: "+ Color.parseString(clientModel.getPlayer().getColor()) + clientModel.getPlayer().getNickname() + Color.RESET + "\n");
+        out.println("You: "+ Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "\n");
     }
 
     private void printAvailableGods() {
+        List<ReducedCard> deck;
+
+        synchronized (clientModel.lock) {
+            deck = clientModel.getDeck();
+        }
+
         Map<Integer, String> numberedDeck = IntStream
-                .range(0, clientModel.getDeck().size()) // IntStream
+                .range(0, deck.size()) // IntStream
                 .boxed() // Stream<Integer>
-                .collect(Collectors.toMap(i -> i, i -> clientModel.getDeck().get(i).getGod().toString().toLowerCase() + ": " + clientModel.getDeck().get(i).getDescription()));
+                .collect(Collectors.toMap(i -> i, i -> deck.get(i).getGod().toString().toLowerCase() + ": " + deck.get(i).getDescription()));
 
         out.print("Available Gods: \n");
 
@@ -173,7 +183,7 @@ public class CLIPrinter<S> {
     private void printGods() {
         List<ReducedPlayer> playerList;
 
-        synchronized (clientModel) {
+        synchronized (clientModel.lock) {
             playerList = clientModel.getOpponents();
         }
 
@@ -198,7 +208,7 @@ public class CLIPrinter<S> {
         God god;
         String color;
 
-        synchronized (clientModel) {
+        synchronized (clientModel.lock) {
             god = clientModel.getPlayer().getCard().getGod();
             color = Color.parseString(clientModel.getPlayer().getColor());
         }
@@ -209,7 +219,7 @@ public class CLIPrinter<S> {
     private void printPossibleActions() {
         ReducedAnswerCell[][] reducedBoard;
 
-        synchronized (clientModel) {
+        synchronized (clientModel.lock) {
             reducedBoard = clientModel.getReducedBoard();
         }
 
@@ -253,10 +263,12 @@ public class CLIPrinter<S> {
     }
 
     private void printCurrentPlayer() {
-        if (clientModel.isYourTurn())
-            printString("It is your turn!\n");
-        else
-            printString(clientModel.getCurrentPlayer()+ " is the current player!\n");
+        synchronized (clientModel.lock) {
+            if (clientModel.isYourTurn())
+                printString("It is your turn!\n");
+            else
+                printString(clientModel.getCurrentPlayer() + " is the current player!\n");
+        }
     }
 
     public void printError() {
@@ -286,10 +298,13 @@ public class CLIPrinter<S> {
            }
 
            ret = allowScanner.get(demandType);
-           if (ret == null)
-               return clientModel.isYourTurn();
-           else
-               return ret;
+           if (ret == null) {
+               synchronized (clientModel.lock) {
+                   ret = clientModel.isYourTurn();
+               }
+           }
+
+           return ret;
     }
 }
 

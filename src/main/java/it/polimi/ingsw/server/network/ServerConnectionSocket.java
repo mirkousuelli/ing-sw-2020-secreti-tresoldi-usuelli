@@ -25,8 +25,7 @@ import java.util.logging.Logger;
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
     private static final Random random = new SecureRandom();
-    private static final String PATH = "src/main/java/it/polimi/ingsw/server/network/message/message";
-    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
+    private static final String BACKUPPATH = "backup_lobby.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private Lobby lobby;
@@ -57,7 +56,7 @@ public class ServerConnectionSocket implements ServerConnection {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this, PATH + random.nextInt() + ".xml");
+                handler = new ServerClientHandlerSocket(socket, this);
                 executor.submit(handler);
             }
             catch(Exception e) {

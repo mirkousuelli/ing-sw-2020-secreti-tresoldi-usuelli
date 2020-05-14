@@ -38,7 +38,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private boolean isActive;
     private boolean creator;
 
-    public ServerClientHandlerSocket(Socket socket, ServerConnection server, String pathFile) throws IOException, ParserConfigurationException, SAXException {
+    public ServerClientHandlerSocket(Socket socket, ServerConnection server) throws IOException, ParserConfigurationException, SAXException {
         this.socket = socket;
         this.server = server;
         file = new FileXML(socket);

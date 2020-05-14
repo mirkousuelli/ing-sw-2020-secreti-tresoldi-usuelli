@@ -6,7 +6,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
-    protected final ClientModel<S> clientModel;
+    protected ClientModel<S> clientModel;
     private boolean isFree;
     public final Object lockFree;
 
@@ -16,6 +16,14 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
         lockFree = new Object();
         setFree(true);
+    }
+
+    public ClientView() {
+        this(null);
+    }
+
+    public void setClientModel(ClientModel<S> clientModel) {
+        this.clientModel = clientModel;
     }
 
     public boolean isFree() {
@@ -36,20 +44,5 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected void endGame() {
         setActive(false);
-    }
-
-    protected void setInitialRequest() {
-        setFree(false);
-
-        synchronized (this) {
-            setDemand(new Demand<S>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
-            setChanged(true);
-        }
-
-        setFree(true);
-
-        synchronized (lockDemand) {
-            lockDemand.notifyAll();
-        }
     }
 }

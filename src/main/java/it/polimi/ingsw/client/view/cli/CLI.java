@@ -1,10 +1,14 @@
 package it.polimi.ingsw.client.view.cli;
 
+import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,8 +20,13 @@ public class CLI<S> extends ClientView<S> {
 
     public CLI(ClientModel<S> clientModel) {
         super(clientModel);
-        out = new CLIPrinter<>(System.out, clientModel, this);
+        out = new CLIPrinter<>(System.out, clientModel);
         in = new CLIScanner<>(System.in, out, clientModel);
+
+    }
+
+    public CLI() {
+        this(null);
     }
 
     private void update() {
@@ -39,9 +48,7 @@ public class CLI<S> extends ClientView<S> {
 
             case SUCCESS:
                 out.printSuccess();
-                synchronized (clientModel) {
-                    isYourTurn = out.printChanges(answerTemp.getContext());
-                }
+                isYourTurn = out.printChanges(answerTemp.getContext());
                 break;
 
             case CLOSE:
@@ -62,11 +69,7 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private void startUI(Answer<S> answerTemp) {
-        Demand<S> demand;
-
-        synchronized (clientModel) {
-            demand = in.requestInput(answerTemp.getContext());
-        }
+        Demand<S> demand = in.requestInput(answerTemp.getContext());
 
         setDemand(demand);
         setChanged(true);
@@ -82,14 +85,14 @@ public class CLI<S> extends ClientView<S> {
                     try {
                         Answer<S> temp;
                         while (isActive()) {
-                            synchronized (clientModel) {
-                                while (!clientModel.isChanged()) clientModel.wait();
+                            synchronized (clientModel.lockAnswer) {
+                                while (!clientModel.isChanged()) clientModel.lockAnswer.wait();
                                 clientModel.setChanged(false);
                                 temp = clientModel.getAnswer();
                             }
 
                             LOGGER.info("Receiving...");
-                            synchronized (this) {
+                            synchronized (lockAnswer) {
                                 setAnswer(temp);
                                 LOGGER.info("Received!");
                                 update();
@@ -108,8 +111,60 @@ public class CLI<S> extends ClientView<S> {
 
     @Override
     protected void startThreads() throws InterruptedException {
-        setInitialRequest();
+        initialRequest();
+        out.setClientModel(clientModel);
+        in.setClientModel(clientModel);
         Thread read = asyncReadFromModel();
         read.join();
+    }
+
+    private void initialRequest() {
+        ClientConnectionSocket clientConnectionSocket = null;
+        ClientModel clientModel;
+        String name;
+        String ip;
+        int port;
+
+        out.printString("Insert your name:\n");
+        name = in.nextLine();
+        out.printString("Insert the server's ip:\n");
+        ip = in.nextLine();
+        out.printString("Insert the server's port:\n");
+        port = Integer.parseInt(in.nextLine());
+
+        try {
+            clientConnectionSocket = new ClientConnectionSocket(ip, port);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException");
+        }
+
+        clientModel = new ClientModel(name, clientConnectionSocket);
+        setClientModel(clientModel);
+        clientConnectionSocket.setClientView(this);
+
+        setInitialRequest();
+
+        new Thread(
+                clientConnectionSocket
+        ).start();
+
+        new Thread(
+                clientModel
+        ).start();
+    }
+
+    private void setInitialRequest() {
+        setFree(false);
+
+        synchronized (clientModel.lock) {
+            setDemand(new Demand<>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
+            setChanged(true);
+        }
+
+        setFree(true);
+
+        synchronized (lockDemand) {
+            lockDemand.notifyAll();
+        }
     }
 }

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.network.ClientConnection;
+import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
@@ -15,21 +15,18 @@ import java.util.logging.Logger;
 
 public class ClientModel<S> extends SantoriniRunnable<S> {
 
-    private final ClientConnection<S> clientConnection;
-
+    private ClientConnectionSocket<S> clientConnection;
     private ReducedAnswerCell[][] reducedBoard;
     private List<ReducedCard> deck;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
     private final ReducedPlayer player;
-
     private boolean isReloaded;
-
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
 
 
-    public ClientModel(String playerName, ClientConnection<S> clientConnection) {
+    public ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
         super();
         reducedBoard = new ReducedAnswerCell[5][5];
         deck = new ArrayList<>();
@@ -47,6 +44,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.clientConnection = clientConnection;
 
         isReloaded = false;
+    }
+
+    public ClientModel(String playerName) {
+        this(playerName, null);
+    }
+
+    public void setClientConnection(ClientConnectionSocket<S> clientConnection) {
+        this.clientConnection = clientConnection;
     }
 
     public synchronized String getCurrentPlayer() {
@@ -69,19 +74,19 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     try {
                         Answer<S> temp;
                         while (isActive()) {
-                            synchronized (clientConnection) {
-                                while (!clientConnection.isChanged()) clientConnection.wait();
+                            synchronized (clientConnection.lockAnswer) {
+                                while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
                                 clientConnection.setChanged(false);
                                 temp = clientConnection.getAnswer();
                             }
 
                             LOGGER.info("Receiving...");
-                            synchronized (this) {
+                            synchronized (lockAnswer) {
                                 setAnswer(temp);
                                 updateModel();
                                 setChanged(true);
                                 LOGGER.info("Received: " + getAnswer().getHeader() + " " + getAnswer().getContext());
-                                this.notifyAll();
+                                lockAnswer.notifyAll();
                             }
                         }
                     } catch (Exception e){

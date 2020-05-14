@@ -11,25 +11,20 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements ClientConnection<S> {
+public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
+
     private final Socket socket;
     private final FileXML file;
-
     private ClientView<S> clientView;
     private final List<Answer<S>> buffer;
-
-    private static final Random random = new SecureRandom();
-    private final String path = "src/main/java/it/polimi/ingsw/client/network/message/message" + random.nextInt() + ".xml";
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
-    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException, ParserConfigurationException, SAXException {
+    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
         super();
         socket = new Socket(ip, port);
         file = new FileXML(socket);
@@ -37,15 +32,12 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
         buffer = new LinkedList<>();
     }
 
-    public ClientConnectionSocket(String ip, int port) throws IOException, ParserConfigurationException, SAXException {
+    public ClientConnectionSocket(String ip, int port) throws IOException {
         this(ip, port, null);
     }
 
-    @Override
     public void setClientView(ClientView<S> clientView) {
-        synchronized (this) {
-            this.clientView = clientView;
-        }
+        this.clientView = clientView;
     }
 
     @Override
@@ -59,7 +51,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
         return answer;
     }
 
-    @Override
     public boolean hasAnswer() {
         boolean ret;
 
@@ -158,9 +149,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
                             }
 
                             LOGGER.info("Consuming...");
-                            synchronized (this) {
+                            synchronized (lockAnswer) {
                                 setChanged(true);
-                                this.notifyAll();
+                                lockAnswer.notifyAll();
                                 LOGGER.info("Consumed!");
                             }
                         }
@@ -185,7 +176,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> implements C
         consumer.join();
     }
 
-    @Override
     public synchronized void closeConnection() {
         try {
             socket.close();

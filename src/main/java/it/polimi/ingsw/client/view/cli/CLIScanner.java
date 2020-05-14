@@ -13,6 +13,7 @@ import java.util.function.Function;
 
 public class CLIScanner<S> {
 
+    private ClientModel<S> clientModel;
     private final Scanner in;
     private final CLIPrinter<S> out;
 
@@ -31,7 +32,6 @@ public class CLIScanner<S> {
     private final Map<DemandType, Function<Integer, Boolean>> indexMap;
     private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
-    private final ClientModel<S> clientModel;
 
     public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
         in = new Scanner(inputStream);
@@ -45,7 +45,11 @@ public class CLIScanner<S> {
         toUsePowerMap = new EnumMap<>(DemandType.class);
         payloadMap = new EnumMap<>(DemandType.class);
 
+        if (clientModel != null)
+            initializeMaps();
+    }
 
+    public void initializeMaps() {
         messageMap.put(DemandType.CREATE_GAME, CREATEGAME);
         messageMap.put(DemandType.CHOOSE_DECK, CHOOSEDECK);
         messageMap.put(DemandType.CHOOSE_CARD, CHOOSECARD);
@@ -85,6 +89,10 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.USE_POWER, this::parseCommand);
     }
 
+    public void setClientModel(ClientModel<S> clientModel) {
+        this.clientModel = clientModel;
+        initializeMaps();
+    }
 
     private S parseString(String string) {
         return (S) (new ReducedMessage(string));
@@ -184,5 +192,9 @@ public class CLIScanner<S> {
             return new Demand<>(demandType, (S) payloadList);
 
         return new Demand<>(demandType, payload);
+    }
+
+    public String nextLine() {
+        return in.nextLine();
     }
 }
