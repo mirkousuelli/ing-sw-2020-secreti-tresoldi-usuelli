@@ -9,12 +9,12 @@ import java.net.Socket;
 public class FileXML {
     public final Object lockReceive;
     public final Object lockSend;
-    private final ObjectInputStream inStream;
     private final ObjectOutputStream outStream;
+    private final ObjectInputStream inStream;
 
     public FileXML(Socket sock) throws IOException {
-        inStream = new ObjectInputStream(sock.getInputStream());
         outStream = new ObjectOutputStream(sock.getOutputStream());
+        inStream = new ObjectInputStream(sock.getInputStream());
         lockReceive = new Object();
         lockSend = new Object();
     }
