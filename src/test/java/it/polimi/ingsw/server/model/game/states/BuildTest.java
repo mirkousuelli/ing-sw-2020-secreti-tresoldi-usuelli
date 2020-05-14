@@ -6,6 +6,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
@@ -82,7 +83,6 @@ public class BuildTest {
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -130,7 +130,6 @@ public class BuildTest {
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -176,7 +175,6 @@ public class BuildTest {
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -216,10 +214,14 @@ public class BuildTest {
 
 
 
+
+
 /*
 ___________________________________________________________________________________________________________________________________
     TESTS ON GODS POWER
+___________________________________________________________________________________________________________________________________
 */
+
 
 
 
@@ -229,7 +231,6 @@ ________________________________________________________________________________
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -272,7 +273,55 @@ ________________________________________________________________________________
     }
 
 
-    // Normal use power works properly
+
+    // CHRONUS: You also win when there are at least five Complete Towers on the board.
+    @Test
+    void winningWithChronusTest() throws ParserConfigurationException, SAXException {
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        Board board = game.getBoard();
+        WinConditionPower power1;
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+
+        game.addPlayer(p1);
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.CHRONUS);
+        power1 = (WinConditionPower) p1.getCard().getPower(0);
+
+        Block worker1Player1 = (Block) board.getCell(1,1);
+        Block chosenCell = (Block) board.getCell(2,2);
+
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        for (int i = 0; i < 4; i++) {
+            Block tower = (Block) board.getCell(i, 0);
+            tower.setLevel(Level.DOME);
+            tower.setPreviousLevel(Level.TOP);
+        }
+        chosenCell.setLevel(Level.TOP);
+
+        game.setState(State.BUILD);
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(2, 2))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        // the win condition power is verified
+        assertTrue(power1.usePower(game));
+   /*     assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
+        assertEquals(State.VICTORY, returnContent.getState());
+*/
+    }
+
+
+
     // DEMETER: Your Worker may build one additional time, but not on the same space.
     @Test
     void buildingWithDemeter() throws ParserConfigurationException, SAXException {
@@ -282,7 +331,6 @@ ________________________________________________________________________________
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -333,7 +381,6 @@ ________________________________________________________________________________
     }
 
 
-    // Normal use power works properly
     // HEPHAESTUS: Your Worker may build one additional block (not dome) on top of your first block.
     @Test
     void buildingWithHephaestus() throws ParserConfigurationException, SAXException {
@@ -343,7 +390,6 @@ ________________________________________________________________________________
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -388,15 +434,15 @@ ________________________________________________________________________________
         assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
     }
 
+    // Hestia: Can build a second time but not on a perimeter cell
     @Test
-    void wrongBuildingWithHephaestus() throws ParserConfigurationException, SAXException {
+    void buildingWithHestia() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         *
          */
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -405,13 +451,15 @@ ________________________________________________________________________________
         game.addPlayer(p3);
 
         Board board = game.getBoard();
-        Block worker1Player1 = (Block) board.getCell(1, 0);
-        Block cellToBuildOn = (Block) board.getCell(1, 1);
+        Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block cell1 = (Block) board.getCell(1, 2);
+        Block cell2 = (Block) board.getCell(2, 2);
 
         p1.initializeWorkerPosition(1, worker1Player1);
-        p1.setCurrentWorker(p1.getWorkers().get(0));
+        p1.setCurrentWorker(p1.getWorker(1));
 
-        cellToBuildOn.setLevel(Level.MIDDLE);
+        cell1.setLevel(Level.MIDDLE);
+        cell2.setLevel(Level.GROUND);
 
         game.setState(State.BUILD);
 
@@ -421,24 +469,26 @@ ________________________________________________________________________________
         game.assignCard(God.ATLAS);
 
         game.setCurrentPlayer(p1);
-        game.assignCard(God.HEPHAESTUS);
+        game.assignCard(God.HESTIA);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
-        //it checks that the player
+        //it checks that the build is made successfully
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(Level.TOP, cellToBuildOn.getLevel());
+        assertEquals(Level.TOP, cell1.getLevel());
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
-        assertEquals(AnswerType.ERROR, rc.getAnswerType());
-        assertEquals(Level.TOP, cellToBuildOn.getLevel());
-        assertEquals(State.BUILD, rc.getState());
-        assertEquals(p1,game.getCurrentPlayer()); // the current player is still p1
+
+        // it checks that if the player picked a different cell, the block is built and the turn is changed
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(Level.BOTTOM, cell2.getLevel());
+        assertEquals(State.CHOOSE_WORKER, rc.getState());
+        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
     }
 
     @Test
@@ -449,7 +499,6 @@ ________________________________________________________________________________
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -477,7 +526,7 @@ ________________________________________________________________________________
         game.assignCard(God.PROMETHEUS);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -496,9 +545,8 @@ ________________________________________________________________________________
         assertEquals(cellToMoveOn, p1.getCurrentWorker().getLocation());
         assertEquals(State.BUILD, returnContent.getState());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(0, 1))));
-
         game.setState(State.BUILD);
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
@@ -508,121 +556,17 @@ ________________________________________________________________________________
         assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
     }
 
-    @Test
-    void wrongBuildingWithPrometheus() throws ParserConfigurationException, SAXException {
-        /*@function
-         * it checks that if the player picked a cell under his current worker, he has to choose a different one
-         */
-
-        Lobby lobby = new Lobby(new Game());
-        Game game = lobby.getGame();
-        //Game game = new Game();
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
-        game.addPlayer(p1);
-        game.addPlayer(p2);
-        game.addPlayer(p3);
-
-        Board board = game.getBoard();
-        Block worker1Player1 = (Block) board.getCell(1, 0);
-        Block cellToDoActions = (Block) board.getCell(1, 1);
-
-        p1.initializeWorkerPosition(1, worker1Player1);
-        p1.setCurrentWorker(p1.getWorkers().get(0));
-
-        game.setState(State.MOVE);
-
-        game.setCurrentPlayer(p2);
-        game.assignCard(God.DEMETER);
-        game.setCurrentPlayer(p3);
-        game.assignCard(God.ATLAS);
-
-        game.setCurrentPlayer(p1);
-        game.assignCard(God.PROMETHEUS);
-
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-
-        ReturnContent returnContent = game.gameEngine();
-
-        //it checks that the player
-        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
-        assertEquals(State.MOVE, returnContent.getState());
-
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
-        returnContent = game.gameEngine();
-
-        //it checks that the player
-        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
-        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
-        assertEquals(worker1Player1, p1.getCurrentWorker().getPreviousLocation());
-        assertEquals(worker1Player1, p1.getCurrentWorker().getLocation());
-        assertEquals(State.MOVE, returnContent.getState());
-    }
-
-
-    // Hestia: Can build a second time but not on a perimeter cell
-  //  @Test
-    void buildingWithHestia() throws ParserConfigurationException, SAXException {
-        /*@function
-         *
-         */
-
-        Game game = new Game();
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
-        game.addPlayer(p1);
-        game.addPlayer(p2);
-        game.addPlayer(p3);
-
-        Board board = game.getBoard();
-        Block worker1Player1 = (Block) board.getCell(1, 1);
-        Block cell1 = (Block) board.getCell(1, 2);
-        Block cell2 = (Block) board.getCell(2, 2);
-
-        p1.initializeWorkerPosition(1, worker1Player1);
-        p1.setCurrentWorker(p1.getWorker(1));
-
-        cell1.setLevel(Level.MIDDLE);
-        cell2.setLevel(Level.GROUND);
-
-        game.setState(State.BUILD);
-        game.setCurrentPlayer(p1);
-        game.assignCard(God.HESTIA);
-
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 2))));
-
-        ReturnContent returnContent = game.gameEngine();
-
-        //it checks that the build is made successfully
-        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(Level.TOP, cell1.getLevel());
-        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
-
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
-        ReturnContent rc = game.gameEngine();
-
-        // it checks that if the player picked a different cell, the block is built and the turn is changed
-        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
-        assertEquals(Level.BOTTOM, cell2.getLevel());
-        assertEquals(State.CHOOSE_WORKER, rc.getState());
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
-    }
 
 
     // ZEUS: Your Worker may build a block under itself.
     @Test
     void buildingUnderWithZeusTest() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         * it checks that if the player has Zeus as God and chooses a cell under his current worker, the build is actually made
          */
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        //Game game = new Game();
         Player p1 = new Player("Fabio");
         Player p2 = new Player("Mirko");
         Player p3 = new Player("Riccardo");
@@ -645,6 +589,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p3);
         game.assignCard(God.ATLAS);
 
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.ZEUS);
 
@@ -657,5 +602,185 @@ ________________________________________________________________________________
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
         assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
         assertEquals(Level.MIDDLE, w1p1.getLevel());
+    }
+
+
+
+
+
+/*
+___________________________________________________________________________________________________________________________________
+    TESTS ON SPECIFIC CASES OF GOD POWERS
+___________________________________________________________________________________________________________________________________
+
+*/
+
+
+    @Test
+    void notUsingHestiaPowerTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         *
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block cell1 = (Block) board.getCell(1, 2);
+        Block cell2 = (Block) board.getCell(2, 2);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorker(1));
+
+        cell1.setLevel(Level.MIDDLE);
+        cell2.setLevel(Level.GROUND);
+
+        game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HESTIA);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 2))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the build is made successfully
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.TOP, cell1.getLevel());
+        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+
+        game.setState(State.ADDITIONAL_POWER);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent rc = game.gameEngine();
+
+        // it checks that if the player picked a different cell, the block is built and the turn is changed
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(Level.GROUND, cell2.getLevel());
+        assertEquals(State.CHOOSE_WORKER, rc.getState());
+        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+    }
+
+    @Test
+    void wrongBuildingWithHephaestus() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block cellToBuildOn = (Block) board.getCell(1, 1);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        cellToBuildOn.setLevel(Level.MIDDLE);
+
+        game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HEPHAESTUS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.BUILD, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.TOP, cellToBuildOn.getLevel());
+        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+
+        game.setState(State.ADDITIONAL_POWER);
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent rc = game.gameEngine();
+
+        assertEquals(AnswerType.ERROR, rc.getAnswerType());
+        assertEquals(Level.TOP, cellToBuildOn.getLevel());
+        assertEquals(State.ADDITIONAL_POWER, rc.getState());
+        assertEquals(p1,game.getCurrentPlayer()); // the current player is still p1
+    }
+
+    @Test
+    void wrongBuildingWithPrometheus() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block cellToDoActions = (Block) board.getCell(1, 1);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PROMETHEUS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the player
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
+        assertEquals(State.MOVE, returnContent.getState());
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
+        returnContent = game.gameEngine();
+
+        //it checks that since the player used the ability, he cannot move up
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToDoActions.getLevel());
+        assertEquals(worker1Player1, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player1, p1.getCurrentWorker().getLocation());
+        assertEquals(State.MOVE, returnContent.getState());
     }
 }

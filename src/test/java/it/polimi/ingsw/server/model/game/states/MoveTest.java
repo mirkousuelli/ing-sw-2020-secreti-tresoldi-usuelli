@@ -270,17 +270,69 @@ public class MoveTest {
 
 /*
 ___________________________________________________________________________________________________________________________________
-    TESTS ON GODS POWER
+    TESTS ON GODS POWER (BASIC ABILITY)
+___________________________________________________________________________________________________________________________________
 */
 
 
 
-    //
+    // APOLLO: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated.
+    @Test
+    void movingWithApolloTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Apollo as God, he can move to an occupied cell and the workers ae swapped
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block w1p1 = (Block) board.getCell(3, 4);
+        Block w1p2 = (Block) board.getCell(3, 3);
+
+        p1.initializeWorkerPosition(1, w1p1);
+        p2.initializeWorkerPosition(1, w1p2);
+
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        w1p1.setLevel(Level.GROUND);
+        w1p2.setLevel(Level.BOTTOM);
+
+        game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.APOLLO);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.BUILD, returnContent.getState());
+        assertEquals(w1p1.getPawn(), p2.getWorker(1));
+        assertEquals(w1p2.getPawn(), p1.getWorker(1));
+        assertEquals(Level.BOTTOM, p1.getWorker(1).getLevel());
+        assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
+    }
+
+
+
     // ARTEMIS: Your Worker may move one additional time, but not back to its initial space.
     @Test
     void movingWithArtemisTest() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that if the player picked a cell where he can move, his worker is actually moved there
+         * it checks that if the player has Artemis as God, he can move one additional time (not to the cell he came from)
          */
 
         Lobby lobby = new Lobby(new Game());
@@ -325,6 +377,7 @@ ________________________________________________________________________________
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
         // check that the move is made correctly and the state is set to build
@@ -335,60 +388,54 @@ ________________________________________________________________________________
 
     }
 
-    
-    // APOLLO: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated.
+
+    // it prints stuff (?)
+    // ATHENA: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.
     @Test
-    void movingWithApolloTest() throws ParserConfigurationException, SAXException {
+    void movingWithAthenaMalusActiveTest() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that if the player has Apollo as God, he can move to an occupied cell and the workers ae swapped
+         * it checks that if Athena's Malus is active, the other players cannot move up during their turn
          */
 
         Lobby lobby = new Lobby(new Game());
         Game game = lobby.getGame();
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
         game.addPlayer(p1);
         game.addPlayer(p2);
-        game.addPlayer(p3);
 
         Board board = game.getBoard();
-        Block w1p1 = (Block) board.getCell(3, 4);
-        Block w1p2 = (Block) board.getCell(3, 3);
+        Block w1p2 = (Block) board.getCell(1, 1);
+        Block chosenCell = (Block) board.getCell(1, 0);
 
-        p1.initializeWorkerPosition(1, w1p1);
-        p2.initializeWorkerPosition(1, w1p2);
-
-        p1.setCurrentWorker(p1.getWorkers().get(0));
-
-        w1p1.setLevel(Level.GROUND);
         w1p2.setLevel(Level.BOTTOM);
+        chosenCell.setLevel(Level.BOTTOM);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ATHENA);
+        ChooseCard.applyMalus(game, Timing.END_TURN);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+        p2.initializeWorkerPosition(1, w1p2);
+        p2.setCurrentWorker(p2.getWorkers().get(0));
 
         game.setState(State.MOVE);
 
-        game.setCurrentPlayer(p2);
-        game.assignCard(God.MINOTAUR);
-        game.setCurrentPlayer(p3);
-        game.assignCard(God.ARTEMIS);
-
-
-        game.setCurrentPlayer(p1);
-        game.assignCard(God.APOLLO);
-
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState());
-        assertEquals(w1p1.getPawn(), p2.getWorker(1));
-        assertEquals(w1p2.getPawn(), p1.getWorker(1));
-        assertEquals(Level.BOTTOM, p1.getWorker(1).getLevel());
-        assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
+        assertEquals(chosenCell.getPawn(), p2.getWorker(1));
+        assertNull(w1p2.getPawn());
     }
 
 
-    // Minotaur: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level.
+
+
+    // MINOTAUR: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level.
     @Test
     void movingWithMinotaurTest() throws ParserConfigurationException, SAXException {
         /*@function
@@ -443,51 +490,98 @@ ________________________________________________________________________________
         assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
     }
 
-    // TODO
-    // Persephone: If possible, at least one Worker must move up this turn.
+
+    // PAN: You also win if your worker moves down two or more levels
     // @Test
-    void movingWithPersephoneMalusTest() throws ParserConfigurationException, SAXException {
+    void winningWithPan() throws ParserConfigurationException, SAXException {
         /*@function
-         * it checks that if the player has Apollo as God, he can move to an occupied cell and the workers ae swapped
+         * it checks that if the player has Pan as God and moves down of 2 levels or more, he wins
          */
 
-        Game game = new Game();
-        Player p1 = new Player("Fabio");
-        Player p2 = new Player("Mirko");
-        Player p3 = new Player("Riccardo");
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
         game.addPlayer(p1);
         game.addPlayer(p2);
-        game.addPlayer(p3);
 
         Board board = game.getBoard();
-        Block w1p1 = (Block) board.getCell(3, 4);
-        Block w1p2 = (Block) board.getCell(3, 3);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block cellToMoveTo = (Block) board.getCell(1, 1);
 
-        p1.initializeWorkerPosition(1, w1p1);
-        p2.initializeWorkerPosition(1, w1p2);
-
+        p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
 
-        w1p1.setLevel(Level.BOTTOM);
-        w1p2.setLevel(Level.GROUND);
+        cellToMoveTo.setLevel(Level.GROUND);
+        worker1Player1.setLevel(Level.MIDDLE);
 
         game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PAN);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        // check that the player moved to down 2 levels, so he wins
+        //   assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
+        //   assertEquals(State.VICTORY, returnContent.getState());
+        assertEquals(cellToMoveTo.getPawn(), p1.getCurrentWorker());
+    }
+
+
+
+    // PERSEPHONE: If possible, at least one Worker must move up this turn.
+    @Test
+    void movingWithPersephoneMalusActiveTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Persephone as God, the other players have to move their worker up whenever it's possible
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        Board board = game.getBoard();
+        Block w1p2 = (Block) board.getCell(1, 1);
+        Block chosenCell = (Block) board.getCell(1, 0);
+
+        w1p2.setLevel(Level.BOTTOM);
+        chosenCell.setLevel(Level.MIDDLE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+
         game.setCurrentPlayer(p1);
         game.assignCard(God.PERSEPHONE);
+        ChooseCard.applyMalus(game, Timing.DEFAULT);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+        p2.initializeWorkerPosition(1, w1p2);
+        p2.setCurrentWorker(p2.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+
+        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState());
-        assertEquals(w1p1.getPawn(), p2.getWorker(1));
-        assertEquals(w1p2.getPawn(), p1.getWorker(1));
-        assertEquals(Level.GROUND, p1.getWorker(1).getLevel());
-        assertEquals(Level.BOTTOM, p2.getWorker(1).getLevel());
+        assertEquals(chosenCell.getPawn(), p2.getWorker(1));
     }
 
-    //
-    // Triton: Each time your Worker moves into a perimeter space, it may immediately move again.
+
+
+    // TRITON: Each time your Worker moves into a perimeter space, it may immediately move again.
     @Test
     void movingWithTritonTest() throws ParserConfigurationException, SAXException {
         /*@function
@@ -530,15 +624,244 @@ ________________________________________________________________________________
         game.assignCard(God.TRITON);
 
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
-        //     game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
-        //      game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent rc = game.gameEngine();
+
+        // it checks that if the player moves to a perimeter cell, he can move his worker again
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(State.MOVE, rc.getState());
+        assertNull(worker1Player1.getPawn());
+        assertEquals(cell1.getPawn(), p1.getCurrentWorker());
+
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
+        GameMemory.save(game, Lobby.backupPath);
+        rc= game.gameEngine();
+
+        // it checks that if the player moves to a perimeter cell, he can move his worker again
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(State.MOVE, rc.getState());
+        assertNull(cell1.getPawn());
+        assertEquals(cell2.getPawn(), p1.getCurrentWorker());
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 2))));
+        GameMemory.save(game, Lobby.backupPath);
+        rc = game.gameEngine();
+
+        // it checks that if the player does not move to a perimeter cell, the state is changed to build
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(State.BUILD, rc.getState());
+        assertNull(cell2.getPawn());
+        assertEquals(cell3.getPawn(), p1.getCurrentWorker());
+    }
+
+
+
+/*
+___________________________________________________________________________________________________________________________________
+    TESTS ON SPECIFIC CASES OF GOD POWERS
+___________________________________________________________________________________________________________________________________
+*/
+
+
+    @Test
+    void notUsingAdditionalPowerTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Artemis as God but he decides not to use his ability, the state is changed to additionalPower
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block cell1 = (Block) board.getCell(1, 1);
+        Block cell2 = (Block) board.getCell(2, 2);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        cell1.setLevel(Level.MIDDLE);
+        worker1Player1.setLevel(Level.BOTTOM);
+
+        game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ARTEMIS);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
-        // check that the move is made correctly and the state is set to build
+        // check that the state is still move since Artemis power allows the player to move a second time
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.MOVE, returnContent.getState());
+        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
         assertNull(worker1Player1.getPawn());
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
+
+        game.setState(State.ADDITIONAL_POWER);
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent rc = game.gameEngine();
+
+        // check that if the player decides not to use the god power, the game changes to build correctly
+        assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
+        assertEquals(State.BUILD, rc.getState());
+        assertNull(cell2.getPawn());
+        assertEquals(cell1.getPawn(), p1.getCurrentWorker());
+    }
+
+
+    @Test
+    void cannotMoveTooHighMinotaurTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Minotaur as God, he cannot move to an occupied cell that is too high
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block w1p1 = (Block) board.getCell(2, 2);
+        Block w1p2 = (Block) board.getCell(3, 3);
+        Block pushed = (Block) board.getCell(4, 4);
+
+
+        p1.initializeWorkerPosition(1, w1p1);
+        p2.initializeWorkerPosition(1, w1p2);
+
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        w1p1.setLevel(Level.GROUND);
+        w1p2.setLevel(Level.MIDDLE);
+
+        game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.PAN);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ARTEMIS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.MINOTAUR);
+
+        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        // it checks that the move is possible and that the workers are correctly moved
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.MOVE, returnContent.getState());
+        assertNull(pushed.getPawn());
+        assertEquals(w1p1.getPawn(), p1.getWorker(1));
+        assertEquals(w1p2.getPawn(), p2.getWorker(1));
+        assertEquals(Level.GROUND, p1.getWorker(1).getLevel());
+        assertEquals(Level.MIDDLE, p2.getWorker(1).getLevel());
+    }
+
+
+
+    @Test
+    void notMovingUpWithPersephoneMalusActiveTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Persephone as God, the other players have to move their worker up whenever it's possible
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        Board board = game.getBoard();
+        Block w1p2 = (Block) board.getCell(1, 1);
+        Block chosenCell = (Block) board.getCell(1, 0);
+        Block cell1 = (Block) board.getCell(1, 2);
+
+        w1p2.setLevel(Level.BOTTOM);
+        chosenCell.setLevel(Level.GROUND);
+        cell1.setLevel(Level.MIDDLE);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PERSEPHONE);
+        ChooseCard.applyMalus(game, Timing.DEFAULT); //per athena uguale ma con timing end_turn
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+        p2.initializeWorkerPosition(1, w1p2);
+        p2.setCurrentWorker(p2.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+
+        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.MOVE, returnContent.getState());
+        assertEquals(w1p2.getPawn(), p2.getWorker(1));
+        assertNull(chosenCell.getPawn());
+    }
+
+
+    @Test
+    void movingUpWithAthenaMalusActiveTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if Athena's Malus is active, the other players cannot move up during their turn
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Pl1");
+        Player p2 = new Player("Pl2");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        Board board = game.getBoard();
+        Block w1p2 = (Block) board.getCell(1, 1);
+        Block chosenCell = (Block) board.getCell(1, 0);
+
+        w1p2.setLevel(Level.BOTTOM);
+        chosenCell.setLevel(Level.MIDDLE);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ATHENA);
+        ChooseCard.applyMalus(game, Timing.END_TURN);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+        p2.initializeWorkerPosition(1, w1p2);
+        p2.setCurrentWorker(p2.getWorkers().get(0));
+
+        game.setState(State.MOVE);
+
+        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        GameMemory.save(game, Lobby.backupPath);
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.MOVE, returnContent.getState());
+        assertEquals(w1p2.getPawn(), p2.getWorker(1));
+        assertNull(chosenCell.getPawn());
     }
 }
