@@ -122,9 +122,6 @@ public abstract class ActivePower<S> extends Power<S> {
                 for (MalusLevel direction : malus.getDirection()) {
                     switch (direction) {
                         case UP:
-                            System.out.println("Current: " + currentPlayer.nickName);
-                            System.out.println("CurrentWorker: " + currentPlayer.getCurrentWorker());
-                            System.out.println("CurrentWorkerId: " + currentPlayer.getCurrentWorker().getId());
                             if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > cellToUse.getLevel().toInt())
                                 return false;
                             break;
