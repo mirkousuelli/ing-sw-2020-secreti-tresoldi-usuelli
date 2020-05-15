@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.button.JBlock;
+import it.polimi.ingsw.client.view.gui.button.JCell;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -11,7 +14,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";
     private final static int DIM = 5;
     private JPanel map;
-    private JButton[][] cellButton;
+    private JCell[][] cellButton;
     private JPanel right;
     private JPanel lobby;
     private JPanel card;
@@ -58,7 +61,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         map.setOpaque(false);
         map.setVisible(true);
 
-        cellButton = new JButton[DIM][DIM];
+        cellButton = new JCell[DIM][DIM];
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 GridBagConstraints c = new GridBagConstraints();
@@ -67,7 +70,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 c.fill = GridBagConstraints.BOTH;
                 c.weighty = 1;
                 c.weightx = 1;
-                cellButton[i][j] = new JButton();
+                cellButton[i][j] = new JBlock();
                 cellButton[i][j].addActionListener(this);
                 cellButton[i][j].setOpaque(false);
                 cellButton[i][j].setContentAreaFilled(false);
