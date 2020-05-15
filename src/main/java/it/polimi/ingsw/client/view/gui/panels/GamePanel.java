@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.button.JBlock;
+import it.polimi.ingsw.client.view.gui.button.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.button.JCell;
 
 import javax.swing.*;
@@ -70,12 +71,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 c.fill = GridBagConstraints.BOTH;
                 c.weighty = 1;
                 c.weightx = 1;
-                cellButton[i][j] = new JBlock();
+                cellButton[i][j] = new JBlockDecorator(new JBlock(i, j));
                 cellButton[i][j].addActionListener(this);
-                cellButton[i][j].setOpaque(false);
+                /*cellButton[i][j].setOpaque(false);
                 cellButton[i][j].setContentAreaFilled(false);
                 cellButton[i][j].setBorderPainted(false);
-                cellButton[i][j].setPreferredSize(new Dimension(80,80));
+                cellButton[i][j].setPreferredSize(new Dimension(80,80));*/
                 map.add(cellButton[i][j], c);
             }
         }
@@ -216,9 +217,16 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ImageIcon icon = new ImageIcon("img/blocks/bottom.png");
-        Image img = icon.getImage().getScaledInstance( cellButton[0][0].getWidth() - 5, cellButton[0][0].getHeight() - 5, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        ((JBlockDecorator)e.getSource()).buildUp();
+        /*ImageIcon icon = new ImageIcon("img/blocks/top.png");
+        Image img = icon.getImage().getScaledInstance( cellButton[0][0].getWidth(), cellButton[0][0].getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         cellButton[0][0].setIcon(icon);
+
+        ImageIcon icon_2 = new ImageIcon("img/blocks/move.png");
+        Image img_2 = icon_2.getImage().getScaledInstance(cellButton[0][0].getWidth(), cellButton[0][0].getHeight(), Image.SCALE_SMOOTH);
+        icon_2 = new ImageIcon(img_2);
+        cellButton[0][0].setLayout(new GridBagLayout());
+        cellButton[0][0].add(new JLabel(icon_2), new GridBagConstraints());*/
     }
 }
