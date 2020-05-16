@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.gui.button;
+package it.polimi.ingsw.client.view.gui.button.map;
 
 public enum JCellStatus {
     NONE(null, 0),

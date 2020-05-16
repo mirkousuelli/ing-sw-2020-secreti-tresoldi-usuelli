@@ -1,17 +1,14 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.JBlock;
-import it.polimi.ingsw.client.view.gui.button.JBlockDecorator;
-import it.polimi.ingsw.client.view.gui.button.JCell;
+import it.polimi.ingsw.client.view.gui.button.map.JBlock;
+import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
+import it.polimi.ingsw.client.view.gui.button.map.JCell;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class GamePanel extends SantoriniPanel implements ActionListener {
+public class GamePanel extends SantoriniPanel {
     private static final String imgPath = "map.png";
     private final static int DIM = 5;
     private JPanel map;
@@ -57,7 +54,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.weightx = 0.1;
         mapCon.weighty = 0.1;
         mapCon.fill = GridBagConstraints.BOTH;
-        mapCon.insets = new Insets(70,10,85,65);
+        mapCon.insets = new Insets(70,10,85,70);
         map = new JPanel(new GridBagLayout());
         map.setOpaque(false);
         map.setVisible(true);
@@ -72,11 +69,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 c.weighty = 1;
                 c.weightx = 1;
                 cellButton[i][j] = new JBlockDecorator(new JBlock(i, j));
-                cellButton[i][j].addActionListener(this);
-                /*cellButton[i][j].setOpaque(false);
-                cellButton[i][j].setContentAreaFilled(false);
-                cellButton[i][j].setBorderPainted(false);
-                cellButton[i][j].setPreferredSize(new Dimension(80,80));*/
+                cellButton[i][j].addActionListener(e -> ((JBlockDecorator)e.getSource()).buildUp());
                 map.add(cellButton[i][j], c);
             }
         }
@@ -215,7 +208,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         secondMalus.add(malus_2, new GridBagConstraints());
     }
 
-    @Override
+    /*@Override
     public void actionPerformed(ActionEvent e) {
         ((JBlockDecorator)e.getSource()).buildUp();
         /*ImageIcon icon = new ImageIcon("img/blocks/top.png");
@@ -227,6 +220,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         Image img_2 = icon_2.getImage().getScaledInstance(cellButton[0][0].getWidth(), cellButton[0][0].getHeight(), Image.SCALE_SMOOTH);
         icon_2 = new ImageIcon(img_2);
         cellButton[0][0].setLayout(new GridBagLayout());
-        cellButton[0][0].add(new JLabel(icon_2), new GridBagConstraints());*/
-    }
+        cellButton[0][0].add(new JLabel(icon_2), new GridBagConstraints());
+    }*/
 }

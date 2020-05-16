@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private static final int GOD_X = 45;
-    private static final int GOD_Y = 65;
+    private static final int GOD_X = 60;
+    private static final int GOD_Y = 80;
     private JButton sendButton;
     private JButton removeButton;
     private JButton chooseButton;
@@ -145,16 +145,24 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.weightx = 1;
+        c.weightx = 0f;
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0,0,-15,0);
 
-        JPanel miniGods = new JPanel(new FlowLayout());
+        JPanel miniGods = new JPanel(new GridBagLayout());
         gods = new JButton[God.values().length];
         God[] array = God.values();
         for (int i = 0; i < array.length; i++) {
             if (!array[i].toString().toLowerCase().equals("poseidon")) {
+                GridBagConstraints f = new GridBagConstraints();
+
+                f.gridx = i;
+                f.gridy = 0;
+                f.weightx = 0f;
+                f.weighty = 0f;
+                f.fill = GridBagConstraints.BOTH;
+
                 ImageIcon icon = new ImageIcon("img/cards/" + array[i].toString().toLowerCase() + "/mini.png");
                 Image img = icon.getImage().getScaledInstance( GOD_X, GOD_Y, Image.SCALE_SMOOTH);
                 icon = new ImageIcon( img );
@@ -164,7 +172,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 gods[i].setContentAreaFilled(false);
                 gods[i].setBorderPainted(false);
 
-                miniGods.add(gods[i]);
+                miniGods.add(gods[i], f);
             }
         }
         miniGods.setOpaque(false);
