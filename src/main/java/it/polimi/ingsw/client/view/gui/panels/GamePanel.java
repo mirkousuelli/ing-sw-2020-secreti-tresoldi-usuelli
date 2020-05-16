@@ -156,7 +156,7 @@ public class GamePanel extends SantoriniPanel {
         card.setVisible(true);
         right.add(card);
 
-        ImageIcon icon_2 = new ImageIcon("img/cards/apollo/apollo.png");
+        ImageIcon icon_2 = new ImageIcon("img/cards/apollo/card.png");
         Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_2 = new ImageIcon( img_2 );
         JLabel god = new JLabel(icon_2);
@@ -188,7 +188,7 @@ public class GamePanel extends SantoriniPanel {
         firstMalus.setVisible(true);
         left.add(firstMalus);
 
-        ImageIcon icon_1 = new ImageIcon("img/cards/malus/malus_athena.png");
+        ImageIcon icon_1 = new ImageIcon("img/cards/malus/malus.png");
         Image img_1 = icon_1.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_1 = new ImageIcon( img_1 );
         JLabel malus_1 = new JLabel(icon_1);
@@ -201,7 +201,7 @@ public class GamePanel extends SantoriniPanel {
         secondMalus.setVisible(true);
         left.add(secondMalus);
 
-        ImageIcon icon_2 = new ImageIcon("img/cards/malus/malus_persephone.png");
+        ImageIcon icon_2 = new ImageIcon("img/cards/malus/malus.png");
         Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_2 = new ImageIcon( img_2 );
         JLabel malus_2 = new JLabel(icon_2);
