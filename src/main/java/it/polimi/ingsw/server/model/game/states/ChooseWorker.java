@@ -79,9 +79,7 @@ public class ChooseWorker implements GameState {
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMoveAny()) {
             returnContent.setAnswerType(AnswerType.DEFEAT);
-            //int newCur = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
             game.getPlayerList().remove(game.getCurrentPlayer());
-            //game.setCurrentPlayer(game.getPlayer(newCur));
             returnContent.setChangeTurn(true);
             //TODO
 
@@ -120,16 +118,19 @@ public class ChooseWorker implements GameState {
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         List<Cell> possibleMoves;
         List<Cell> possibleBuilds;
+        List<Cell> specialMoves;
         List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
+        List<ReducedAnswerCell> toReturn;
         ReducedAnswerCell temp;
 
         if (state.equals(State.CHOOSE_WORKER))
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
         else
             possibleMoves = new ArrayList<>();
-        List<Cell> specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
-        List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
+
+        specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
+        toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
         Power power = game.getCurrentPlayer().getCard().getPower(0);
         Malus malus = power.getPersonalMalus();
@@ -138,7 +139,6 @@ public class ChooseWorker implements GameState {
             toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, new ArrayList<>());
 
             toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
-
         }
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
@@ -152,6 +152,8 @@ public class ChooseWorker implements GameState {
 
     public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
+        List<ReducedAnswerCell> ret = new ArrayList<>(toReturn);
+
         for (ReducedAnswerCell tc : tempList) {
             found = false;
             for (ReducedAnswerCell rc : toReturn) {
@@ -162,9 +164,9 @@ public class ChooseWorker implements GameState {
             }
 
             if (!found)
-                toReturn.add(tc);
+                ret.add(tc);
             }
 
-        return toReturn;
+        return ret;
     }
 }

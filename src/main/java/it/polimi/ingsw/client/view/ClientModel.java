@@ -54,6 +54,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.clientConnection = clientConnection;
     }
 
+    public ClientConnectionSocket<S> getClientConnection() {
+        ClientConnectionSocket<S> ret;
+
+        synchronized (lock) {
+            ret = clientConnection;
+        }
+
+        return ret;
+    }
+
     public synchronized String getCurrentPlayer() {
         return currentPlayer;
     }

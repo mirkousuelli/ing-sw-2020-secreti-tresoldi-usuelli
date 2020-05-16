@@ -52,6 +52,7 @@ public class Build implements GameState {
         /* @predicate
          * it tells if a player picked a cell where he can actually build
          */
+
         List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation());
 
         for (Cell c : possibleBuilds) {
@@ -73,21 +74,20 @@ public class Build implements GameState {
 
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
-        Cell cellToBuildUp = new Block(cell.getX(), cell.getY());
-
-        Cell chosenCell;
-        List<Cell> changedCells = new ArrayList<>();
+        Cell cellToBuildUp = game.getBoard().getCell(cell.getX(), cell.getY());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.BUILD);
 
+        if (cellToBuildUp == null)
+            return returnContent;
+
         List<ReducedAnswerCell> toReturn = new ArrayList<>();
-        chosenCell = game.getBoard().getCell(cellToBuildUp.getX(), cellToBuildUp.getY());
 
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
             Power p = currentPlayer.getCard().getPower(0);
 
-            if (((BuildPower) p).usePower(currentPlayer, chosenCell, game.getBoard().getAround(chosenCell))) {
+            if (((BuildPower) p).usePower(currentPlayer, cellToBuildUp, game.getBoard().getAround(cellToBuildUp))) {
                 ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
                 toReturn.add(temp);
 
@@ -96,42 +96,33 @@ public class Build implements GameState {
                 returnContent.setChangeTurn(true);
                 returnContent.setPayload(toReturn);
 
-
-                GameMemory.save((Block) chosenCell, Lobby.backupPath);
+                GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
                 GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
             }
         }
         else {
             // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
-            if (isBuildPossible(chosenCell)) {
-                game.getBoard().build(currentPlayer, chosenCell);
-                //changedCells.add(chosenCell);
+            if (isBuildPossible(cellToBuildUp)) {
+                game.getBoard().build(currentPlayer, cellToBuildUp);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
-                chosenCell = currentPlayer.getCurrentWorker().getPreviousBuild();
-                changedCells.add(chosenCell);
 
                 Power p = game.getCurrentPlayer().getCard().getPower(0);
-                if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) {
+                if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) { //TODO empty
                     returnContent.setState(State.ADDITIONAL_POWER);
                     toReturn = Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
                 }
                 else {
                     returnContent.setState(State.CHOOSE_WORKER);
                     returnContent.setChangeTurn(true);
-                    toReturn = new ArrayList<>();
+                    toReturn.add(ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
                 }
 
-                for (Cell c : changedCells) {
-                    toReturn.add(ReducedAnswerCell.prepareCell(c, game.getPlayerList()));
-                    GameMemory.save((Block) c, Lobby.backupPath);
-                }
-
+                GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
                 GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
 
                 returnContent.setPayload(toReturn);
             }
-
         }
 
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);

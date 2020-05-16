@@ -214,6 +214,13 @@ public class Board implements Cloneable {
        if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
            around.add(player.getCurrentWorker().getLocation());
 
+        /*if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isSameCell).distinct().reduce(false, (a, b) -> a ? true : b)) {
+            Cell prev = player.getCurrentWorker().getPreviousBuild();
+
+            if (!around.contains(player.getCurrentWorker().getPreviousBuild()))
+                around.add(prev);
+        }*/
+
         for (Cell c : around) {
             for (Power bp : activePowerList) {
                 if (((BuildPower) bp).preamble(player, c)) {

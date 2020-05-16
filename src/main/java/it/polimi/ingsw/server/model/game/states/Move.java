@@ -71,7 +71,6 @@ public class Move implements GameState {
         return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
     }
 
-
     @Override
     public String getName() {
         return State.MOVE.toString();
@@ -122,37 +121,35 @@ public class Move implements GameState {
             }
         }
         else {
-            // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
-            //if (currentPlayer.getCurrentWorker().isMovable()) { // if the worker can be moved, the player is showed the cells he can move to and moves to one of them
-                // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
-                if (isMoveCorrect(cellToMoveTo)) {
-                    game.getBoard().move(currentPlayer, cellToMoveTo);
-                    //if the worker is moved to a third level (from a second one), the player that moved wins
-                    if (reachedThirdLevel(game)) {
-                        returnContent.setAnswerType(AnswerType.VICTORY);
-                        returnContent.setState(State.VICTORY);
-                    } else { //which means that no one won in this turn, the game switches to UsePower state
-                        returnContent.setAnswerType(AnswerType.SUCCESS);
-
-                        Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
-                        if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) {
-                            returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
-                            returnContent.setState(State.ADDITIONAL_POWER);
-
-                            GameMemory.save(game.parseState(State.ADDITIONAL_POWER), Lobby.backupPath);
-                            return returnContent;
-                        }
-
-                        returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
-                        returnContent.setState(State.BUILD);
-                    }
+            // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
+            if (isMoveCorrect(cellToMoveTo)) {
+                game.getBoard().move(currentPlayer, cellToMoveTo);
+                //if the worker is moved to a third level (from a second one), the player that moved wins
+                if (reachedThirdLevel(game)) {
+                    returnContent.setAnswerType(AnswerType.VICTORY);
+                    returnContent.setState(State.VICTORY);
+                    returnContent.setPayload(addChangedCells(game));
                 }
-            //}
+                else { //which means that no one won in this turn, the game switches to UsePower state
+                    returnContent.setAnswerType(AnswerType.SUCCESS);
+
+                    Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
+                    if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) { //TODO empty
+                        returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
+                        returnContent.setState(State.ADDITIONAL_POWER);
+                        GameMemory.save(game.parseState(State.ADDITIONAL_POWER), Lobby.backupPath);
+
+                        return returnContent;
+                    }
+
+                    returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                    returnContent.setState(State.BUILD);
+                }
+            }
         }
 
         if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
-            //GameMemory.save(currentPlayer.getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
         }
 
@@ -163,16 +160,11 @@ public class Move implements GameState {
 
     public static List<ReducedAnswerCell> preparePayloadBuild(Game game, Timing timing, State state) {
         List<Cell> possibleBuilds;
-        ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
 
         if (state.equals(State.MOVE)) {
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
-            temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
-            tempList.add(temp);
-
-            temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
-            tempList.add(temp);
+            tempList = addChangedCells(game);
         }
         else
             possibleBuilds = new ArrayList<>();
@@ -181,5 +173,18 @@ public class Move implements GameState {
         List<ReducedAnswerCell> toReturn = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, specialBuilds);
 
         return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
+    }
+
+    private static List<ReducedAnswerCell> addChangedCells(Game game) {
+        ReducedAnswerCell temp;
+        List<ReducedAnswerCell> tempList = new ArrayList<>();
+
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+        tempList.add(temp);
+
+        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+        tempList.add(temp);
+
+        return tempList;
     }
 }
