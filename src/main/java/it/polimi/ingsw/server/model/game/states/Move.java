@@ -32,6 +32,7 @@ import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Move implements GameState {
     /* @Class
@@ -71,6 +72,20 @@ public class Move implements GameState {
         return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
     }
 
+    public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo, List<Cell> around) {
+        Player currentPlayer = game.getCurrentPlayer();
+
+        return around.stream()
+                .filter(c -> !c.getLevel().equals(Level.DOME))
+                .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
+                .noneMatch(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1));
+
+    }
+
+    public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo) {
+        return Move.isPresentAtLeastOneCellToMoveTo(game, cellToMoveTo, game.getBoard().getAround(cellToMoveTo));
+    }
+
     @Override
     public String getName() {
         return State.MOVE.toString();
@@ -83,11 +98,15 @@ public class Move implements GameState {
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
+        List<ReducedAnswerCell> payload = new ArrayList<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.MOVE);
 
+        //validate input
         if (cellToMoveTo == null)
+            return returnContent;
+        if (!Move.isPresentAtLeastOneCellToMoveTo(game, cellToMoveTo))
             return returnContent;
 
 
@@ -100,11 +119,11 @@ public class Move implements GameState {
                 if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) {
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.MOVE);
-                    returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
+                    payload = ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE);
                 }
                 else {
                     returnContent.setState(State.BUILD);
-                    returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                    payload = Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE);
                 }
 
                 GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
@@ -114,7 +133,7 @@ public class Move implements GameState {
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 returnContent.setState(State.MOVE);
-                returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
+                payload = ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.MOVE);
 
                 GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
                 GameMemory.save(game.parseState(State.MOVE), Lobby.backupPath);
@@ -128,27 +147,40 @@ public class Move implements GameState {
                 if (reachedThirdLevel(game)) {
                     returnContent.setAnswerType(AnswerType.VICTORY);
                     returnContent.setState(State.VICTORY);
-                    returnContent.setPayload(addChangedCells(game));
+                    payload = addChangedCells(game);
                 }
                 else { //which means that no one won in this turn, the game switches to UsePower state
                     returnContent.setAnswerType(AnswerType.SUCCESS);
 
                     Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
-                    if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) { //TODO empty
-                        returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
-                        returnContent.setState(State.ADDITIONAL_POWER);
-                        GameMemory.save(game.parseState(State.ADDITIONAL_POWER), Lobby.backupPath);
+                    if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) {
+                        payload = ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE);
 
-                        return returnContent;
+                        if (payload.stream()
+                                .map(ReducedAnswerCell::getActionList)
+                                .flatMap(List::stream)
+                                .distinct()
+                                .allMatch(action -> action.equals(ReducedAction.DEFAULT))
+                           )
+                            returnContent.setState(State.BUILD);
+                        else
+                            returnContent.setState(State.ADDITIONAL_POWER);
                     }
-
-                    returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
-                    returnContent.setState(State.BUILD);
+                    else {
+                        payload = Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE);
+                        returnContent.setState(State.BUILD);
+                    }
                 }
             }
         }
 
+        if(ChangeTurn.controlWinCondition(game)) {
+            returnContent.setState(State.VICTORY);
+            returnContent.setAnswerType(AnswerType.VICTORY);
+        }
+
         if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
+            returnContent.setPayload(payload);
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
         }
@@ -175,7 +207,7 @@ public class Move implements GameState {
         return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
-    private static List<ReducedAnswerCell> addChangedCells(Game game) {
+    public static List<ReducedAnswerCell> addChangedCells(Game game) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
 

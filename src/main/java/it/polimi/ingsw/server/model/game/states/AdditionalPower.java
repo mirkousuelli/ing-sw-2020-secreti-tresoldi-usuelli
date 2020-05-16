@@ -56,7 +56,13 @@ public class AdditionalPower implements GameState {
             }
         }
         else {
+            if (c == null)
+                return returnContent;
+
             if (prevState.equals(State.MOVE)) {
+                if (!Move.isPresentAtLeastOneCellToMoveTo(game, c))
+                    return returnContent;
+
                 if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.BUILD);
@@ -67,6 +73,9 @@ public class AdditionalPower implements GameState {
                 }
             }
             else if (prevState.equals(State.BUILD)) {
+                if (c.isComplete())
+                    return returnContent;
+
                 if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.CHOOSE_WORKER);

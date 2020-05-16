@@ -717,8 +717,10 @@ ________________________________________________________________________________
         //it checks that the player
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
-        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
+        assertEquals(p2,game.getCurrentPlayer());
 
+        game.setCurrentPlayer(p1);
         game.setState(State.ADDITIONAL_POWER);
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.backupPath);

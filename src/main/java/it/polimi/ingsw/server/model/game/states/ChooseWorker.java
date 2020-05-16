@@ -24,6 +24,7 @@ import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
+import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
@@ -50,14 +51,17 @@ public class ChooseWorker implements GameState {
         /* @predicate
          * it checks if the current player cannot move any of his workers
          */
+
         List<Worker> workerList = game.getCurrentPlayer().getWorkers();
 
-        return workerList.stream().allMatch(this::cannotMove);
+        return !workerList.stream().allMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
     }
 
-    private boolean cannotMove(Worker worker) {
-        return !worker.isMovable();
-    }
+    /*private boolean cannotMove(Cell workerPos) {
+        return game.getBoard().getAround(workerPos).stream()
+                .filter(c -> !c.isWalkable())
+                .noneMatch(c -> (c.getLevel().toInt() - workerPos.getLevel().toInt() <= 1));
+    }*/
 
     @Override
     public String getName() {
@@ -70,25 +74,30 @@ public class ChooseWorker implements GameState {
 
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
-        Cell chosenWorker = new Block(cell.getX(), cell.getY());
+        Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_WORKER);
+
+        //validate input
+        if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains((Worker) ((Block) chosenWorker).getPawn()))
+            return returnContent;
 
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMoveAny()) {
             returnContent.setAnswerType(AnswerType.DEFEAT);
+            returnContent.setPayload(game.getCurrentPlayer());
             game.getPlayerList().remove(game.getCurrentPlayer());
+            returnContent.setState(State.CHOOSE_WORKER);
             returnContent.setChangeTurn(true);
-            //TODO
 
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
         else {
             for (Worker w : currentPlayer.getWorkers()) {
                 if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
-                    if(!cannotMove(w)) {
+                    if(Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
                         // the player has to pick a worker and the game goes to Move state
                         currentPlayer.setCurrentWorker(w);
                         returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -102,7 +111,7 @@ public class ChooseWorker implements GameState {
                     else {
                         // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
                         currentPlayer.removeWorker(currentPlayer.getCurrentWorker());
-                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName)); //TODO
+                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName));
                     }
                     break;
                 }
@@ -120,9 +129,7 @@ public class ChooseWorker implements GameState {
         List<Cell> possibleBuilds;
         List<Cell> specialMoves;
         List<ReducedAnswerCell> toReturnMalus;
-        List<ReducedAnswerCell> tempList = new ArrayList<>();
         List<ReducedAnswerCell> toReturn;
-        ReducedAnswerCell temp;
 
         if (state.equals(State.CHOOSE_WORKER))
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
@@ -141,13 +148,7 @@ public class ChooseWorker implements GameState {
             toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
         }
 
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
-        tempList.add(temp);
-
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
-        tempList.add(temp);
-
-        return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
+        return ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game));
     }
 
     public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {

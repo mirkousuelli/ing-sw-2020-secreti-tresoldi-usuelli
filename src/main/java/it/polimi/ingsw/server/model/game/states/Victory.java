@@ -33,12 +33,9 @@ public class Victory implements GameState {
         this.game = game;
     }
 
-   /* private void endGame(Game game) {
-         // it shows the player that won and ends the current game
-
-        // once there is a winner, it shows the name of the winner
+    private void endGame(Game game) {
         game.getBoard().clean(); // it cleans the whole board (and the pawns too)
-    }*/
+    }
 
     @Override
     public String getName() {
@@ -50,7 +47,7 @@ public class Victory implements GameState {
         //TODO
         ReturnContent returnContent = new ReturnContent();
 
-        returnContent.setAnswerType(AnswerType.VICTORY);
+        returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.START);
 
         GameMemory.save(this, Lobby.backupPath);

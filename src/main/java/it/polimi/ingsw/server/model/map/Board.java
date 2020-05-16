@@ -285,36 +285,6 @@ public class Board implements Cloneable {
             }
         }
 
-        // cannot move up malus active
-        /*if (this.player.cannotMoveUpActive()) {
-            // look for everything around
-            for (Cell around : this.currCell.getAround()) {
-                // checking level difference
-                if (this.currCell.getLevel().toInt() < around.getLevel().toInt()) {
-                    //removing from the list to return
-                    toReturn.remove(around);
-                }
-            }
-            // if everything is removed then i will return null
-        }
-
-        // must move up malus active
-        if (this.player.isMustMoveUpActive()) {
-            // look for everything around
-            for (Cell around : this.currCell.getAround()) {
-                // checking level difference
-                if (this.currCell.getLevel().toInt() > around.getLevel().toInt()) {
-                    //removing from the list to return
-                    toReturn.remove(around);
-                }
-            }
-
-            // in case i removed everything i reset around
-            if (toReturn == null) {
-                toReturn = this.currCell.getAround();
-            }
-        }*/
-
         // in case no malus has been active : normal getAround()
         // in case both malus are active : normal getAround()
         return toReturn;

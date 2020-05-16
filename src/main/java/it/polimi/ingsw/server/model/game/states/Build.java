@@ -12,6 +12,7 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
@@ -77,7 +78,10 @@ public class Build implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.BUILD);
 
+        //validate input
         if (cellToBuildUp == null)
+            return returnContent;
+        if (cellToBuildUp.isComplete())
             return returnContent;
 
         List<ReducedAnswerCell> toReturn = new ArrayList<>();
@@ -106,9 +110,20 @@ public class Build implements GameState {
                 returnContent.setAnswerType(AnswerType.SUCCESS);
 
                 Power p = game.getCurrentPlayer().getCard().getPower(0);
-                if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) { //TODO empty
-                    returnContent.setState(State.ADDITIONAL_POWER);
+                if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) {
                     toReturn = Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
+
+                    if (toReturn.stream()
+                            .map(ReducedAnswerCell::getActionList)
+                            .flatMap(List::stream)
+                            .distinct()
+                            .allMatch(action -> action.equals(ReducedAction.DEFAULT))
+                       ) {
+                        returnContent.setState(State.CHOOSE_WORKER);
+                        returnContent.setChangeTurn(true);
+                    }
+                    else
+                        returnContent.setState(State.ADDITIONAL_POWER);
                 }
                 else {
                     returnContent.setState(State.CHOOSE_WORKER);
@@ -122,6 +137,11 @@ public class Build implements GameState {
 
                 returnContent.setPayload(toReturn);
             }
+        }
+
+        if(ChangeTurn.controlWinCondition(game)) {
+            returnContent.setState(State.VICTORY);
+            returnContent.setAnswerType(AnswerType.VICTORY);
         }
 
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);

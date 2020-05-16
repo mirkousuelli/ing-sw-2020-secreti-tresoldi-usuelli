@@ -249,6 +249,8 @@ public class Game extends Observable<Answer> {
     }
 
     public ReturnContent gameEngine() {
+        //TODO win/defeat
+
         ReturnContent returnContent = state.gameEngine();
         boolean availableGods = returnContent.isAvailableGods();
 

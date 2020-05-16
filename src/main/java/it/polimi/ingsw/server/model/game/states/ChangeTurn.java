@@ -55,7 +55,7 @@ public class ChangeTurn implements GameState {
         return game.getNumPlayers() == 1;
     }
 
-    private boolean controlWinCondition() {
+    public static boolean controlWinCondition(Game game) {
         /* @predicate
          * it checks if any win condition is verified (some God powers add a secondary win condition)
          */
@@ -90,7 +90,7 @@ public class ChangeTurn implements GameState {
             ChooseCard.applyMalus(game, Timing.END_TURN);
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        if(controlWinCondition() || onePlayerRemaining()) {
+        if(controlWinCondition(game) || onePlayerRemaining()) {
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setState(State.VICTORY);
         }
@@ -106,8 +106,6 @@ public class ChangeTurn implements GameState {
             !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
             GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
         }
-
-        //GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
     }
