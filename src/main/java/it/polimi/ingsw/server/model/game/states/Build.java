@@ -12,10 +12,8 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
-import it.polimi.ingsw.communication.message.payload.ReducedLevel;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
@@ -115,8 +113,9 @@ public class Build implements GameState {
                 else {
                     returnContent.setState(State.CHOOSE_WORKER);
                     returnContent.setChangeTurn(true);
-                    toReturn.add(ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
                 }
+
+                toReturn.add(ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
 
                 GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
                 GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);

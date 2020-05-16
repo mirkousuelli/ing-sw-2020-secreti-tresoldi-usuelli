@@ -63,7 +63,6 @@ public class AdditionalPower implements GameState {
                     returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
 
                     GameMemory.save((Block) c, Lobby.backupPath);
-                    GameMemory.save(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), Lobby.backupPath);
                     GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.backupPath);
                 }
             }
