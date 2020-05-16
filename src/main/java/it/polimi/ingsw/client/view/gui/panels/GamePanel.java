@@ -1,15 +1,12 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.JBlock;
-import it.polimi.ingsw.client.view.gui.button.JBlockDecorator;
-import it.polimi.ingsw.client.view.gui.button.JCell;
+import it.polimi.ingsw.client.view.gui.button.map.JBlock;
+import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
+import it.polimi.ingsw.client.view.gui.button.map.JCell;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GamePanel extends SantoriniPanel {
     private static final String imgPath = "map.png";
