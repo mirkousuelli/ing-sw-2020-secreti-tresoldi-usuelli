@@ -20,15 +20,19 @@ public class JBlockDecorator extends JCell {
     }
 
     public void addDecoration(JCellStatus decoration) {
-        this.current++;
-        this.decoration.add(decoration);
+        if (!this.decoration.contains(decoration)) {
+            this.current++;
+            this.decoration.add(decoration);
 
-        ImageIcon icon = new ImageIcon(decoration.getPath());
-        Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
+            ImageIcon icon = new ImageIcon(decoration.getPath());
+            Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img);
 
-        this.history.add(new JLabel(icon));
-        add(this.history.get(current), new GridBagConstraints());
+            this.history.add(new JLabel(icon));
+            add(this.history.get(current), new GridBagConstraints());
+            validate();
+            repaint();
+        }
     }
 
     public void removeDecoration() {
