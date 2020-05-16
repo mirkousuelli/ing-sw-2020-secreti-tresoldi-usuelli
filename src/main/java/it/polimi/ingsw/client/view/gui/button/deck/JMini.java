@@ -2,10 +2,10 @@ package it.polimi.ingsw.client.view.gui.button.deck;
 
 import javax.swing.*;
 
-public class JCard extends JLabel {
+public class JMini extends JButton {
     private final String path;
 
-    public JCard(String path) {
+    public JMini(String path) {
         this.path = path;
     }
 
