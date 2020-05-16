@@ -38,6 +38,7 @@ public class ServerStub implements ServerClientHandler {
 
     @Override
     public Lobby getLobby() {
+        //stub
         return null;
     }
 
@@ -49,5 +50,10 @@ public class ServerStub implements ServerClientHandler {
     @Override
     public void setCreator(boolean creator) {
         //stub
+    }
+
+    @Override
+    public void setActive(boolean isActive) {
+
     }
 }

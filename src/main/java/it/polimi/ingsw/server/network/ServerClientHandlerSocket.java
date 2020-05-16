@@ -32,13 +32,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private final FileXML file;
     private final ServerConnection server;
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
-    Lobby lobby;
+    private Lobby lobby;
     private final List<Demand> buffer;
 
     private boolean isActive;
     private boolean creator;
 
-    public ServerClientHandlerSocket(Socket socket, ServerConnection server) throws IOException, ParserConfigurationException, SAXException {
+    public ServerClientHandlerSocket(Socket socket, ServerConnection server) throws IOException {
         this.socket = socket;
         this.server = server;
         file = new FileXML(socket);
@@ -47,10 +47,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         creator = false;
     }
 
-    private synchronized boolean isActive(){
-        return isActive;
-    }
-
+    @Override
     public synchronized void setActive(boolean isActive) {
         this.isActive = isActive;
     }
@@ -78,7 +75,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     public void send(Answer message) {
         synchronized (file.lockSend) {
             try {
-                file.send(message);    // INCAPSULATO
+                file.send(message);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Got an IOException", e);
             }
@@ -96,11 +93,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     private void close() {
-        closeConnection();
         LOGGER.info("Deregistering client...");
         synchronized (server) {
             server.deregisterConnection(this);
         }
+        closeConnection();
         LOGGER.info("Done");
     }
 
@@ -109,7 +106,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         new Thread( () -> send(message) ).start();
     }
 
-    private Demand read() throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException {
+    private Demand read() {
         Demand demand;
 
         synchronized (file.lockReceive) {
@@ -221,7 +218,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             }
 
 
-                            while(isActive()) {
+                            while(isActive) {
                                 demand = read();
                                 LOGGER.info("Consuming...");
                                 synchronized (buffer) {
@@ -230,9 +227,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 }
                                 LOGGER.info("Consumed!");
                             }
-                        } catch (NoSuchElementException | ParserConfigurationException | SAXException | IOException | InterruptedException | TransformerConfigurationException e) {
+                        } catch (Exception e) {
                             LOGGER.log(Level.SEVERE, e, () -> "Failed to receive!!" + e.getMessage());
-                            setActive(false);
+                            close();
                         }
                 }
         );
@@ -258,7 +255,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             LOGGER.info("Notified");
                         }
                     } catch (InterruptedException e){
-                        setActive(false);
+                        close();
                     }
                 }
         );

@@ -4,9 +4,7 @@ import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.ServerClientHandler;
-import it.polimi.ingsw.server.network.ServerConnectionSocket;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
@@ -20,15 +18,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Lobby {
-    private final String id;
     private final Game game;
     private final Controller controller;
     private final List<View> playerViewList;
-    private String messagePath;
     public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
     private final Map<ServerClientHandler, View> playingConnection;
     private final Map<View, ReducedPlayer> playerColor;
-    private static final Random randomLobby = new SecureRandom();
     private int numberOfPlayers;
     private boolean reloaded;
     public final Object lockLobby;
@@ -37,21 +32,6 @@ public class Lobby {
     public Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
         reloaded = false;
-    }
-
-    public Lobby(Game game) {
-        id = String.valueOf(randomLobby.nextInt());
-
-        this.game = game;
-        controller = new Controller(game);
-        playerViewList = new ArrayList<>();
-        playingConnection = new HashMap<>();
-        playerColor = new HashMap<>();
-
-        lockLobby = new Object();
-        numberOfPlayers = -1;
-
-        reloaded = true;
 
         File f = new File(backupPath);
         boolean b;
@@ -64,12 +44,17 @@ public class Lobby {
         }
     }
 
-    public String getMessagePath() {
-        return this.messagePath;
-    }
+    public Lobby(Game game) {
+        this.game = game;
+        controller = new Controller(game);
+        playerViewList = new ArrayList<>();
+        playingConnection = new HashMap<>();
+        playerColor = new HashMap<>();
 
-    public String getId() {
-        return id;
+        lockLobby = new Object();
+        numberOfPlayers = -1;
+
+        reloaded = true;
     }
 
     public int getNumberOfPlayers() {
@@ -197,5 +182,13 @@ public class Lobby {
         }
 
         return color;
+    }
+
+    public String getPlayer(ServerClientHandler c) {
+        return playerColor.get(playingConnection.get(c)).getNickname();
+    }
+
+    public List<ServerClientHandler> getServerClientHandlerList() {
+        return new ArrayList<>(playingConnection.keySet());
     }
 }

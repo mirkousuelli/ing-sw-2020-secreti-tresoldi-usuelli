@@ -5,6 +5,7 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
@@ -15,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.SecureRandom;
-import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -24,19 +23,39 @@ import java.util.logging.Logger;
 
 public class ServerConnectionSocket implements ServerConnection {
     private final int port;
-    private static final Random random = new SecureRandom();
-    private static final String BACKUPPATH = "backup_lobby.xml";
+    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private Lobby lobby;
+    private boolean isActive;
 
     public ServerConnectionSocket(int port) {
         this.port = port;
 
         lobby = null;
         loadLobby();
+
+        isActive = false;
     }
 
+    private void loadLobby() {
+        Game loadedGame = null;
+
+        try {
+            File f = new File(BACKUPPATH);
+            if (f.exists())
+                loadedGame = GameMemory.load(BACKUPPATH);
+        } catch (ParserConfigurationException | SAXException e) {
+            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
+        }
+
+        if (loadedGame != null) {
+            lobby = new Lobby(loadedGame);
+            lobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+        }
+    }
+
+    @Override
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ServerClientHandlerSocket handler;
@@ -53,7 +72,8 @@ public class ServerConnectionSocket implements ServerConnection {
 
         LOGGER.info("Server ready");
 
-        while (!Thread.currentThread().isInterrupted()) {
+        isActive = true;
+        while (isActive) {
             try {
                 socket = serverSocket.accept();
                 handler = new ServerClientHandlerSocket(socket, this);
@@ -70,13 +90,26 @@ public class ServerConnectionSocket implements ServerConnection {
         serverSocket.close();
     }
 
-    //Deregister connection
     @Override
     public void deregisterConnection(ServerClientHandler c) {
-        //TODO lobby.stop?
+        for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
+            ch.asyncSend(new Answer(AnswerType.SUCCESS, DemandType.DEFEAT, new ReducedPlayer(lobby.getPlayer(c))));
+        }
+
+        c.setActive(false);
+        lobby.deletePlayer(c);
     }
 
-    //Wait for another player
+    @Override
+    public void logOut() {
+        for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
+            ch.asyncSend(new Answer(AnswerType.CLOSE, null, null));
+            ch.setActive(false);
+        }
+
+        isActive = false;
+    }
+
     @Override
     public synchronized boolean connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
         if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
@@ -85,7 +118,7 @@ public class ServerConnectionSocket implements ServerConnection {
             LOGGER.info("Reloaded!");
             return false;
         }
-        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null)) {
+        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfPlayers() != -1)) {
             lobby = new Lobby();
             lobby.addPlayer(name, c);
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
@@ -131,25 +164,5 @@ public class ServerConnectionSocket implements ServerConnection {
 
         c.send(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, new ReducedMessage("null")));
         return true;
-    }
-
-    private void loadLobby() {
-        Game loadedGame = null;
-        Lobby loadedLobby;
-
-        try {
-            File f = new File(BACKUPPATH);
-            if (f.exists())
-                loadedGame = GameMemory.load(BACKUPPATH);
-        } catch (ParserConfigurationException | SAXException e) {
-            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
-        }
-
-        if (loadedGame != null) {
-            loadedLobby = new Lobby(loadedGame);
-            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
-            //lobbyList.add(loadedLobby);
-            lobby = loadedLobby;
-        }
     }
 }

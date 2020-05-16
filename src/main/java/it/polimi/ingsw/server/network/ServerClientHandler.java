@@ -20,4 +20,6 @@ public interface ServerClientHandler {
     void setLobby(Lobby lobby);
 
     void setCreator(boolean creator);
+
+    void setActive(boolean isActive);
 }
