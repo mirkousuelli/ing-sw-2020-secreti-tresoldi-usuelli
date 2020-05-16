@@ -9,8 +9,8 @@ import java.net.Socket;
 public class FileXML {
     public final Object lockReceive;
     public final Object lockSend;
-    private final ObjectInputStream inStream;
     private final ObjectOutputStream outStream;
+    private final ObjectInputStream inStream;
 
     public FileXML(Socket sock) throws IOException {
         outStream = new ObjectOutputStream(sock.getOutputStream());
