@@ -17,7 +17,8 @@ public enum DemandType {
     ASK_ADDITIONAL_POWER,
     CHANGE_TURN,
     VICTORY,
-    DEFEAT;
+    DEFEAT,
+    NEW_GAME;
 
     public static DemandType parseString(String str) {
         switch (str) {
@@ -55,6 +56,8 @@ public enum DemandType {
                 return VICTORY;
             case "defeat":
                 return DEFEAT;
+            case "newGame":
+                return NEW_GAME;
             default:
                 return null;
         }
@@ -97,6 +100,8 @@ public enum DemandType {
                 return "victory";
             case DEFEAT:
                 return "defeat";
+            case NEW_GAME:
+                return "newGame";
             default:
                 return "";
         }

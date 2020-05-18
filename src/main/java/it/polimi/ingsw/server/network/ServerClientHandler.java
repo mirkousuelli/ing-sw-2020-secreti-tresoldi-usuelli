@@ -9,6 +9,8 @@ public interface ServerClientHandler {
 
     void closeConnection();
 
+    void close();
+
     void addObserver(Observer<Demand> observer);
 
     void asyncSend(Answer message);

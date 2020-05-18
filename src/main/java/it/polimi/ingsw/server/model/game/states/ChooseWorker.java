@@ -54,7 +54,7 @@ public class ChooseWorker implements GameState {
 
         List<Worker> workerList = game.getCurrentPlayer().getWorkers();
 
-        return !workerList.stream().allMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
+        return workerList.stream().noneMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
     }
 
     /*private boolean cannotMove(Cell workerPos) {
@@ -148,7 +148,9 @@ public class ChooseWorker implements GameState {
             toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
         }
 
-        return ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game));
+        toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game));
+
+        return ChooseWorker.removeSurroundedCells(game, toReturn);
     }
 
     public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
@@ -167,6 +169,21 @@ public class ChooseWorker implements GameState {
             if (!found)
                 ret.add(tc);
             }
+
+        return ret;
+    }
+
+    public static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
+        List<ReducedAnswerCell> ret = new ArrayList<>();
+        Cell c;
+
+        if (!Move.isPresentAtLeastOneCellToMoveTo(game, game.getCurrentPlayer().getCurrentWorker().getLocation())) return new ArrayList<>();
+
+        for (ReducedAnswerCell rac : toReturn) {
+            c = game.getBoard().getCell(rac.getX(), rac.getY());
+            if (Move.isPresentAtLeastOneCellToMoveTo(game, c))
+                ret.add(rac);
+        }
 
         return ret;
     }

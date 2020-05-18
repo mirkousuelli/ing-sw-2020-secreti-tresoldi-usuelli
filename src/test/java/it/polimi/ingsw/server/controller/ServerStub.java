@@ -21,6 +21,11 @@ public class ServerStub implements ServerClientHandler {
     }
 
     @Override
+    public void close() {
+        //stub
+    }
+
+    @Override
     public void addObserver(Observer<Demand> observer) {
         //stub
     }

@@ -86,6 +86,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                         while (isActive()) {
                             synchronized (clientConnection.lockAnswer) {
                                 while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
+                                if (!clientConnection.isActive()) {
+                                    setActive(false);
+                                    break;
+                                }
                                 clientConnection.setChanged(false);
                                 temp = clientConnection.getAnswer();
                             }

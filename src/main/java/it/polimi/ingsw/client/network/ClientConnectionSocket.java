@@ -52,6 +52,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
     }
 
     public boolean hasAnswer() {
+        if (!isActive()) return true;
         boolean ret;
 
         synchronized (buffer) {
@@ -67,19 +68,28 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                         try {
                             Answer<S> temp;
                             while (isActive()) {
-                                synchronized (file.lockReceive) {
-                                    temp = (Answer<S>) file.receive();
-                                }
+                                if (socket.isConnected() && !socket.isClosed()) {
+                                    synchronized (file.lockReceive) {
+                                        temp = (Answer<S>) file.receive();
+                                    }
 
-                                if(temp.getHeader().equals(AnswerType.CLOSE))
-                                    setActive(false);
+                                    if (temp.getHeader().equals(AnswerType.CLOSE))
+                                        setActive(false);
 
-                                LOGGER.info("Queueing...");
-                                synchronized (buffer) {
-                                    buffer.add(temp);
-                                    LOGGER.info("Queued!");
-                                    buffer.notifyAll();
-                                    LOGGER.info("READ");
+                                    LOGGER.info("Queueing...");
+                                    synchronized (buffer) {
+                                        buffer.add(temp);
+                                        LOGGER.info("Queued!");
+                                        buffer.notifyAll();
+                                        LOGGER.info("READ");
+                                    }
+
+                                    if (!clientView.isActive() || socket.isClosed()) {
+                                        setActive(false);
+                                        synchronized (buffer) {
+                                            buffer.notifyAll();
+                                        }
+                                    }
                                 }
                             }
                         } catch (Exception e){
@@ -112,16 +122,24 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 }
 
                                 LOGGER.info("Sending...");
-                                synchronized (file.lockSend) {
-                                    try {
-                                        file.send(demand);
-                                    }
-                                    catch(IOException e) {
-                                        LOGGER.log(Level.SEVERE, "Got an IOException", e);
-                                        break;
+                                if (socket.isConnected() && !socket.isClosed()) {
+                                    synchronized (file.lockSend) {
+                                        try {
+                                            file.send(demand);
+                                        } catch (IOException e) {
+                                            LOGGER.log(Level.SEVERE, "Got an IOException", e);
+                                            break;
+                                        }
                                     }
                                 }
                                 LOGGER.info("Sent!");
+
+                                if (!clientView.isActive() || socket.isClosed()) {
+                                    setActive(false);
+                                    synchronized (buffer) {
+                                        buffer.notifyAll();
+                                    }
+                                }
                             }
                         } catch(Exception e) {
                             setActive(false);
@@ -146,6 +164,12 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
                             synchronized (buffer) {
                                 while (!hasAnswer()) buffer.wait();
+                                if (!clientView.isActive() || socket.isClosed()) {
+                                    setActive(false);
+                                    synchronized (lockAnswer) {
+                                        lockAnswer.notifyAll();
+                                    }
+                                }
                             }
 
                             LOGGER.info("Consuming...");

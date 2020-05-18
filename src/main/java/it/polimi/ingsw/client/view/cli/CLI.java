@@ -40,11 +40,15 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case DEFEAT:
-            case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 if(clientModel.isYourTurn())
                     endGame();
                 return;
+
+            case VICTORY:
+                out.printEnd(answerTemp.getHeader().toString());
+                isYourTurn = true;
+                break;
 
             case SUCCESS:
                 out.printSuccess();
@@ -70,6 +74,13 @@ public class CLI<S> extends ClientView<S> {
 
     private void startUI(Answer<S> answerTemp) {
         Demand<S> demand = in.requestInput(answerTemp.getContext());
+
+        if (demand.getHeader().equals(DemandType.VICTORY) && ((ReducedMessage) demand.getPayload()).getMessage().equals("n")) {
+            setActive(false);
+            synchronized (clientModel.lock) {
+                clientModel.setActive(false);
+            }
+        }
 
         setDemand(demand);
         setChanged(true);

@@ -60,7 +60,7 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if (verifyMalus(currentPlayer, cellToUse)) return false;
+        if (ActivePower.verifyMalus(currentPlayer, cellToUse)) return false;
 
         //verify constraints
         return verifyConstraints(cellToUse);
@@ -116,7 +116,7 @@ public abstract class ActivePower<S> extends Power<S> {
                 cellToUse.getY() - workerToUse.getLocation().getY() >= -1 && cellToUse.getY() - workerToUse.getLocation().getY() <=1);
     }
 
-    protected boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
+    public static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
         if (currentPlayer.getMalusList() != null) {
             for (Malus malus : currentPlayer.getMalusList()) {
                 for (MalusLevel direction : malus.getDirection()) {

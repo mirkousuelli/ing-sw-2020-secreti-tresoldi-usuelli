@@ -18,4 +18,6 @@ public interface ServerConnection {
     void deregisterConnection(ServerClientHandler c);
 
     void logOut();
+
+    boolean newGame(ServerClientHandler c, Demand demand);
 }

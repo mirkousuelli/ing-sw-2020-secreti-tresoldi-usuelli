@@ -92,7 +92,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
-    private void close() {
+    @Override
+    public void close() {
         LOGGER.info("Deregistering client...");
         synchronized (server) {
             server.deregisterConnection(this);
@@ -130,9 +131,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             do {
                                 if (demand == null)
                                     demand = read();
+
                                 synchronized (server) {
                                     toRepeat = server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
                                 }
+
                                 if (!creator) {
                                     synchronized (lobby.lockLobby) {
                                         while (lobby.getNumberOfPlayers() == -1) lobby.lockLobby.wait();
@@ -160,76 +163,38 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 reload = lobby.isReloaded();
                             }
 
-                            if(!reload) {
-                                //wait
-                                List<ReducedPlayer> players;
-                                synchronized (lobby.lockLobby) {
-                                    while (!lobby.canStart()) lobby.lockLobby.wait();
-                                    synchronized (lobby.lockLobby) {
-                                        lobby.lockLobby.notifyAll();
-                                        players = lobby.getReducedPlayerList();
-                                    }
-                                }
+                            if(!reload)
+                                basicStart();
+                            else
+                                reloadStart();
 
-                                //start
-                                send(new Answer(AnswerType.SUCCESS, DemandType.START, players));
-                                synchronized (lobby.lockLobby) {
-                                    send(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
-                                    if (lobby.isCurrentPlayerInGame(this))
-                                        asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
-                                }
-                            }
-                            else {
-                                ReducedGame reducedGame;
-                                Game loadedGame;
-                                synchronized (lobby.lockLobby) {
-                                    while (!lobby.canStart()) lobby.lockLobby.wait();
-                                    synchronized (lobby.lockLobby) {
-                                        lobby.lockLobby.notifyAll();
-                                        loadedGame = lobby.getGame();
-                                        reducedGame = new ReducedGame(lobby);
-                                    }
-                                }
-
-                                //reload
-                                send(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
-
-                                //resume game
-                                synchronized (lobby.lockLobby) {
-                                    if (lobby.isCurrentPlayerInGame(this)) {
-                                        List<ReducedAnswerCell> payload = new ArrayList<>();
-
-                                        if (loadedGame.getState().getName().equals(State.MOVE.toString()))
-                                            payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
-
-                                        if (loadedGame.getState().getName().equals(State.BUILD.toString()))
-                                            payload = Move.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
-
-                                        if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
-                                            if (loadedGame.getPrevState().equals(State.MOVE))
-                                                payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
-                                            if (loadedGame.getPrevState().equals(State.BUILD))
-                                                payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
-                                        }
-
-                                        asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), payload));
-                                    }
-                                }
-                            }
-
-
+                            boolean newGame;
                             while(isActive) {
                                 demand = read();
-                                LOGGER.info("Consuming...");
-                                synchronized (buffer) {
-                                    buffer.add(demand);
-                                    buffer.notifyAll();
+
+                                synchronized (lobby.lockLobby) {
+                                    newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
+                                    lobby.setNumberOfReady(0);
+                                    lobby.setReloaded(false);
                                 }
-                                LOGGER.info("Consumed!");
+
+                                if (newGame) {
+                                    synchronized (server) {
+                                        server.newGame(this, demand);
+                                    }
+                                    basicStart();
+                                }
+                                else {
+                                    LOGGER.info("Consuming...");
+                                    synchronized (buffer) {
+                                        buffer.add(demand);
+                                        buffer.notifyAll();
+                                    }
+                                    LOGGER.info("Consumed!");
+                                }
                             }
                         } catch (Exception e) {
                             LOGGER.log(Level.SEVERE, e, () -> "Failed to receive!!" + e.getMessage());
-                            close();
                         }
                 }
         );
@@ -276,7 +241,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
         } finally {
             setActive(false);
-            closeConnection();
+            close();
         }
     }
 
@@ -293,5 +258,64 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     @Override
     public void setCreator(boolean creator) {
         this.creator = creator;
+    }
+
+    private void basicStart() throws InterruptedException {
+        //wait
+        List<ReducedPlayer> players;
+        synchronized (lobby.lockLobby) {
+            while (!lobby.canStart()) lobby.lockLobby.wait();
+            synchronized (lobby.lockLobby) {
+                lobby.lockLobby.notifyAll();
+                players = lobby.getReducedPlayerList();
+            }
+        }
+
+        //start
+        send(new Answer(AnswerType.SUCCESS, DemandType.START, players));
+        synchronized (lobby.lockLobby) {
+            send(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
+            if (lobby.isCurrentPlayerInGame(this))
+                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+        }
+    }
+
+    private void reloadStart() throws InterruptedException {
+        ReducedGame reducedGame;
+        Game loadedGame;
+
+        synchronized (lobby.lockLobby) {
+            while (!lobby.canStart()) lobby.lockLobby.wait();
+            synchronized (lobby.lockLobby) {
+                lobby.lockLobby.notifyAll();
+                loadedGame = lobby.getGame();
+                reducedGame = new ReducedGame(lobby);
+            }
+        }
+
+        //reload
+        send(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
+
+        //resume game
+        synchronized (lobby.lockLobby) {
+            if (lobby.isCurrentPlayerInGame(this)) {
+                List<ReducedAnswerCell> payload = new ArrayList<>();
+
+                if (loadedGame.getState().getName().equals(State.MOVE.toString()))
+                    payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
+
+                if (loadedGame.getState().getName().equals(State.BUILD.toString()))
+                    payload = Move.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
+
+                if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
+                    if (loadedGame.getPrevState().equals(State.MOVE))
+                        payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
+                    if (loadedGame.getPrevState().equals(State.BUILD))
+                        payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
+                }
+
+                asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), payload));
+            }
+        }
     }
 }

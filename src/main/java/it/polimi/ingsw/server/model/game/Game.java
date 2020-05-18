@@ -248,9 +248,11 @@ public class Game extends Observable<Answer> {
         return numberOfCompleteTowers;
     }
 
-    public ReturnContent gameEngine() {
-        //TODO win/defeat
+    public void removePlayer(String player) {
+        players.removeIf(p -> p.nickName.equals(player));
+    }
 
+    public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
         boolean availableGods = returnContent.isAvailableGods();
 

@@ -25,6 +25,7 @@ public class Lobby {
     private final Map<ServerClientHandler, View> playingConnection;
     private final Map<View, ReducedPlayer> playerColor;
     private int numberOfPlayers;
+    private int numberOfReady;
     private boolean reloaded;
     public final Object lockLobby;
     private static final Logger LOGGER = Logger.getLogger(Lobby.class.getName());
@@ -53,6 +54,7 @@ public class Lobby {
 
         lockLobby = new Object();
         numberOfPlayers = -1;
+        numberOfReady = 0;
 
         reloaded = true;
     }
@@ -93,6 +95,8 @@ public class Lobby {
     public void deletePlayer(ServerClientHandler player) {
         synchronized (playerViewList) {
             synchronized (playingConnection) {
+                game.removeObserver(playingConnection.get(player));
+                game.removePlayer(playingConnection.get(player).getPlayer());
                 playerViewList.remove(playingConnection.get(player));
                 playingConnection.remove(player);
             }
@@ -113,6 +117,12 @@ public class Lobby {
         }
 
         return ret;
+    }
+
+    public void setReloaded(boolean reloaded) {
+        synchronized (lockLobby) {
+            this.reloaded = reloaded;
+        }
     }
 
     public Game getGame() {
@@ -138,22 +148,21 @@ public class Lobby {
         if (!reloaded)
             game.addPlayer(player);
 
+        numberOfReady++;
+
         return true;
     }
 
     public boolean canStart() {
         int numOfPl;
-        int size;
+        int numOfRd;
 
         synchronized (lockLobby) {
             numOfPl = numberOfPlayers;
+            numOfRd = numberOfReady;
         }
 
-        synchronized (playerViewList) {
-            size = playerViewList.size();
-        }
-
-        return size == numOfPl;
+        return numOfRd == numOfPl;
     }
 
     public boolean isCurrentPlayerInGame(ServerClientHandler c) {
@@ -190,5 +199,13 @@ public class Lobby {
 
     public List<ServerClientHandler> getServerClientHandlerList() {
         return new ArrayList<>(playingConnection.keySet());
+    }
+
+    public int getNumberOfReady() {
+        return numberOfReady;
+    }
+
+    public void setNumberOfReady(int numberOfReady) {
+        this.numberOfReady = numberOfReady;
     }
 }

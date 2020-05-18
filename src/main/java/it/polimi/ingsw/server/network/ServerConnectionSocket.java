@@ -7,6 +7,7 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
@@ -43,8 +44,11 @@ public class ServerConnectionSocket implements ServerConnection {
 
         try {
             File f = new File(BACKUPPATH);
-            if (f.exists())
+            if (f.exists()) {
                 loadedGame = GameMemory.load(BACKUPPATH);
+                if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
+                    loadedGame = null;
+            }
         } catch (ParserConfigurationException | SAXException e) {
             LOGGER.log(Level.SEVERE, "Cannot load backup", e);
         }
@@ -118,7 +122,7 @@ public class ServerConnectionSocket implements ServerConnection {
             LOGGER.info("Reloaded!");
             return false;
         }
-        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfPlayers() != -1)) {
+        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfPlayers() == -1)) {
             lobby = new Lobby();
             lobby.addPlayer(name, c);
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
@@ -163,6 +167,25 @@ public class ServerConnectionSocket implements ServerConnection {
         }
 
         c.send(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, new ReducedMessage("null")));
+        return true;
+    }
+
+    @Override
+    public synchronized boolean newGame(ServerClientHandler c, Demand demand) {
+        String response = ((ReducedMessage) demand.getPayload()).getMessage();
+
+        if (response.equals("n")) {
+            lobby.deletePlayer(c);
+            c.setActive(false);
+            c.closeConnection();
+            return false;
+        }
+        else if (response.equals("y")) {
+            lobby.setNumberOfReady(lobby.getNumberOfReady() + 1);
+            return false;
+        }
+
+        c.asyncSend(new Answer(AnswerType.ERROR, DemandType.NEW_GAME));
         return true;
     }
 }

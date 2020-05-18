@@ -9,7 +9,12 @@ import java.io.*;
 public class DecoderXML {
     public static Message decode(ObjectInputStream in) {
         try {
-            String xmlString = (String) in.readObject();
+            String xmlString;
+            try {
+                xmlString = (String) in.readObject();
+            } catch (EOFException e) {
+                return null;
+            }
             XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
             Message message = (Message) decoder.readObject();
 

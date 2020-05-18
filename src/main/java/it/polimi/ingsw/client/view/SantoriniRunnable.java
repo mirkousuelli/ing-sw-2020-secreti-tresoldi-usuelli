@@ -44,7 +44,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
-    protected boolean isActive() {
+    public boolean isActive() {
         boolean ret;
 
         synchronized (lock) {
@@ -54,7 +54,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         return ret;
     }
 
-    protected void setActive(boolean active) {
+    public void setActive(boolean active) {
         synchronized (lock) {
             isActive = active;
         }

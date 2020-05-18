@@ -27,6 +27,7 @@ import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 
@@ -78,7 +79,7 @@ public class Move implements GameState {
         return around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
                 .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
-                .noneMatch(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1));
+                .anyMatch(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1));
 
     }
 
@@ -149,7 +150,7 @@ public class Move implements GameState {
                     returnContent.setState(State.VICTORY);
                     payload = addChangedCells(game);
                 }
-                else { //which means that no one won in this turn, the game switches to UsePower state
+                else { //which means that no one won in this turn, the game switches to AdditionalPower state
                     returnContent.setAnswerType(AnswerType.SUCCESS);
 
                     Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
@@ -174,15 +175,16 @@ public class Move implements GameState {
             }
         }
 
-        if(ChangeTurn.controlWinCondition(game)) {
-            returnContent.setState(State.VICTORY);
-            returnContent.setAnswerType(AnswerType.VICTORY);
-        }
-
-        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
+        if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             returnContent.setPayload(payload);
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+        }
+
+        if(ChangeTurn.controlWinCondition(game)) {
+            returnContent.setState(State.VICTORY);
+            returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setPayload(Move.addChangedCells(game));
         }
 
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
