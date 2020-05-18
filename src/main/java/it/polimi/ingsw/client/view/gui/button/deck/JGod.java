@@ -10,4 +10,16 @@ public class JGod {
         card = new JCard(god);
         mini = new JMini(god);
     }
+
+    public JCard getCard() {
+        return this.card;
+    }
+
+    public JMini getMini() {
+        return this.mini;
+    }
+
+    public God getGod() {
+        return this.mini.getGod();
+    }
 }

@@ -1,28 +1,28 @@
 package it.polimi.ingsw.client.view.gui.panels;
+import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.button.deck.JGod;
+import it.polimi.ingsw.client.view.gui.button.deck.JMini;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private static final int GOD_X = 60;
-    private static final int GOD_Y = 80;
     private JButton sendButton;
     private JButton removeButton;
     private JButton chooseButton;
     private JLayeredPane godsList;
     private JPanel choice;
     private JLayeredPane choosenList;
-    private JButton[] gods;
     private JLabel godsBack;
     private JLabel cloudBack;
-
-    JLayeredPane layers;
-
+    private JDeck deck;
+    private JLayeredPane layers;
 
     public ChooseCardsPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
@@ -49,7 +49,10 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
 
+        deck = new JDeck(Arrays.asList(God.values()));
         loadGods();
+        for (JGod god : deck.getList())
+            god.getMini().addActionListener(this);
 
         createSendButton();
         createRemoveButton();
@@ -150,34 +153,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0,0,-15,0);
 
-        JPanel miniGods = new JPanel(new GridBagLayout());
-        gods = new JButton[God.values().length];
-        God[] array = God.values();
-        for (int i = 0; i < array.length; i++) {
-            if (!array[i].toString().toLowerCase().equals("poseidon")) {
-                GridBagConstraints f = new GridBagConstraints();
-
-                f.gridx = i;
-                f.gridy = 0;
-                f.weightx = 0f;
-                f.weighty = 0f;
-                f.fill = GridBagConstraints.BOTH;
-
-                ImageIcon icon = new ImageIcon("img/cards/" + array[i].toString().toLowerCase() + "/mini.png");
-                Image img = icon.getImage().getScaledInstance( GOD_X, GOD_Y, Image.SCALE_SMOOTH);
-                icon = new ImageIcon( img );
-
-                gods[i] = new JButton(icon);
-                gods[i].setOpaque(false);
-                gods[i].setContentAreaFilled(false);
-                gods[i].setBorderPainted(false);
-
-                miniGods.add(gods[i], f);
-            }
-        }
-        miniGods.setOpaque(false);
-
-        godsBack.add(miniGods, c);
+        godsBack.add(deck, c);
+        deck.showMiniList();
     }
 
     private void createSendButton() {
@@ -243,6 +220,11 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        this.panelIndex.next(this.panels);
+        if (e.getSource() instanceof JMini) {
+            System.out.println(((JMini)e.getSource()).getGod().toString());
+        }
+        else if (e.getSource() instanceof JButton) {
+            this.panelIndex.next(this.panels);
+        }
     }
 }
