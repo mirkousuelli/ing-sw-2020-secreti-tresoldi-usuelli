@@ -1,5 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.communication.message.header.DemandType;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -65,6 +69,26 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (!e.getSource().equals(sendButton)) return;
+
+        this.panelIndex.next(this.panels);
+    }
+
+    @Override
+    public void updateFromModel(ClientModel clientModel) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        if (gui.getAnswer().getContext().equals(DemandType.CHOOSE_DECK))
+            mg.updateCurrentPanel();
+        else if (gui.getAnswer().getContext().equals(DemandType.CHOOSE_CARD))
+            mg.setCurrentPanelIndex(5);
+        else {
+            gui.free();
+            return;
+        }
+
+        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }
 }

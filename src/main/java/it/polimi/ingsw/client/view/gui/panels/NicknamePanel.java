@@ -1,5 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.communication.message.header.DemandType;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -110,6 +114,30 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        GUI gui = ((ManagerPanel) panels).getGui();
+
+        if (!e.getSource().equals(sendButton)) return;
+
+        gui.initialRequest(
+                nickText.getText(),
+                (String) serverAdd.getSelectedItem(),
+                serverPort.getSelectedItem() == null
+                        ? Integer.parseInt((String) serverPort.getItemAt(0))
+                        : Integer.parseInt((String) serverPort.getSelectedItem())
+        );
+    }
+
+    @Override
+    public void updateFromModel(ClientModel clientModel) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        if (gui.getAnswer().getContext().equals(DemandType.CREATE_GAME))
+            mg.setCurrentPanelIndex(2);
+        else
+            mg.setCurrentPanelIndex(4);
+
+        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }
 }

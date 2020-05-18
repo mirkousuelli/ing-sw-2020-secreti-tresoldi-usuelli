@@ -46,10 +46,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isReloaded = false;
     }
 
-    public ClientModel(String playerName) {
-        this(playerName, null);
-    }
-
     public void setClientConnection(ClientConnectionSocket<S> clientConnection) {
         this.clientConnection = clientConnection;
     }

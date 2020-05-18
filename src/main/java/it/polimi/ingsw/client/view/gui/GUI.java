@@ -1,34 +1,68 @@
 package it.polimi.ingsw.client.view.gui;
 
-import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.gui.frame.SantoriniFrame;
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.DemandType;
 
 import javax.swing.*;
 
-public class GUI<S>/* extends ClientView<S>*/ {
+public class GUI<S> extends ClientView<S> {
 
-    //private final GUIScanner<S> in;
-    //private final GUIPrinter<S> out;
+    private JFrame frame;
+    private final Object lockReady;
+    private boolean isReady;
 
     public GUI() {
-    }
-
-    public GUI(ClientModel<S> clientModel) {
-        //super(clientModel);
-        //out = new GUIPrinter<>(System.out, clientModel, this);
-        //in = new GUIScanner<>(System.in, out, clientModel);
+        lockReady = new Object();
+        isReady = false;
     }
 
     public void createAndStartGUI() {
         JFrame.setDefaultLookAndFeelDecorated(true);
-        JFrame frame = new SantoriniFrame();
+        frame = new SantoriniFrame(this);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
 
-    /*@Override
-    public void run() {
-        //not implemented yet
-    }*/
+    @Override
+    protected void startThreads() throws InterruptedException {
+        synchronized (lockReady) {
+            while (!isReady) lockReady.wait();
+        }
+
+        Thread read = asyncReadFromModel();
+        read.join();
+    }
+
+    @Override
+    protected void update() {
+        synchronized (clientModel.lock) {
+            ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel(clientModel);
+        }
+    }
+
+    public void initialRequest(String name, String ip, int port) {
+        new Thread(
+                this
+        ).start();
+
+        runThreads(name, ip, port);
+
+        synchronized (lockReady) {
+            isReady = true;
+            lockReady.notifyAll();
+        }
+    }
+
+    public void generateDemand(DemandType demandType, S payload) {
+        createDemand(new Demand<>(demandType, payload));
+
+        becomeFree();
+    }
+
+    public void free() {
+        becomeFree();
+    }
 }

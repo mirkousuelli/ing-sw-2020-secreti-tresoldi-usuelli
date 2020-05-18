@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
@@ -8,15 +7,10 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class CLI<S> extends ClientView<S> {
 
     private final CLIScanner<S> in;
     private final CLIPrinter<S> out;
-    private static final Logger LOGGER = Logger.getLogger(CLI.class.getName());
 
     public CLI(ClientModel<S> clientModel) {
         super(clientModel);
@@ -29,7 +23,8 @@ public class CLI<S> extends ClientView<S> {
         this(null);
     }
 
-    private void update() {
+    @Override
+    protected void update() {
         boolean isYourTurn;
         Answer<S> answerTemp = getAnswer();
 
@@ -66,10 +61,7 @@ public class CLI<S> extends ClientView<S> {
         if (isYourTurn)
             startUI(answerTemp);
 
-        setFree(true);
-        synchronized (lockFree) {
-            lockFree.notifyAll();
-        }
+        becomeFree();
     }
 
     private void startUI(Answer<S> answerTemp) {
@@ -82,42 +74,7 @@ public class CLI<S> extends ClientView<S> {
             }
         }
 
-        setDemand(demand);
-        setChanged(true);
-
-        synchronized (lockDemand) {
-            lockDemand.notifyAll();
-        }
-    }
-
-    public Thread asyncReadFromModel() {
-        Thread t = new Thread(
-                () -> {
-                    try {
-                        Answer<S> temp;
-                        while (isActive()) {
-                            synchronized (clientModel.lockAnswer) {
-                                while (!clientModel.isChanged()) clientModel.lockAnswer.wait();
-                                clientModel.setChanged(false);
-                                temp = clientModel.getAnswer();
-                            }
-
-                            LOGGER.info("Receiving...");
-                            synchronized (lockAnswer) {
-                                setAnswer(temp);
-                                LOGGER.info("Received!");
-                                update();
-                            }
-                        }
-                    } catch (Exception e){
-                        setActive(false);
-                        LOGGER.log(Level.SEVERE, "Got an exception", e);
-                    }
-                }
-        );
-
-        t.start();
-        return t;
+        createDemand(demand);
     }
 
     @Override
@@ -130,52 +87,15 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private void initialRequest() {
-        ClientConnectionSocket clientConnectionSocket = null;
-        ClientModel clientModel;
-        String name;
-        String ip;
-        int port;
-
         out.printString("Insert your name:\n");
-        name = in.nextLine();
+        String name = in.nextLine();
+
         out.printString("Insert the server's ip:\n");
-        ip = in.nextLine();
+        String ip = in.nextLine();
+
         out.printString("Insert the server's port:\n");
-        port = Integer.parseInt(in.nextLine());
+        int port = Integer.parseInt(in.nextLine());
 
-        try {
-            clientConnectionSocket = new ClientConnectionSocket(ip, port);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException");
-        }
-
-        clientModel = new ClientModel(name, clientConnectionSocket);
-        setClientModel(clientModel);
-        clientConnectionSocket.setClientView(this);
-
-        setInitialRequest();
-
-        new Thread(
-                clientConnectionSocket
-        ).start();
-
-        new Thread(
-                clientModel
-        ).start();
-    }
-
-    private void setInitialRequest() {
-        setFree(false);
-
-        synchronized (clientModel.lock) {
-            setDemand(new Demand<>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
-            setChanged(true);
-        }
-
-        setFree(true);
-
-        synchronized (lockDemand) {
-            lockDemand.notifyAll();
-        }
+        runThreads(name, ip, port);
     }
 }

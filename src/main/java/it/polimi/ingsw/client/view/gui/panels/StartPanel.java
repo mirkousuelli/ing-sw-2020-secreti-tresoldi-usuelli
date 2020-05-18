@@ -42,5 +42,6 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         this.panelIndex.next(this.panels);
+        ((ManagerPanel) panels).updateCurrentPanel();
     }
 }

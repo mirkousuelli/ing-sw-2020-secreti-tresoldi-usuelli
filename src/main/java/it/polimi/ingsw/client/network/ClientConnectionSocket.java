@@ -73,6 +73,17 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                         temp = (Answer<S>) file.receive();
                                     }
 
+                                    if (temp == null) {
+                                        setActive(false);
+                                        synchronized (clientView.lockFree) {
+                                            clientView.lockFree.notifyAll();
+                                        }
+                                        synchronized (clientView.lockDemand) {
+                                            lockDemand.notifyAll();
+                                        }
+                                        break;
+                                    }
+
                                     if (temp.getHeader().equals(AnswerType.CLOSE))
                                         setActive(false);
 
@@ -109,7 +120,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                             Demand<S> demand;
                             while (isActive()) {
                                 synchronized (clientView.lockDemand) {
-                                    while (!clientView.isChanged()) clientView.lockDemand.wait();
+                                    while (!isActive() ||!clientView.isChanged()) clientView.lockDemand.wait();
+                                    if (!isActive())
+                                        break;
                                     clientView.setChanged(false);
                                     demand = clientView.getDemand();
                                 }
@@ -158,7 +171,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                     try {
                         while (isActive()) {
                             synchronized (clientView.lockFree) {
-                                while (!clientView.isFree()) clientView.lockFree.wait();
+                                while (!isActive() || !clientView.isFree()) clientView.lockFree.wait();
+                                if (!isActive())
+                                    break;
                                 clientView.setFree(false);
                             }
 

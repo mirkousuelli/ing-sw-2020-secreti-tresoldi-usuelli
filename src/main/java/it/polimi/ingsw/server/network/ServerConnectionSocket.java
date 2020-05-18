@@ -107,11 +107,10 @@ public class ServerConnectionSocket implements ServerConnection {
     @Override
     public void logOut() {
         for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
-            ch.asyncSend(new Answer(AnswerType.CLOSE, null, null));
-            ch.setActive(false);
+            logOutClient(ch);
         }
 
-        isActive = false;
+        loadLobby();
     }
 
     @Override
@@ -128,6 +127,7 @@ public class ServerConnectionSocket implements ServerConnection {
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
             c.setLobby(lobby);
             c.setCreator(true);
+            LOGGER.info("Created!");
 
             c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getColor(c))));
             return false;
@@ -137,6 +137,7 @@ public class ServerConnectionSocket implements ServerConnection {
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
             c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, new ReducedMessage(lobby.getColor(c))));
+            LOGGER.info("Joined!");
             return false;
         }
 
@@ -145,6 +146,7 @@ public class ServerConnectionSocket implements ServerConnection {
         else
             c.setLobby(lobby);
 
+        LOGGER.info("Error!");
         return true;
     }
 
@@ -176,8 +178,7 @@ public class ServerConnectionSocket implements ServerConnection {
 
         if (response.equals("n")) {
             lobby.deletePlayer(c);
-            c.setActive(false);
-            c.closeConnection();
+            logOutClient(c);
             return false;
         }
         else if (response.equals("y")) {
@@ -187,5 +188,16 @@ public class ServerConnectionSocket implements ServerConnection {
 
         c.asyncSend(new Answer(AnswerType.ERROR, DemandType.NEW_GAME));
         return true;
+    }
+
+    private void logOutClient(ServerClientHandler ch) {
+        ch.closeConnection();
+        ch.setActive(false);
+        synchronized (ch.getSocket()) {
+            ch.getSocket().notifyAll();
+        }
+        synchronized (ch.getBuffer()) {
+            ch.getBuffer().notifyAll();
+        }
     }
 }

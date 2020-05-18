@@ -1,5 +1,10 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,6 +44,20 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String numberOfPlayers = null;
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        if (e.getSource().equals(_2playersButton))
+            numberOfPlayers = "2";
+        else if (e.getSource().equals(_3playersButton))
+            numberOfPlayers = "3";
+
+        if (numberOfPlayers != null)
+            gui.generateDemand(DemandType.CREATE_GAME, new ReducedMessage(numberOfPlayers));
+
+        mg.updateCurrentPanel();
+        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }
 }

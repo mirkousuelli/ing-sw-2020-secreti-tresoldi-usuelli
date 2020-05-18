@@ -6,6 +6,8 @@ import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.network.ServerClientHandler;
 import it.polimi.ingsw.server.network.message.Lobby;
 
+import java.net.Socket;
+
 public class ServerStub implements ServerClientHandler {
 
     public Answer answer;
@@ -59,6 +61,18 @@ public class ServerStub implements ServerClientHandler {
 
     @Override
     public void setActive(boolean isActive) {
+        //stub
+    }
 
+    @Override
+    public Socket getSocket() {
+        //stub
+        return null;
+    }
+
+    @Override
+    public Object getBuffer() {
+        //stub
+        return null;
     }
 }

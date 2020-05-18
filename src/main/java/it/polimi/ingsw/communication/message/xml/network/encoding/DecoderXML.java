@@ -12,7 +12,9 @@ public class DecoderXML {
             String xmlString;
             try {
                 xmlString = (String) in.readObject();
-            } catch (EOFException e) {
+            } catch (IOException e) {
+                if (!(e instanceof EOFException) && !e.getMessage().equals("Connection reset"))
+                    e.printStackTrace();
                 return null;
             }
             XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
@@ -23,7 +25,7 @@ public class DecoderXML {
             } else if (message.getHeader() instanceof AnswerType){
                 return new Answer((Answer) message);
             }
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 

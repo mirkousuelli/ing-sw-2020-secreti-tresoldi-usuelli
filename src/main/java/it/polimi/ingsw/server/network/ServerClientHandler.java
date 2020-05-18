@@ -5,6 +5,8 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.network.message.Lobby;
 
+import java.net.Socket;
+
 public interface ServerClientHandler {
 
     void closeConnection();
@@ -24,4 +26,8 @@ public interface ServerClientHandler {
     void setCreator(boolean creator);
 
     void setActive(boolean isActive);
+
+    Socket getSocket();
+
+    Object getBuffer();
 }

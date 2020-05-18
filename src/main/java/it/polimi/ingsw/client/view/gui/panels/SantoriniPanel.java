@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.gui.GUI;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -56,4 +59,6 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
     public Dimension getPreferredSize() {
         return new Dimension(this.scaleWidth, this.scaleHeight);
     }
+
+    public void updateFromModel(ClientModel clientModel) {}
 }
