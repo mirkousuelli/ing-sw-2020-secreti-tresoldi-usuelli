@@ -47,10 +47,8 @@ public class GamePanel extends SantoriniPanel {
         mapCon.anchor = GridBagConstraints.CENTER;
         mapCon.gridx = 1;
         mapCon.gridy = 0;
-
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
-
         mapCon.weightx = 0.1;
         mapCon.weighty = 0.1;
         mapCon.fill = GridBagConstraints.BOTH;
@@ -156,7 +154,7 @@ public class GamePanel extends SantoriniPanel {
         card.setVisible(true);
         right.add(card);
 
-        ImageIcon icon_2 = new ImageIcon("img/cards/apollo/apollo.png");
+        ImageIcon icon_2 = new ImageIcon("img/cards/apollo/card.png");
         Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_2 = new ImageIcon( img_2 );
         JLabel god = new JLabel(icon_2);
@@ -188,7 +186,7 @@ public class GamePanel extends SantoriniPanel {
         firstMalus.setVisible(true);
         left.add(firstMalus);
 
-        ImageIcon icon_1 = new ImageIcon("img/cards/malus/malus_athena.png");
+        ImageIcon icon_1 = new ImageIcon("img/cards/persephone/malus.png");
         Image img_1 = icon_1.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_1 = new ImageIcon( img_1 );
         JLabel malus_1 = new JLabel(icon_1);
@@ -201,25 +199,10 @@ public class GamePanel extends SantoriniPanel {
         secondMalus.setVisible(true);
         left.add(secondMalus);
 
-        ImageIcon icon_2 = new ImageIcon("img/cards/malus/malus_persephone.png");
+        ImageIcon icon_2 = new ImageIcon("img/cards/athena/malus.png");
         Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
         icon_2 = new ImageIcon( img_2 );
         JLabel malus_2 = new JLabel(icon_2);
         secondMalus.add(malus_2, new GridBagConstraints());
     }
-
-    /*@Override
-    public void actionPerformed(ActionEvent e) {
-        ((JBlockDecorator)e.getSource()).buildUp();
-        /*ImageIcon icon = new ImageIcon("img/blocks/top.png");
-        Image img = icon.getImage().getScaledInstance( cellButton[0][0].getWidth(), cellButton[0][0].getHeight(), Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
-        cellButton[0][0].setIcon(icon);
-
-        ImageIcon icon_2 = new ImageIcon("img/blocks/move.png");
-        Image img_2 = icon_2.getImage().getScaledInstance(cellButton[0][0].getWidth(), cellButton[0][0].getHeight(), Image.SCALE_SMOOTH);
-        icon_2 = new ImageIcon(img_2);
-        cellButton[0][0].setLayout(new GridBagLayout());
-        cellButton[0][0].add(new JLabel(icon_2), new GridBagConstraints());
-    }*/
 }

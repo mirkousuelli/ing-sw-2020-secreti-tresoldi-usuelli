@@ -1,28 +1,30 @@
 package it.polimi.ingsw.client.view.gui.panels;
+import it.polimi.ingsw.client.view.gui.button.deck.JCard;
+import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.button.deck.JGod;
+import it.polimi.ingsw.client.view.gui.button.deck.JMini;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private static final int GOD_X = 60;
-    private static final int GOD_Y = 80;
     private JButton sendButton;
     private JButton removeButton;
     private JButton chooseButton;
     private JLayeredPane godsList;
-    private JPanel choice;
+    private JLabel choice;
     private JLayeredPane choosenList;
-    private JButton[] gods;
     private JLabel godsBack;
     private JLabel cloudBack;
-
-    JLayeredPane layers;
-
+    private JDeck deck;
+    private JLayeredPane layers;
 
     public ChooseCardsPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
@@ -49,7 +51,11 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
 
+        deck = new JDeck(Arrays.asList(God.values()));
         loadGods();
+        for (JGod god : deck.getList())
+            god.getMini().addActionListener(this);
+        setChoice(deck.getJGod(God.APOLLO));
 
         createSendButton();
         createRemoveButton();
@@ -72,12 +78,12 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         choosenList.setLayout(new GridBagLayout());
         choosenList.setVisible(true);
         choosenList.setOpaque(false);
-        choosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 150));
+        choosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 130));
 
         layers.add(choosenList, c, 0);
 
         ImageIcon icon = new ImageIcon("img/labels/clouds.png");
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 150, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         cloudBack = new JLabel(icon);
         cloudBack.setLayout(new GridBagLayout());
@@ -99,12 +105,20 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0.3;
         c.fill = GridBagConstraints.BOTH;
 
-        choice = new JPanel(new FlowLayout());
+        choice = new JLabel();
+        choice.setLayout(new GridBagLayout());
         choice.setVisible(true);
         choice.setOpaque(false);
-        choice.setBackground(Color.GREEN);
 
         layers.add(choice, c, 1);
+    }
+
+    void setChoice(JGod god) {
+        choice.removeAll();
+        choice.add(god.getCard(), new GridBagConstraints());
+        deck.setCurrent(god);
+        validate();
+        repaint();
     }
 
     void createGodsList() {
@@ -118,6 +132,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(0,0,-20,0);
 
         godsList = new JLayeredPane();
         godsList.setLayout(new OverlayLayout(godsList));
@@ -128,7 +143,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         layers.add(godsList, c, 0);
 
         ImageIcon icon = new ImageIcon("img/labels/gods_menu.png");
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 180, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 155, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         godsBack = new JLabel(icon);
         godsBack.setOpaque(false);
@@ -148,36 +163,10 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 0f;
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0,0,-15,0);
+        //c.insets = new Insets(0,0,-15,0);
 
-        JPanel miniGods = new JPanel(new GridBagLayout());
-        gods = new JButton[God.values().length];
-        God[] array = God.values();
-        for (int i = 0; i < array.length; i++) {
-            if (!array[i].toString().toLowerCase().equals("poseidon")) {
-                GridBagConstraints f = new GridBagConstraints();
-
-                f.gridx = i;
-                f.gridy = 0;
-                f.weightx = 0f;
-                f.weighty = 0f;
-                f.fill = GridBagConstraints.BOTH;
-
-                ImageIcon icon = new ImageIcon("img/cards/" + array[i].toString().toLowerCase() + "/mini.png");
-                Image img = icon.getImage().getScaledInstance( GOD_X, GOD_Y, Image.SCALE_SMOOTH);
-                icon = new ImageIcon( img );
-
-                gods[i] = new JButton(icon);
-                gods[i].setOpaque(false);
-                gods[i].setContentAreaFilled(false);
-                gods[i].setBorderPainted(false);
-
-                miniGods.add(gods[i], f);
-            }
-        }
-        miniGods.setOpaque(false);
-
-        godsBack.add(miniGods, c);
+        godsBack.add(deck, c);
+        deck.showMiniList();
     }
 
     private void createSendButton() {
@@ -243,6 +232,11 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        this.panelIndex.next(this.panels);
+        if (e.getSource() instanceof JMini) {
+            setChoice(deck.getJGod(((JMini)e.getSource()).getGod()));
+        }
+        else if (e.getSource() instanceof JButton) {
+            this.panelIndex.next(this.panels);
+        }
     }
 }

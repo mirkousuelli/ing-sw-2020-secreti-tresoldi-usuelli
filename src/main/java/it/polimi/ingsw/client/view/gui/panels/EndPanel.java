@@ -7,6 +7,7 @@ public class EndPanel extends SantoriniPanel {
     public static final String VICTORY = "victory.png";
     public static final String DEFEAT = "defeat.png";
     public static final String LOST = "lost.png";
+    public static final String SAVE = "save.png";
     private String type;
 
     public EndPanel(String type, CardLayout panelIndex, JPanel panels) {

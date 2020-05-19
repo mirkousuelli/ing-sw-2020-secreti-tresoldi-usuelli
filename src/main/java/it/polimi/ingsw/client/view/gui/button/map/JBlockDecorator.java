@@ -8,15 +8,18 @@ public class JBlockDecorator extends JCell {
     private final JCell origin;
     private int current;
     protected ArrayList<JCellStatus> decoration;
-    protected ArrayList<JLabel> history;
+    protected ArrayList<JComponent> history;
 
     public JBlockDecorator(JCell origin) {
         super(origin.getXCoordinate(), origin.getYCoordinate());
         this.decoration = new ArrayList<>();
         this.history = new ArrayList<>();
         this.origin = origin;
-        this.current = -1;
         this.setStatus(this.origin.getStatus());
+
+        this.current = 0;
+        this.history.add(this);
+        this.decoration.add(this.getStatus());
     }
 
     public void addDecoration(JCellStatus decoration) {
@@ -28,22 +31,24 @@ public class JBlockDecorator extends JCell {
             Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
             icon = new ImageIcon(img);
 
-            this.history.add(new JLabel(icon));
-            add(this.history.get(current), new GridBagConstraints());
+            JLabel newDecoration = new JLabel(icon);
+            newDecoration.setLayout(new GridBagLayout());
+            this.history.add(newDecoration);
+            this.history.get(current - 1).add(this.history.get(current), new GridBagConstraints());
             validate();
             repaint();
         }
     }
 
-    public void removeDecoration() {
-        if (this.current >= 0) {
+    public void removeCurrentDecoration() {
+        if (this.current > 0) {
             remove(this.history.get(current));
             this.history.remove(current);
             this.current--;
         }
     }
 
-    public JCellStatus getDecoration() {
+    public JCellStatus getCurrentDecoration() {
         return this.decoration.get(current);
     }
 
@@ -52,9 +57,9 @@ public class JBlockDecorator extends JCell {
     }
 
     public void buildUp() {
-        if (((JBlock)this.origin).isTop())
+        if (((JBlock)this.origin).isTop()) {
             this.addDecoration(JCellStatus.DOME);
-        else {
+        } else {
             ((JBlock)this.origin).buildUp();
             this.setStatus(this.origin.getStatus());
         }
