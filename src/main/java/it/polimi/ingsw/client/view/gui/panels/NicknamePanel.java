@@ -115,11 +115,13 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         GUI gui = ((ManagerPanel) panels).getGui();
+        String name = nickText.getText();
 
         if (!e.getSource().equals(sendButton)) return;
+        if (name == null || name.equals("")) return;
 
         gui.initialRequest(
-                nickText.getText(),
+                name,
                 (String) serverAdd.getSelectedItem(),
                 serverPort.getSelectedItem() == null
                         ? Integer.parseInt((String) serverPort.getItemAt(0))
@@ -133,9 +135,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
 
         if (gui.getAnswer().getContext().equals(DemandType.CREATE_GAME))
-            mg.setCurrentPanelIndex(2);
+            mg.setCurrentPanelIndex("numOfPlayers");
         else
-            mg.setCurrentPanelIndex(4);
+            mg.setCurrentPanelIndex("waiting");
 
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);

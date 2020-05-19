@@ -10,8 +10,10 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ClientModel<S> extends SantoriniRunnable<S> {
 
@@ -21,6 +23,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
+    private String prevPlayer = null;
+    private String challenger;
     private final ReducedPlayer player;
     private boolean isReloaded;
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
@@ -44,6 +48,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.clientConnection = clientConnection;
 
         isReloaded = false;
+        challenger = null;
     }
 
     public void setClientConnection(ClientConnectionSocket<S> clientConnection) {
@@ -60,15 +65,21 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
-    public synchronized String getCurrentPlayer() {
-        return currentPlayer;
-    }
-
     public ReducedPlayer getPlayer() {
         ReducedPlayer ret;
 
-        synchronized (player) {
+        synchronized (lock) {
             ret = player;
+        }
+
+        return ret;
+    }
+
+    public boolean isReloaded() {
+        boolean ret;
+
+        synchronized (lock) {
+            ret = isReloaded;
         }
 
         return ret;
@@ -151,12 +162,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case CREATE_GAME:
+                player.setColor(((ReducedMessage) answer.getPayload()).getMessage());
+                challenger = player.getNickname();
+                break;
+
             case CONNECT:
                 player.setColor(((ReducedMessage) answer.getPayload()).getMessage());
                 break;
 
             case START:
-                currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname();//Hp: first one is the chosen one
+                currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname(); //Hp: first one is the chosen one
 
                 opponents = ((List<ReducedPlayer>) answer.getPayload());
 
@@ -171,22 +186,44 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CHOOSE_DECK:
             case AVAILABLE_GODS:
                 deck = new ArrayList<>((List<ReducedCard>) answer.getPayload());
+                System.out.println(deck);
                 break;
 
             case CHOOSE_CARD:
             case CHOOSE_STARTER:
-                ReducedPlayer rp = ((ReducedPlayer) answer.getPayload());
-                if (rp.getCard() == null) return;
+                List<ReducedCard> reducedCardList = ((List<ReducedCard> ) answer.getPayload());
+                if (reducedCardList == null || reducedCardList.isEmpty()) return;
 
-                deck.removeIf(card -> card.getGod().equals(rp.getCard().getGod()));
+                Set<God> gods = reducedCardList.stream()
+                        .map(ReducedCard::getGod)
+                        .collect(Collectors.toSet());
 
-                for (ReducedPlayer p : opponents) {
-                    if (p.getNickname().equals(rp.getNickname())) {
-                        p.setCard(rp.getCard());
-                        return;
-                    }
+                List<ReducedCard> chosenList = deck.stream()
+                        .filter(card -> !gods.contains(card.getGod()))
+                        .collect(Collectors.toList());
+
+                if (chosenList.size() > 1) return;
+
+                ReducedCard chosen;
+                if (chosenList.isEmpty()) {
+                    chosen = reducedCardList.get(0);
+                    prevPlayer = currentPlayer;
                 }
-                player.setCard(rp.getCard());
+                else
+                    chosen= chosenList.get(0);
+
+                ReducedPlayer current = opponents.stream()
+                                                  .filter(p -> p.getNickname().equals(prevPlayer))
+                                                  .reduce(null, (a, b) -> a != null
+                                                          ? a
+                                                          : b
+                                                  );
+
+                if (current == null)
+                    current = player;
+
+                current.setCard(chosen);
+                deck.remove(chosen);
                 break;
 
             case MOVE:
@@ -220,6 +257,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case CHANGE_TURN:
+                prevPlayer = currentPlayer;
                 currentPlayer = ((ReducedPlayer) answer.getPayload()).getNickname();
                 break;
 
@@ -255,15 +293,20 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
-    public synchronized boolean checkCell(int x, int y) {
+    public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
     }
 
-    public synchronized boolean checkGod(String godString) {
+    public boolean checkGod(String godString) {
+        List<ReducedCard> dk;
         God god = God.parseString(godString);
         if (god == null) return true;
 
-        return deck.stream()
+        synchronized (lock) {
+            dk = deck;
+        }
+
+        return dk.stream()
                     .noneMatch(g -> g.getGod().equals(god));
     }
 
@@ -351,5 +394,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         ret.add(1, string.charAt(2) - 48);
 
         return ret;
+    }
+
+    public synchronized ReducedPlayer getCurrentPlayer() {
+        if (player.getNickname().equals(currentPlayer)) return player;
+
+        for (ReducedPlayer o : opponents) {
+            if (o.getNickname().equals(currentPlayer))
+                return o;
+        }
+
+        return null;
     }
 }

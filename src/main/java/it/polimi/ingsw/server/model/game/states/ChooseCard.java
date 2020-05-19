@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.MalusPower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
@@ -12,6 +14,10 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChooseCard implements GameState {
 
@@ -32,27 +38,35 @@ public class ChooseCard implements GameState {
 
         Player currentPlayer = game.getCurrentPlayer();
         God chosenGod = ((God) game.getRequest().getDemand().getPayload());
+        Card chosenCard = null;
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_CARD);
 
-        for (God g : game.getChosenGods()) {
-            if (g.equals(chosenGod)) {
-                game.removeGod(g);
-                currentPlayer.setCard(game.getDeck().getCard(g));
-
-                returnContent.setAnswerType(AnswerType.SUCCESS);
-                if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))
-                    returnContent.setState(State.CHOOSE_STARTER);
-                else
-                    returnContent.setChangeTurn(true);
-
-                returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName(), currentPlayer.getCard()));
-
-                ChooseCard.applyMalus(game, Timing.DEFAULT);
-
+        for (Card g : game.getChosenGods()) {
+            if (g.getGod().equals(chosenGod)) {
+                chosenCard = g;
                 break;
             }
+        }
+
+        if (chosenCard != null) {
+            game.removeGod(chosenCard);
+            currentPlayer.setCard(chosenCard);
+
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName())) {
+                returnContent.setState(State.CHOOSE_STARTER);
+                List<ReducedCard> toReturn = new ArrayList<>();
+                toReturn.add(new ReducedCard(chosenCard));
+                returnContent.setPayload(toReturn);
+            }
+            else {
+                returnContent.setChangeTurn(true);
+                returnContent.setPayload(game.getChosenGods().stream().map(ReducedCard::new).collect(Collectors.toList()));
+            }
+
+            ChooseCard.applyMalus(game, Timing.DEFAULT);
         }
 
         return returnContent;

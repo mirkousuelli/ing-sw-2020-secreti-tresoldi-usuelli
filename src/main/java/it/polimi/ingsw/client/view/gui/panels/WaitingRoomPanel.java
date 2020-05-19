@@ -80,9 +80,9 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
 
         if (gui.getAnswer().getContext().equals(DemandType.CHOOSE_DECK))
-            mg.updateCurrentPanel();
+            mg.setCurrentPanelIndex("chooseCards");
         else if (gui.getAnswer().getContext().equals(DemandType.CHOOSE_CARD))
-            mg.setCurrentPanelIndex(5);
+            mg.setCurrentPanelIndex("chooseGod");
         else {
             gui.free();
             return;

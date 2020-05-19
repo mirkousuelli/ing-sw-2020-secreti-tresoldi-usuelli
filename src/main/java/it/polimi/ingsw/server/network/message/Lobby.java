@@ -28,7 +28,6 @@ public class Lobby {
     private int numberOfReady;
     private boolean reloaded;
     public final Object lockLobby;
-    private static final Logger LOGGER = Logger.getLogger(Lobby.class.getName());
 
     public Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
@@ -38,7 +37,6 @@ public class Lobby {
         boolean b;
         if (f.exists())
             b = f.delete();
-        //b = f.createNewFile();
     }
 
     public Lobby(Game game) {

@@ -3,9 +3,11 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.Deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.states.*;
@@ -26,7 +28,7 @@ public class Game extends Observable<Answer> {
      */
     private List<Player> players;
     private Deck deck;
-    private List<God> chosenGods;
+    private List<Card> chosenGods;
     private Board board;
     private GameState state;
     private State prevState;
@@ -58,20 +60,16 @@ public class Game extends Observable<Answer> {
         this.starter = starter;
     }
 
-    public List<God> getChosenGods() {
+    public List<Card> getChosenGods() {
         return chosenGods;
     }
 
-    public void setChosenGods(List<God> choosenGods) {
-        this.chosenGods = choosenGods;
+    public void setChosenGods(List<God> chosenGods) {
+        this.chosenGods = chosenGods.stream().map(deck::getCard).collect(Collectors.toList());
     }
 
-    public void removeGod(God god) {
+    public void removeGod(Card god) {
         chosenGods.remove(god);
-    }
-
-    public void addGod(God god) {
-        chosenGods.add(god);
     }
 
     public ActionToPerform getRequest() {
@@ -265,7 +263,7 @@ public class Game extends Observable<Answer> {
             }
 
             if (availableGods)
-                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, deck.popChosenGods(chosenGods)));
+                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, chosenGods.stream().map(ReducedCard::new).collect(Collectors.toList())));
 
             notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }

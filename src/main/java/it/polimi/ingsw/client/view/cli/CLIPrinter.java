@@ -56,7 +56,6 @@ public class CLIPrinter<S> {
         changesMap.put(DemandType.START, this::printStart);
         changesMap.put(DemandType.CHOOSE_DECK, this::printAvailableGods);
         changesMap.put(DemandType.CHOOSE_CARD, this::printAvailableGods);
-        changesMap.put(DemandType.AVAILABLE_GODS, this::printAvailableGods);
         changesMap.put(DemandType.CHOOSE_STARTER, this::printGods);
         changesMap.put(DemandType.PLACE_WORKERS, this::printBoard);
         changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
@@ -257,18 +256,24 @@ public class CLIPrinter<S> {
 
     private void printAll() {
         printBoard();
-        if (clientModel.isYourTurn())
-            printPossibleActions();
+        printPossibleActions();
         printGods();
     }
 
     private void printCurrentPlayer() {
+        boolean isYourTurn = false;
+        ReducedPlayer currentPlayer;
+
         synchronized (clientModel.lock) {
             if (clientModel.isYourTurn())
-                printString("It is your turn!\n");
-            else
-                printString(clientModel.getCurrentPlayer() + " is the current player!\n");
+                isYourTurn = true;
+            currentPlayer= clientModel.getCurrentPlayer();
         }
+
+        if (isYourTurn)
+            printString("It is your turn!\n");
+        else
+            printString(Color.RESET + Color.parseString(currentPlayer.getColor()) + currentPlayer.getNickname() + Color.RESET + " is the current player!\n");
     }
 
     public void printError() {
@@ -283,7 +288,7 @@ public class CLIPrinter<S> {
         if (clientModel.isYourTurn())
             out.println("It's your " + context + "!");
         else
-            out.println("It's " + clientModel.getCurrentPlayer() + "'s" + context + "!");
+            out.println("It's " + clientModel.getCurrentPlayer() + "'s " + context + "!");
     }
 
     public boolean printChanges(DemandType demandType) {

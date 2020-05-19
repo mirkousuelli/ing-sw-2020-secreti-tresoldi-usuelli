@@ -37,9 +37,10 @@ public class ChooseCardTest {
         chosenGods.add(God.ARTEMIS);
         chosenGods.add(God.MINOTAUR);
         chosenGods.add(God.PERSEPHONE);
+
+        game.getDeck().fetchDeck();
         game.setChosenGods(chosenGods);
 
-        game.getDeck().fetchCards(chosenGods);
         game.setCurrentPlayer(p2);
         game.setState(State.CHOOSE_CARD);
 
@@ -85,9 +86,9 @@ public class ChooseCardTest {
         List<God> chosenGods = new ArrayList<>();
         chosenGods.add(God.ATLAS);
         chosenGods.add(God.PAN);
+        game.getDeck().fetchDeck();
         game.setChosenGods(chosenGods);
 
-        game.getDeck().fetchCards(chosenGods);
         game.setCurrentPlayer(p2);
         game.setState(State.CHOOSE_CARD);
         game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.CHOOSE_CARD, God.ATLAS)));

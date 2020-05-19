@@ -56,7 +56,7 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         if (numberOfPlayers != null)
             gui.generateDemand(DemandType.CREATE_GAME, new ReducedMessage(numberOfPlayers));
 
-        mg.updateCurrentPanel();
+        mg.setCurrentPanelIndex("chooseCards");
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }

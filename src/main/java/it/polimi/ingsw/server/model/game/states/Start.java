@@ -67,7 +67,7 @@ public class Start implements GameState {
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.CHOOSE_CARD);
-        returnContent.setPayload(new ReducedPlayer(null, null, null));
+        returnContent.setPayload(game.getDeck().popChosenGods(game.getChosenGods()));
         returnContent.setChangeTurn(true);
         returnContent.setAvailableGods(true);
 

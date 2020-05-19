@@ -97,18 +97,14 @@ public class Deck {
         return cards.stream().filter(c -> c.getNumPlayer() >= numberOfPlayers).map(ReducedCard::new).collect(Collectors.toList());
     }
 
-    public List<ReducedCard> popChosenGods(List<God> chosenGods) {
-        List<ReducedCard> reducedCardList = new ArrayList<>();
+    public List<ReducedCard> popChosenGods(List<Card> chosenGods) {
+        Set<God> cardSet = chosenGods.stream()
+                .map(Card::getGod)
+                .collect(Collectors.toSet());
 
-        for (Card c : cards) {
-            for (God g : chosenGods) {
-                if (c.getGod().equals(g)) {
-                    reducedCardList.add(new ReducedCard(c));
-                    break;
-                }
-            }
-        }
-
-        return reducedCardList;
+        return cards.stream()
+                .filter(card -> !cardSet.contains(card.getGod()))
+                .map(ReducedCard::new)
+                .collect(Collectors.toList());
     }
 }
