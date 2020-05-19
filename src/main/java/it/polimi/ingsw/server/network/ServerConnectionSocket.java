@@ -109,6 +109,13 @@ public class ServerConnectionSocket implements ServerConnection {
         for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
             ch.closeSocket();
         }
+
+        lobby.setNumberOfReady(0);
+        File f = new File(Lobby.backupPath);
+        if (f.exists())
+            lobby.setReloaded(true);
+        else
+            lobby = null;
     }
 
     @Override
@@ -119,7 +126,7 @@ public class ServerConnectionSocket implements ServerConnection {
             LOGGER.info("Reloaded!");
             return false;
         }
-        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfPlayers() == -1)) {
+        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() == 0)) {
             lobby = new Lobby();
             lobby.addPlayer(name, c);
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());

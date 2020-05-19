@@ -33,6 +33,10 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         this.clientModel = clientModel;
     }
 
+    public ClientModel<S> getClientModel() {
+        return clientModel;
+    }
+
     public boolean isFree() {
         boolean ret;
 

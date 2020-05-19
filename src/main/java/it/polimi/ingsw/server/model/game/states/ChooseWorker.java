@@ -29,6 +29,8 @@ import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +117,16 @@ public class ChooseWorker implements GameState {
                     }
                     break;
                 }
+            }
+        }
+
+        File f = new File(Lobby.backupPath);
+        if (!f.exists()) {
+            try {
+                boolean b = f.createNewFile();
+            } catch (IOException e) {
+                returnContent.setAnswerType(AnswerType.ERROR);
+                returnContent.setState(State.CHOOSE_WORKER);
             }
         }
 
