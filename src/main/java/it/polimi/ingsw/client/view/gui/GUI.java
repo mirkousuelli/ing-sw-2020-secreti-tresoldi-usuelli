@@ -27,13 +27,14 @@ public class GUI<S> extends ClientView<S> {
     }
 
     @Override
-    protected void startThreads() throws InterruptedException {
+    protected void startThreads(Thread watchDogThread) throws InterruptedException {
         synchronized (lockReady) {
             while (!isReady) lockReady.wait();
         }
 
         Thread read = asyncReadFromModel();
-        read.join();
+        watchDogThread.join();
+        read.interrupt();
     }
 
     @Override

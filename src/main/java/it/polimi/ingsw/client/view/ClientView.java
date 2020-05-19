@@ -99,8 +99,8 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
                             }
                         }
                     } catch (Exception e){
-                        setActive(false);
-                        LOGGER.log(Level.SEVERE, "Got an exception", e);
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.SEVERE, "Got an exception", e);
                     }
                 }
         );

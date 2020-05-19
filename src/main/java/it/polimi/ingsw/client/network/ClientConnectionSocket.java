@@ -52,7 +52,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
     }
 
     public boolean hasAnswer() {
-        if (!isActive()) return true;
         boolean ret;
 
         synchronized (buffer) {
@@ -75,12 +74,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
                                     if (temp == null) {
                                         setActive(false);
-                                        synchronized (clientView.lockFree) {
-                                            clientView.lockFree.notifyAll();
-                                        }
-                                        synchronized (clientView.lockDemand) {
-                                            lockDemand.notifyAll();
-                                        }
                                         break;
                                     }
 
@@ -94,17 +87,10 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                         buffer.notifyAll();
                                         LOGGER.info("READ");
                                     }
-
-                                    if (!clientView.isActive() || socket.isClosed()) {
-                                        setActive(false);
-                                        synchronized (buffer) {
-                                            buffer.notifyAll();
-                                        }
-                                    }
                                 }
                             }
                         } catch (Exception e){
-                            setActive(false);
+                            LOGGER.log(Level.SEVERE, "Got an IOException", e);
                         }
                     }
         );
@@ -120,9 +106,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                             Demand<S> demand;
                             while (isActive()) {
                                 synchronized (clientView.lockDemand) {
-                                    while (!isActive() ||!clientView.isChanged()) clientView.lockDemand.wait();
-                                    if (!isActive())
-                                        break;
+                                    while (!clientView.isChanged()) clientView.lockDemand.wait();
                                     clientView.setChanged(false);
                                     demand = clientView.getDemand();
                                 }
@@ -135,7 +119,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 }
 
                                 LOGGER.info("Sending...");
-                                if (socket.isConnected() && !socket.isClosed()) {
+                                if (isActive()) {
                                     synchronized (file.lockSend) {
                                         try {
                                             file.send(demand);
@@ -146,17 +130,10 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                     }
                                 }
                                 LOGGER.info("Sent!");
-
-                                if (!clientView.isActive() || socket.isClosed()) {
-                                    setActive(false);
-                                    synchronized (buffer) {
-                                        buffer.notifyAll();
-                                    }
-                                }
                             }
-                        } catch(Exception e) {
-                            setActive(false);
-                            LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
+                        } catch (Exception e) {
+                            if (!(e instanceof InterruptedException))
+                                LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
                         }
                     }
             );
@@ -171,20 +148,12 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                     try {
                         while (isActive()) {
                             synchronized (clientView.lockFree) {
-                                while (!isActive() || !clientView.isFree()) clientView.lockFree.wait();
-                                if (!isActive())
-                                    break;
+                                while (!clientView.isFree()) clientView.lockFree.wait();
                                 clientView.setFree(false);
                             }
 
                             synchronized (buffer) {
                                 while (!hasAnswer()) buffer.wait();
-                                if (!clientView.isActive() || socket.isClosed()) {
-                                    setActive(false);
-                                    synchronized (lockAnswer) {
-                                        lockAnswer.notifyAll();
-                                    }
-                                }
                             }
 
                             LOGGER.info("Consuming...");
@@ -195,8 +164,8 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                             }
                         }
                     } catch(Exception e) {
-                        setActive(false);
-                        LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
                     }
                 }
         );
@@ -206,19 +175,19 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
     }
 
     @Override
-    protected void startThreads() throws InterruptedException {
+    protected void startThreads(Thread watchDogThread) throws InterruptedException {
         Thread read = asyncReadFromSocket();
         Thread write = asyncWriteToSocket();
         Thread consumer = consumerThread();
-        read.join();
-        write.join();
-        consumer.join();
+        watchDogThread.join();
+        read.interrupt();
+        write.interrupt();
+        consumer.interrupt();
     }
 
     public synchronized void closeConnection() {
         try {
             socket.close();
-            setActive(false);
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Cannot close socket", e);

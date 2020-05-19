@@ -1,20 +1,23 @@
 package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CLIScanner<S> {
 
     private ClientModel<S> clientModel;
-    private final Scanner in;
+    private final BufferedReader in;
     private final CLIPrinter<S> out;
 
     private static final String CREATEGAME = "Insert the number of players:\n";
@@ -34,8 +37,10 @@ public class CLIScanner<S> {
     private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
+    private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
+
     public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
-        in = new Scanner(inputStream);
+        in = new BufferedReader(new InputStreamReader(inputStream));
         this.out = out;
         this.clientModel = clientModel;
 
@@ -144,7 +149,9 @@ public class CLIScanner<S> {
             payload = null;
 
             out.printString(messageMap.get(demandType));
-            value = in.nextLine();
+            if (!clientModel.isActive())
+                return null;
+            value = nextLine();
 
             toRepeatFunction = toRepeatMap.get(demandType);
             if (toRepeatFunction != null)
@@ -153,7 +160,7 @@ public class CLIScanner<S> {
             if (demandType.equals(DemandType.ASK_ADDITIONAL_POWER)) {
                 if (value.equals("y")) {
                     out.printString(ADDITIONALPOWERREQ);
-                    value = in.nextLine();
+                    value = nextLine();
                     payload = parseCommand(value);
                 }
                 else if (value.equals("n")) {
@@ -199,6 +206,24 @@ public class CLIScanner<S> {
     }
 
     public String nextLine() {
-        return in.nextLine();
+        String value = null;
+        try {
+            value = in.readLine();
+        } catch (Exception e) {
+            if (!(e instanceof IOException))
+                LOGGER.log(Level.SEVERE, "Got an Exception", e);
+            else
+                return null;
+        }
+
+        return value;
+    }
+
+    public void close() {
+        try {
+            in.close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an Exception", e);
+        }
     }
 }

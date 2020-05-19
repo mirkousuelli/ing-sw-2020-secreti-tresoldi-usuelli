@@ -3,14 +3,13 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class SantoriniRunnable<S> implements Runnable {
 
-    private boolean isActive;
-    private boolean isChanged;
+    private boolean isActive = false;
+    private boolean isChanged = false;
 
     private Demand<S> demand;
     protected Answer<S> answer;
@@ -19,29 +18,45 @@ public abstract class SantoriniRunnable<S> implements Runnable {
     public final Object lockAnswer;
     public final Object lock;
 
+    private static boolean isViewActive = true;
+    private static final Object lockWatchDog = new Object();
     private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
 
     public SantoriniRunnable() {
         lockDemand = new Object();
         lockAnswer = new Object();
         lock = new Object();
-
-        setActive(false);
-        setChanged(false);
     }
 
     @Override
     public void run() {
         setActive(true);
-        setChanged(false);
 
         try {
-            startThreads();
-        } catch (InterruptedException | NoSuchElementException e) {
+            Thread watchDogThread = watchDogThread();
+            startThreads(watchDogThread);
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
         } finally {
             setActive(false);
         }
+    }
+
+    protected Thread watchDogThread() {
+        Thread t = new Thread(
+                () -> {
+                    try {
+                        synchronized (lockWatchDog) {
+                            while (isViewActive) lockWatchDog.wait();
+                        }
+                    } catch (Exception e){
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                    }
+                }
+        );
+        t.start();
+        return t;
     }
 
     public boolean isActive() {
@@ -57,6 +72,13 @@ public abstract class SantoriniRunnable<S> implements Runnable {
     public void setActive(boolean active) {
         synchronized (lock) {
             isActive = active;
+        }
+
+        synchronized (lockWatchDog) {
+            if (!isActive) {
+                isViewActive = false;
+                lockWatchDog.notifyAll();
+            }
         }
     }
 
@@ -107,5 +129,5 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
-    protected abstract void startThreads() throws InterruptedException;
+    protected abstract void startThreads(Thread watchDogThread) throws InterruptedException;
 }

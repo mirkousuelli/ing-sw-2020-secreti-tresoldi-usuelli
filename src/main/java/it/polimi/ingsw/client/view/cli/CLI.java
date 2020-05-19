@@ -78,12 +78,14 @@ public class CLI<S> extends ClientView<S> {
     }
 
     @Override
-    protected void startThreads() throws InterruptedException {
+    protected void startThreads(Thread watchDogThread) throws InterruptedException {
         initialRequest();
         out.setClientModel(clientModel);
         in.setClientModel(clientModel);
         Thread read = asyncReadFromModel();
-        read.join();
+        watchDogThread.join();
+        in.close();
+        read.interrupt();
     }
 
     private void initialRequest() {

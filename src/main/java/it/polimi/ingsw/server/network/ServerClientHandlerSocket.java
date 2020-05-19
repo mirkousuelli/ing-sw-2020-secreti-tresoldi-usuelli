@@ -7,24 +7,18 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
-import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.game.states.ChooseWorker;
 import it.polimi.ingsw.server.model.game.states.Move;
 import it.polimi.ingsw.server.network.message.Lobby;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ServerClientHandlerSocket extends Observable<Demand> implements ServerClientHandler, Runnable {
 
@@ -37,6 +31,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     private boolean isActive;
     private boolean creator;
+    private boolean loggingOut;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server) throws IOException {
         this.socket = socket;
@@ -45,6 +40,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         lobby = null;
         buffer = new LinkedList<>();
         creator = false;
+        loggingOut = false;
+    }
+
+    @Override
+    public void setLoggingOut(boolean loggingOut) {
+        this.loggingOut = loggingOut;
     }
 
     @Override
@@ -52,9 +53,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         this.isActive = isActive;
     }
 
-    private boolean hasDemand() {
-        if (!isActive) return true;
+    public synchronized boolean isActive() {
+        return isActive;
+    }
 
+    private boolean hasDemand() {
         boolean ret;
 
         synchronized (buffer) {
@@ -85,33 +88,18 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     @Override
-    public Socket getSocket() {
-        return socket;
-    }
-
-    @Override
-    public Object getBuffer() {
-        return buffer;
-    }
-
-    @Override
-    public void closeConnection() {
+    public void closeSocket() {
         try {
-            if (!socket.isClosed())
+           if (!socket.isClosed())
                 socket.close();
+           synchronized (this) {
+               setActive(false);
+               notifyAll();
+           }
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
         }
-    }
-
-    @Override
-    public void close() {
-        LOGGER.info("logOut client...");
-        synchronized (server) {
-            server.logOut();
-        }
-        LOGGER.info("Done");
     }
 
     @Override
@@ -129,15 +117,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         LOGGER.info("Received!");
 
         if (demand == null) {
-            synchronized (socket) {
-                socket.notifyAll();
-                isActive = false;
-                synchronized (socket) {
-                    socket.notifyAll();
-                }
-                synchronized (buffer) {
-                    buffer.notifyAll();
-                }
+            synchronized (this) {
+                notifyAll();
+                setActive(false);
                 LOGGER.info("Closing...");
             }
         }
@@ -157,9 +139,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             do {
                                 if (demand == null)
                                     demand = read();
-
-                                if (!isActive)
-                                    throw new InterruptedException();
 
                                 synchronized (server) {
                                     toRepeat = server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
@@ -183,9 +162,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 do {
                                     demand = read();
 
-                                    if (!isActive)
-                                        throw new InterruptedException();
-
                                     synchronized (server) {
                                         toRepeat = server.numOfPlayers(this, demand);
                                     }
@@ -205,9 +181,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             while(isActive) {
                                 demand = read();
 
-                                if (!isActive)
-                                    throw new InterruptedException();
-
                                 synchronized (lobby.lockLobby) {
                                     newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
                                     lobby.setNumberOfReady(0);
@@ -215,10 +188,15 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 }
 
                                 if (newGame) {
-                                    synchronized (server) {
-                                        server.newGame(this, demand);
-                                    }
-                                    basicStart();
+                                    do {
+                                        synchronized (server) {
+                                            toRepeat = server.newGame(this, demand);
+                                        }
+                                        if (toRepeat)
+                                            demand = read();
+                                        else if (!loggingOut)
+                                            basicStart();
+                                    } while (toRepeat);
                                 }
                                 else {
                                     LOGGER.info("Consuming...");
@@ -230,7 +208,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 }
                             }
                         } catch (Exception e) {
-                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                            if (!(e instanceof InterruptedException))
+                                LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
                         }
                 }
         );
@@ -243,11 +222,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 () -> {
                     try {
                         Demand demand;
-                        while (isActive) {
+                        while (isActive()) {
                             synchronized (buffer) {
                                 while (!hasDemand()) buffer.wait();
-                                if (!isActive)
-                                    throw new InterruptedException();
                                 demand = getDemand();
                             }
 
@@ -257,7 +234,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             }
                             LOGGER.info("Notified");
                         }
-                    } catch (InterruptedException e){
+                    } catch (Exception e){
                         LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
                     }
                 }
@@ -270,13 +247,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         Thread t = new Thread(
                 () -> {
                     try {
-                        synchronized (socket) {
-                            while (!socket.isConnected() || !socket.isClosed()) socket.wait();
+                        synchronized (this) {
+                            while (isActive()) this.wait();
                         }
-                        isActive = false;
-                        throw new InterruptedException();
-                    } catch (InterruptedException e){
-                        LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                    } catch (Exception e){
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
                     }
                 }
         );
@@ -292,15 +268,15 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             Thread reader = asyncReadFromSocket();
             Thread notifier = notifierThread();
             Thread watchDog = watchDogThread();
-            reader.join();
-            notifier.join();
             watchDog.join();
-        } catch (InterruptedException | NoSuchElementException e) {
-            if (e instanceof NoSuchElementException)
-                LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
+            reader.interrupt();
+            notifier.interrupt();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
         } finally {
             setActive(false);
-            server.logOut();
+            if (!loggingOut)
+                server.SuddenDisconnection();
         }
     }
 

@@ -82,10 +82,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                         while (isActive()) {
                             synchronized (clientConnection.lockAnswer) {
                                 while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
-                                if (!clientConnection.isActive()) {
-                                    setActive(false);
-                                    break;
-                                }
                                 clientConnection.setChanged(false);
                                 temp = clientConnection.getAnswer();
                             }
@@ -100,8 +96,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                             }
                         }
                     } catch (Exception e){
-                        setActive(false);
-                        LOGGER.log(Level.SEVERE, "Got an exception", e);
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.SEVERE, "Got an exception", e);
                     }
                 }
         );
@@ -110,9 +106,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     @Override
-    protected void startThreads() throws InterruptedException {
+    protected void startThreads(Thread watchDogThread) throws InterruptedException {
         Thread read = asyncReadFromConnection();
-        read.join();
+        watchDogThread.join();
+        read.interrupt();
     }
 
     private void updateModel() {

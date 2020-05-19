@@ -6,24 +6,16 @@ import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.network.ServerClientHandler;
 import it.polimi.ingsw.server.network.message.Lobby;
 
-import java.net.Socket;
-
 public class ServerStub implements ServerClientHandler {
 
     public Answer answer;
-
 
     public ServerStub() {
         //stub
     }
 
     @Override
-    public void closeConnection() {
-        //stub
-    }
-
-    @Override
-    public void close() {
+    public void closeSocket() {
         //stub
     }
 
@@ -65,14 +57,7 @@ public class ServerStub implements ServerClientHandler {
     }
 
     @Override
-    public Socket getSocket() {
+    public void setLoggingOut(boolean loggingOut) {
         //stub
-        return null;
-    }
-
-    @Override
-    public Object getBuffer() {
-        //stub
-        return null;
     }
 }

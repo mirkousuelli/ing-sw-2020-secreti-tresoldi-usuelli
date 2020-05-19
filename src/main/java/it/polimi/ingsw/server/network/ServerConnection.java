@@ -17,7 +17,7 @@ public interface ServerConnection {
     //deregister
     void deregisterConnection(ServerClientHandler c);
 
-    void logOut();
+    void SuddenDisconnection();
 
     boolean newGame(ServerClientHandler c, Demand demand);
 }
