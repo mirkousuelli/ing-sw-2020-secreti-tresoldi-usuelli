@@ -33,14 +33,22 @@ public class JDeck extends JPanel implements ActionListener {
         setOpaque(false);
     }
 
+    public int getNum() {
+        return this.gods.size();
+    }
+
     public void addGod(JGod god) {
         this.gods.add(god);
+        this.setCurrent(god);
     }
 
     public void setCurrent(JGod chosen) {
-        this.gods.get(current).getMini().disactive();
-        this.current = this.gods.indexOf(chosen);
-        this.gods.get(current).getMini().active();
+        if (gods.contains(chosen)) {
+            if (current < this.getNum())
+                this.gods.get(current).getMini().disactive();
+            this.current = this.gods.indexOf(chosen);
+            this.gods.get(current).getMini().active();
+        }
     }
 
     public JGod getCurrent() {
@@ -91,11 +99,22 @@ public class JDeck extends JPanel implements ActionListener {
         return gods;
     }
 
+    public List<JMini> getMiniList() {
+        List<JMini> list = new ArrayList<>();
+
+        for (JGod god : gods) {
+            list.add(god.getMini());
+        }
+
+        return list;
+    }
+
     public JGod pop(JGod god) {
         JGod toPop = this.gods.remove(this.gods.indexOf(god));
         remove(toPop.getMini());
         toPop.getMini().disactive();
-        setCurrent(this.gods.get(0));
+        if (this.gods.size() > 0)
+            setCurrent(this.gods.get(0));
         return toPop;
     }
 

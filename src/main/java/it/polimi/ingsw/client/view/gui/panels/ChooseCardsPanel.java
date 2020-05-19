@@ -1,23 +1,22 @@
 package it.polimi.ingsw.client.view.gui.panels;
-import it.polimi.ingsw.client.view.gui.button.deck.JCard;
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.button.deck.JGod;
 import it.polimi.ingsw.client.view.gui.button.deck.JMini;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.List;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private JButton sendButton;
+    private int numPlayer = 3; // !!!!!! TODO : aggiungere il riferimento al numero di giocatori (x action listener)
+    private JButton activeButton;
     private JButton removeButton;
-    private JButton chooseButton;
     private JLayeredPane godsList;
     private JLabel choice;
     private JLayeredPane choosenList;
@@ -27,7 +26,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JDeck chosenDeck;
     private JLayeredPane layers;
 
-    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels) {
+    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, List<God> gods) {
         super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -52,16 +51,15 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
 
-        deck = new JDeck(Arrays.asList(God.values()));
+        deck = new JDeck(gods);
         chosenDeck = new JDeck();
         loadGods();
         for (JGod god : deck.getList())
             god.getMini().addActionListener(this);
-        setChoice(deck.getJGod(God.APOLLO));
+        setChoice(deck, deck.getGod(0));
 
         createSendButton();
         createRemoveButton();
-        createChooseButton();
     }
 
     void createChosenList() {
@@ -107,6 +105,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
 
         chosenDeck.addGod(god);
+        chosenDeck.setCurrent(chosenDeck.getGod(chosenDeck.getNum() - 1));
         cloudBack.add(chosenDeck, c);
         chosenDeck.showMiniList();
     }
@@ -131,7 +130,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         layers.add(choice, c, 1);
     }
 
-    void setChoice(JGod god) {
+    void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -201,18 +200,18 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 1;
 
-        ImageIcon icon = new ImageIcon("img/buttons/send_button.png");
+        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
-        sendButton = new JButton(icon);
-        sendButton.setOpaque(false);
-        sendButton.setContentAreaFilled(false);
-        sendButton.setBorderPainted(false);
-        sendButton.addActionListener(this);
-        sendButton.setName("send");
+        activeButton = new JButton(icon);
+        activeButton.setOpaque(false);
+        activeButton.setContentAreaFilled(false);
+        activeButton.setBorderPainted(false);
+        activeButton.addActionListener(this);
+        activeButton.setName("choose");
 
-        cloudBack.add(sendButton, c);
+        cloudBack.add(activeButton, c);
     }
 
     private void createRemoveButton() {
@@ -232,30 +231,10 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         removeButton.setOpaque(false);
         removeButton.setContentAreaFilled(false);
         removeButton.setBorderPainted(false);
+        removeButton.addActionListener(this);
+        removeButton.setName("remove");
 
         cloudBack.add(removeButton, c);
-    }
-
-    private void createChooseButton() {
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.SOUTH;
-        c.weightx = 1;
-        c.weighty = 1;
-
-        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
-
-        chooseButton = new JButton(icon);
-        chooseButton.setOpaque(false);
-        chooseButton.setContentAreaFilled(false);
-        chooseButton.setBorderPainted(false);
-        chooseButton.addActionListener(this);
-        chooseButton.setName("choose");
-
-        cloudBack.add(chooseButton, c);
     }
 
     @Override
@@ -265,15 +244,43 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 this.panelIndex.next(this.panels);
                 break;
             case "choose":
-                //System.out.println(deck.pop(deck.getCurrent()).getGod().toString());
                 loadChosen(deck.pop(deck.getCurrent()));
-                setChoice(deck.getCurrent());
+                setChoice(deck, deck.getCurrent());
                 deck.showMiniList();
+                if (numPlayer == chosenDeck.getNum()) {
+                    ImageIcon icon = new ImageIcon("img/buttons/send_button.png");
+                    Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+                    icon = new ImageIcon(img);
+                    activeButton.setIcon(icon);
+                    activeButton.setName("send");
+                }
                 // TODO: get god's description from model
                 // gui.getModel()
                 break;
+            case "remove":
+                deck.addGod(chosenDeck.pop(chosenDeck.getCurrent()));
+                if (chosenDeck.getNum() > 0)
+                    chosenDeck.setCurrent(chosenDeck.getGod(0));
+                deck.showMiniList();
+                chosenDeck.showMiniList();
+                if (activeButton.getName().equalsIgnoreCase("send")) {
+                    ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+                    Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+                    icon = new ImageIcon(img);
+                    activeButton.setIcon(icon);
+                    activeButton.setName("choose");
+                }
+                repaint();
+                validate();
+                break;
             case "mini":
-                setChoice(deck.getJGod(((JMini)e.getSource()).getGod()));
+                JMini obj = (JMini)e.getSource();
+                if (deck.getMiniList().contains(obj)) {
+                    setChoice(deck, deck.getJGod(obj.getGod()));
+                }
+                else if (chosenDeck.getMiniList().contains(obj)) {
+                    setChoice(chosenDeck, chosenDeck.getJGod(obj.getGod()));
+                }
                 break;
             default:
                 break;
