@@ -84,19 +84,18 @@ public class CLI<S> extends ClientView<S> {
         in.setClientModel(clientModel);
         Thread read = asyncReadFromModel();
         watchDogThread.join();
-        in.close();
         read.interrupt();
     }
 
     private void initialRequest() {
         out.printString("Insert your name:\n");
-        String name = in.nextLine();
+        String name = in.getValue();
 
         out.printString("Insert the server's ip:\n");
-        String ip = in.nextLine();
+        String ip = in.getValue();
 
         out.printString("Insert the server's port:\n");
-        int port = Integer.parseInt(in.nextLine());
+        int port = Integer.parseInt(in.getValue());
 
         runThreads(name, ip, port);
     }

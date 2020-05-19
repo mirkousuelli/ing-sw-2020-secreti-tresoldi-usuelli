@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
@@ -37,6 +38,10 @@ public class CLIScanner<S> {
     private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
+    private volatile String value;
+    private volatile Thread read;
+    private volatile boolean isClosed = false;
+
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
     public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
@@ -53,6 +58,8 @@ public class CLIScanner<S> {
 
         if (clientModel != null)
             initializeMaps();
+
+        value = null;
     }
 
     public void initializeMaps() {
@@ -96,6 +103,8 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.BUILD, this::parseCommand);
         payloadMap.put(DemandType.USE_POWER, this::parseCommand);
         payloadMap.put(DemandType.VICTORY, this::parseString);
+
+        close();
     }
 
     public void setClientModel(ClientModel<S> clientModel) {
@@ -133,7 +142,6 @@ public class CLIScanner<S> {
         boolean toUsePower;
         boolean incrementIndex;
         int i = 0;
-        String value;
         List<S> payloadList = new ArrayList<>();
         S payload;
 
@@ -151,7 +159,10 @@ public class CLIScanner<S> {
             out.printString(messageMap.get(demandType));
             if (!clientModel.isActive())
                 return null;
-            value = nextLine();
+            nextLine();
+
+            if (value == null)
+                break;
 
             toRepeatFunction = toRepeatMap.get(demandType);
             if (toRepeatFunction != null)
@@ -160,7 +171,9 @@ public class CLIScanner<S> {
             if (demandType.equals(DemandType.ASK_ADDITIONAL_POWER)) {
                 if (value.equals("y")) {
                     out.printString(ADDITIONALPOWERREQ);
-                    value = nextLine();
+                    nextLine();
+                    if (value == null)
+                        break;
                     payload = parseCommand(value);
                 }
                 else if (value.equals("n")) {
@@ -196,6 +209,9 @@ public class CLIScanner<S> {
             }
         } while (toRepeat || incrementIndex);
 
+        value = null;
+        read = null;
+
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
 
@@ -205,25 +221,62 @@ public class CLIScanner<S> {
         return new Demand<>(demandType, payload);
     }
 
-    public String nextLine() {
-        String value = null;
+    private void nextLine() {
+        read = readThread();
         try {
-            value = in.readLine();
-        } catch (Exception e) {
-            if (!(e instanceof IOException))
-                LOGGER.log(Level.SEVERE, "Got an Exception", e);
-            else
-                return null;
+            read.join();
+        } catch (InterruptedException e) {
+            LOGGER.info(e.getMessage());
         }
+    }
+
+    public String getValue() {
+        nextLine();
 
         return value;
     }
 
+    public Thread readThread() {
+        Thread t = new Thread(
+                () -> {
+                    try {
+                        while (!in.ready()) {
+                            Thread.sleep(50);
+                        }
+
+                        if (!isClosed)
+                            value = in.readLine();
+                    } catch (Exception e) {
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.SEVERE, "Got an Exception", e);
+                    }
+                }
+        );
+
+        t.start();
+        return t;
+    }
+
     public void close() {
-        try {
-            in.close();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an Exception", e);
-        }
+        Thread t = new Thread(
+                () -> {
+                    try {
+                        synchronized (SantoriniRunnable.lockWatchDog) {
+                            while (clientModel.isActive()) SantoriniRunnable.lockWatchDog.wait();
+                            if (read.isAlive()) {
+                                isClosed = true;
+                                in.close();
+                                read.interrupt();
+                            }
+                        }
+                    } catch (Exception e) {
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.SEVERE, "Got an Exception", e);
+                    }
+                }
+        );
+
+        t.setDaemon(true);
+        t.start();
     }
 }

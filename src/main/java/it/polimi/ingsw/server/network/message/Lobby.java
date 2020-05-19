@@ -36,13 +36,9 @@ public class Lobby {
 
         File f = new File(backupPath);
         boolean b;
-        try {
-            if (f.exists())
-                b = f.delete();
-            b = f.createNewFile();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an exception", e);
-        }
+        if (f.exists())
+            b = f.delete();
+        //b = f.createNewFile();
     }
 
     public Lobby(Game game) {
@@ -93,13 +89,17 @@ public class Lobby {
     }
 
     public void deletePlayer(ServerClientHandler player) {
-        synchronized (playerViewList) {
-            synchronized (playingConnection) {
-                game.removeObserver(playingConnection.get(player));
-                game.removePlayer(playingConnection.get(player).getPlayer());
-                playerViewList.remove(playingConnection.get(player));
-                playingConnection.remove(player);
+        synchronized (playingConnection) {
+            View playerToRemove = playingConnection.get(player);
+
+            playerToRemove.removeObserver(controller);
+            game.removeObserver(playerToRemove);
+
+            game.removePlayer(playerToRemove.getPlayer());
+            synchronized (playerViewList) {
+                playerViewList.remove(playerToRemove);
             }
+            playingConnection.remove(player);
         }
     }
 

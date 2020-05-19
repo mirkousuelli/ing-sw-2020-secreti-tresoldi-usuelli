@@ -228,6 +228,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 demand = getDemand();
                             }
 
+                            if (!isActive()) break;
+
                             LOGGER.info("Notifying...");
                             synchronized (lobby.getController()) {
                                 notify(demand);
@@ -235,7 +237,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             LOGGER.info("Notified");
                         }
                     } catch (Exception e){
-                        LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                        if (!(e instanceof InterruptedException))
+                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
                     }
                 }
         );

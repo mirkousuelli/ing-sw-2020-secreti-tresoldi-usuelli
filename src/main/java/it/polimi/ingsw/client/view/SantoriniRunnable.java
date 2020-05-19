@@ -19,7 +19,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
     public final Object lock;
 
     private static boolean isViewActive = true;
-    private static final Object lockWatchDog = new Object();
+    public static final Object lockWatchDog = new Object();
     private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
 
     public SantoriniRunnable() {
@@ -75,7 +75,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
 
         synchronized (lockWatchDog) {
-            if (!isActive) {
+            if (!active) {
                 isViewActive = false;
                 lockWatchDog.notifyAll();
             }
