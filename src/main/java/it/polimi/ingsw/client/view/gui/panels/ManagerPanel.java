@@ -1,10 +1,12 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ManagerPanel extends JPanel {
@@ -58,13 +60,13 @@ public class ManagerPanel extends JPanel {
         santoriniPanelList = new ArrayList<>();
         cardLayout = new CardLayout();
         setLayout(cardLayout);
-
+        
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));
         santoriniPanelList.add(new NumPlayerPanel(cardLayout, this));
         santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
-        santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this));
-        santoriniPanelList.add(new ChooseGodPanel(cardLayout, this));
+        santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this, Arrays.asList(God.values())));
+        //santoriniPanelList.add(new ChooseGodPanel(cardLayout, this)); TODO : aggiungere i god scelti dal creatore
         santoriniPanelList.add(new GamePanel(cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.DEFEAT, cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.VICTORY, cardLayout, this));
