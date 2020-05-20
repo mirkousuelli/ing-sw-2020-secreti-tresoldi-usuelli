@@ -26,7 +26,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JDeck chosenDeck;
     private JLayeredPane layers;
 
-    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, List<God> gods) {
+    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -51,7 +51,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
 
-        deck = new JDeck(gods);
+        this.deck = deck;
         chosenDeck = new JDeck();
         loadGods();
         for (JGod god : deck.getList())
