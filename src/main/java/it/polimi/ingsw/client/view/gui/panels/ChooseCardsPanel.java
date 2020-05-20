@@ -241,8 +241,18 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
+                // remove all gods from main deck
+                for (JGod god : deck.getList())
+                    deck.getList().remove(god);
+
+                // adding the chosen ones
+                for (JGod god : chosenDeck.getList())
+                    deck.addGod(god);
+
+                //changing panel
                 this.panelIndex.next(this.panels);
                 break;
+
             case "choose":
                 loadChosen(deck.pop(deck.getCurrent()));
                 setChoice(deck, deck.getCurrent());
@@ -257,6 +267,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 // TODO: get god's description from model
                 // gui.getModel()
                 break;
+
             case "remove":
                 deck.addGod(chosenDeck.pop(chosenDeck.getCurrent()));
                 if (chosenDeck.getNum() > 0)
@@ -273,6 +284,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 repaint();
                 validate();
                 break;
+
             case "mini":
                 JMini obj = (JMini)e.getSource();
                 if (deck.getMiniList().contains(obj)) {

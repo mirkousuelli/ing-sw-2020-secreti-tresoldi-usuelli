@@ -214,7 +214,30 @@ public class GamePanel extends SantoriniPanel {
         }
     }
 
+    public void possibleMove(List<JCell> where) {
+        setAround(where, JCellStatus.MOVE);
+    }
+
+    public void possibleBuild(List<JCell> where) {
+        setAround(where, JCellStatus.BUILD);
+    }
+
+    public void possibleUsePower(List<JCell> where) {
+        setAround(where, JCellStatus.USE_POWER);
+    }
+
+    public void possibleMalus(List<JCell> where) {
+        setAround(where, JCellStatus.MALUS);
+    }
+
     public void setPlayer(JCell where, JCellStatus who) {
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                if (((JBlockDecorator) cellButton[i][j]).containsDecoration(who)) {
+                    ((JBlockDecorator) cellButton[i][j]).removeDecoration(who);
+                }
+            }
+        }
         ((JBlockDecorator) where).addDecoration(who);
     }
 

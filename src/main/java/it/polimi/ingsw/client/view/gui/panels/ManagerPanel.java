@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.button.map.JCell;
 import it.polimi.ingsw.client.view.gui.button.map.JCellStatus;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
@@ -50,7 +51,7 @@ public class ManagerPanel extends JPanel {
         around.add(curr.getCell(3,1));
         around.add(curr.getCell(1,3));
 
-        curr.setAround(around, JCellStatus.MOVE);
+        curr.possibleBuild(around);
         curr.setPlayer(curr.getCell(2,2), JCellStatus.PLAYER_3_FEMALE);
         /* --------------------------------------------------------------------------------------------*/
         santoriniPanelList.add(new StartPanel(cardLayout, this));

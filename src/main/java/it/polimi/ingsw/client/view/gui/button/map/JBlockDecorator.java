@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.button.map;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JBlockDecorator extends JCell {
     private final JCell origin;
@@ -16,6 +17,7 @@ public class JBlockDecorator extends JCell {
         this.history = new ArrayList<>();
         this.origin = origin;
         this.setStatus(this.origin.getStatus());
+        setEnabled(false);
 
         this.current = 0;
         this.history.add(this);
@@ -35,6 +37,10 @@ public class JBlockDecorator extends JCell {
             newDecoration.setLayout(new GridBagLayout());
             this.history.add(newDecoration);
             this.history.get(current - 1).add(this.history.get(current), new GridBagConstraints());
+
+            if (decoration.equals(JCellStatus.MOVE) | decoration.equals(JCellStatus.BUILD) | decoration.equals(JCellStatus.USE_POWER))
+                setEnabled(true);
+
             validate();
             repaint();
         }
@@ -52,6 +58,20 @@ public class JBlockDecorator extends JCell {
         return this.decoration.get(current);
     }
 
+    public boolean containsDecoration(JCellStatus dec) {
+        return this.decoration.contains(dec);
+    }
+
+    public void removeDecoration(JCellStatus dec) {
+        int index = this.decoration.indexOf(dec);
+        this.decoration.remove(dec);
+        remove(this.history.remove(index));
+        setEnabled(false);
+        this.current--;
+        validate();
+        repaint();
+    }
+
     public JCell getBlock() {
         return this.origin;
     }
@@ -67,5 +87,22 @@ public class JBlockDecorator extends JCell {
 
     public void reset() {
         removeAll();
+    }
+
+    public void clean() {
+        JCellStatus curr;
+        List<JCellStatus> toClean = new ArrayList<>();
+
+        toClean.add(JCellStatus.MOVE);
+        toClean.add(JCellStatus.BUILD);
+        toClean.add(JCellStatus.USE_POWER);
+        toClean.add(JCellStatus.MALUS);
+
+        for (int i = 0; i < this.decoration.size(); i++) {
+            curr = this.decoration.get(i);
+            if (toClean.contains(curr)) {
+                this.removeDecoration(curr);
+            }
+        }
     }
 }
