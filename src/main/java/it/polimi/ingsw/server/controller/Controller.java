@@ -19,13 +19,13 @@ public class Controller implements Observer<ActionToPerformView> {
 
     private synchronized void performAction(ActionToPerformView actionToPerformView) {
         if (!model.getCurrentPlayer().nickName.equals(actionToPerformView.getPlayer())) {
-            actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReducedMessage("Not current player")));
+            actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not current player")));
             return;
         }
 
         if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER)) {
             if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString())) {
-                actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReducedMessage("Not permitted")));
+                actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not permitted")));
                 return;
             }
         }
@@ -34,7 +34,7 @@ public class Controller implements Observer<ActionToPerformView> {
         ReturnContent returnContent = model.gameEngine();
 
         if (returnContent == null || returnContent.getAnswerType().equals(AnswerType.ERROR)) {
-            actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, (DemandType) actionToPerformView.getDemand().getHeader(), new ReducedMessage("Error")));
+            actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, new ReducedMessage("Error")));
         }
         else
             model.setState(returnContent.getState());

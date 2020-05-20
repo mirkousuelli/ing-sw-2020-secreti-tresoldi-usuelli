@@ -97,7 +97,7 @@ public class ChangeTurn implements GameState {
         else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
             changeCurrentPlayer();
-            returnContent.setAnswerType(AnswerType.SUCCESS);
+            returnContent.setAnswerType(AnswerType.CHANGE_TURN);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
         }
 

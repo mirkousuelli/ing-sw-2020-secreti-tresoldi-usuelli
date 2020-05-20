@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
@@ -252,22 +253,23 @@ public class Game extends Observable<Answer> {
 
     public ReturnContent gameEngine() {
         ReturnContent returnContent = state.gameEngine();
-        boolean availableGods = returnContent.isAvailableGods();
+        ReturnContent rc = null;
 
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             if (returnContent.isChangeTurn()) {
                 setState(new ChangeTurn(this));
-                ReturnContent rc = state.gameEngine();
+                 rc = state.gameEngine();
 
-                notify(new Answer(rc.getAnswerType(), DemandType.CHANGE_TURN, rc.getPayload()));
+                if (!rc.getAnswerType().equals(AnswerType.ERROR))
+                    notify(new Answer(AnswerType.CHANGE_TURN, rc.getPayload()));
             }
 
-            if (availableGods)
-                notify(new Answer(AnswerType.SUCCESS, DemandType.AVAILABLE_GODS, chosenGods.stream().map(ReducedCard::new).collect(Collectors.toList())));
-
-            notify(new Answer(returnContent.getAnswerType(), DemandType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
+            notify(new Answer(returnContent.getAnswerType(), UpdatedPartType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }
 
-        return returnContent;
+        if (rc != null && rc.getAnswerType().equals(AnswerType.ERROR))
+            return rc;
+        else
+            return returnContent;
     }
 }

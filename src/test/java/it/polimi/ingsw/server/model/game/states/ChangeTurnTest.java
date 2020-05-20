@@ -40,7 +40,7 @@ public class ChangeTurnTest {
         assertTrue(game1.getState() instanceof ChangeTurn);
 
         // it changes the current player
-        game1.setRequest(new ActionToPerform(p3.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game1.setRequest(new ActionToPerform(p3.nickName, new Demand(DemandType.CHANGE_TURN)));
         ReturnContent returnContent = game1.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType()); // the operation is made successfully
@@ -57,7 +57,7 @@ public class ChangeTurnTest {
         game2.setState(State.CHANGE_TURN);
 
         // it changes the current player
-        game2.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game2.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
         ReturnContent rc = game2.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType()); // the operation is made successfully
@@ -90,7 +90,7 @@ public class ChangeTurnTest {
         assertEquals("changeTurn",game.getState().getName());
 
         // it enters change Turn state with only one player, so it goes to victory state
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that it correctly goes to victory state

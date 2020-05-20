@@ -8,26 +8,20 @@ public class ReturnContent<S> {
     private S payload;
     private State state;
     private boolean changeTurn;
-    private boolean availableGods;
 
     public ReturnContent() {
-        this(null, null, null, false, false);
+        this(null, null, null, false);
     }
 
     public ReturnContent(AnswerType answerType, S payload, State state) {
-        this(answerType, payload, state, false, false);
+        this(answerType, payload, state, false);
     }
 
     public ReturnContent(AnswerType answerType, S payload, State state, boolean changeTurn) {
-        this(answerType, payload, state, changeTurn, false);
-    }
-
-    public ReturnContent(AnswerType answerType, S payload, State state, boolean changeTurn, boolean availableGods) {
         this.answerType = answerType;
         this.payload = payload;
         this.state = state;
         this.changeTurn = changeTurn;
-        this.availableGods = availableGods;
     }
 
     public AnswerType getAnswerType() {
@@ -60,13 +54,5 @@ public class ReturnContent<S> {
 
     public void setChangeTurn(boolean changeTurn) {
         this.changeTurn = changeTurn;
-    }
-
-    public boolean isAvailableGods() {
-        return availableGods;
-    }
-
-    public void setAvailableGods(boolean availableGods) {
-        this.availableGods = availableGods;
     }
 }

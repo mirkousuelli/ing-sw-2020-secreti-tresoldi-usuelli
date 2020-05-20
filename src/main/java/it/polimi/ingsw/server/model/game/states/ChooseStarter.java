@@ -39,11 +39,20 @@ public class ChooseStarter implements GameState {
         returnContent.setState(State.CHOOSE_STARTER);
 
         for (Player p : game.getPlayerList()) {
+            if (game.getCurrentPlayer().nickName.equals(starter)) {
+                returnContent.setAnswerType(AnswerType.SUCCESS);
+                returnContent.setState(State.PLACE_WORKERS);
+                returnContent.setChangeTurn(false);
+                returnContent.setPayload(new ArrayList<>());
+
+                break;
+            }
+
             if(p.nickName.equals(starter)) {
-                    game.setStarter(game.getIndex(p));
-                    int newCur = (game.getStarter() + game.getNumPlayers() - 1) % game.getNumPlayers();
-                    game.setCurrentPlayer(game.getPlayer(newCur));
-                    returnContent.setChangeTurn(true);
+                game.setStarter(game.getIndex(p));
+                int newCur = (game.getStarter() + game.getNumPlayers() - 1) % game.getNumPlayers();
+                game.setCurrentPlayer(game.getPlayer(newCur));
+                returnContent.setChangeTurn(true);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
                 returnContent.setState(State.PLACE_WORKERS);

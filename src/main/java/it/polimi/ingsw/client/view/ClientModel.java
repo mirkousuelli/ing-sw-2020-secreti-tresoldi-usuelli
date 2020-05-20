@@ -5,6 +5,7 @@ import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
@@ -26,7 +27,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private String prevPlayer = null;
     private String challenger;
     private final ReducedPlayer player;
+
+    private boolean isCreator = false;
+    private boolean isInitializing = true;
     private boolean isReloaded;
+
+    private DemandType nextState = DemandType.CONNECT;
+    private DemandType currentState = DemandType.CONNECT;
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
 
 
@@ -75,6 +82,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
+    public DemandType getCurrentState() {
+        return currentState;
+    }
+
     public boolean isReloaded() {
         boolean ret;
 
@@ -101,9 +112,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                             synchronized (lockAnswer) {
                                 setAnswer(temp);
                                 updateModel();
-                                setChanged(true);
-                                LOGGER.info("Received: " + getAnswer().getHeader() + " " + getAnswer().getContext());
-                                lockAnswer.notifyAll();
+                                LOGGER.info("updated!");
+                                LOGGER.info("curr: " + currentState);
+                                LOGGER.info("next: " + nextState);
                             }
                         }
                     } catch (Exception e){
@@ -123,76 +134,141 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         read.interrupt();
     }
 
-    private void updateModel() {
-        if (isReloaded) {
-            isReloaded = false;
+    private synchronized void updateStateInitial(Answer<S> answerTemp) {
+        if (!isInitializing) return;
+
+        if (currentState.equals(DemandType.CONNECT) && answerTemp.getHeader().equals(AnswerType.CHANGE_TURN)) {
+            isCreator = true;
+            currentPlayer = player.getNickname();
+            answerTemp.setHeader(AnswerType.SUCCESS);
         }
+
+        updateNextState();
+    }
+
+    private synchronized void updateNextState() {
+        nextState = DemandType.getNextState(currentState, isCreator);
+    }
+
+    private void updateModel() {
+        Answer<S> answerTemp;
+
         synchronized (lockAnswer) {
-            if (answer.getHeader().equals(AnswerType.CLOSE)) {
-                setActive(false);
-                return;
+            answerTemp = getAnswer();
+        }
+
+        if (!isCreator && isInitializing)
+            currentState = nextState;
+        updateStateInitial(answerTemp);
+
+        if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN))
+            updateCurrentPlayer();
+        else{
+            if (isYourTurn()) {
+                if (!isReloaded) {
+                    if (nextState.ordinal() >= DemandType.USE_POWER.ordinal())
+                        currentState = DemandType.CHOOSE_WORKER;
+                    else
+                        currentState = nextState;
+                }
+                else
+                    isReloaded = false;
             }
 
-            if (!answer.getHeader().equals(AnswerType.ERROR))
-                updateReduceObjects(answer);
+            if (answerTemp.getHeader().equals(AnswerType.SUCCESS)) {
+                if (isInitializing)
+                    updateReducedObjectsInitialize(answerTemp);
+                else
+                    updateReduceObjects(answerTemp);
+            }
+
+            if (answerTemp.getHeader().equals(AnswerType.RELOAD))
+                reloadGame();
+
+            updateNextState();
+        }
+
+        synchronized (lockAnswer) {
+            setChanged(true);
+            lockAnswer.notifyAll();
+        }
+    }
+
+    private synchronized void reloadGame() {
+        ReducedGame reducedGame = ((ReducedGame) answer.getPayload());
+
+        reducedBoard = reducedGame.getReducedBoard();
+        opponents = reducedGame.getReducedPlayerList();
+        currentPlayer = reducedGame.getCurrentPlayerIndex();
+        workers = reducedGame.getReducedWorkerList();
+        isInitializing = false;
+
+        if (isYourTurn())
+            currentState = reducedGame.getCurrentState();
+        else
+            currentState = DemandType.CHOOSE_WORKER;
+
+        for (ReducedPlayer o : opponents) {
+            deck.add(o.getCard());
+            if (o.getNickname().equals(player.getNickname())) {
+                player.setCard(o.getCard());
+                player.setColor(o.getColor());
+                opponents.remove(o);
+                break;
+            }
+        }
+
+        isReloaded = true;
+    }
+
+    private synchronized void updateCurrentPlayer() {
+        prevPlayer = currentPlayer;
+        currentPlayer = ((ReducedPlayer) answer.getPayload()).getNickname();
+    }
+
+    private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
+        switch (currentState) {
+            case CREATE_GAME:
+                player.setColor(((ReducedMessage) answerTemp.getPayload()).getMessage());
+                challenger = player.getNickname();
+                break;
+
+            case CONNECT:
+                player.setColor(((ReducedMessage) answerTemp.getPayload()).getMessage());
+                break;
+
+            case START:
+                currentPlayer = ((List<ReducedPlayer>) answerTemp.getPayload()).get(0).getNickname(); //Hp: first one is the chosen one
+
+                opponents = ((List<ReducedPlayer>) answerTemp.getPayload());
+
+                for (ReducedPlayer o : opponents) {
+                    if (o.getNickname().equals(player.getNickname())) {
+                        opponents.remove(o);
+                        break;
+                    }
+                }
+
+                isInitializing = false;
+                break;
+
+            default:
+                throw new NotAValidInputRunTimeException("Not a valid turn: " + currentState);
         }
     }
 
     private synchronized void updateReduceObjects(Answer<S> answer) {
         switch (answer.getContext()) {
-            case RELOAD:
-                ReducedGame reducedGame = ((ReducedGame) answer.getPayload());
-
-                reducedBoard = reducedGame.getReducedBoard();
-                opponents = reducedGame.getReducedPlayerList();
-                currentPlayer = reducedGame.getCurrentPlayerIndex();
-                workers = reducedGame.getReducedWorkerList();
-
-                for (ReducedPlayer o : opponents) {
-                    deck.add(o.getCard());
-                    if (o.getNickname().equals(player.getNickname())) {
-                        player.setCard(o.getCard());
-                        player.setColor(o.getColor());
-                        opponents.remove(o);
-                        break;
-                    }
-                }
-
-                isReloaded = true;
-                break;
-
-            case CREATE_GAME:
-                player.setColor(((ReducedMessage) answer.getPayload()).getMessage());
-                challenger = player.getNickname();
-                break;
-
-            case CONNECT:
-                player.setColor(((ReducedMessage) answer.getPayload()).getMessage());
-                break;
-
-            case START:
-                currentPlayer = ((List<ReducedPlayer>) answer.getPayload()).get(0).getNickname(); //Hp: first one is the chosen one
-
-                opponents = ((List<ReducedPlayer>) answer.getPayload());
-
-                for (ReducedPlayer o : opponents) {
-                    if (o.getNickname().equals(player.getNickname())) {
-                        opponents.remove(o);
-                        break;
-                    }
-                }
-                break;
-
-            case CHOOSE_DECK:
-            case AVAILABLE_GODS:
-                deck = new ArrayList<>((List<ReducedCard>) answer.getPayload());
-                System.out.println(deck);
-                break;
-
-            case CHOOSE_CARD:
-            case CHOOSE_STARTER:
+            case GOD:
+            case PLAYER:
+            case CARD:
                 List<ReducedCard> reducedCardList = ((List<ReducedCard> ) answer.getPayload());
+
                 if (reducedCardList == null || reducedCardList.isEmpty()) return;
+                if (deck.isEmpty() || deck.size() > opponents.size() + 1) {
+                    deck = reducedCardList;
+                    return;
+                }
 
                 Set<God> gods = reducedCardList.stream()
                         .map(ReducedCard::getGod)
@@ -226,16 +302,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 deck.remove(chosen);
                 break;
 
-            case MOVE:
-            case BUILD:
-            case USE_POWER:
-            case ASK_ADDITIONAL_POWER:
-            case PLACE_WORKERS:
-            case CHOOSE_WORKER:
-            case VICTORY:
-            case DEFEAT:
+            case WORKER:
+            case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
-                if (reducedAnswerCellList.isEmpty()) break;
+                if (reducedAnswerCellList.isEmpty()) return;
 
                 //reset board
                 for (int i = 0; i < 5; i++) {
@@ -256,11 +326,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 }
                 break;
 
-            case CHANGE_TURN:
-                prevPlayer = currentPlayer;
-                currentPlayer = ((ReducedPlayer) answer.getPayload()).getNickname();
-                break;
-
             default:
                 throw new NotAValidInputRunTimeException("Not a valid turn");
         }
@@ -273,7 +338,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     public synchronized boolean isYourTurn() {
-       if (currentPlayer == null) return true;
+       if (currentPlayer == null) return false;
 
        return player.getNickname().equals(currentPlayer);
     }

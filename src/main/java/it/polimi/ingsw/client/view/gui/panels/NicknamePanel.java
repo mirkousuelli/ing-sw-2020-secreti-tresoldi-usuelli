@@ -134,7 +134,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
-        if (gui.getAnswer().getContext().equals(DemandType.CREATE_GAME))
+        if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME))
             mg.setCurrentPanelIndex("numOfPlayers");
         else
             mg.setCurrentPanelIndex("waiting");

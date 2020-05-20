@@ -1,5 +1,6 @@
 package it.polimi.ingsw.communication.message.payload;
 
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.map.Board;
@@ -17,6 +18,7 @@ public class ReducedGame {
     private List<ReducedWorker> reducedWorkerList;
     private String currentPlayerIndex;
     private int currentWorkerIndex;
+    private DemandType currentState;
 
     public ReducedGame() {}
 
@@ -31,6 +33,7 @@ public class ReducedGame {
         reducedBoard = new ReducedAnswerCell[5][5];
         reducedPlayerList = new ArrayList<>(lobby.getReducedPlayerList());
         reducedWorkerList = new ArrayList<>();
+        currentState = DemandType.parseString(lobby.getGame().getState().getName());
 
 
         for (int i = 0; i < 5; i++) {
@@ -113,5 +116,13 @@ public class ReducedGame {
 
     public void setCurrentWorkerIndex(int currentWorkerIndex) {
         this.currentWorkerIndex = currentWorkerIndex;
+    }
+
+    public DemandType getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(DemandType currentState) {
+        this.currentState = currentState;
     }
 }

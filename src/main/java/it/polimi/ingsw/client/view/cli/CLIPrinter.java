@@ -2,7 +2,9 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.communication.Color;
+import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
@@ -21,10 +23,10 @@ public class CLIPrinter<S> {
     private final PrintStream out;
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
-    private final EnumMap<DemandType, Runnable> changesMap;
-    private final EnumMap<DemandType, Boolean> allowScanner;
+    private final EnumMap<UpdatedPartType, Runnable> changesMap;
 
     private static final String CONNECT = "Connected!\n";
+    private static final String START = "Starting!!\n";
     private static final String RELOAD = "Reloaded!\n";
     private static final String CREATEGAME = "Waiting other players...\n";
 
@@ -43,32 +45,21 @@ public class CLIPrinter<S> {
 
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
-        changesMap = new EnumMap<>(DemandType.class);
-        allowScanner = new EnumMap<>(DemandType.class);
+        changesMap = new EnumMap<>(UpdatedPartType.class);
 
         stringMap.put(DemandType.CONNECT, CONNECT);
-        stringMap.put(DemandType.RELOAD, RELOAD);
+        stringMap.put(DemandType.START, START);
         stringMap.put(DemandType.CREATE_GAME, CREATEGAME);
 
         initialMap.put(DemandType.CONNECT, this::printString);
+        initialMap.put(DemandType.START, this::printStart);
+        initialMap.put(DemandType.CREATE_GAME, this::printString);
 
-        changesMap.put(DemandType.RELOAD, this::printAll);
-        changesMap.put(DemandType.START, this::printStart);
-        changesMap.put(DemandType.CHOOSE_DECK, this::printAvailableGods);
-        changesMap.put(DemandType.CHOOSE_CARD, this::printAvailableGods);
-        changesMap.put(DemandType.CHOOSE_STARTER, this::printGods);
-        changesMap.put(DemandType.PLACE_WORKERS, this::printBoard);
-        changesMap.put(DemandType.CHOOSE_WORKER, this::printBoard);
-        changesMap.put(DemandType.MOVE, this::printAll);
-        changesMap.put(DemandType.BUILD, this::printAll);
-        changesMap.put(DemandType.ASK_ADDITIONAL_POWER, this::printAll);
-        changesMap.put(DemandType.CHANGE_TURN, this::printCurrentPlayer);
-
-        allowScanner.put(DemandType.CONNECT, false);
-        allowScanner.put(DemandType.RELOAD, false);
-        allowScanner.put(DemandType.START, false);
-        allowScanner.put(DemandType.CHANGE_TURN, false);
-        allowScanner.put(DemandType.AVAILABLE_GODS, false);
+        changesMap.put(UpdatedPartType.GOD, this::printAvailableGods);
+        changesMap.put(UpdatedPartType.CARD, this::printAvailableGods);
+        changesMap.put(UpdatedPartType.PLAYER, this::printGods);
+        changesMap.put(UpdatedPartType.WORKER, this::printBoard);
+        changesMap.put(UpdatedPartType.BOARD, this::printAll);
     }
 
     public void setClientModel(ClientModel<S> clientModel) {
@@ -83,7 +74,8 @@ public class CLIPrinter<S> {
         out.print(message);
     }
 
-    public void printStart() {
+    public void printStart(String message) {
+        out.println(message);
         printLogo();
         printOpponents();
     }
@@ -256,11 +248,12 @@ public class CLIPrinter<S> {
 
     private void printAll() {
         printBoard();
-        printPossibleActions();
+        if (clientModel.isYourTurn() && !clientModel.isReloaded())
+            printPossibleActions();
         printGods();
     }
 
-    private void printCurrentPlayer() {
+    public void printCurrentPlayer() {
         boolean isYourTurn = false;
         ReducedPlayer currentPlayer;
 
@@ -284,6 +277,10 @@ public class CLIPrinter<S> {
         out.println("Done!");
     }
 
+    public void printReload() {
+        out.println(RELOAD);
+    }
+
     public void printEnd(String context) {
         if (clientModel.isYourTurn())
             out.println("It's your " + context + "!");
@@ -292,9 +289,9 @@ public class CLIPrinter<S> {
     }
 
     public boolean printChanges(DemandType demandType) {
-        Boolean ret;
+        boolean ret;
         Consumer<String> initlaFunct = initialMap.get(demandType);
-        Runnable changesMapFunct = changesMap.get(demandType);
+        Runnable changesMapFunct = changesMap.get(UpdatedPartType.parseString(demandType.toString()));
 
            if (initlaFunct != null)
                initlaFunct.accept(stringMap.get(demandType));
@@ -302,11 +299,8 @@ public class CLIPrinter<S> {
                changesMapFunct.run();
            }
 
-           ret = allowScanner.get(demandType);
-           if (ret == null) {
-               synchronized (clientModel.lock) {
-                   ret = clientModel.isYourTurn();
-               }
+           synchronized (clientModel.lock) {
+               ret = clientModel.isYourTurn();
            }
 
            return ret;

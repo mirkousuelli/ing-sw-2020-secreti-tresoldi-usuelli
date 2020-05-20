@@ -3,9 +3,10 @@ package it.polimi.ingsw.communication.message.header;
 public enum AnswerType {
     ERROR,
     SUCCESS,
+    CHANGE_TURN,
     DEFEAT,
     VICTORY,
-    RESUME,
+    RELOAD,
     CLOSE;
 
     public AnswerType parseString(String str) {
@@ -14,12 +15,14 @@ public enum AnswerType {
                 return ERROR;
             case "success":
                 return SUCCESS;
+            case "changeTurn":
+                return CHANGE_TURN;
             case "defeat":
                 return DEFEAT;
             case "victory":
                 return VICTORY;
-            case "resume":
-                return RESUME;
+            case "reload":
+                return RELOAD;
             case "close":
                 return CLOSE;
             default:
@@ -34,12 +37,14 @@ public enum AnswerType {
                 return "error";
             case SUCCESS:
                 return "success";
+            case CHANGE_TURN:
+                return "changeTurn";
             case DEFEAT:
                 return "defeat";
             case VICTORY:
                 return "victory";
-            case RESUME:
-                return "resume";
+            case RELOAD:
+                return "reload";
             case CLOSE:
                 return "close";
             default:

@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
@@ -149,7 +150,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                         while (lobby.getNumberOfPlayers() == -1) lobby.lockLobby.wait();
 
                                         if (lobby.getNumberOfPlayers() == lobby.getReducedPlayerList().size() && !lobby.isPresentInGame(this)) {
-                                            send(new Answer(AnswerType.CLOSE, DemandType.CONNECT, new ReducedMessage("null")));
+                                            send(new Answer(AnswerType.CLOSE));
                                             setActive(false);
                                             return;
                                         }
@@ -310,11 +311,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
 
         //start
-        send(new Answer(AnswerType.SUCCESS, DemandType.START, players));
+        send(new Answer(AnswerType.SUCCESS, players));
         synchronized (lobby.lockLobby) {
-            send(new Answer(AnswerType.SUCCESS, DemandType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
+            send(new Answer(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
             if (lobby.isCurrentPlayerInGame(this))
-                asyncSend(new Answer(AnswerType.SUCCESS, DemandType.CHOOSE_DECK, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+                asyncSend(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
     }
 
@@ -332,7 +333,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
 
         //reload
-        send(new Answer<>(AnswerType.SUCCESS, DemandType.RELOAD, reducedGame));
+        send(new Answer<>(AnswerType.RELOAD, reducedGame));
 
         //resume game
         synchronized (lobby.lockLobby) {
@@ -352,7 +353,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
                 }
 
-                asyncSend(new Answer<>(AnswerType.SUCCESS, DemandType.parseString(loadedGame.getState().getName()), payload));
+                asyncSend(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }
         }
     }

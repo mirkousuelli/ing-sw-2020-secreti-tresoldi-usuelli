@@ -25,7 +25,7 @@ public class CLI<S> extends ClientView<S> {
 
     @Override
     protected void update() {
-        boolean isYourTurn;
+        boolean isYourTurn = false;
         Answer<S> answerTemp = getAnswer();
 
         switch (answerTemp.getHeader()) {
@@ -47,34 +47,49 @@ public class CLI<S> extends ClientView<S> {
 
             case SUCCESS:
                 out.printSuccess();
-                isYourTurn = out.printChanges(answerTemp.getContext());
+                isYourTurn = out.printChanges(clientModel.getCurrentState());
                 break;
 
             case CLOSE:
                 setActive(false);
                 return;
 
+            case CHANGE_TURN:
+                out.printCurrentPlayer();
+                if (clientModel.getCurrentState().equals(DemandType.CREATE_GAME))
+                    isYourTurn = out.printChanges(clientModel.getCurrentState());
+                break;
+
+            case RELOAD:
+                out.printReload();
+                out.printChanges(clientModel.getCurrentState());
+                isYourTurn = false;
+                break;
+
             default:
                 throw new NotAValidInputRunTimeException("Not a valid answer");
         }
 
         if (isYourTurn)
-            startUI(answerTemp);
+            startUI();
 
         becomeFree();
     }
 
-    private void startUI(Answer<S> answerTemp) {
-        Demand<S> demand = in.requestInput(answerTemp.getContext());
+    private void startUI() {
+        if (clientModel.getCurrentState().equals(DemandType.START))
+            return;
+        Demand<S> demand = in.requestInput(clientModel.getCurrentState());
 
-        if (demand.getHeader().equals(DemandType.VICTORY) && ((ReducedMessage) demand.getPayload()).getMessage().equals("n")) {
+        /*if (demand.getHeader().equals(DemandType.VICTORY) && ((ReducedMessage) demand.getPayload()).getMessage().equals("n")) {
             setActive(false);
             synchronized (clientModel.lock) {
                 clientModel.setActive(false);
             }
-        }
+        }*/
 
-        createDemand(demand);
+        if (clientModel.isYourTurn())
+            createDemand(demand);
     }
 
     @Override

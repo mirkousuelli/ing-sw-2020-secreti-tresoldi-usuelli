@@ -97,7 +97,7 @@ public class ServerConnectionSocket implements ServerConnection {
     @Override
     public void deregisterConnection(ServerClientHandler c) {
         for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
-            ch.asyncSend(new Answer(AnswerType.SUCCESS, DemandType.DEFEAT, new ReducedPlayer(lobby.getPlayer(c))));
+            ch.asyncSend(new Answer(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c))));
         }
 
         c.setActive(false);
@@ -120,6 +120,7 @@ public class ServerConnectionSocket implements ServerConnection {
 
     @Override
     public synchronized boolean connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
+        //connect
         if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
@@ -127,6 +128,7 @@ public class ServerConnectionSocket implements ServerConnection {
             return false;
         }
         else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() == 0)) {
+            //connect
             lobby = new Lobby();
             lobby.addPlayer(name, c);
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
@@ -134,20 +136,22 @@ public class ServerConnectionSocket implements ServerConnection {
             c.setCreator(true);
             LOGGER.info("Created!");
 
-            c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CREATE_GAME, new ReducedMessage(lobby.getColor(c))));
+            //TODO
+            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedMessage(lobby.getColor(c))));
             return false;
         }
         else if (!lobby.isReloaded() && lobby.getGame().getPlayer(name) == null &&
                  lobby.getNumberOfPlayers() != -1 && lobby.getNumberOfPlayers() > lobby.getReducedPlayerList().size()) {
+            //connect
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
-            c.send(new Answer<>(AnswerType.SUCCESS, DemandType.CONNECT, new ReducedMessage(lobby.getColor(c))));
+            c.send(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(c))));
             LOGGER.info("Joined!");
             return false;
         }
 
         if (lobby.getNumberOfPlayers() != -1)
-            c.send(new Answer<>(AnswerType.ERROR, DemandType.CONNECT, new ReducedMessage("null")));
+            c.send(new Answer<>(AnswerType.ERROR));
         else
             c.setLobby(lobby);
 
@@ -173,7 +177,7 @@ public class ServerConnectionSocket implements ServerConnection {
             }
         }
 
-        c.send(new Answer<>(AnswerType.ERROR, DemandType.CREATE_GAME, new ReducedMessage("null")));
+        c.send(new Answer<>(AnswerType.ERROR));
         return true;
     }
 
@@ -192,7 +196,7 @@ public class ServerConnectionSocket implements ServerConnection {
             return false;
         }
 
-        c.asyncSend(new Answer(AnswerType.ERROR, DemandType.NEW_GAME));
+        c.asyncSend(new Answer(AnswerType.ERROR));
         return true;
     }
 }

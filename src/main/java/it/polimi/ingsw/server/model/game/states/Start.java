@@ -11,6 +11,7 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
@@ -23,6 +24,7 @@ import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Start implements GameState {
     /* @Class
@@ -67,9 +69,8 @@ public class Start implements GameState {
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.CHOOSE_CARD);
-        returnContent.setPayload(game.getDeck().popChosenGods(game.getChosenGods()));
+        returnContent.setPayload(game.getChosenGods().stream().map(ReducedCard::new).collect(Collectors.toList()));
         returnContent.setChangeTurn(true);
-        returnContent.setAvailableGods(true);
 
         return returnContent;
     }
