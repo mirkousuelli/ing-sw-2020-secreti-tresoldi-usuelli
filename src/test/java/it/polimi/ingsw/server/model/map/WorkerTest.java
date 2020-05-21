@@ -374,4 +374,41 @@ class WorkerTest {
         assertSame(tester.getLevel(), origin.getPreviousLevel());
         assertSame(tester, origin.getPawn()); // ..but actually is in the right block
     }
+
+    @Test
+    void correctFunctionsWorkerTest() {
+        Board board = new Board();
+        Block origin = (Block) board.getCell(0, 0);
+
+        Player player = new Player("id");
+        player.initializeWorkerPosition(1, origin);
+        Worker tester = player.getWorkers().get(0);
+        player.setCurrentWorker(tester);
+
+        // check that the worker is not walkable, not complete and it is not free
+        assertFalse(tester.isWalkable());
+        assertFalse(tester.isFree());
+        assertFalse(tester.isComplete());
+
+        // check that if the worker's cell is a dome, the cell is complete
+        tester.setLevel(Level.DOME);
+        assertTrue(tester.isComplete());
+        assertEquals("4",tester.getLevel().toString());
+
+        origin.setX(2);
+        origin.setY(2);
+        assertEquals(2,origin.getX());
+        assertEquals(2,origin.getY());
+
+        tester.setX(1);
+        tester.setY(4);
+        assertEquals(1,tester.getX());
+        assertEquals(4,tester.getY());
+
+        // check if the clean works properly
+        tester.clean();
+        assertNull(origin.getPawn());
+
+
+    }
 }

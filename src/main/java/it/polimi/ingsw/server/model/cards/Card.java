@@ -16,21 +16,20 @@ import it.polimi.ingsw.server.model.cards.powers.Power;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the Card and contains the corresponding God, a description, the number of player that it can
+ * be played with and a list of powers
+ */
 public class Card implements Cloneable {
-    /*@class
-     * it describes the player's card
-     */
-
     private God god;
     private String description;
     private int numPlayer;
     private List<Power> powerList;
 
+    /**
+     * Constructor of the card, that sets the attributes describing it
+     */
     public Card() {
-        /*@constructor
-         * it sets the attributes describing the card
-         */
-
         powerList = new ArrayList<>();
     }
 
@@ -62,6 +61,11 @@ public class Card implements Cloneable {
         return powerList.get(i);
     }
 
+    /**
+     * Method that adds the power to the list of powers of the card
+     *
+     * @param power Power that is added
+     */
     public void addPower(Power power) {
         powerList.add(power);
     }
@@ -82,6 +86,12 @@ public class Card implements Cloneable {
         this.powerList = powerList;
     }
 
+
+    /**
+     * Method that clones the card with his attributes
+     *
+     * @return the cloned card
+     */
     @Override
     public Card clone() {
         Card newCard = new Card();

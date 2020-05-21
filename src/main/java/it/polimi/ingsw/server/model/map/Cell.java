@@ -10,27 +10,22 @@
 
 package it.polimi.ingsw.server.model.map;
 
+/**
+ * Abstract class that represents the abstract object which composes the board game and which is developed deeper
+ * by the Block class
+ */
 public interface Cell {
-    /* @abstractClass
-     * it represents the abstract object which composes the board game and which is developed
-     * deeper by the Block class
-     */
-
-    /* GETTER ---------------------------------------------------------------------------------------------------------- */
     int getX();
     int getY();
     Level getLevel();
 
-    /* SETTER ---------------------------------------------------------------------------------------------------------- */
     void setX(int newX);
     void setY(int newY);
     void setLevel(Level newLevel);
 
-    /* PREDICATE ------------------------------------------------------------------------------------------------------- */
     boolean isWalkable();
     boolean isComplete();
     boolean isFree();
 
-    /* FUNCTION -------------------------------------------------------------------------------------------------------- */
     void clean();
 }

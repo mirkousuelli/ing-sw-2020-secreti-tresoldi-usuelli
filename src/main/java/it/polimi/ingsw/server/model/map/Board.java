@@ -25,19 +25,18 @@ import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents a board, which contains 25 cells in a 5x5 map
+ */
 public class Board implements Cloneable {
-    /* @class
-     * it holds 25 cells in a 5x5 map
-     */
 
     public final int DIM = 5;
     public Cell[][] map;
 
-    /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
+    /**
+     * Constructor of the board, that builds up cell-by-cell the whole map
+     */
     public Board() {
-        /* @constructor
-         * it builds up cell-by-cell the whole map.
-         */
 
         this.map = new Cell[DIM][DIM];
 
@@ -48,13 +47,7 @@ public class Board implements Cloneable {
         }
     }
 
-    /* GETTER ---------------------------------------------------------------------------------------------------------- */
-
     public Cell getCell(int x, int y){
-        /* @getter
-         * it gets a specific cell in return through xy coordinates
-         */
-
         if ((x >= 0 && x < 5) && (y >= 0 && y < 5)) {
             return this.map[x][y];
         }
@@ -63,10 +56,6 @@ public class Board implements Cloneable {
     }
 
     public int getLength() {
-        /* @getter
-         * it returns the length of the square map
-         */
-
         return this.DIM;
     }
 
@@ -108,20 +97,15 @@ public class Board implements Cloneable {
         return null;
     }
 
-    /* FUNCTION ----------------------------------------------------------------------------------------------------- */
 
+    /**
+     * Method that gets the 8 cells around the one passed as parameter
+     *
+     * @param cell Cell from which the cells around are calculated
+     * @return list of cells around the chosen one
+     */
     public List<Cell> getAround(Cell cell) {
-        /* @function
-         * it returns 8 cells next to the current one passed as parameter
-         * --------------------------------------------------------------------
-         * @params
-         *          (Cell) cell : base cell where to extrapolate its own cells
-         * --------------------------------------------------------------------
-         * @return
-         *          (ArrayList<Cell>) : 8 cells around the base passed
-         */
 
-        /* ------- EXISTENCE CONTROL ------- */
         boolean notExists = true;
         int i;
 
@@ -173,11 +157,15 @@ public class Board implements Cloneable {
         return null;
     }
 
+    /**
+     * Method that gets all the special moves that can be activated by some Gods
+     *
+     * @param cell Cell from which the cells for special moves are calculated
+     * @param player Player who can make the eventual special move
+     * @param timing Timing that depends from the God
+     * @return list of cells where a special move is possible
+     */
     public List<Cell> getSpecialMoves(Cell cell, Player player, Timing timing) {
-        /* @function
-         * returns all special moves that can be activated by some gods where
-         * around cell are busy from other players' workers
-         */
 
         List<Cell> around = getAround(cell);
         List<Cell> toReturn = new ArrayList<>();
@@ -201,25 +189,23 @@ public class Board implements Cloneable {
         return toReturn;
     }
 
+    /**
+     * Method that gets all the special builds that can be activated by some God powers, where around cell are busy
+     * from other players' workers
+     *
+     * @param cell Cell from which the cells for special build are calculated
+     * @param player Player who can make the eventual special build
+     * @param timing Timing that depends from the God
+     * @return list of cells where a special build is possible
+     */
     public List<Cell> getSpecialBuilds(Cell cell, Player player, Timing timing) {
-        /* @function
-         * returns all special moves that can be activated by some gods where
-         * around cell are busy from other players' workers
-         */
 
         List<Cell> around = getAround(cell).stream().filter(Cell::isWalkable).filter(Cell::isFree).collect(Collectors.toList());
         List<Cell> toReturn = new ArrayList<>();
         List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
 
-       if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
-           around.add(player.getCurrentWorker().getLocation());
-
-        /*if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isSameCell).distinct().reduce(false, (a, b) -> a ? true : b)) {
-            Cell prev = player.getCurrentWorker().getPreviousBuild();
-
-            if (!around.contains(player.getCurrentWorker().getPreviousBuild()))
-                around.add(prev);
-        }*/
+        if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
+            around.add(player.getCurrentWorker().getLocation());
 
         for (Cell c : around) {
             for (Power bp : activePowerList) {
@@ -233,10 +219,16 @@ public class Board implements Cloneable {
         return toReturn;
     }
 
+    /**
+     * Method that gets then cell where the player can move to
+     * It takes all the cells around the current location and removes the one where the player cannot move, considering
+     * all rules of moving and possible maluses
+     *
+     * @param player Player that has to move
+     * @return list of cells where the player can move
+     */
     public List<Cell> getPossibleMoves(Player player) {
-        /* @getter
-         * it considers malus attributes in player and modify possible around cells
-         */
+
         List<Cell> toReturn = getAround(player.getCurrentWorker().getLocation());
         List<Cell> copy;
 
@@ -285,15 +277,50 @@ public class Board implements Cloneable {
             }
         }
 
+        // cannot move up malus active
+        /*if (this.player.cannotMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() < around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+            // if everything is removed then i will return null
+        }
+
+        // must move up malus active
+        if (this.player.isMustMoveUpActive()) {
+            // look for everything around
+            for (Cell around : this.currCell.getAround()) {
+                // checking level difference
+                if (this.currCell.getLevel().toInt() > around.getLevel().toInt()) {
+                    //removing from the list to return
+                    toReturn.remove(around);
+                }
+            }
+
+            // in case i removed everything i reset around
+            if (toReturn == null) {
+                toReturn = this.currCell.getAround();
+            }
+        }*/
+
         // in case no malus has been active : normal getAround()
         // in case both malus are active : normal getAround()
         return toReturn;
     }
 
+    /**
+     * Method that gets then cell where the player can build
+     * It takes all the cells around the given cell and removes the one where the player cannot build, that are the
+     * ones that are occupied by a worker or have a dome
+     *
+     * @param cell Cell from which it calculates the possible builds
+     * @return list of cells where the player can build
+     */
     public List<Cell> getPossibleBuilds(Cell cell) {
-        /* @getter
-         * it gets possible cell where to build
-         */
 
         // in this case, since no gods have consequence on it, it doesn't change
         List<Cell> toReturn = getAround(cell);
@@ -306,10 +333,15 @@ public class Board implements Cloneable {
         return toReturn;
     }
 
+    /**
+     * Method that makes the worker move to the chosen cell, through an operation of undecorate-decorate
+     *
+     * @param player Player that is requiring the move
+     * @param newCell Cell where the worker wants to be moved
+     * @return {@code true} if the worker is moved properly, {@code false} if the action wasn't possible
+     */
     public boolean move(Player player, Cell newCell) {
-        /* @function
-         * it makes worker moving to another cell going through an operation of undecorate-decorate
-         */
+
         Worker worker = player.getCurrentWorker();
 
         // if it is not a dome, free and it is contained within possible choices
@@ -331,10 +363,14 @@ public class Board implements Cloneable {
         return false;
     }
 
+    /**
+     * Method that makes the worker build on the chosen cell
+     *
+     * @param player Player that is requiring the build
+     * @param cellToBuildUp Cell where the worker wants to build
+     * @return {@code true} if the build is made properly, {@code false} if the action wasn't possible
+     */
     public boolean build(Player player, Cell cellToBuildUp) {
-        /* @function
-         * it builds around except for its current location (by default), unless a god change this rule
-         */
         Worker worker = player.getCurrentWorker();
         Block toBuild = (Block) cellToBuildUp;
 
@@ -357,12 +393,10 @@ public class Board implements Cloneable {
         return false;
     }
 
+    /**
+     * Method that cleans off the entire map, setting the default level of each cell to ground and removing every pawn
+     */
     public void clean() {
-        /* @function
-         * it cleans off the entire map setting GROUND as default level and
-         * removing eventual pawns
-         */
-
         // checking each row
         for (int i = 0; i < this.DIM; i++) {
             // and every cell in the current row
@@ -373,6 +407,11 @@ public class Board implements Cloneable {
         }
     }
 
+    /**
+     * Method that clones the board of the game that is being played
+     *
+     * @return the cloned board
+     */
     @Override
     public Board clone() {
         Board cloned = new Board();

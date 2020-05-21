@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VictoryTest {
 
-    //@Test
+    @Test
     void startNewGameAfterVictoryTest() throws ParserConfigurationException, SAXException {
         /*@function
          *  it checks that after a player won, the state is set back to start
@@ -41,7 +41,7 @@ public class VictoryTest {
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that it correctly goes to the start
-        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType()); // the operation is made successfully
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType()); // the operation is made successfully
         assertEquals(State.START, returnContent.getState());
     }
 }

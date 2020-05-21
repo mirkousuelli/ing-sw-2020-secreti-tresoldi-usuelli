@@ -19,12 +19,27 @@ import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.List;
 
+/**
+ * Class that represents a build power
+ * It extends the class ActivePower
+ */
 public class BuildPower<S> extends ActivePower<S> {
 
+    /**
+     * Constructor of the build power that recalls its super class ActivePower
+     */
     public BuildPower() {
         super();
     }
 
+    /**
+     * Method that builds on the chosen cell, considering every case of different God powers
+     *
+     * @param currentPlayer the player that uses the power
+     * @param cellToBuild the chosen cell to build on
+     * @param adjacency list of cells around the worker
+     * @return {@code true} if the power is used correctly, {@code false} otherwise
+     */
     protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
@@ -37,6 +52,13 @@ public class BuildPower<S> extends ActivePower<S> {
         return build(cellToBuild, cellToBuild.getLevel().toInt() + 1);
     }
 
+    /**
+     * Method that builds on the chosen cell at the designated level
+     *
+     * @param cellToBuild chosen cell to build on
+     * @param level level that wants to be built
+     * @return {@code true} after the build is complete
+     */
     private boolean build(Cell cellToBuild, int level) {
         Worker temp = (Worker) ((Block) cellToBuild).getPawn();
 
