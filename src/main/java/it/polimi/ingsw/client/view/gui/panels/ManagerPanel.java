@@ -42,17 +42,17 @@ public class ManagerPanel extends JPanel {
         GamePanel curr = (GamePanel)getCurrentPanel();
 
         List<JCell> around = new ArrayList<>();
-        around.add(curr.getCell(2,1));
-        around.add(curr.getCell(1,2));
-        around.add(curr.getCell(1,1));
-        around.add(curr.getCell(3,3));
-        around.add(curr.getCell(3,2));
-        around.add(curr.getCell(2,3));
-        around.add(curr.getCell(3,1));
-        around.add(curr.getCell(1,3));
+        around.add(curr.getJMap().getCell(2,1));
+        around.add(curr.getJMap().getCell(1,2));
+        around.add(curr.getJMap().getCell(1,1));
+        around.add(curr.getJMap().getCell(3,3));
+        around.add(curr.getJMap().getCell(3,2));
+        around.add(curr.getJMap().getCell(2,3));
+        around.add(curr.getJMap().getCell(3,1));
+        around.add(curr.getJMap().getCell(1,3));
 
-        curr.possibleBuild(around);
-        curr.setPlayer(curr.getCell(2,2), JCellStatus.PLAYER_3_FEMALE);
+        curr.getJMap().possibleMove(around);
+        curr.getJMap().setPlayer(curr.getJMap().getCell(2,2), JCellStatus.PLAYER_3_FEMALE);
         /* --------------------------------------------------------------------------------------------*/
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));

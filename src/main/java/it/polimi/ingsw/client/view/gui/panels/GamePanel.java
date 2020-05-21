@@ -1,20 +1,17 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.map.JBlock;
-import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
-import it.polimi.ingsw.client.view.gui.button.map.JCell;
-import it.polimi.ingsw.client.view.gui.button.map.JCellStatus;
+import it.polimi.ingsw.client.view.gui.button.map.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
-public class GamePanel extends SantoriniPanel {
+public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";
-    private final static int DIM = 5;
-    private JPanel map;
-    private JCell[][] cellButton;
+    private JMap map;
     private JPanel right;
     private JPanel lobby;
     private JPanel card;
@@ -55,24 +52,10 @@ public class GamePanel extends SantoriniPanel {
         mapCon.weighty = 0.1;
         mapCon.fill = GridBagConstraints.BOTH;
         mapCon.insets = new Insets(70,10,85,70);
-        map = new JPanel(new GridBagLayout());
+
+        map = new JMap();
         map.setOpaque(false);
         map.setVisible(true);
-
-        cellButton = new JCell[DIM][DIM];
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                GridBagConstraints c = new GridBagConstraints();
-                c.gridx = i;
-                c.gridy = DIM - j - 1;
-                c.fill = GridBagConstraints.BOTH;
-                c.weighty = 1;
-                c.weightx = 1;
-                cellButton[i][j] = new JBlockDecorator(new JBlock(i, j));
-                cellButton[i][j].addActionListener(e -> ((JBlockDecorator)e.getSource()).buildUp());
-                map.add(cellButton[i][j], c);
-            }
-        }
         map.setBorder(new EmptyBorder(0,25,0,10));
         add(map, mapCon);
     }
@@ -208,40 +191,12 @@ public class GamePanel extends SantoriniPanel {
         secondMalus.add(malus_2, new GridBagConstraints());
     }
 
-    public void setAround(List<JCell> where, JCellStatus how) {
-        for (JCell cell : where) {
-            ((JBlockDecorator) cell).addDecoration(how);
-        }
+    public JMap getJMap() {
+        return map;
     }
 
-    public void possibleMove(List<JCell> where) {
-        setAround(where, JCellStatus.MOVE);
-    }
-
-    public void possibleBuild(List<JCell> where) {
-        setAround(where, JCellStatus.BUILD);
-    }
-
-    public void possibleUsePower(List<JCell> where) {
-        setAround(where, JCellStatus.USE_POWER);
-    }
-
-    public void possibleMalus(List<JCell> where) {
-        setAround(where, JCellStatus.MALUS);
-    }
-
-    public void setPlayer(JCell where, JCellStatus who) {
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                if (((JBlockDecorator) cellButton[i][j]).containsDecoration(who)) {
-                    ((JBlockDecorator) cellButton[i][j]).removeDecoration(who);
-                }
-            }
-        }
-        ((JBlockDecorator) where).addDecoration(who);
-    }
-
-    public JCell getCell(int x, int y) {
-        return cellButton[x][y];
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ;
     }
 }

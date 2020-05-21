@@ -17,7 +17,6 @@ public class JBlockDecorator extends JCell {
         this.history = new ArrayList<>();
         this.origin = origin;
         this.setStatus(this.origin.getStatus());
-        setEnabled(false);
 
         this.current = 0;
         this.history.add(this);
@@ -38,8 +37,10 @@ public class JBlockDecorator extends JCell {
             this.history.add(newDecoration);
             this.history.get(current - 1).add(this.history.get(current), new GridBagConstraints());
 
-            if (decoration.equals(JCellStatus.MOVE) | decoration.equals(JCellStatus.BUILD) | decoration.equals(JCellStatus.USE_POWER))
-                setEnabled(true);
+            /*if (decoration.equals(JCellStatus.MOVE) ||
+                    decoration.equals(JCellStatus.BUILD) ||
+                    decoration.equals(JCellStatus.USE_POWER))
+                setEnabled(true);*/
 
             validate();
             repaint();
@@ -66,7 +67,7 @@ public class JBlockDecorator extends JCell {
         int index = this.decoration.indexOf(dec);
         this.decoration.remove(dec);
         remove(this.history.remove(index));
-        setEnabled(false);
+        //setEnabled(false);
         this.current--;
         validate();
         repaint();
@@ -85,22 +86,23 @@ public class JBlockDecorator extends JCell {
         }
     }
 
+
+    public void activeAction() {
+        if (decoration.contains(JCellStatus.BUILD))
+            buildUp();
+    }
+
     public void reset() {
         removeAll();
     }
 
     public void clean() {
         JCellStatus curr;
-        List<JCellStatus> toClean = new ArrayList<>();
-
-        toClean.add(JCellStatus.MOVE);
-        toClean.add(JCellStatus.BUILD);
-        toClean.add(JCellStatus.USE_POWER);
-        toClean.add(JCellStatus.MALUS);
 
         for (int i = 0; i < this.decoration.size(); i++) {
             curr = this.decoration.get(i);
-            if (toClean.contains(curr)) {
+            if (curr.equals(JCellStatus.MOVE) || curr.equals(JCellStatus.BUILD) ||
+                    curr.equals(JCellStatus.USE_POWER) || curr.equals(JCellStatus.MALUS)) {
                 this.removeDecoration(curr);
             }
         }

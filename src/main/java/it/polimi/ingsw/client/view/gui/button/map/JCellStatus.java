@@ -17,8 +17,8 @@ public enum JCellStatus {
     PLAYER_3_FEMALE("img/workers/worker_3/female.png", 13),
     PLAYER_3_MALE("img/workers/worker_3/male.png", 14);
 
-    private String path;
-    private int value;
+    public final String path;
+    public final int value;
 
     JCellStatus(String path, int value) {
         this.path = path;

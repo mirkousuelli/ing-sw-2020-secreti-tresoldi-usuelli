@@ -18,6 +18,7 @@ public abstract class JCell extends JButton {
         setBorderPainted(false);
         setPreferredSize(new Dimension(DIMENSION, DIMENSION));
         setLayout(new GridBagLayout());
+        setName("cell");
     }
 
     public JCellStatus getStatus() {
