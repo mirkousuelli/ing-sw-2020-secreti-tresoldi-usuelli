@@ -28,7 +28,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JDeck chosenDeck;
     private JLayeredPane layers;
 
-    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, List<God> gods) {
+    public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -53,7 +53,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
 
-        deck = new JDeck(gods);
+        this.deck = deck;
         chosenDeck = new JDeck();
         loadGods();
         for (JGod god : deck.getList())
@@ -243,12 +243,22 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
+                // remove all gods from main deck
+                for (JGod god : deck.getList())
+                    deck.getList().remove(god);
+
+                // adding the chosen ones
+                for (JGod god : chosenDeck.getList())
+                    deck.addGod(god);
+
+                //changing panel
                 ManagerPanel mg = (ManagerPanel) panels;
                 mg.setCurrentPanelIndex("chooseGod");
                 mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
                 this.panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;
+
             case "choose":
                 loadChosen(deck.pop(deck.getCurrent()));
                 setChoice(deck, deck.getCurrent());
@@ -262,6 +272,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 }
                 // TODO: get god's description from model
                 break;
+
             case "remove":
                 deck.addGod(chosenDeck.pop(chosenDeck.getCurrent()));
                 if (chosenDeck.getNum() > 0)
@@ -278,6 +289,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 repaint();
                 validate();
                 break;
+
             case "mini":
                 JMini obj = (JMini)e.getSource();
                 if (deck.getMiniList().contains(obj)) {

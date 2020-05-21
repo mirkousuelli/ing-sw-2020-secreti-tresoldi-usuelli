@@ -3,10 +3,12 @@ package it.polimi.ingsw.client.view.gui.panels;
 import it.polimi.ingsw.client.view.gui.button.map.JBlock;
 import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.button.map.JCell;
+import it.polimi.ingsw.client.view.gui.button.map.JCellStatus;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
 
 public class GamePanel extends SantoriniPanel {
     private static final String imgPath = "map.png";
@@ -61,8 +63,8 @@ public class GamePanel extends SantoriniPanel {
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 GridBagConstraints c = new GridBagConstraints();
-                c.gridx = j;
-                c.gridy = i;
+                c.gridx = i;
+                c.gridy = DIM - j - 1;
                 c.fill = GridBagConstraints.BOTH;
                 c.weighty = 1;
                 c.weightx = 1;
@@ -204,5 +206,42 @@ public class GamePanel extends SantoriniPanel {
         icon_2 = new ImageIcon( img_2 );
         JLabel malus_2 = new JLabel(icon_2);
         secondMalus.add(malus_2, new GridBagConstraints());
+    }
+
+    public void setAround(List<JCell> where, JCellStatus how) {
+        for (JCell cell : where) {
+            ((JBlockDecorator) cell).addDecoration(how);
+        }
+    }
+
+    public void possibleMove(List<JCell> where) {
+        setAround(where, JCellStatus.MOVE);
+    }
+
+    public void possibleBuild(List<JCell> where) {
+        setAround(where, JCellStatus.BUILD);
+    }
+
+    public void possibleUsePower(List<JCell> where) {
+        setAround(where, JCellStatus.USE_POWER);
+    }
+
+    public void possibleMalus(List<JCell> where) {
+        setAround(where, JCellStatus.MALUS);
+    }
+
+    public void setPlayer(JCell where, JCellStatus who) {
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                if (((JBlockDecorator) cellButton[i][j]).containsDecoration(who)) {
+                    ((JBlockDecorator) cellButton[i][j]).removeDecoration(who);
+                }
+            }
+        }
+        ((JBlockDecorator) where).addDecoration(who);
+    }
+
+    public JCell getCell(int x, int y) {
+        return cellButton[x][y];
     }
 }
