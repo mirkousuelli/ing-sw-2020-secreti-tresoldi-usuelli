@@ -1,17 +1,14 @@
 package it.polimi.ingsw.client.view.gui.panels;
-import it.polimi.ingsw.client.view.ClientModel;
-import it.polimi.ingsw.client.view.gui.GUI;
+
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.button.deck.JGod;
 import it.polimi.ingsw.client.view.gui.button.deck.JMini;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
@@ -244,12 +241,12 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
                 // remove all gods from main deck
-                for (JGod god : deck.getList())
+                /*for (JGod god : deck.getList())
                     deck.getList().remove(god);
 
                 // adding the chosen ones
                 for (JGod god : chosenDeck.getList())
-                    deck.addGod(god);
+                    deck.addGod(god);*/
 
                 //changing panel
                 ManagerPanel mg = (ManagerPanel) panels;

@@ -123,6 +123,13 @@ public class JDeck extends JPanel implements ActionListener {
         return gods.stream().map(JGod::getGod).collect(Collectors.toList());
     }
 
+    public void removeGod(God god) {
+        if (gods.get(current).getGod().equals(god))
+            current = (current + 1) % gods.size();
+
+        gods.removeIf(jg -> jg.getGod().equals(god));
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         setCurrent(getJGod(((JMini) e.getSource()).getGod()));

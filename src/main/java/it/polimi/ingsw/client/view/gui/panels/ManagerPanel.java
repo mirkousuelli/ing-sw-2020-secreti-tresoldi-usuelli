@@ -2,8 +2,6 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
-import it.polimi.ingsw.client.view.gui.button.map.JCell;
-import it.polimi.ingsw.client.view.gui.button.map.JCellStatus;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -71,25 +69,8 @@ public class ManagerPanel extends JPanel {
          * noi direttamente dal manager panel
          */
 
-        /* --------------------------------------------------------------------------------------------*/
-        deck = new JDeck(Arrays.asList(God.values())); //  TODO : aggiungere i god scelti dal creatore
+        deck = new JDeck(Arrays.asList(God.values()));
 
-        santoriniPanelList.add(new GamePanel(cardLayout, this));
-        GamePanel curr = (GamePanel)getCurrentPanel();
-
-        List<JCell> around = new ArrayList<>();
-        around.add(curr.getCell(2,1));
-        around.add(curr.getCell(1,2));
-        around.add(curr.getCell(1,1));
-        around.add(curr.getCell(3,3));
-        around.add(curr.getCell(3,2));
-        around.add(curr.getCell(2,3));
-        around.add(curr.getCell(3,1));
-        around.add(curr.getCell(1,3));
-
-        curr.possibleBuild(around);
-        curr.setPlayer(curr.getCell(2,2), JCellStatus.PLAYER_3_FEMALE);
-        /* --------------------------------------------------------------------------------------------*/
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));
         santoriniPanelList.add(new NumPlayerPanel(cardLayout, this));

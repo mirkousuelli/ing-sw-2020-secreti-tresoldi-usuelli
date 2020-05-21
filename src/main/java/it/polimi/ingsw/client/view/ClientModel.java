@@ -58,10 +58,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         challenger = null;
     }
 
-    public void setClientConnection(ClientConnectionSocket<S> clientConnection) {
-        this.clientConnection = clientConnection;
-    }
-
     public ClientConnectionSocket<S> getClientConnection() {
         ClientConnectionSocket<S> ret;
 
@@ -351,6 +347,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
        if (currentPlayer == null) return false;
 
        return player.getNickname().equals(currentPlayer);
+    }
+
+    public synchronized boolean isCreator() {
+        return isCreator;
     }
 
     public synchronized ReducedAnswerCell[][] getReducedBoard() {

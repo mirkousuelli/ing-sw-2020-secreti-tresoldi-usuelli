@@ -82,9 +82,12 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
         if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_DECK)) {
             mg.setCurrentPanelIndex("chooseCards");
             ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
+            gui.free();
         }
-        else if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_CARD))
+        else if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_CARD)) {
             mg.setCurrentPanelIndex("chooseGod");
+            (mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex())).updateFromModel();
+        }
         else {
             gui.free();
             return;
@@ -92,6 +95,5 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
 
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
-        gui.free();
     }
 }
