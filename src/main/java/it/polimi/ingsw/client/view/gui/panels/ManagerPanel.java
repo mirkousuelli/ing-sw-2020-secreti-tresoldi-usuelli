@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
-import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -62,12 +62,6 @@ public class ManagerPanel extends JPanel {
         santoriniPanelList = new ArrayList<>();
         cardLayout = new CardLayout();
         setLayout(cardLayout);
-
-        /* x Fabio
-         * ho pensato che sia di gran lunga meglio tenere JDeck qui, perchè lo devono usufruire 3 diversi panel
-         * ed è inutile avercene uno interno a ciascuno e passare ogni volta una lista di dei, glielo passiamo
-         * noi direttamente dal manager panel
-         */
 
         deck = new JDeck(Arrays.asList(God.values()));
 

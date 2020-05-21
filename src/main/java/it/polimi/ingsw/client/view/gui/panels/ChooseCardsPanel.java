@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
-import it.polimi.ingsw.client.view.gui.button.deck.JGod;
-import it.polimi.ingsw.client.view.gui.button.deck.JMini;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.deck.JGod;
+import it.polimi.ingsw.client.view.gui.component.deck.JMini;
 
 import javax.swing.*;
 import java.awt.*;

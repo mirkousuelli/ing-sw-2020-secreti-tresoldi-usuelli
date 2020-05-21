@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.gui.button.map;
+package it.polimi.ingsw.client.view.gui.component.map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,7 @@ public abstract class JCell extends JButton {
         setBorderPainted(false);
         setPreferredSize(new Dimension(DIMENSION, DIMENSION));
         setLayout(new GridBagLayout());
+        setName("cell");
     }
 
     public JCellStatus getStatus() {
