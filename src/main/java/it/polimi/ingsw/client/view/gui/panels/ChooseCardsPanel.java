@@ -1,25 +1,27 @@
 package it.polimi.ingsw.client.view.gui.panels;
+import it.polimi.ingsw.client.view.ClientModel;
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.button.deck.JGod;
 import it.polimi.ingsw.client.view.gui.button.deck.JMini;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private int numPlayer = 3; // !!!!!! TODO : aggiungere il riferimento al numero di giocatori (x action listener)
+    int numPlayer = 3;
     private JButton activeButton;
     private JButton removeButton;
     private JLayeredPane godsList;
     private JLabel choice;
-    private JLayeredPane choosenList;
+    private JLayeredPane chosenList;
     private JLabel godsBack;
     private JLabel cloudBack;
     private JDeck deck;
@@ -74,13 +76,13 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
 
-        choosenList = new JLayeredPane();
-        choosenList.setLayout(new GridBagLayout());
-        choosenList.setVisible(true);
-        choosenList.setOpaque(false);
-        choosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 130));
+        chosenList = new JLayeredPane();
+        chosenList.setLayout(new GridBagLayout());
+        chosenList.setVisible(true);
+        chosenList.setOpaque(false);
+        chosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 130));
 
-        layers.add(choosenList, c, 0);
+        layers.add(chosenList, c, 0);
 
         ImageIcon icon = new ImageIcon("img/labels/clouds.png");
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
@@ -89,7 +91,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         cloudBack.setOpaque(false);
         cloudBack.setLayout(new GridBagLayout());
 
-        choosenList.add(cloudBack);
+        chosenList.add(cloudBack);
     }
 
     void loadChosen(JGod god) {
@@ -241,7 +243,11 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
+                ManagerPanel mg = (ManagerPanel) panels;
+                mg.setCurrentPanelIndex("chooseGod");
+                mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
                 this.panelIndex.next(this.panels);
+                mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;
             case "choose":
                 loadChosen(deck.pop(deck.getCurrent()));
@@ -255,7 +261,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                     activeButton.setName("send");
                 }
                 // TODO: get god's description from model
-                // gui.getModel()
                 break;
             case "remove":
                 deck.addGod(chosenDeck.pop(chosenDeck.getCurrent()));

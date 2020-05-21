@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
@@ -56,7 +55,7 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         if (numberOfPlayers != null)
             gui.generateDemand(DemandType.CREATE_GAME, new ReducedMessage(numberOfPlayers));
 
-        mg.setCurrentPanelIndex("chooseCards");
+        mg.setCurrentPanelIndex("waiting");
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }

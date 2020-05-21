@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
     private ArrayList<JGod> gods;
@@ -116,6 +117,10 @@ public class JDeck extends JPanel implements ActionListener {
         if (this.gods.size() > 0)
             setCurrent(this.gods.get(0));
         return toPop;
+    }
+
+    public List<God> getGodList() {
+        return gods.stream().map(JGod::getGod).collect(Collectors.toList());
     }
 
     @Override

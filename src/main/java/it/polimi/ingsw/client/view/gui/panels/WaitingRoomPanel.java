@@ -75,12 +75,14 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
     }
 
     @Override
-    public void updateFromModel(ClientModel clientModel) {
+    public void updateFromModel() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
-        if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_DECK))
+        if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_DECK)) {
             mg.setCurrentPanelIndex("chooseCards");
+            ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
+        }
         else if (gui.getClientModel().getCurrentState().equals(DemandType.CHOOSE_CARD))
             mg.setCurrentPanelIndex("chooseGod");
         else {
@@ -90,5 +92,6 @@ public class WaitingRoomPanel extends SantoriniPanel implements ActionListener {
 
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
+        gui.free();
     }
 }

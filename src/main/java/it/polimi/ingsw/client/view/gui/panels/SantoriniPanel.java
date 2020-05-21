@@ -60,5 +60,5 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         return new Dimension(this.scaleWidth, this.scaleHeight);
     }
 
-    public void updateFromModel(ClientModel clientModel) {}
+    public void updateFromModel() {}
 }

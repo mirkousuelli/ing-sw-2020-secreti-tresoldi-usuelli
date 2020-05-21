@@ -130,7 +130,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     }
 
     @Override
-    public void updateFromModel(ClientModel clientModel) {
+    public void updateFromModel() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 

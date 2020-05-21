@@ -40,7 +40,7 @@ public class GUI<S> extends ClientView<S> {
     @Override
     protected void update() {
         synchronized (clientModel.lock) {
-            ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel(clientModel);
+            ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel();
         }
     }
 
@@ -59,7 +59,6 @@ public class GUI<S> extends ClientView<S> {
 
     public void generateDemand(DemandType demandType, S payload) {
         createDemand(new Demand<>(demandType, payload));
-
         becomeFree();
     }
 

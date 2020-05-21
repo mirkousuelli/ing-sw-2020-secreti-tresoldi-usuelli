@@ -5,8 +5,8 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 public class ReducedCard {
 
-    God god;
-    String description;
+    private God god;
+    private String description;
 
     public ReducedCard() {}
 

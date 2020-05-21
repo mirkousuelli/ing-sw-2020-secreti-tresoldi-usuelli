@@ -1,16 +1,19 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.button.deck.JGod;
 import it.polimi.ingsw.client.view.gui.button.deck.JMini;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
@@ -21,9 +24,10 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private JPanel choice;
     private JButton chooseButton;
     private JDeck deck;
+    private God chosenGod;
 
 
-    public ChooseGodPanel(CardLayout panelIndex, JPanel panels, List<God> gods) {
+    public ChooseGodPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -47,12 +51,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
         createChooseButton();
-
-        deck = new JDeck(gods);
-        loadGods();
-        for (JGod god : deck.getList())
-            god.getMini().addActionListener(this);
-        setChoice(deck, deck.getGod(0));
     }
 
     void loadGods() {
@@ -155,6 +153,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         choice.removeAll();
         choice.add(god.getCard(), c);
         deck.setCurrent(god);
+        chosenGod = god.getGod();
         validate();
         repaint();
     }
@@ -170,8 +169,32 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case "choose":
-                this.panelIndex.next(this.panels);
+                ManagerPanel mg = (ManagerPanel) panels;
+                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
                 break;
         }
+    }
+
+    @Override
+    public void updateFromModel() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
+        List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
+        System.out.println(gods);
+
+        if (gods.size() > gui.getClientModel().getNumberOfPlayers()) {
+            gui.free();
+            return;
+        }
+
+        deck = new JDeck(gods);
+        loadGods();
+        for (JGod god : deck.getList())
+            god.getMini().addActionListener(this);
+        setChoice(deck, deck.getGod(0));
+
+        mg.setCurrentPanelIndex("game");
+        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
     }
 }

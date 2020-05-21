@@ -140,6 +140,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected void becomeFree() {
         setFree(true);
+
         synchronized (lockFree) {
             lockFree.notifyAll();
         }

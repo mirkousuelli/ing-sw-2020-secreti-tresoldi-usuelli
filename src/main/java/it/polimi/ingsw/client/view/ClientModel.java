@@ -72,6 +72,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
+    public int getNumberOfPlayers() {
+        int numOfPl;
+
+        synchronized (lock) {
+            numOfPl = opponents.size() + 1;
+        }
+
+        return numOfPl;
+    }
+
     public ReducedPlayer getPlayer() {
         ReducedPlayer ret;
 
