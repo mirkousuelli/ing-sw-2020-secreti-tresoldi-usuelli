@@ -1,5 +1,8 @@
 package it.polimi.ingsw.server.model.cards.powers.tags.malus;
 
+/**
+ * Enumeration that represents the type of level that the malus is applied to
+ */
 public enum MalusLevel {
     UP, DOWN, SAME, DEFAULT;
 

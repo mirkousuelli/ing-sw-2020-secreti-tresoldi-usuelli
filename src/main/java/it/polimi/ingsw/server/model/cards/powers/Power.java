@@ -14,9 +14,9 @@ import it.polimi.ingsw.server.model.cards.powers.tags.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
 
 /**
- * Represents a generic power of a god.
+ * Class that represents the generic power of a God.
  * <p>
- *     It allows us to describe each characteristic of every god.
+ *     It allows us to describe each characteristic of every God.
  *     Different attributes are used to describe a god's power.
  *     For example, Demeter's power allows to build one additional time, so {@code effect} will be {@code Effect.BUILD} and {@code timing} will be {@code Timing.ADDITIONAL}.
  * <p>
@@ -29,51 +29,17 @@ import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
  *     Power should have a getter for each attribute of Power.
  */
 public class Power<S> {
-    /**
-     * Represents the state the worker must be to be able to use the power.
-     * It can be unmoved or default.
-     * For example, Poseidon to perform its power requires an unmoved worker.
-     */
+
     protected WorkerType workerType;
-    /**
-     * Represents the position the worker must be to be able to use the power.
-     * It can be any level from ground to top.
-     * For example, Poseidon to perform its power requires a worker on the ground.
-     */
     protected WorkerPosition workerInitPos;
-    /**
-     * Represents the effect of the power.
-     * It can be a move, a build, a malus or an extra win condition.
-     * For example, Poseidon to perform its power requires an unmoved worker.
-     */
     protected Effect effect;
-    /**
-     * Indicates when the power can be used.
-     * It can be at the start of the turn or at the end.
-     * For active powers such as move and build can also be additional or default.
-     * For example, Poseidon performs its power at the end of the turn.
-     */
     protected Timing timing;
-    /**
-     * Symbolizes restrictions on the power itself.
-     * In other words, it contains constraints about where is it possible to build or move with a god's power.
-     * For example, Demeter can build one additional time but not on the same space.
-     */
     protected Constraints constraints;
-    /**
-     * */
     protected S allowedAction;
-    /**
-     * Represents a complementary malus.
-     * That is to say, a malus applied on the owner of the card when he will use its god's power.
-     * It could be a move malus or a build one.
-     * Also, it can be permanent or limited to a specific number of turns.
-     * For example, Prometheus's power allows to build before and after moving only if the player does not move up.
-     */
     protected Malus personalMalus;
 
     /**
-     * Constructor.
+     * Constructor of the power
      */
     public Power() {
         constraints = new Constraints();
@@ -132,7 +98,7 @@ public class Power<S> {
     }
 
     /**
-     * Implements the algorithm to do the actions related to a god's power.
+     * Implements the algorithm to do the actions related to a God power.
      * <p>
      *     It analyses the values of the attributes of class Power and performs the right actions for the detected power.
      *     Each one of these subclasses represents a different type of power.

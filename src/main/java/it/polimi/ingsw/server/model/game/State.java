@@ -1,5 +1,8 @@
 package it.polimi.ingsw.server.model.game;
 
+/**
+ * Enumeration that contains all possible states of the game
+ */
 public enum State {
     START,
     CHOOSE_CARD,
@@ -12,11 +15,13 @@ public enum State {
     CHANGE_TURN,
     VICTORY;
 
+    /**
+     * Method that prints what string corresponds to each state
+     * @return the string corresponding to the state
+     */
     @Override
     public String toString() {
-        /* @function
-         * it prints what string corresponds to each god
-         */
+
         switch (this) {
             case START:
                 return "chooseDeck";
@@ -43,6 +48,12 @@ public enum State {
         }
     }
 
+    /**
+     * Method that returns the State enum that corresponds to the string
+     *
+     * @param str string of the state
+     * @return the corresponding state
+     */
     public static State parseString(String str) {
         if (str.equalsIgnoreCase("chooseDeck"))
             return START;

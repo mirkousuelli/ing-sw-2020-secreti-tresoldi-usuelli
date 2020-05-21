@@ -18,11 +18,13 @@ import it.polimi.ingsw.server.model.map.Worker;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents a player
+ * <p>
+ *     It contains its nickname, the list of workers, the card he owns, the worker he last picked as current and
+ *     a list of maluses he has (caused by opponents' Gods)
+ */
 public class Player {
-    /*@class
-     * it is used to represent a player, it contains a reference to the player's card and one to its workers
-     */
-
     public final String nickName;
     private final List<Worker> workers;
     private Card card;
@@ -30,11 +32,12 @@ public class Player {
     private final List<Malus> malusList;
     private final int NUM_WORKERS = 2;
 
+    /**
+     * Constructor of the player, initialising elements like his workers and card
+     *
+     * @param nickName String representing the nickname of the player
+     */
     public Player(String nickName) {
-        /*@constructor
-         * it sets the name of the player and creates its 2 workers
-         */
-
         this.nickName = nickName;
         workers = new ArrayList<>(NUM_WORKERS);
         card = null;
@@ -42,19 +45,28 @@ public class Player {
         malusList = new ArrayList<>();
     }
 
+    /**
+     * @return the nickname of the player
+     */
     public String getNickName() {
         return nickName;
     }
 
+    /**
+     * @return the number of workers of the player
+     */
     public int getNumWorkers() {
         return NUM_WORKERS;
     }
 
+    /**
+     * Method that connects a worker with his owner and sets his initial position on the board
+     *
+     * @param id Number between 0 and 1 that represents each worker of every player
+     * @param position Block where the worker is placed at the beginning
+     * @return {@code true} if the worker is initialised properly, {@code false} if the chosen id is not correct or if the chosen position is occupied
+     */
     public boolean initializeWorkerPosition(int id, Block position) {
-        /*@function
-         * it sets the initial position of the current worker
-         */
-
         if (!position.isFree()) return false;
         if (id != 1 && id != 2) return false;
 
@@ -71,6 +83,12 @@ public class Player {
         return true;
     }
 
+    /**
+     * Method that adds the worker to the list of workers of the player
+     *
+     * @param newWorker Worker that is added
+     * @return {@code true} if the worker is added properly, {@code false} if the player has already got both his workers
+     */
     public boolean addWorker(Worker newWorker) {
         if (this.workers.size() < NUM_WORKERS) {
             if (this.workers.size() == 1) {
@@ -82,26 +100,33 @@ public class Player {
         return false;
     }
 
+    /**
+     * Method that removes the worker from the list of workers of the player
+     *
+     * @param worker Worker that is removed
+     */
     public void removeWorker(Worker worker) {
         workers.remove(worker);
     }
 
+    /**
+     * @return the list of workers of the player
+     */
     public List<Worker> getWorkers() {
-        /*@getter
-         * it returns player's workers
-         */
-
         return new ArrayList<>(workers);
     }
 
+    /**
+     * @return the current worker
+     */
     public Worker getCurrentWorker() {
-        /*@getter
-         * it gets the current worker
-         */
-
         return currentWorker;
     }
 
+    /**
+     * @param id of the worker
+     * @return the worker with the chosen id
+     */
     public Worker getWorker(int id) {
         for (Worker w : workers) {
             if (w.getId() == id)
@@ -111,30 +136,36 @@ public class Player {
         return null;
     }
 
+    /**
+     * Method that sets the current worker of the player to the chosen one
+     *
+     * @param currentWorker the current worker of the player
+     */
     public void setCurrentWorker(Worker currentWorker) {
-        /*@setter
-         * it sets the current worker to the designated one
-         */
-
         this.currentWorker = currentWorker;
     }
 
+    /**
+     * @return the player's card
+     */
     public Card getCard() {
-        /*@getter
-         * it gets the player's card
-         */
-
         return card;
     }
 
+    /**
+     * Method that sets the player's card
+     *
+     * @param card the current worker of the player
+     */
     public void setCard(Card card) {
-        /*@setter
-         * it sets the player's card
-         */
-
         this.card = card;
     }
 
+    /**
+     * Method that adds a malus to the player
+     *
+     * @param malusPlayer the Malus that is added to the malus list of the player
+     */
     public void addMalus(Malus malusPlayer) {
         Malus found = malusList.stream()
                 .filter(m -> m.equals(malusPlayer))
@@ -144,10 +175,16 @@ public class Player {
             malusList.add(malusPlayer);
     }
 
+    /**
+     * @return the list of the maluses that the player has
+     */
     public List<Malus> getMalusList() {
         return new ArrayList<>(malusList);
     }
 
+    /**
+     * Method that removes the malus from the player
+     */
     public void removeMalus() {
         malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == 0);
     }

@@ -1,5 +1,9 @@
 package it.polimi.ingsw.server.model.cards.gods;
 
+/**
+ * Enumeration that contains the name of the Gods that are implemented, which are all simple Gods (except Hermes)
+ * plus five advanced Gods: Chronus, Hestia, Persephone, Triton and Zeus
+ */
 public enum God {
     APOLLO,
     ARTEMIS,
@@ -17,11 +21,13 @@ public enum God {
     TRITON,
     ZEUS;
 
+    /**
+     * Method that prints the string corresponding to each God
+     *
+     * @return the string with the name of the god
+     */
     @Override
     public String toString() {
-        /* @function
-         * it prints what string corresponds to each god
-         */
         switch (this) {
             case APOLLO:
                 return "APOLLO";
@@ -58,6 +64,12 @@ public enum God {
         }
     }
 
+    /**
+     * Method that returns the God that corresponds to the string of its name
+     *
+     * @param str the string of God's name
+     * @return the corresponding God
+     */
     public static God parseString(String str) {
         if (str.equalsIgnoreCase("APOLLO"))
             return APOLLO;

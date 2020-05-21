@@ -19,15 +19,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the deck and contains a list of the cards
+ */
 public class Deck {
-    /*@class
-     * it contains a list of the 14 chosen cards
-     */
-
     private final List<Card> cards;
     private final GodParser parser;
     private static final Random randomIndex = new Random();
 
+    /**
+     * Constructor of the player, that creates the list of the cards
+     *
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
     public Deck() throws ParserConfigurationException, SAXException {
         /*@constructor
          * it creates a list of the 14 chosen cards
@@ -37,11 +42,12 @@ public class Deck {
         cards = new ArrayList<>();
     }
 
+    /**
+     * Method that picks a random card from the deck
+     *
+     * @return the randomly picked card
+     */
     public Card popRandomCard() {
-        /*@function
-         * it picks a card from the deck
-         */
-
         Card pickedCard = null;
 
         if (!cards.isEmpty()) {
@@ -52,6 +58,11 @@ public class Deck {
         return pickedCard;
     }
 
+    /**
+     * Method that adds a specific card to the list of cards
+     *
+     * @param newCard Card that is added
+     */
     public void addCard(Card newCard) {
         this.cards.add(newCard);
     }
@@ -72,11 +83,13 @@ public class Deck {
         parser.parseCards(Arrays.asList(God.values()));
     }
 
+    /**
+     * Method that picks the selected card from the deck
+     *
+     * @param god God that is chosen
+     * @return the picked card
+     */
     public Card popCard(God god) {
-        /*@function
-         * it picks the selected card from the deck
-         */
-
         Card pickedCard = null;
 
         if (!cards.isEmpty()) {
