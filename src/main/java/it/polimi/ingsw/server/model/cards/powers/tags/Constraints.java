@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model.cards.powers.tags;
 
+/**
+ * Class that has all constraints useful for some specific powers
+ * It contains restriction on the power itself, telling where it is possible to build or move with a God power
+ * For example Demeter can build one additional time but not on the same space.
+ */
 public class Constraints {
     private int numberOfAdditional;
     private boolean sameCell;

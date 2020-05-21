@@ -19,12 +19,28 @@ import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.List;
 
+/**
+ * Class that represents a move power
+ * It extends the class ActivePower
+ */
 public class MovePower<S> extends ActivePower<S> {
 
+    /**
+     * Constructor of the move power that recalls its super class ActivePower
+     */
     public MovePower() {
         super();
     }
 
+    /**
+     * Method that allows the player to move to the chosen cell as an active power, considering every case of
+     * different God powers
+     *
+     * @param currentPlayer the player that uses the power
+     * @param cellToMove the chosen cell to move to
+     * @param adjacency list of cells around the worker
+     * @return {@code true} if the power is used correctly, {@code false} otherwise
+     */
     @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
         if (cellToMove.getLevel().toInt() - currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > 1) return false;
@@ -60,6 +76,16 @@ public class MovePower<S> extends ActivePower<S> {
         }
     }
 
+    /**
+     * TODO
+     * Method that allows the current player to move
+     *
+     * @param currentPlayer the current player
+     * @param cellToMove cell chosen where to move
+     * @param opponentWorker
+     * @param newPos
+     * @return {@code true} after the build is complete, {@code false}
+     */
     private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block newPos) {
         if (cellToMove.isFree()) return false;
         if (opponentWorker == null) return false;
@@ -80,10 +106,16 @@ public class MovePower<S> extends ActivePower<S> {
         return true;
     }
 
+
+    /**
+     * Method that identifies the direction where the opponent's worker will be forced to move
+     *
+     * @param currentPlayer the current player
+     * @param cell TODO
+     * @param adjacency list of cells around the worker
+     * @return the cell where the opponent's worker is forced to move
+     */
     private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {
-        /*@function
-         * it identifies the direction in which the opponent's worker will be forced to move
-         */
 
         Cell currCell = currentPlayer.getCurrentWorker().getLocation();
 
@@ -113,16 +145,19 @@ public class MovePower<S> extends ActivePower<S> {
         return null;
     }
 
+    /**
+     * Method that identifies the new cell of the opponent's worker
+     *
+     * @param list list of cells where the cell can be
+     * @param x x-coordinate of the cell to be found
+     * @param y y-coordinate of the cell to be found
+     * @return the cell where the opponent's worker is
+     */
     private Cell findCell(List<Cell> list, int x, int y) {
-        /*@function
-         * it identifies the new cell of the opponent's worker
-         */
-
-        for (Cell c: list){
+             for (Cell c: list){
             if (c.getX() == x && c.getY() == y)
                 return c;
         }
-
 
         return null;
     }

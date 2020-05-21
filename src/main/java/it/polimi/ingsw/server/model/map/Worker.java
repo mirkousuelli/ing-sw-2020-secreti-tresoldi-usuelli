@@ -10,35 +10,36 @@
 
 package it.polimi.ingsw.server.model.map;
 
+/**
+ * Class that represents the pawn "worker"
+ * It contains its previous cell, previous build, gender and id
+ */
 public class Worker extends Pawn {
-    /* @class
-     * it represents the pawn 'worker' which can be moved to one cell distance from its current location (default),
-     * and then build around one block up to the selected cell (except for its new position).
-     */
-
     private Block prevCell;
     private Block prevBuild;
     private boolean gender;
     private int id;
 
-    /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
 
+    /**
+     * Constructor of the worker, re-calling its super class Pawn
+     *
+     * @param pos Block where the worker is placed
+     */
     public Worker(Block pos) {
-        /* @constructor
-         * it re-calls its super class Pawn
-         */
-
         super(pos);
         this.prevCell = pos;
         this.prevBuild = null;
         this.gender = true;
     }
 
+    /**
+     * Constructor of the worker, re-calling its super class Pawn
+     *
+     * @param id Number that identifies the worker
+     * @param pos Block where the worker is placed
+     */
     public Worker(int id, Block pos) {
-        /* @constructor
-         * it re-calls its super class Pawn
-         */
-
         super(pos);
         this.prevCell = pos;
         this.prevBuild = null;
@@ -46,54 +47,37 @@ public class Worker extends Pawn {
         this.id = id;
     }
 
-    /* GETTER  --------------------------------------------------------------------------------------------------------- */
-
     public Block getPreviousLocation() {
-        /* @getter
-         * it gets previous worker's location
-         */
-
         return prevCell;
     }
 
     public Block getPreviousBuild() {
-        /* @getter
-         * it gets the previous building built
-         */
-
         return prevBuild;
     }
 
     public int getId() {
         return id;
     }
-    /* SETTER ---------------------------------------------------------------------------------------------------------- */
 
     public void setPreviousLocation(Cell prevCell) {
-        /* @setter
-         * it sets previous worker's location
-         */
-
         if ((prevCell.getX() < 5 && prevCell.getX() >= 0) && (prevCell.getY() < 5 && prevCell.getY() >= 0)) {
             this.prevCell = (Block) prevCell;
         }
     }
 
     public void setPreviousBuild(Cell prevBuild) {
-        /* @setter
-         * it sets the previous block built
-         */
-
         if ((prevBuild.getX() < 5 && prevBuild.getX() >= 0) && (prevBuild.getY() < 5 && prevBuild.getY() >= 0)) {
             this.prevBuild = (Block) prevBuild;
         }
     }
 
+    /**
+     * Method that checks if the worker can be moved
+     *
+     * @return {@code true} if the worker can be moved, {@code false} otherwise
+     */
     @Override
     public boolean isMovable() {
-        /* @predicate
-         * it indicates that the pawn worker is able to change is position
-         */
         return true;
     }
 
@@ -101,6 +85,11 @@ public class Worker extends Pawn {
         this.gender = gender;
     }
 
+    /**
+     * Method that checks the gender of the worker
+     *
+     * @return {@code true} if the worker is a male, {@code false} if it is a female
+     */
     public boolean isMale() {
         return gender;
     }

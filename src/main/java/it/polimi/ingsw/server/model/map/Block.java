@@ -12,24 +12,26 @@ package it.polimi.ingsw.server.model.map;
 
 import java.util.Arrays;
 
+/**
+ * Class that represents a block, the concrete object described by the cell
+ * <p>
+ *     It contains its current and previous level, its coordinates (x and y) and the eventual pawn that can be on
+ *     this block
+ */
 public class Block implements Cell {
-    /* @class
-     * it represents the concrete object described by the cell
-     */
-
     private Level currLevel;
     private Level prevLevel;
     private int x;
     private int y;
     private Pawn pawn;
 
-    /* CONSTRUCTOR ----------------------------------------------------------------------------------------------------- */
-
+    /**
+     * Constructor of the block, initialising the proper cell with its coordinates and sets the level to GROUND
+     *
+     * @param x the x-coordinate of the cell
+     * @param y the y-coordinate of the cell
+     */
     public Block(int x, int y) {
-        /* @constructor
-         * it initialize the proper cell with its coordinates and set as default GROUND as level
-         */
-
         if ((x >= 0 && x < 5) && (y >= 0 && y < 5)) {
             this.x = x;
             this.y = y;
@@ -39,60 +41,33 @@ public class Block implements Cell {
         }
     }
 
-    public Block(){}
-
-    /* GETTER ---------------------------------------------------------------------------------------------------------- */
+    // public Block(){}
 
     @Override
     public int getX() {
-        /* @getter
-         * it gets which column
-         */
-
         return this.x;
     }
 
     @Override
     public int getY() {
-        /* @getter
-         * it gets which row
-         */
-
         return this.y;
     }
 
     @Override
     public Level getLevel() {
-        /* @getter
-         * it gets the current level
-         */
-
         return this.currLevel;
     }
 
     public Level getPreviousLevel() {
-        /* @getter
-         * it gets the previous level state of the cell (useful for Atlas)
-         */
-
         return this.prevLevel;
     }
 
     public Pawn getPawn() {
-        /* @getter
-         * it gives back the eventual pawn on it
-         */
-
-        return this.pawn;
+       return this.pawn;
     }
 
-    /* SETTER ---------------------------------------------------------------------------------------------------------- */
     @Override
     public void setX(int newX){
-        /* @setter
-         * it sets the column
-         */
-
         if (newX >= 0 && newX < 5) {
             this.x = newX;
         }
@@ -100,10 +75,6 @@ public class Block implements Cell {
 
     @Override
     public void setY(int newY) {
-        /* @setter
-         * it sets the row
-         */
-
         if (newY >= 0 && newY < 5) {
             this.y = newY;
         }
@@ -111,81 +82,74 @@ public class Block implements Cell {
 
     @Override
     public void setLevel(Level newLevel) {
-        /* @setter
-         * it sets the level
-         */
-
         if (Arrays.asList(Level.values()).contains(newLevel)) {
             this.currLevel = newLevel;
         }
     }
 
     public void setPreviousLevel(Level oldLevel) {
-        /* @setter
-         * it sets the previous level
-         */
-
         if (Arrays.asList(Level.values()).contains(oldLevel)) {
             this.prevLevel = oldLevel;
         }
     }
 
-    /* FUNCTION -------------------------------------------------------------------------------------------------------- */
-
+    /**
+     * Method that tells if a worker can go to the block.
+     * It is always walkable unless the current level is a dome or if there is a pawn on it
+     *
+     * @return {@code true} if the block is walkable, {@code false} otherwise
+     */
     @Override
     public boolean isWalkable() {
-        /* @predicate
-         * it is always walkable unless the current level is a dome.
-         */
-
         return ((this.getLevel() != Level.DOME) && (this.pawn == null));
     }
 
+    /**
+     * Method that tells if the block has any pawn on it
+     *
+     * @return {@code true} if the block is free, {@code false} otherwise
+     */
     @Override
     public boolean isFree() {
-        /* @predicate
-         * ask if it is free
-         */
-
         return this.pawn == null;
     }
 
+    /**
+     * Method that checks if the block is complete, which means that its level is dome
+     *
+     * @return {@code true} if the block is complete, {@code false} otherwise
+     */
     @Override
     public boolean isComplete() {
-        /* @predicate
-         * ask if it is complete
-         */
-
         return this.getLevel() == Level.DOME;
     }
 
+    /**
+     * Method that cleans the block, removing possible pawns and setting its level back to ground
+     */
     @Override
     public void clean() {
-        /* @function
-         * clean off the cell to its starting state
-         */
-
         this.currLevel = Level.GROUND;
         this.prevLevel = Level.GROUND;
         this.removePawn();
     }
 
+    /**
+     * Method that adds a pawn on the block (if it is walkable, otherwise it does nothing)
+     *
+     * @param newPawn Pawn to add
+     */
     public void addPawn(Pawn newPawn) {
-        /* @function
-         * adding a link to the pawn on it
-         */
-
         if (this.isWalkable()) {
             // setting
             this.pawn = newPawn;
         }
     }
 
+    /**
+     * Method that removes an eventual pawn from the block
+     */
     public void removePawn() {
-        /* @function
-         * remove the pawn from it
-         */
-
         this.pawn = null;
     }
 }

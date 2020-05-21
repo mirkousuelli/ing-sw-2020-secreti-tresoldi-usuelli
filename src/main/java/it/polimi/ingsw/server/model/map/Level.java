@@ -10,10 +10,10 @@
 
 package it.polimi.ingsw.server.model.map;
 
+/**
+ * Enumeration that represents the level of the cell
+ */
 public enum Level {
-    /* @enum
-     * it standardize level layers for a better reading.
-     */
 
     // level 0
     GROUND {
@@ -52,27 +52,26 @@ public enum Level {
 
     /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
+    /**
+     * Method that increases the level of the building by one
+     */
     public Level buildUp() {
-        /* @function
-         * it increases of one level the building
-         */
-
         return values()[ordinal() + 1];
     }
 
+    /**
+     * Method that decreases the level of the building by one
+     */
     public Level buildDown() {
-        /* @function
-         * it reduces of one level the building
-         */
-
         return values()[ordinal() - 1];
     }
 
+    /**
+     * Method that returns the string that corresponds to each level
+     * @return the string that corresponds to the level
+     */
     @Override
     public String toString() {
-        /* @function
-         * it prints what string corresponds to each level
-         */
 
         switch (this) {
             case GROUND:
@@ -90,10 +89,12 @@ public enum Level {
         }
     }
 
+    /**
+     * Method that returns the integer value that corresponds to each level
+     * @return the number that corresponds to the level
+     */
     public Integer toInt() {
-        /* @function
-         * it returns the correspondent integer value
-         */
+
         switch (this) {
             case GROUND:
                 return 0;
@@ -110,10 +111,13 @@ public enum Level {
         }
     }
 
+    /**
+     * Method that returns the correspondent level enum from an integer input
+     *
+     * @param level the number of the level to parse
+     * @return the corresponding level or null if the number isn't correct
+     */
     public static Level parseInt(int level) {
-        /* @function
-         * it returns the correspondent level enum from an integer input
-         */
 
         switch (level) {
             case 0:
@@ -131,10 +135,13 @@ public enum Level {
         }
     }
 
+    /**
+     * Method that returns the level enum that corresponds to the string
+     *
+     * @param level string of the level
+     * @return the corresponding level
+     */
     public static Level parseString(String level) {
-        /* @function
-         * it returns the correspondent level enum from an integer input
-         */
 
         switch (level) {
             case "GROUND":
@@ -153,9 +160,6 @@ public enum Level {
     }
 
     public String getName() {
-        /* @function
-         * it prints what string corresponds to each level
-         */
 
         switch (this) {
             case GROUND:
