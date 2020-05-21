@@ -1,13 +1,12 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.map.*;
+import it.polimi.ingsw.client.view.gui.component.map.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";

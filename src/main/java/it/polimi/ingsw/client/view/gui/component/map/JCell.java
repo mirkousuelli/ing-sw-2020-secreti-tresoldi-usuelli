@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.gui.button.map;
+package it.polimi.ingsw.client.view.gui.component.map;
 
 import javax.swing.*;
 import java.awt.*;

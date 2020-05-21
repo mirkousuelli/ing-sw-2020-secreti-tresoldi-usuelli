@@ -1,14 +1,13 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
-import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
-import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
-import it.polimi.ingsw.client.view.gui.button.map.JCell;
-import it.polimi.ingsw.client.view.gui.button.map.JCellStatus;
-import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
+import it.polimi.ingsw.client.view.gui.component.JWorker;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.map.JCell;
+import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
+import it.polimi.ingsw.client.view.gui.component.map.JDecorator;
 import it.polimi.ingsw.server.model.cards.gods.God;
-import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.model.game.State;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,23 +35,29 @@ public class ManagerPanel extends JPanel {
          */
 
         /* --------------------------------------------------------------------------------------------*/
-        deck = new JDeck(Arrays.asList(God.values())); //  TODO : aggiungere i god scelti dal creatore
+        //  TODO : aggiungere i god scelti dal creatore
+        deck = new JDeck(Arrays.asList(God.values()));
 
-        santoriniPanelList.add(new GamePanel(cardLayout, this));
-        GamePanel curr = (GamePanel)getCurrentPanel();
+        /*santoriniPanelList.add(new GamePanel(cardLayout, this));
+        GamePanel game = (GamePanel)getCurrentPanel();
+
+        JPlayer p = new JPlayer("mirko");
+        JWorker w1 = new JWorker(new JDecorator(JCellStatus.PLAYER_2_FEMALE), game.getJMap().getCell(2,2));
+        JWorker w2 = new JWorker(new JDecorator(JCellStatus.PLAYER_2_MALE), game.getJMap().getCell(0,0));
+        p.setWorkers(w1, w2);
+        game.getJMap().setCurrentWorker(p.getFemaleWorker());
 
         List<JCell> around = new ArrayList<>();
-        around.add(curr.getJMap().getCell(2,1));
-        around.add(curr.getJMap().getCell(1,2));
-        around.add(curr.getJMap().getCell(1,1));
-        around.add(curr.getJMap().getCell(3,3));
-        around.add(curr.getJMap().getCell(3,2));
-        around.add(curr.getJMap().getCell(2,3));
-        around.add(curr.getJMap().getCell(3,1));
-        around.add(curr.getJMap().getCell(1,3));
+        around.add(game.getJMap().getCell(2,1));
+        around.add(game.getJMap().getCell(1,2));
+        around.add(game.getJMap().getCell(1,1));
+        around.add(game.getJMap().getCell(3,3));
+        around.add(game.getJMap().getCell(3,2));
+        around.add(game.getJMap().getCell(2,3));
+        around.add(game.getJMap().getCell(3,1));
+        around.add(game.getJMap().getCell(1,3));
 
-        curr.getJMap().possibleMove(around);
-        curr.getJMap().setPlayer(curr.getJMap().getCell(2,2), JCellStatus.PLAYER_3_FEMALE);
+        game.getJMap().setPossibleBuild(around);*/
         /* --------------------------------------------------------------------------------------------*/
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));

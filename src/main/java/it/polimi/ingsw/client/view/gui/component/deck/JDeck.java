@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.view.gui.button.deck;
+package it.polimi.ingsw.client.view.gui.component.deck;
 
 import it.polimi.ingsw.server.model.cards.gods.God;
 

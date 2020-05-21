@@ -1,15 +1,14 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.button.deck.JDeck;
-import it.polimi.ingsw.client.view.gui.button.deck.JGod;
-import it.polimi.ingsw.client.view.gui.button.deck.JMini;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.deck.JGod;
+import it.polimi.ingsw.client.view.gui.component.deck.JMini;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {

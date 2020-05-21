@@ -1,12 +1,9 @@
-package it.polimi.ingsw.client.view.gui.button.deck;
+package it.polimi.ingsw.client.view.gui.component.deck;
 
-import it.polimi.ingsw.client.view.gui.button.map.JBlockDecorator;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class JMini extends JButton {
     private final static int SIZE_X = 65;
