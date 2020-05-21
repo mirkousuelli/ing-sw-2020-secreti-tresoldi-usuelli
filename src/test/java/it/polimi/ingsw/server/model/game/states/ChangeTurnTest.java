@@ -43,7 +43,7 @@ public class ChangeTurnTest {
         //game1.setRequest(new ActionToPerform(p3.nickName, new Demand(DemandType.CHANGE_TURN)));
         ReturnContent returnContent = game1.gameEngine();
 
-        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType()); // the operation is made successfully
+        assertEquals(AnswerType.CHANGE_TURN, returnContent.getAnswerType()); // the operation is made successfully
         assertEquals(p1, game1.getCurrentPlayer()); // the current player is changed properly
 
 
@@ -60,7 +60,7 @@ public class ChangeTurnTest {
         //game2.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
         ReturnContent rc = game2.gameEngine();
 
-        assertEquals(AnswerType.SUCCESS, rc.getAnswerType()); // the operation is made successfully
+        assertEquals(AnswerType.CHANGE_TURN, rc.getAnswerType()); // the operation is made successfully
         assertEquals(p2, game2.getCurrentPlayer()); // the current player is changed properly
     }
 
