@@ -169,7 +169,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
         if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN))
             updateCurrentPlayer();
-        else{
+        else {
             if (isYourTurn()) {
                 if (!isReloaded) {
                     if (nextState.ordinal() >= DemandType.USE_POWER.ordinal())

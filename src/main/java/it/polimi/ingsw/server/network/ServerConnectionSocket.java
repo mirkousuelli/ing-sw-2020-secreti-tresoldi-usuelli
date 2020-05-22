@@ -119,16 +119,15 @@ public class ServerConnectionSocket implements ServerConnection {
     }
 
     @Override
-    public synchronized boolean connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
-        //connect
+    public synchronized void connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
+        //reload
         if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
             LOGGER.info("Reloaded!");
-            return false;
         }
         else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() == 0)) {
-            //connect
+            //create
             lobby = new Lobby();
             lobby.addPlayer(name, c);
             lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
@@ -136,18 +135,15 @@ public class ServerConnectionSocket implements ServerConnection {
             c.setCreator(true);
             LOGGER.info("Created!");
 
-            //TODO
             c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedMessage(lobby.getColor(c))));
-            return false;
         }
         else if (!lobby.isReloaded() && lobby.getGame().getPlayer(name) == null &&
                  lobby.getNumberOfPlayers() != -1 && lobby.getNumberOfPlayers() > lobby.getReducedPlayerList().size()) {
-            //connect
+            //join
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
             c.send(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(c))));
             LOGGER.info("Joined!");
-            return false;
         }
 
         if (lobby.getNumberOfPlayers() != -1)
@@ -156,7 +152,6 @@ public class ServerConnectionSocket implements ServerConnection {
             c.setLobby(lobby);
 
         LOGGER.info("Error!");
-        return true;
     }
 
     @Override
