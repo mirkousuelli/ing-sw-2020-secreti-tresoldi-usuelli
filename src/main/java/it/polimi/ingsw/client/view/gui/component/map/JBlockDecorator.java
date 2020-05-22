@@ -22,6 +22,7 @@ public class JBlockDecorator extends JCell {
 
     public void addDecoration(JCellStatus decoration) {
         if (!this.decoration.getDecoration().equals(decoration)) {
+            removeAll();
             this.decoration.setDecoration(decoration);
 
             ImageIcon icon = new ImageIcon(decoration.getPath());
@@ -33,7 +34,7 @@ public class JBlockDecorator extends JCell {
             this.decoration.setComponent(newDecoration);
             add(this.decoration.getComponent());
 
-            // TODO : da spostare!!!!
+            // TODO : da spostare! perchè potrebbe rallentare
             repaint();
             validate();
         }
@@ -42,10 +43,17 @@ public class JBlockDecorator extends JCell {
     public void removeDecoration() {
         this.decoration.setDecoration(JCellStatus.NONE);
         this.decoration.getComponent().removeAll();
+
+        validate();
+        repaint();
     }
 
     public JCellStatus getDecoration() {
         return this.decoration.getDecoration();
+    }
+
+    public JDecorator getDecorator() {
+        return this.decoration;
     }
 
     public void addWorker(JWorker worker) {

@@ -1,12 +1,15 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.map.*;
+import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";
@@ -14,6 +17,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JPanel right;
     private JPanel lobby;
     private JPanel card;
+    private JCard cardButton;
     private JPanel left;
     private JPanel firstMalus;
     private JPanel secondMalus;
@@ -138,11 +142,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         card.setVisible(true);
         right.add(card);
 
-        ImageIcon icon_2 = new ImageIcon("img/cards/apollo/card.png");
-        Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
-        icon_2 = new ImageIcon( img_2 );
-        JLabel god = new JLabel(icon_2);
-        card.add(god, new GridBagConstraints());
+        cardButton = new JCard(God.APOLLO);
+        cardButton.addActionListener(this);
+        card.add(cardButton, new GridBagConstraints());
     }
 
     void createLeftSection() {
@@ -194,8 +196,40 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         return map;
     }
 
+    public void setPossibleMove(List<JCell> where) {
+        map.setPossibleMove(where);
+        cardButton.applyNormal();
+    }
+
+    public void setPossibleBuild(List<JCell> where) {
+        map.setPossibleBuild(where);
+        cardButton.applyNormal();
+    }
+
+    public void setPossibleUsePower(List<JCell> where) {
+        map.setPossibleUsePower(where);
+        cardButton.applyPower();
+    }
+
+    public void setPossibleMalus(List<JCell> where) {
+        map.setPossibleMalus(where);
+        cardButton.applyNormal();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        ;
+        JCard src = (JCard)e.getSource();
+
+        switch (src.getName()) {
+            case "card":
+                map.hidePowerCells();
+                cardButton.applyPower();
+                break;
+
+            case "power":
+                map.showPowerCells();
+                cardButton.applyNormal();
+                break;
+        }
     }
 }
