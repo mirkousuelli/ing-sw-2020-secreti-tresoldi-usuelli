@@ -241,12 +241,12 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
                 // remove all gods from main deck
-                /*for (JGod god : deck.getList())
-                    deck.getList().remove(god);
+                int size = deck.getList().size();
+                if (size > 0) deck.getList().subList(0, size).clear();
 
                 // adding the chosen ones
-                for (JGod god : chosenDeck.getList())
-                    deck.addGod(god);*/
+                for (JGod jGod : chosenDeck.getList())
+                    deck.addGod(jGod);
 
                 //changing panel
                 ManagerPanel mg = (ManagerPanel) panels;

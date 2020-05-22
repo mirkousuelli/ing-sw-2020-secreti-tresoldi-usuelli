@@ -70,7 +70,7 @@ public class ManagerPanel extends JPanel {
         santoriniPanelList.add(new NumPlayerPanel(cardLayout, this));
         santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
         santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this, deck));
-        santoriniPanelList.add(new ChooseGodPanel(cardLayout, this));
+        santoriniPanelList.add(new ChooseGodPanel(cardLayout, this, deck));
         santoriniPanelList.add(new GamePanel(cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.DEFEAT, cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.VICTORY, cardLayout, this));

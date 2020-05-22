@@ -6,6 +6,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.deck.JMini;
+import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
@@ -27,7 +29,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private God chosenGod;
 
 
-    public ChooseGodPanel(CardLayout panelIndex, JPanel panels) {
+    public ChooseGodPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 
         GridBagConstraints c = new GridBagConstraints();
@@ -48,7 +50,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.setLayout(new GridBagLayout());
         add(layers, c);
 
-        deck = null;
+        this.deck = deck;
 
         createGodsList();
         createChoice();
@@ -67,7 +69,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
 
-        godsBack.removeAll();
         godsBack.add(deck, c);
         deck.showMiniList();
     }
@@ -162,25 +163,13 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
-    void updateJDeck() {
-        loadGods();
-        for (JGod god : deck.getList())
-            god.getMini().addActionListener(this);
-        setChoice(deck, deck.getGod(0));
-    }
-
-    void removeGod(God chosenGod) {
-        deck.removeGod(chosenGod);
-        if (!deck.getGodList().isEmpty())
-            updateJDeck();
-    }
-
     void nextPanel(boolean isChallenger) {
         ManagerPanel mg = (ManagerPanel) panels;
 
+        //TODO change to otherWait
         if (isChallenger)
             mg.setCurrentPanelIndex("game");
-        else //TODO change to otherWait
+        else
             mg.setCurrentPanelIndex("waiting");
 
         mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
@@ -200,7 +189,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             case "choose":
                 ManagerPanel mg = (ManagerPanel) panels;
                 mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
-                removeGod(chosenGod);
+                deck.removeGod(chosenGod);
                 break;
         }
     }
@@ -220,16 +209,19 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             return;
         }
 
-        if (deck == null || (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty())) {
-            deck = new JDeck(gods);
-            updateJDeck();
+        if (deck.getList().size() >= gui.getClientModel().getNumberOfPlayers() || (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty())) {
+            List<JGod> jGodsToRemove = deck.getList().stream()
+                    .filter(jGod -> !gods.contains(jGod.getGod()))
+                    .collect(Collectors.toList());
+
+            deck.getList().removeIf(jGodsToRemove::contains);
+            loadGods();
         }
 
-        if (gui.getClientModel().getCurrentPlayer().getCard() != null) {
+        if (gui.getClientModel().getCurrentPlayer().getCard() != null)
             nextPanel(isChallenger);
-            if (!isChallenger) return;
-        }
 
+        if (!isChallenger) return;
         gui.free();
     }
 }
