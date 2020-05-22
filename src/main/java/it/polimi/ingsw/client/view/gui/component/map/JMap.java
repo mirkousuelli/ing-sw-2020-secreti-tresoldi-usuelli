@@ -17,6 +17,7 @@ public class JMap extends JPanel implements ActionListener {
     private List<JCell> powerCells;
     private JWorker currentWorker;
     private JCellStatus turn; // can be just MOVE or BUILD (it drives the use of usePower)
+    private boolean power;
 
     public JMap() {
         super(new GridBagLayout());
@@ -24,6 +25,7 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
+        this.power = false;
         activeCells = new ArrayList<>();
         powerCells = new ArrayList<>();
         cellButton = new JCell[DIM][DIM];
@@ -79,6 +81,7 @@ public class JMap extends JPanel implements ActionListener {
 
     public void setPossibleUsePower(List<JCell> where) {
         setAround(where, JCellStatus.USE_POWER);
+        this.power = true;
     }
 
     public void setPossibleMalus(List<JCell> where) {
@@ -117,6 +120,10 @@ public class JMap extends JPanel implements ActionListener {
         return cellButton[x][y];
     }
 
+    public boolean isPowerActive() {
+        return this.power;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
@@ -143,6 +150,7 @@ public class JMap extends JPanel implements ActionListener {
                         else if (turn.equals(JCellStatus.MOVE))
                             moveWorker(src);
                     }
+                    this.power = false;
 
                     validate();
                     repaint();

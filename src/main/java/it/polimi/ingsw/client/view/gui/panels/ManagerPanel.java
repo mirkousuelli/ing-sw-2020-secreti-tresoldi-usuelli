@@ -94,7 +94,7 @@ public class ManagerPanel extends JPanel {
         around.add(game.getJMap().getCell(2,3));
         around.add(game.getJMap().getCell(3,1));
 
-        game.setPossibleBuild(around);
+        game.setPossibleMove(around);
         game.setPossibleUsePower(around);
         /* ------------------------------------------------------------------- */
 

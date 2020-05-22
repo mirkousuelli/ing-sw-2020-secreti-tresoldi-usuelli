@@ -222,13 +222,17 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         switch (src.getName()) {
             case "card":
-                map.hidePowerCells();
-                cardButton.applyPower();
+                if (getJMap().isPowerActive()) {
+                    map.hidePowerCells();
+                    cardButton.applyPower();
+                }
                 break;
 
             case "power":
-                map.showPowerCells();
-                cardButton.applyNormal();
+                if (getJMap().isPowerActive()) {
+                    map.showPowerCells();
+                    cardButton.applyNormal();
+                }
                 break;
         }
     }
