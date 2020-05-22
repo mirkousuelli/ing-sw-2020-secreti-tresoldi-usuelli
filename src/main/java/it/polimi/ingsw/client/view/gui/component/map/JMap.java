@@ -127,34 +127,31 @@ public class JMap extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
-        if (src.getName().equals("cell")) {
-            if (activeCells.contains(src) || powerCells.contains(src)) {
-                JCellStatus status = ((JBlockDecorator) src).getDecoration();
-                if (!status.equals(JCellStatus.NONE)) {
+        if (src.getName().equals("cell") && (activeCells.contains(src) || powerCells.contains(src))) {
+            JCellStatus status = ((JBlockDecorator) src).getDecoration();
+            if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
+                for (JCell cell : activeCells)
+                    ((JBlockDecorator) cell).clean();
+                activeCells.clear();
 
-                    for (JCell cell : activeCells)
-                        ((JBlockDecorator) cell).clean();
-                    activeCells.clear();
+                for (JCell cell : powerCells)
+                    ((JBlockDecorator) cell).clean();
+                powerCells.clear();
 
-                    for (JCell cell : powerCells)
-                        ((JBlockDecorator) cell).clean();
-                    powerCells.clear();
-
-                    if (status.equals(JCellStatus.BUILD))
+                if (status.equals(JCellStatus.BUILD))
+                    ((JBlockDecorator) src).buildUp();
+                else if (status.equals(JCellStatus.MOVE))
+                    moveWorker(src);
+                else if (status.equals(JCellStatus.USE_POWER)) {
+                    if (turn.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                    else if (status.equals(JCellStatus.MOVE))
+                    else if (turn.equals(JCellStatus.MOVE))
                         moveWorker(src);
-                    else if (status.equals(JCellStatus.USE_POWER)) {
-                        if (turn.equals(JCellStatus.BUILD))
-                            ((JBlockDecorator) src).buildUp();
-                        else if (turn.equals(JCellStatus.MOVE))
-                            moveWorker(src);
-                    }
-                    this.power = false;
-
-                    validate();
-                    repaint();
                 }
+                this.power = false;
+
+                validate();
+                repaint();
             }
         }
     }

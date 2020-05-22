@@ -33,8 +33,9 @@ public class JBlockDecorator extends JCell {
             newDecoration.setLayout(new GridBagLayout());
             this.decoration.setComponent(newDecoration);
             add(this.decoration.getComponent());
+            if (!worker.getPawn().getDecoration().equals(JCellStatus.NONE))
+                addWorkerOnTop();
 
-            // TODO : da spostare! perchè potrebbe rallentare
             repaint();
             validate();
         }
@@ -42,7 +43,8 @@ public class JBlockDecorator extends JCell {
 
     public void removeDecoration() {
         this.decoration.setDecoration(JCellStatus.NONE);
-        this.decoration.getComponent().removeAll();
+        removeAll();
+        addWorker(worker);
 
         validate();
         repaint();
@@ -63,10 +65,24 @@ public class JBlockDecorator extends JCell {
         Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
 
-        JLabel newDecoration = new JLabel(icon);
-        newDecoration.setLayout(new GridBagLayout());
-        this.worker.getPawn().setComponent(newDecoration);
+        JLabel newWorker = new JLabel(icon);
+        newWorker.setLayout(new GridBagLayout());
+        this.worker.getPawn().setComponent(newWorker);
         add(this.worker.getPawn().getComponent());
+
+        repaint();
+        validate();
+    }
+
+    private void addWorkerOnTop() {
+        ImageIcon icon = new ImageIcon(worker.getPawn().getDecoration().getPath());
+        Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
+
+        JLabel newWorker = new JLabel(icon);
+        newWorker.setLayout(new GridBagLayout());
+        this.worker.getPawn().setComponent(newWorker);
+        this.decoration.getComponent().add(this.worker.getPawn().getComponent());
 
         repaint();
         validate();

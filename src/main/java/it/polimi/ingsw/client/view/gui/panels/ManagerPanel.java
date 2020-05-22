@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ManagerPanel extends JPanel {
@@ -20,7 +22,8 @@ public class ManagerPanel extends JPanel {
     private final List<SantoriniPanel> santoriniPanelList;
     private int currentPanelIndex;
     private final GUI gui;
-    private JDeck deck;
+    private JDeck deck; // da utilizzare quello in JGame
+    private JGame game;
 
     enum SantoriniPanelEnum {
         START,
@@ -71,21 +74,22 @@ public class ManagerPanel extends JPanel {
         deck = new JDeck(Arrays.asList(God.values()));
 
         /* ------------------------ZONA TESTING---------------------------- */
-        santoriniPanelList.add(new GamePanel(cardLayout, this));
+        /*santoriniPanelList.add(new GamePanel(cardLayout, this));
         GamePanel game = (GamePanel)getCurrentPanel();
 
         JPlayer p = new JPlayer("mirko");
         JWorker w1 = new JWorker(new JDecorator(JCellStatus.PLAYER_2_FEMALE), game.getJMap().getCell(2,2));
         JWorker w2 = new JWorker(new JDecorator(JCellStatus.PLAYER_2_MALE), game.getJMap().getCell(0,0));
         p.setWorkers(w1, w2);
-        game.getJMap().setCurrentWorker(p.getFemaleWorker());
+
+        // PER TESTARE CHOOSE WORKER
+        /*p.chooseWorker();
+        game.getJMap().setCurrentWorker(p.getCurrentWorker());*/
+
+        // PER TESTARE MOVE/BUILD/USEPOWER
+        /*game.getJMap().setCurrentWorker(p.getFemaleWorker());
 
         List<JCell> around = new ArrayList<>();
-        around.add(game.getJMap().getCell(1,3));
-        game.setPossibleMalus(around);
-
-        around.clear();
-
         around.add(game.getJMap().getCell(2,1));
         around.add(game.getJMap().getCell(1,2));
         around.add(game.getJMap().getCell(1,1));
@@ -95,7 +99,9 @@ public class ManagerPanel extends JPanel {
         around.add(game.getJMap().getCell(3,1));
 
         game.setPossibleMove(around);
-        game.setPossibleUsePower(around);
+        game.setPossibleMalus(Collections.singletonList(game.getJMap().getCell(1,3)));
+        game.setPossibleUsePower(around); */
+
         /* ------------------------------------------------------------------- */
 
         santoriniPanelList.add(new StartPanel(cardLayout, this));
