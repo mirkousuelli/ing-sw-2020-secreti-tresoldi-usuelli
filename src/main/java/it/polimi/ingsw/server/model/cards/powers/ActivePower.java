@@ -19,10 +19,12 @@ import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class that represents an active power, which can be a move or a build
@@ -74,7 +76,13 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if (ActivePower.verifyMalus(currentPlayer, cellToUse)) return false;
+        List<Malus> correctMalus = new ArrayList<>();
+        if (effect.equals(Effect.MALUS))
+            correctMalus= currentPlayer.getMalusList().stream()
+                    .filter(m -> m.getMalusType().equals(((Malus) allowedAction).getMalusType()))
+                    .collect(Collectors.toList());
+
+        if (!correctMalus.isEmpty() && !ActivePower.verifyMalus(correctMalus, workerToUse.getLocation(), cellToUse)) return false;
 
         //verify constraints
         return verifyConstraints(cellToUse);
@@ -211,6 +219,6 @@ public abstract class ActivePower<S> extends Power<S> {
                 }
             }
         }
-        return false;
+        return true;
     }
 }

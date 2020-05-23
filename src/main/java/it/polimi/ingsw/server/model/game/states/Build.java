@@ -133,7 +133,7 @@ public class Build implements GameState {
                     returnContent.setChangeTurn(true);
                 }
 
-                toReturn.add(ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
+                toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
 
                 GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
                 GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);

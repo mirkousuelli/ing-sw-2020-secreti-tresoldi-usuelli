@@ -14,10 +14,12 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.ActivePower;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.ReturnContent;
@@ -76,10 +78,16 @@ public class Move implements GameState {
     public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo, List<Cell> around) {
         Player currentPlayer = game.getCurrentPlayer();
 
-        return around.stream()
+        List<Cell> remainingCells = around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
                 .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
-                .anyMatch(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1));
+                .filter(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1))
+                .collect(Collectors.toList());
+
+        if (remainingCells.isEmpty()) return false;
+        if (game.getCurrentPlayer().getMalusList().isEmpty()) return true;
+
+        return remainingCells.stream().anyMatch(c -> ActivePower.verifyMalus(game.getCurrentPlayer().getMalusList(), cellToMoveTo, c)) || game.getCurrentPlayer().getMalusList().get(0).isPermanent();
 
     }
 
@@ -107,9 +115,6 @@ public class Move implements GameState {
         //validate input
         if (cellToMoveTo == null)
             return returnContent;
-        if (!Move.isPresentAtLeastOneCellToMoveTo(game, cellToMoveTo))
-            return returnContent;
-
 
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
             Power p = game.getCurrentPlayer().getCard().getPower(0);
@@ -186,6 +191,11 @@ public class Move implements GameState {
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setPayload(Move.addChangedCells(game, State.MOVE));
+        }
+
+        if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS)) {
+            ChooseCard.applyMalus(game, Timing.END_TURN);
+            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
 
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);

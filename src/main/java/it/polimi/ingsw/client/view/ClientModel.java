@@ -183,7 +183,7 @@ public class ClientModel<S> extends SantoriniRunnable {
             updateCurrentPlayer();
             additionalPowerUsed = true;
         }
-        else {
+        else if (!answerTemp.getHeader().equals(AnswerType.ERROR)) {
             if (isYourTurn()) {
                 if (!isReloaded) {
                     if (nextState.ordinal() >= DemandType.USE_POWER.ordinal())
@@ -201,14 +201,12 @@ public class ClientModel<S> extends SantoriniRunnable {
                 else
                     updateReduceObjects(answerTemp);
             }
-
-            if (answerTemp.getHeader().equals(AnswerType.VICTORY)) {
+            else if (answerTemp.getHeader().equals(AnswerType.VICTORY)) {
                 currentState = DemandType.NEW_GAME;
                 nextState = DemandType.START;
                 isNewGame = true;
             }
-
-            if (answerTemp.getHeader().equals(AnswerType.RELOAD))
+            else if (answerTemp.getHeader().equals(AnswerType.RELOAD))
                 reloadGame();
 
             updateNextState();

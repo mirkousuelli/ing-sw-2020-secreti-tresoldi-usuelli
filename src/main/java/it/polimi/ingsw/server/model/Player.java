@@ -12,6 +12,7 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Worker;
 
@@ -187,5 +188,19 @@ public class Player {
      */
     public void removeMalus() {
         malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == 0);
+    }
+
+    /**
+     * Method that removes permanent malus from the player
+     */
+    public Malus removePermanentMalus() {
+        for (Malus m : malusList) {
+            if (m.isPermanent()) {
+                malusList.removeIf(malus -> malus.equals(m));
+                return  m;
+            }
+        }
+
+        return null;
     }
 }

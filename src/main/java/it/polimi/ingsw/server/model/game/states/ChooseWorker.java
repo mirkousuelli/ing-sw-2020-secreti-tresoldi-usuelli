@@ -13,10 +13,12 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.powers.ActivePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -115,13 +117,7 @@ public class ChooseWorker implements GameState {
                         returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
 
                         GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-                        GameMemory.save(currentPlayer, Lobby.backupPath);
                         GameMemory.save(game, Lobby.backupPath);
-                    }
-                    else {
-                        // if the curPlayer cannot move with the chosen worker, he gets to choose a different one and the game goes to ChooseWorker state
-                        currentPlayer.removeWorker(currentPlayer.getCurrentWorker());
-                        returnContent.setPayload(new ReducedWorker(w, currentPlayer.nickName));
                     }
                     break;
                 }
@@ -140,11 +136,23 @@ public class ChooseWorker implements GameState {
         List<Cell> specialMoves;
         List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> toReturn;
+        boolean personalMalus = false;
+        boolean removed = false;
+
+        List<Malus> maluses = game.getCurrentPlayer().getMalusList();
+        if (game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null) {
+            Malus temp = game.getCurrentPlayer().removePermanentMalus();
+            maluses.removeIf(m -> m.equals(temp));
+            removed = true;
+        }
 
         if (state.equals(State.CHOOSE_WORKER) || state.equals(State.MOVE))
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
         else
             possibleMoves = new ArrayList<>();
+
+        if (removed)
+            game.getCurrentPlayer().addMalus(game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus());
 
         specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
@@ -155,9 +163,17 @@ public class ChooseWorker implements GameState {
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation()));
             toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.USEPOWER, game.getPlayerList(), possibleBuilds, new ArrayList<>());
             toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
+            personalMalus = true;
         }
 
         toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game, State.CHOOSE_WORKER));
+
+        if (maluses != null && !maluses.isEmpty() && !personalMalus) {
+            for (ReducedAnswerCell c : toReturn) {
+                if (!ActivePower.verifyMalus(maluses, game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getBoard().getCell(c.getX(), c.getY())))
+                    c.resetAction();
+            }
+        }
 
         return ChooseWorker.removeSurroundedCells(game, toReturn);
     }
@@ -181,6 +197,13 @@ public class ChooseWorker implements GameState {
             }
 
         return ret;
+    }
+
+    static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, ReducedAnswerCell temp) {
+        List<ReducedAnswerCell> tempList = new ArrayList<>();
+        tempList.add(temp);
+
+        return mergeReducedAnswerCellList(toReturn, tempList);
     }
 
     private static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {

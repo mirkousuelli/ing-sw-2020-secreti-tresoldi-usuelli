@@ -43,6 +43,8 @@ public class AdditionalPower implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ADDITIONAL_POWER);
 
+        System.out.println(getName());
+
         if (response.getX() == -1 && response.getY() == -1) {
             returnContent.setAnswerType(AnswerType.SUCCESS);
             if (prevState.equals(State.MOVE)) {

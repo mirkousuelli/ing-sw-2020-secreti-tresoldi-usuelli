@@ -37,6 +37,7 @@ public class MalusPower<S> extends Power<S> {
      * Method that adds the malus to the opponents
      *
      * @param opponents list of players that the malus is applied to
+     * @param currentPlayer currentPlayer
      * @return {@code true} after the malus is added to the opponents
      */
     public boolean usePower(List<Player> opponents, Player currentPlayer) {
