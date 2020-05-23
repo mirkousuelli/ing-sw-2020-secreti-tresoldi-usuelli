@@ -158,9 +158,6 @@ public class Move implements GameState {
                     if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) {
                         payload = ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER);
 
-
-                        System.out.println(payload.stream().map(c -> c.getX() + ", " + c.getY() + c.getActionList() + "\n").collect(Collectors.joining()));
-
                         if (payload.stream()
                                 .map(ReducedAnswerCell::getActionList)
                                 .flatMap(List::stream)
@@ -174,7 +171,6 @@ public class Move implements GameState {
                     else {
                         payload = Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE);
                         returnContent.setState(State.BUILD);
-                        System.out.println(payload.stream().map(c -> c.getX() + ", " + c.getY() + " " + c.getActionList() + "\n").collect(Collectors.joining()));
                     }
                 }
             }
