@@ -207,7 +207,7 @@ public class ChooseWorker implements GameState {
         set.addAll(list2);
 
         if (set.stream().distinct().count() > 1 && set.contains(ReducedAction.DEFAULT)) {
-            set.removeIf(ra -> !ra.equals(ReducedAction.DEFAULT));
+            set.removeIf(ra -> ra.equals(ReducedAction.DEFAULT));
         }
 
         return new ArrayList<>(set);

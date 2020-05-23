@@ -174,6 +174,7 @@ public class Move implements GameState {
                     else {
                         payload = Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE);
                         returnContent.setState(State.BUILD);
+                        System.out.println(payload.stream().map(c -> c.getX() + ", " + c.getY() + " " + c.getActionList() + "\n").collect(Collectors.joining()));
                     }
                 }
             }
