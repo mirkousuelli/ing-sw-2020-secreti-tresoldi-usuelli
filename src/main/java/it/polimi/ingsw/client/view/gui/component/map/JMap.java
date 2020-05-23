@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
 import it.polimi.ingsw.client.view.gui.component.JWorker;
+import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,10 @@ public class JMap extends JPanel implements ActionListener {
     public final static int DIM = 5;
     private JCell[][] cellButton;
     private List<JCell> activeCells;
+    private List<JCell> powerCells;
     private JWorker currentWorker;
+    private JCellStatus turn; // can be just MOVE or BUILD (it drives the use of usePower)
+    private boolean power;
 
     public JMap() {
         super(new GridBagLayout());
@@ -21,7 +25,9 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
+        this.power = false;
         activeCells = new ArrayList<>();
+        powerCells = new ArrayList<>();
         cellButton = new JCell[DIM][DIM];
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
@@ -47,10 +53,21 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void setAround(List<JCell> where, JCellStatus how) {
-        activeCells.clear();
-        for (JCell cell : where) {
-            activeCells.add(cell);
-            ((JBlockDecorator) cell).addDecoration(how);
+        if (how.equals(JCellStatus.MOVE) || how.equals(JCellStatus.BUILD)) {
+            activeCells.clear();
+            this.turn = how;
+            for (JCell cell : where) {
+                activeCells.add(cell);
+                ((JBlockDecorator) cell).addDecoration(how);
+            }
+        } else if (how.equals(JCellStatus.USE_POWER)) {
+            powerCells.clear();
+            powerCells.addAll(where);
+        } else if (how.equals(JCellStatus.MALUS)) {
+            for (JCell cell : where) {
+                activeCells.add(cell);
+                ((JBlockDecorator) cell).addDecoration(how);
+            }
         }
     }
 
@@ -64,6 +81,7 @@ public class JMap extends JPanel implements ActionListener {
 
     public void setPossibleUsePower(List<JCell> where) {
         setAround(where, JCellStatus.USE_POWER);
+        this.power = true;
     }
 
     public void setPossibleMalus(List<JCell> where) {
@@ -74,30 +92,67 @@ public class JMap extends JPanel implements ActionListener {
         currentWorker.setLocation(where);
     }
 
+    public void showPowerCells() {
+        for (JCell cell : activeCells)
+            if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
+                ((JBlockDecorator)cell).removeDecoration();
+
+        for (JCell cell : powerCells)
+            ((JBlockDecorator)cell).addDecoration(JCellStatus.USE_POWER);
+
+        repaint();
+        validate();
+    }
+
+    public void hidePowerCells() {
+        for (JCell cell : powerCells)
+            ((JBlockDecorator)cell).removeDecoration();
+
+        for (JCell cell : activeCells)
+            if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
+                ((JBlockDecorator)cell).addDecoration(turn);
+
+        repaint();
+        validate();
+    }
+
     public JCell getCell(int x, int y) {
         return cellButton[x][y];
+    }
+
+    public boolean isPowerActive() {
+        return this.power;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
-        switch (src.getName()) {
-            case "cell":
-                JCellStatus status = ((JBlockDecorator) src).getDecoration();
-                if (!status.equals(JCellStatus.NONE)) {
+        if (src.getName().equals("cell") && (activeCells.contains(src) || powerCells.contains(src))) {
+            JCellStatus status = ((JBlockDecorator) src).getDecoration();
+            if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
+                for (JCell cell : activeCells)
+                    ((JBlockDecorator) cell).clean();
+                activeCells.clear();
 
-                    for (JCell cell : activeCells)
-                            ((JBlockDecorator) cell).clean();
+                for (JCell cell : powerCells)
+                    ((JBlockDecorator) cell).clean();
+                powerCells.clear();
 
-                    if (status.equals(JCellStatus.BUILD))
+                if (status.equals(JCellStatus.BUILD))
+                    ((JBlockDecorator) src).buildUp();
+                else if (status.equals(JCellStatus.MOVE))
+                    moveWorker(src);
+                else if (status.equals(JCellStatus.USE_POWER)) {
+                    if (turn.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                    else if (status.equals(JCellStatus.MOVE))
+                    else if (turn.equals(JCellStatus.MOVE))
                         moveWorker(src);
-
-                    validate();
-                    repaint();
                 }
-                break;
+                this.power = false;
+
+                validate();
+                repaint();
+            }
         }
     }
 }

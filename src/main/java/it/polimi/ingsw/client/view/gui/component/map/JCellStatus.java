@@ -10,12 +10,13 @@ public enum JCellStatus {
     BUILD("img/blocks/build.png", 6),
     MALUS("img/blocks/malus.png", 7),
     USE_POWER("img/blocks/use_power.png", 8),
-    PLAYER_1_FEMALE("img/workers/worker_1/female.png", 9),
-    PLAYER_1_MALE("img/workers/worker_1/male.png", 10),
-    PLAYER_2_FEMALE("img/workers/worker_2/female.png", 11),
-    PLAYER_2_MALE("img/workers/worker_2/male.png", 12),
-    PLAYER_3_FEMALE("img/workers/worker_3/female.png", 13),
-    PLAYER_3_MALE("img/workers/worker_3/male.png", 14);
+    CHOOSE_WORKER("img/blocks/choose_worker.png", 9),
+    PLAYER_1_FEMALE("img/workers/worker_1/female.png", 10),
+    PLAYER_1_MALE("img/workers/worker_1/male.png", 11),
+    PLAYER_2_FEMALE("img/workers/worker_2/female.png", 12),
+    PLAYER_2_MALE("img/workers/worker_2/male.png", 13),
+    PLAYER_3_FEMALE("img/workers/worker_3/female.png", 14),
+    PLAYER_3_MALE("img/workers/worker_3/male.png", 15);
 
     public final String path;
     public final int value;
