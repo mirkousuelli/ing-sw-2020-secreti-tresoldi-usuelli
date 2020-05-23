@@ -28,10 +28,14 @@ import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 
+import javax.print.DocFlavor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ChooseWorker implements GameState {
      /* @abstractClass
@@ -74,6 +78,17 @@ public class ChooseWorker implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_WORKER);
 
+        File f = new File(Lobby.backupPath);
+        if (!f.exists()) {
+            try {
+                boolean b = f.createNewFile();
+            } catch (IOException e) {
+                returnContent.setAnswerType(AnswerType.ERROR);
+                returnContent.setState(State.CHOOSE_WORKER);
+            }
+        }
+        GameMemory.save(game, Lobby.backupPath);
+
         //validate input
         if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains((Worker) ((Block) chosenWorker).getPawn()))
             return returnContent;
@@ -113,16 +128,6 @@ public class ChooseWorker implements GameState {
             }
         }
 
-        File f = new File(Lobby.backupPath);
-        if (!f.exists()) {
-            try {
-                boolean b = f.createNewFile();
-            } catch (IOException e) {
-                returnContent.setAnswerType(AnswerType.ERROR);
-                returnContent.setState(State.CHOOSE_WORKER);
-            }
-        }
-
         GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
@@ -136,7 +141,7 @@ public class ChooseWorker implements GameState {
         List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> toReturn;
 
-        if (state.equals(State.CHOOSE_WORKER))
+        if (state.equals(State.CHOOSE_WORKER) || state.equals(State.MOVE))
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer()));
         else
             possibleMoves = new ArrayList<>();
@@ -146,14 +151,13 @@ public class ChooseWorker implements GameState {
 
         Power power = game.getCurrentPlayer().getCard().getPower(0);
         Malus malus = power.getPersonalMalus();
-        if (malus !=  null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) {
+        if (state.equals(State.CHOOSE_WORKER) && malus != null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) {
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation()));
-            toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.BUILD, game.getPlayerList(), possibleBuilds, new ArrayList<>());
-
+            toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.USEPOWER, game.getPlayerList(), possibleBuilds, new ArrayList<>());
             toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, toReturnMalus);
         }
 
-        toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game));
+        toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, Move.addChangedCells(game, State.CHOOSE_WORKER));
 
         return ChooseWorker.removeSurroundedCells(game, toReturn);
     }
@@ -167,6 +171,7 @@ public class ChooseWorker implements GameState {
             for (ReducedAnswerCell rc : toReturn) {
                 if (rc.getX() == tc.getX() && rc.getY() == tc.getY()) {
                     found = true;
+                    rc.setActionList(ChooseWorker.unionActions(rc.getActionList(), tc.getActionList()));
                     break;
                 }
             }
@@ -191,5 +196,18 @@ public class ChooseWorker implements GameState {
         }
 
         return ret;
+    }
+
+    private static List<ReducedAction> unionActions(List<ReducedAction> list1, List<ReducedAction> list2) {
+        Set<ReducedAction> set = new HashSet<>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+
+        if (set.stream().distinct().count() > 1 && set.contains(ReducedAction.DEFAULT)) {
+            set.removeIf(ra -> !ra.equals(ReducedAction.DEFAULT));
+        }
+
+        return new ArrayList<>(set);
     }
 }

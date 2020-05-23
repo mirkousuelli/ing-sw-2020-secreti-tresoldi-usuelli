@@ -93,7 +93,7 @@ public class Build implements GameState {
             Power p = currentPlayer.getCard().getPower(0);
 
             if (((BuildPower) p).usePower(currentPlayer, cellToBuildUp, game.getBoard().getAround(cellToBuildUp))) {
-                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousBuild(), game.getPlayerList());
                 toReturn.add(temp);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);

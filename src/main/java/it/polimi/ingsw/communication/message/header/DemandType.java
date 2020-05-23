@@ -13,8 +13,8 @@ public enum DemandType {
     CHOOSE_WORKER,
     MOVE,
     BUILD,
-    USE_POWER,
     ASK_ADDITIONAL_POWER,
+    USE_POWER,
     NEW_GAME;
 
     public static DemandType parseString(String str) {
@@ -106,6 +106,9 @@ public enum DemandType {
             else
                 return PLACE_WORKERS;
         }
+
+        if (currentState.equals(ASK_ADDITIONAL_POWER) || currentState.equals(BUILD))
+            return CHOOSE_WORKER;
 
         //repeat
         if (currentState.equals(NEW_GAME))

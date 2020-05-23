@@ -8,6 +8,7 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class ClientModel<S> extends SantoriniRunnable {
     private boolean isInitializing = true;
     private boolean isReloaded;
     private boolean isNewGame = false;
+    private boolean additionalPowerUsed = true;
 
     private DemandType nextState = DemandType.CONNECT;
     private DemandType currentState = DemandType.CONNECT;
@@ -89,6 +91,10 @@ public class ClientModel<S> extends SantoriniRunnable {
 
     public DemandType getCurrentState() {
         return currentState;
+    }
+
+    public synchronized void setNextState(DemandType nextState) {
+        this.nextState = nextState;
     }
 
     public boolean isReloaded() {
@@ -173,8 +179,10 @@ public class ClientModel<S> extends SantoriniRunnable {
 
         updateStateInitial(answerTemp);
 
-        if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN))
+        if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN)) {
             updateCurrentPlayer();
+            additionalPowerUsed = true;
+        }
         else {
             if (isYourTurn()) {
                 if (!isReloaded) {
@@ -203,8 +211,23 @@ public class ClientModel<S> extends SantoriniRunnable {
             if (answerTemp.getHeader().equals(AnswerType.RELOAD))
                 reloadGame();
 
-            updateNextState();
+            else
+                updateNextState();
         }
+
+        if (!additionalPowerUsed && player != null && player.getCard() != null && player.getCard().isAdditionalPower() && currentState.equals(DemandType.BUILD) && player.getCard().getEffect().equals(Effect.MOVE)) {
+            currentState = DemandType.ASK_ADDITIONAL_POWER;
+            nextState = DemandType.BUILD;
+            additionalPowerUsed = true;
+        }
+
+        if (!additionalPowerUsed && player != null && player.getCard() != null && player.getCard().isAdditionalPower() && nextState.equals(DemandType.CHOOSE_WORKER) && player.getCard().getEffect().equals(Effect.BUILD)) {
+            nextState = DemandType.ASK_ADDITIONAL_POWER;
+            additionalPowerUsed = true;
+        }
+
+        if (currentState.equals(DemandType.MOVE))
+            additionalPowerUsed = false;
 
         synchronized (lockAnswer) {
             setChanged(true);

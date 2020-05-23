@@ -42,6 +42,8 @@ public class CLIScanner<S> {
     private volatile Thread read;
     private volatile boolean isClosed = false;
 
+    private DemandType demandType;
+
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
     public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
@@ -130,6 +132,9 @@ public class CLIScanner<S> {
 
         if (input.length != 2) return null;
 
+        if (clientModel.getCurrentState().equals(DemandType.MOVE) && input[0].equals("usePower"))
+            clientModel.setNextState(DemandType.MOVE);
+
         return parseStringReducedDemandCell(input[1]);
     }
 
@@ -137,13 +142,14 @@ public class CLIScanner<S> {
         return (S) (God.parseString(string));
     }
 
-    public Demand<S> requestInput(DemandType demandType) {
+    public Demand<S> requestInput(DemandType currentState) {
         boolean toRepeat;
         boolean toUsePower;
         boolean incrementIndex;
         int i = 0;
         List<S> payloadList = new ArrayList<>();
         S payload;
+        demandType = currentState;
 
         Function <String, Boolean> toRepeatFunction;
         Function <Integer, Boolean> indexFunction;
