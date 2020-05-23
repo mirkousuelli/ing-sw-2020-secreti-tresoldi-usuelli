@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class ClientView<S> extends SantoriniRunnable<S> {
+public abstract class ClientView<S> extends SantoriniRunnable {
 
     protected ClientModel<S> clientModel;
     private boolean isFree;
@@ -74,7 +74,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         }
     }
 
-    protected void createDemand(Demand demand) {
+    protected void createDemand(Demand<S> demand) {
         setDemand(demand);
         setChanged(true);
 
@@ -87,17 +87,14 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         Thread t = new Thread(
                 () -> {
                     try {
-                        Answer<S> temp;
                         while (isActive()) {
-                            synchronized (clientModel.lockAnswer) {
-                                while (!clientModel.isChanged()) clientModel.lockAnswer.wait();
+                            synchronized (lockAnswer) {
+                                while (!clientModel.isChanged()) lockAnswer.wait();
                                 clientModel.setChanged(false);
-                                temp = clientModel.getAnswer();
                             }
 
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
-                                setAnswer(temp);
                                 LOGGER.info("Received!");
                                 update();
                             }

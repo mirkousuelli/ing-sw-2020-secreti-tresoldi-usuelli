@@ -285,7 +285,7 @@ public class CLIPrinter<S> {
         if (clientModel.isYourTurn())
             out.println("It's your " + context + "!");
         else
-            out.println("It's " + clientModel.getCurrentPlayer() + "'s " + context + "!");
+            out.println("It's " + clientModel.getCurrentPlayer().getNickname() + "'s " + context + "!");
     }
 
     public boolean printChanges(DemandType demandType) {

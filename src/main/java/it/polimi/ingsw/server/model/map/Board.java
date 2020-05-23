@@ -78,26 +78,6 @@ public class Board implements Cloneable {
         return null;
     }
 
-    public List<Cell> getColumn(int col) {
-        /* @getter
-         * it gets the full column selected as a list
-         */
-
-        if (col >= 0 && col < 5) {
-            List<Cell> colList = new ArrayList<Cell>();
-
-            for (int i = 0; i < this.DIM; i++) {
-                // adding each cell of the same column
-                colList.add(this.getCell(i, col));
-            }
-
-            return colList;
-        }
-
-        return null;
-    }
-
-
     /**
      * Method that gets the 8 cells around the one passed as parameter
      *
@@ -185,6 +165,8 @@ public class Board implements Cloneable {
                 }
             }
         }
+
+        toReturn.removeIf(c -> c.getLevel().toInt() > player.getCurrentWorker().getLocation().getLevel().toInt() + 1);
 
         return toReturn;
     }

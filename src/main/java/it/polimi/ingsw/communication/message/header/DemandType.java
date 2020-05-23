@@ -14,7 +14,8 @@ public enum DemandType {
     MOVE,
     BUILD,
     USE_POWER,
-    ASK_ADDITIONAL_POWER;
+    ASK_ADDITIONAL_POWER,
+    NEW_GAME;
 
     public static DemandType parseString(String str) {
         switch (str) {
@@ -42,6 +43,8 @@ public enum DemandType {
                 return USE_POWER;
             case "askAdditionalPower":
                 return ASK_ADDITIONAL_POWER;
+            case "newGame":
+                return NEW_GAME;
             default:
                 return null;
         }
@@ -74,6 +77,8 @@ public enum DemandType {
                 return "usePower";
             case ASK_ADDITIONAL_POWER:
                 return "askAdditionalPower";
+            case NEW_GAME:
+                return "newGame";
             default:
                 return "";
         }
@@ -101,6 +106,10 @@ public enum DemandType {
             else
                 return PLACE_WORKERS;
         }
+
+        //repeat
+        if (currentState.equals(NEW_GAME))
+            return START;
 
         //pick the next one in numerical order
         return Arrays.stream(DemandType.values())

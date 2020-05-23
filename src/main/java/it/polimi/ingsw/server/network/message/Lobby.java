@@ -95,6 +95,10 @@ public class Lobby {
             }
             playingConnection.remove(player);
         }
+
+        synchronized (lockLobby) {
+            numberOfReady--;
+        }
     }
 
     public void setCurrentPlayer(String player) {

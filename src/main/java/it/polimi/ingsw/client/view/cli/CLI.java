@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
@@ -31,7 +32,6 @@ public class CLI<S> extends ClientView<S> {
         switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
-                isYourTurn = true;
                 break;
 
             case DEFEAT:
@@ -77,19 +77,10 @@ public class CLI<S> extends ClientView<S> {
     }
 
     private void startUI() {
-        if (clientModel.getCurrentState().equals(DemandType.START))
-            return;
-        Demand<S> demand = in.requestInput(clientModel.getCurrentState());
+        if (clientModel.getCurrentState().equals(DemandType.START)) return;
 
-        /*if (demand.getHeader().equals(DemandType.VICTORY) && ((ReducedMessage) demand.getPayload()).getMessage().equals("n")) {
-            setActive(false);
-            synchronized (clientModel.lock) {
-                clientModel.setActive(false);
-            }
-        }*/
-
-        if (clientModel.isYourTurn())
-            createDemand(demand);
+        if (clientModel.isYourTurn() || getAnswer().getHeader().equals(AnswerType.VICTORY))
+            createDemand(in.requestInput(clientModel.getCurrentState()));
     }
 
     @Override

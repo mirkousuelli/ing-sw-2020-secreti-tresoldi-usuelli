@@ -143,11 +143,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 server.connect(this, name);
                             }
 
-                            if (creator) //createGame
-                                numberOfPlayers();
-                            else //joinGame
-                                waitNumberOfPlayers();
-
                             if (!isActive) {
                                 Thread.currentThread().interrupt();
                                 return;
@@ -157,8 +152,19 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 reload = lobby.isReloaded();
                             }
 
-                            if(!reload)
+                            if(!reload) {
+                                if (creator) //createGame
+                                    numberOfPlayers();
+                                else //joinGame
+                                    waitNumberOfPlayers();
+
+                                if (!isActive) {
+                                    Thread.currentThread().interrupt();
+                                    return;
+                                }
+
                                 basicStart(); //start
+                            }
                             else
                                 reloadStart(); //reload
 
@@ -167,12 +173,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                                 synchronized (lobby.lockLobby) {
                                     newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
-                                    lobby.setNumberOfReady(0);
                                     lobby.setReloaded(false);
                                 }
 
-                                if (newGame) //newGame
+                                if (newGame) { //newGame
                                     newGame(demand);
+                                    lobby.getGame().setState(State.START);
+                                }
                                 else { //normal gameFlow
                                     LOGGER.info("Consuming...");
                                     synchronized (buffer) {
@@ -290,7 +297,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         synchronized (lobby.lockLobby) {
             send(new Answer(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
             if (lobby.isCurrentPlayerInGame(this))
-                asyncSend(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+                send(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
     }
 
@@ -328,7 +335,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
                 }
 
-                asyncSend(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
+                send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }
         }
     }
@@ -340,13 +347,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             if (lobby.isFull() && !lobby.isPresentInGame(this)) {
                 setLoggingOut(true);
                 closeSocket();
-                LOGGER.info("Full!" + name);
             }
-            else {
+            else
                 lobby.addPlayer(name, this);
-                asyncSend(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(this))));
-                LOGGER.info("Joined!" + name);
-            }
         }
     }
 
@@ -373,9 +376,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
             if (toRepeat)
                 demand = read();
-            else if (!loggingOut)
-                basicStart();
-
         } while (toRepeat);
+
+        if (!loggingOut)
+            basicStart();
     }
 }

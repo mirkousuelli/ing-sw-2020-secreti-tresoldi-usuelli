@@ -24,7 +24,6 @@ import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
-import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
@@ -58,12 +57,6 @@ public class ChooseWorker implements GameState {
 
         return workerList.stream().noneMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
     }
-
-    /*private boolean cannotMove(Cell workerPos) {
-        return game.getBoard().getAround(workerPos).stream()
-                .filter(c -> !c.isWalkable())
-                .noneMatch(c -> (c.getLevel().toInt() - workerPos.getLevel().toInt() <= 1));
-    }*/
 
     @Override
     public String getName() {
@@ -165,7 +158,7 @@ public class ChooseWorker implements GameState {
         return ChooseWorker.removeSurroundedCells(game, toReturn);
     }
 
-    public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
+    static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
         List<ReducedAnswerCell> ret = new ArrayList<>(toReturn);
 
@@ -185,7 +178,7 @@ public class ChooseWorker implements GameState {
         return ret;
     }
 
-    public static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
+    private static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
         List<ReducedAnswerCell> ret = new ArrayList<>();
         Cell c;
 

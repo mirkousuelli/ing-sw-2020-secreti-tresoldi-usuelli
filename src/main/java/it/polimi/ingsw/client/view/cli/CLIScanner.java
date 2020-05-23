@@ -73,7 +73,7 @@ public class CLIScanner<S> {
         messageMap.put(DemandType.BUILD, ACTION);
         messageMap.put(DemandType.USE_POWER, ACTION);
         messageMap.put(DemandType.ASK_ADDITIONAL_POWER, ADDITIONALPOWER);
-        //messageMap.put(DemandType.VICTORY, NEWGAME);
+        messageMap.put(DemandType.NEW_GAME, NEWGAME);
 
         toRepeatMap.put(DemandType.CREATE_GAME, index -> Integer.parseInt(index) < 2 || Integer.parseInt(index) > 3);
         toRepeatMap.put(DemandType.CHOOSE_DECK, clientModel::checkGod);
@@ -84,7 +84,7 @@ public class CLIScanner<S> {
         toRepeatMap.put(DemandType.MOVE, clientModel::evalToRepeat);
         toRepeatMap.put(DemandType.BUILD, clientModel::evalToRepeat);
         toRepeatMap.put(DemandType.USE_POWER, clientModel::evalToRepeat);
-        //toRepeatMap.put(DemandType.VICTORY, value -> !value.equals("y") && !value.equals("n"));
+        toRepeatMap.put(DemandType.NEW_GAME, value -> !value.equals("y") && !value.equals("n"));
 
         indexMap.put(DemandType.CHOOSE_DECK, index -> index < clientModel.getOpponents().size());
         indexMap.put(DemandType.PLACE_WORKERS, index -> index < 1);
@@ -102,7 +102,7 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.MOVE, this::parseCommand);
         payloadMap.put(DemandType.BUILD, this::parseCommand);
         payloadMap.put(DemandType.USE_POWER, this::parseCommand);
-        //payloadMap.put(DemandType.VICTORY, this::parseString);
+        payloadMap.put(DemandType.NEW_GAME, this::parseString);
 
         close();
     }
@@ -263,7 +263,7 @@ public class CLIScanner<S> {
                     try {
                         synchronized (SantoriniRunnable.lockWatchDog) {
                             while (clientModel.isActive()) SantoriniRunnable.lockWatchDog.wait();
-                            if (read.isAlive()) {
+                            if (read != null && read.isAlive()) {
                                 isClosed = true;
                                 in.close();
                                 read.interrupt();

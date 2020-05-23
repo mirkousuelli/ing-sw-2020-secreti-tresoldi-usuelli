@@ -120,8 +120,8 @@ public class ServerConnectionSocket implements ServerConnection {
 
     @Override
     public synchronized void connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException {
-        //reload
         if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
+            //reload
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
             LOGGER.info("Reloaded!");
@@ -146,12 +146,12 @@ public class ServerConnectionSocket implements ServerConnection {
             LOGGER.info("Joined!");
         }
 
-        if (lobby.getNumberOfPlayers() != -1)
-            c.send(new Answer<>(AnswerType.ERROR));
+        if (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() != 0) { //reloaded lobby is full
+            c.setLoggingOut(true);
+            c.closeSocket();
+        }
         else
             c.setLobby(lobby);
-
-        LOGGER.info("Error!");
     }
 
     @Override
@@ -182,8 +182,10 @@ public class ServerConnectionSocket implements ServerConnection {
 
         if (response.equals("n")) {
             lobby.deletePlayer(c);
+            lobby.setNumberOfReady(lobby.getNumberOfReady() - 1);
             c.setLoggingOut(true);
             c.closeSocket();
+            System.out.println("Noooooo");
             return false;
         }
         else if (response.equals("y")) {
@@ -191,7 +193,7 @@ public class ServerConnectionSocket implements ServerConnection {
             return false;
         }
 
-        c.asyncSend(new Answer(AnswerType.ERROR));
+        c.send(new Answer(AnswerType.ERROR));
         return true;
     }
 }

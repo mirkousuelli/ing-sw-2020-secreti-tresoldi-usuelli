@@ -209,7 +209,7 @@ public class Move implements GameState {
         return ChooseWorker.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
-    public static List<ReducedAnswerCell> addChangedCells(Game game) {
+    static List<ReducedAnswerCell> addChangedCells(Game game) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
 

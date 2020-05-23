@@ -6,27 +6,23 @@ import it.polimi.ingsw.communication.message.Demand;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class SantoriniRunnable<S> implements Runnable {
+public abstract class SantoriniRunnable implements Runnable {
 
     private boolean isActive = false;
     private boolean isChanged = false;
 
-    private Demand<S> demand;
-    protected Answer<S> answer;
+    private static volatile Demand demand;
+    private static volatile Answer answer;
 
-    public final Object lockDemand;
-    public final Object lockAnswer;
-    public final Object lock;
+    public static final Object lockDemand = new Object();
+    public static final Object lockAnswer = new Object();
+    public final Object lock = new Object();
 
     private static boolean isViewActive = true;
     public static final Object lockWatchDog = new Object();
     private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
 
-    public SantoriniRunnable() {
-        lockDemand = new Object();
-        lockAnswer = new Object();
-        lock = new Object();
-    }
+    public SantoriniRunnable() {}
 
     @Override
     public void run() {
@@ -98,14 +94,14 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
-    protected void setDemand(Demand<S> demand) {
+    protected void setDemand(Demand demand) {
         synchronized (lockDemand) {
-            this.demand = demand;
+            SantoriniRunnable.demand = demand;
         }
     }
 
-    public Demand<S> getDemand() {
-        Demand<S> temp;
+    public Demand getDemand() {
+        Demand temp;
 
         synchronized (lockDemand) {
             temp = demand;
@@ -113,8 +109,8 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         return temp;
     }
 
-    public Answer<S> getAnswer() {
-        Answer<S> temp;
+    public Answer getAnswer() {
+        Answer temp;
 
         synchronized (lockAnswer) {
             temp = answer;
@@ -123,9 +119,9 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         return temp;
     }
 
-    protected void setAnswer(Answer<S> answer) {
+    protected void setAnswer(Answer answer) {
         synchronized (lockAnswer) {
-            this.answer = answer;
+            SantoriniRunnable.answer = answer;
         }
     }
 
