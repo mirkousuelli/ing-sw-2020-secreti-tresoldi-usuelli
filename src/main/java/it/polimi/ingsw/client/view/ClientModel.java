@@ -211,8 +211,7 @@ public class ClientModel<S> extends SantoriniRunnable {
             if (answerTemp.getHeader().equals(AnswerType.RELOAD))
                 reloadGame();
 
-            else
-                updateNextState();
+            updateNextState();
         }
 
         if (!additionalPowerUsed && player != null && player.getCard() != null && player.getCard().isAdditionalPower() && currentState.equals(DemandType.BUILD) && player.getCard().getEffect().equals(Effect.MOVE)) {

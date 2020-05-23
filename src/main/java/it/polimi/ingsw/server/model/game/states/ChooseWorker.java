@@ -147,7 +147,9 @@ public class ChooseWorker implements GameState {
             possibleMoves = new ArrayList<>();
 
         specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
+        System.out.println(specialMoves.stream().map(c -> c.getX() + ", " + c.getY() + "\n").collect(Collectors.joining()));
         toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
+        System.out.println(toReturn.stream().map(c -> c.getX() + ", " + c.getY() + c.getActionList() + "\n").collect(Collectors.joining()));
 
         Power power = game.getCurrentPlayer().getCard().getPower(0);
         Malus malus = power.getPersonalMalus();

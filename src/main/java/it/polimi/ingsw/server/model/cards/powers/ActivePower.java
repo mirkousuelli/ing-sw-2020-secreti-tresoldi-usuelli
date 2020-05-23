@@ -102,7 +102,7 @@ public abstract class ActivePower<S> extends Power<S> {
      * if we consider Zeus), {@code false} otherwise
      */
     private boolean verifyConstraints(Cell cellToUse) {
-        if (constraints.isPerimCell() && !isPerim(cellToUse) && numberOfActionsRemaining > 0)  return false;
+        if (constraints.isPerimCell() && !isPerim(cellToUse))  return false;
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;

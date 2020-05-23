@@ -32,6 +32,7 @@ public class CLI<S> extends ClientView<S> {
         switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
+                isYourTurn = out.printChanges(clientModel.getCurrentState());
                 break;
 
             case DEFEAT:
