@@ -3,7 +3,6 @@ package it.polimi.ingsw.server.network;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
@@ -33,6 +32,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private boolean isActive;
     private boolean creator;
     private boolean loggingOut;
+    private String name;
 
     public ServerClientHandlerSocket(Socket socket, ServerConnection server) throws IOException {
         this.socket = socket;
@@ -95,7 +95,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 socket.close();
            synchronized (this) {
                setActive(false);
-               notifyAll();
+               this.notifyAll();
            }
         }
         catch (IOException e) {
@@ -131,75 +131,56 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private Thread asyncReadFromSocket() {
         Thread t = new Thread(
                 () -> {
+                        Demand demand;
+                        boolean reload;
+                        boolean newGame;
+
                         try {
-                            Demand demand = null;
-                            boolean toRepeat;
-                            boolean reload;
-
                             //connect
-                            do {
-                                if (demand == null)
-                                    demand = read();
+                            demand = read();
+                            name = ((ReducedMessage) demand.getPayload()).getMessage();
+                            synchronized (server) {
+                                server.connect(this, name);
+                            }
 
-                                synchronized (server) {
-                                    toRepeat = server.connect(this, ((ReducedMessage) demand.getPayload()).getMessage());
-                                }
-
-                                if (!creator) {
-                                    synchronized (lobby.lockLobby) {
-                                        while (lobby.getNumberOfPlayers() == -1) lobby.lockLobby.wait();
-
-                                        if (lobby.getNumberOfPlayers() == lobby.getReducedPlayerList().size() && !lobby.isPresentInGame(this)) {
-                                            send(new Answer(AnswerType.CLOSE));
-                                            setActive(false);
-                                            return;
-                                        }
-                                    }
-                                }
-                            } while (toRepeat);
-
-                            //createGame
-                            if (creator) {
-                                do {
-                                    demand = read();
-
-                                    synchronized (server) {
-                                        toRepeat = server.numOfPlayers(this, demand);
-                                    }
-                                } while (toRepeat);
+                            if (!isActive) {
+                                Thread.currentThread().interrupt();
+                                return;
                             }
 
                             synchronized (lobby.lockLobby) {
                                 reload = lobby.isReloaded();
                             }
 
-                            if(!reload)
-                                basicStart();
-                            else
-                                reloadStart();
+                            if(!reload) {
+                                if (creator) //createGame
+                                    numberOfPlayers();
+                                else //joinGame
+                                    waitNumberOfPlayers();
 
-                            boolean newGame;
+                                if (!isActive) {
+                                    Thread.currentThread().interrupt();
+                                    return;
+                                }
+
+                                basicStart(); //start
+                            }
+                            else
+                                reloadStart(); //reload
+
                             while(isActive) {
                                 demand = read();
 
                                 synchronized (lobby.lockLobby) {
                                     newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
-                                    lobby.setNumberOfReady(0);
                                     lobby.setReloaded(false);
                                 }
 
-                                if (newGame) {
-                                    do {
-                                        synchronized (server) {
-                                            toRepeat = server.newGame(this, demand);
-                                        }
-                                        if (toRepeat)
-                                            demand = read();
-                                        else if (!loggingOut)
-                                            basicStart();
-                                    } while (toRepeat);
+                                if (newGame) { //newGame
+                                    newGame(demand);
+                                    lobby.getGame().setState(State.START);
                                 }
-                                else {
+                                else { //normal gameFlow
                                     LOGGER.info("Consuming...");
                                     synchronized (buffer) {
                                         buffer.add(demand);
@@ -214,6 +195,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         }
                 }
         );
+
         t.start();
         return t;
     }
@@ -315,7 +297,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         synchronized (lobby.lockLobby) {
             send(new Answer(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
             if (lobby.isCurrentPlayerInGame(this))
-                asyncSend(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+                send(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
     }
 
@@ -353,8 +335,50 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
                 }
 
-                asyncSend(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
+                send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }
         }
+    }
+
+    private void waitNumberOfPlayers() throws InterruptedException {
+        synchronized (lobby.lockLobby) {
+            while (lobby.getNumberOfPlayers() == -1) lobby.lockLobby.wait();
+
+            if (lobby.isFull() && !lobby.isPresentInGame(this)) {
+                setLoggingOut(true);
+                closeSocket();
+            }
+            else
+                lobby.addPlayer(name, this);
+        }
+    }
+
+    private void numberOfPlayers() {
+        Demand demand;
+        boolean toRepeat;
+
+        do {
+            demand = read();
+
+            synchronized (server) {
+                toRepeat = server.numOfPlayers(this, demand);
+            }
+        } while (toRepeat);
+    }
+
+    private void newGame(Demand demand) throws InterruptedException {
+        boolean toRepeat;
+
+        do {
+            synchronized (server) {
+                toRepeat = server.newGame(this, demand);
+            }
+
+            if (toRepeat)
+                demand = read();
+        } while (toRepeat);
+
+        if (!loggingOut)
+            basicStart();
     }
 }

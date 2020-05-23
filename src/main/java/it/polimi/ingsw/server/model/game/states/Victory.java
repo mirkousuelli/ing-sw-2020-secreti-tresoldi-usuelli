@@ -44,13 +44,13 @@ public class Victory implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        //TODO
         ReturnContent returnContent = new ReturnContent();
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.START);
 
         GameMemory.save(this, Lobby.backupPath);
+        endGame(game);
 
         return returnContent;
     }

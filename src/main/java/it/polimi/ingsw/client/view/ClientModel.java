@@ -8,6 +8,7 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +17,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class ClientModel<S> extends SantoriniRunnable<S> {
+public class ClientModel<S> extends SantoriniRunnable {
 
-    private ClientConnectionSocket<S> clientConnection;
+    private final ClientConnectionSocket<S> clientConnection;
     private ReducedAnswerCell[][] reducedBoard;
     private List<ReducedCard> deck;
     private List<ReducedPlayer> opponents;
     private List<ReducedWorker> workers;
     private String currentPlayer;
     private String prevPlayer = null;
-    private String challenger;
     private final ReducedPlayer player;
 
     private boolean isCreator = false;
     private boolean isInitializing = true;
     private boolean isReloaded;
+    private boolean isNewGame = false;
+    private boolean additionalPowerUsed = true;
 
     private DemandType nextState = DemandType.CONNECT;
     private DemandType currentState = DemandType.CONNECT;
@@ -55,7 +57,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.clientConnection = clientConnection;
 
         isReloaded = false;
-        challenger = null;
     }
 
     public ClientConnectionSocket<S> getClientConnection() {
@@ -92,6 +93,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return currentState;
     }
 
+    public synchronized void setNextState(DemandType nextState) {
+        this.nextState = nextState;
+    }
+
     public boolean isReloaded() {
         boolean ret;
 
@@ -106,17 +111,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         Thread t = new Thread(
                 () -> {
                     try {
-                        Answer<S> temp;
                         while (isActive()) {
-                            synchronized (clientConnection.lockAnswer) {
-                                while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
+                            synchronized (lockAnswer) {
+                                while (!clientConnection.isChanged()) lockAnswer.wait();
                                 clientConnection.setChanged(false);
-                                temp = clientConnection.getAnswer();
                             }
 
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
-                                setAnswer(temp);
                                 updateModel();
                                 LOGGER.info("updated!");
                                 LOGGER.info("curr: " + currentState);
@@ -157,7 +159,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private void updateModel() {
-        Answer<S> answerTemp;
+        Answer answerTemp;
 
         synchronized (lockAnswer) {
             answerTemp = getAnswer();
@@ -165,11 +167,23 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
         if (!isCreator && isInitializing)
             currentState = nextState;
+
+        if (isNewGame) {
+            currentState = DemandType.CONNECT;
+            isNewGame = false;
+            isInitializing = true;
+            deck.clear();
+            opponents.clear();
+            workers.clear();
+        }
+
         updateStateInitial(answerTemp);
 
-        if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN))
+        if (answerTemp.getHeader().equals(AnswerType.CHANGE_TURN)) {
             updateCurrentPlayer();
-        else{
+            additionalPowerUsed = true;
+        }
+        else if (!answerTemp.getHeader().equals(AnswerType.ERROR)) {
             if (isYourTurn()) {
                 if (!isReloaded) {
                     if (nextState.ordinal() >= DemandType.USE_POWER.ordinal())
@@ -187,12 +201,30 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 else
                     updateReduceObjects(answerTemp);
             }
-
-            if (answerTemp.getHeader().equals(AnswerType.RELOAD))
+            else if (answerTemp.getHeader().equals(AnswerType.VICTORY)) {
+                currentState = DemandType.NEW_GAME;
+                nextState = DemandType.START;
+                isNewGame = true;
+            }
+            else if (answerTemp.getHeader().equals(AnswerType.RELOAD))
                 reloadGame();
 
             updateNextState();
         }
+
+        if (!additionalPowerUsed && player != null && player.getCard() != null && player.getCard().isAdditionalPower() && currentState.equals(DemandType.BUILD) && player.getCard().getEffect().equals(Effect.MOVE)) {
+            currentState = DemandType.ASK_ADDITIONAL_POWER;
+            nextState = DemandType.BUILD;
+            additionalPowerUsed = true;
+        }
+
+        if (!additionalPowerUsed && player != null && player.getCard() != null && player.getCard().isAdditionalPower() && nextState.equals(DemandType.CHOOSE_WORKER) && player.getCard().getEffect().equals(Effect.BUILD)) {
+            nextState = DemandType.ASK_ADDITIONAL_POWER;
+            additionalPowerUsed = true;
+        }
+
+        if (currentState.equals(DemandType.MOVE))
+            additionalPowerUsed = false;
 
         synchronized (lockAnswer) {
             setChanged(true);
@@ -201,7 +233,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private synchronized void reloadGame() {
-        ReducedGame reducedGame = ((ReducedGame) answer.getPayload());
+        ReducedGame reducedGame = ((ReducedGame) getAnswer().getPayload());
 
         reducedBoard = reducedGame.getReducedBoard();
         opponents = reducedGame.getReducedPlayerList();
@@ -229,16 +261,12 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private synchronized void updateCurrentPlayer() {
         prevPlayer = currentPlayer;
-        currentPlayer = ((ReducedPlayer) answer.getPayload()).getNickname();
+        currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
     }
 
-    private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
+    private synchronized void updateReducedObjectsInitialize(Answer answerTemp) {
         switch (currentState) {
             case CREATE_GAME:
-                player.setColor(((ReducedMessage) answerTemp.getPayload()).getMessage());
-                challenger = player.getNickname();
-                break;
-
             case CONNECT:
                 player.setColor(((ReducedMessage) answerTemp.getPayload()).getMessage());
                 break;
@@ -263,7 +291,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
-    private synchronized void updateReduceObjects(Answer<S> answer) {
+    private synchronized void updateReduceObjects(Answer answer) {
         switch (answer.getContext()) {
             case GOD:
             case PLAYER:

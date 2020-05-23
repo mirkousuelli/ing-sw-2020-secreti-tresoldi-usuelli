@@ -10,7 +10,7 @@ public interface ServerConnection {
 
     void startServer() throws IOException;
 
-    boolean connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException;
+    void connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException;
 
     boolean numOfPlayers(ServerClientHandler c, Demand demand);
 

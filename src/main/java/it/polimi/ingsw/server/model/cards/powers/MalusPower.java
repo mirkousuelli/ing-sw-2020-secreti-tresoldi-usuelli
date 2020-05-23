@@ -13,6 +13,7 @@ package it.polimi.ingsw.server.model.cards.powers;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,10 +37,19 @@ public class MalusPower<S> extends Power<S> {
      * Method that adds the malus to the opponents
      *
      * @param opponents list of players that the malus is applied to
+     * @param currentPlayer currentPlayer
      * @return {@code true} after the malus is added to the opponents
      */
-    public boolean usePower(List<Player> opponents) {
+    public boolean usePower(List<Player> opponents, Player currentPlayer) {
         Malus malusPlayer = new Malus((Malus) allowedAction);
+
+        if (!malusPlayer.isPermanent()) {
+            List<Malus> maluses = new ArrayList<>();
+            maluses.add(malusPlayer);
+
+            if (ActivePower.verifyMalus(maluses, currentPlayer.getCurrentWorker().getPreviousLocation(), currentPlayer.getCurrentWorker().getLocation()))
+                return false;
+        }
 
         for (Player opponent : opponents)
             opponent.addMalus(malusPlayer);

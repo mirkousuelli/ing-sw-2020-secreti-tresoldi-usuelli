@@ -23,14 +23,17 @@ import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
+import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Build implements GameState {
     /* @Class
@@ -90,7 +93,7 @@ public class Build implements GameState {
             Power p = currentPlayer.getCard().getPower(0);
 
             if (((BuildPower) p).usePower(currentPlayer, cellToBuildUp, game.getBoard().getAround(cellToBuildUp))) {
-                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousBuild(), game.getPlayerList());
                 toReturn.add(temp);
 
                 returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -130,7 +133,7 @@ public class Build implements GameState {
                     returnContent.setChangeTurn(true);
                 }
 
-                toReturn.add(ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
+                toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
 
                 GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
                 GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
@@ -139,13 +142,53 @@ public class Build implements GameState {
             }
         }
 
-        if(ChangeTurn.controlWinCondition(game)) {
+        if (ChangeTurn.controlWinCondition(game)) {
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
+        }
+
+        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
+            toReturn = ChooseWorker.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), removeBlockedWorkers(game));
+            returnContent.setPayload(toReturn);
         }
 
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;
+    }
+
+    static List<ReducedAnswerCell> removeBlockedWorkers(Game game) {
+        List<Player> playerList = game.getPlayerList();
+        List<Worker> workerList = playerList.stream()
+                        .map(Player::getWorkers)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
+
+        List<ReducedAnswerCell> toReturn = new ArrayList<>();
+        List<Cell> around;
+        boolean toRemove = true;
+        for (Worker w : workerList) {
+            around = game.getBoard().getAround(w.getLocation());
+            for (Cell c : around) {
+                if (c.isWalkable())
+                    toRemove = false;
+            }
+
+            if (toRemove) {
+                toReturn.add(ReducedAnswerCell.prepareCell(w.getLocation(), playerList));
+                Build.removeWorkerFromGame(game, w);
+            }
+        }
+
+        return toReturn;
+    }
+
+    private static void removeWorkerFromGame(Game game, Worker w) {
+        for (Player p : game.getPlayerList()) {
+            if (p.getWorkers().contains(w)) {
+                p.removeWorker(w);
+                return;
+            }
+        }
     }
 }

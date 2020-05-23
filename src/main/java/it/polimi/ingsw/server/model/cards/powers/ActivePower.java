@@ -19,10 +19,12 @@ import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class that represents an active power, which can be a move or a build
@@ -74,7 +76,13 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if (ActivePower.verifyMalus(currentPlayer, cellToUse)) return false;
+        List<Malus> correctMalus = new ArrayList<>();
+        if (effect.equals(Effect.MALUS))
+            correctMalus= currentPlayer.getMalusList().stream()
+                    .filter(m -> m.getMalusType().equals(((Malus) allowedAction).getMalusType()))
+                    .collect(Collectors.toList());
+
+        if (!correctMalus.isEmpty() && !ActivePower.verifyMalus(correctMalus, workerToUse.getLocation(), cellToUse)) return false;
 
         //verify constraints
         return verifyConstraints(cellToUse);
@@ -102,7 +110,7 @@ public abstract class ActivePower<S> extends Power<S> {
      * if we consider Zeus), {@code false} otherwise
      */
     private boolean verifyConstraints(Cell cellToUse) {
-        if (constraints.isPerimCell() && !isPerim(cellToUse) && numberOfActionsRemaining > 0)  return false;
+        if (constraints.isPerimCell() && !isPerim(cellToUse))  return false;
         if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
@@ -182,21 +190,25 @@ public abstract class ActivePower<S> extends Power<S> {
      * @param cellToUse the cell that gets checked
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
-    public static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
-        if (currentPlayer.getMalusList() != null) {
-            for (Malus malus : currentPlayer.getMalusList()) {
+    private static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
+        return verifyMalus(currentPlayer.getMalusList(), currentPlayer.getCurrentWorker().getLocation(), cellToUse);
+    }
+
+    public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
+        if (maluses!= null) {
+            for (Malus malus : maluses) {
                 for (MalusLevel direction : malus.getDirection()) {
                     switch (direction) {
                         case UP:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > cellToUse.getLevel().toInt())
+                            if (workerLocation.getLevel().toInt() < cellToUse.getLevel().toInt())
                                 return false;
                             break;
                         case DOWN:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() < cellToUse.getLevel().toInt())
+                            if (workerLocation.getLevel().toInt() > cellToUse.getLevel().toInt())
                                 return false;
                             break;
                         case SAME:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt().equals(cellToUse.getLevel().toInt()))
+                            if (workerLocation.getLevel().toInt().equals(cellToUse.getLevel().toInt()))
                                 return false;
                             break;
                         case DEFAULT:
@@ -207,6 +219,6 @@ public abstract class ActivePower<S> extends Power<S> {
                 }
             }
         }
-        return false;
+        return true;
     }
 }

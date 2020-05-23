@@ -11,11 +11,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Lobby {
     private final Game game;
@@ -99,6 +95,10 @@ public class Lobby {
             }
             playingConnection.remove(player);
         }
+
+        synchronized (lockLobby) {
+            numberOfReady--;
+        }
     }
 
     public void setCurrentPlayer(String player) {
@@ -115,6 +115,10 @@ public class Lobby {
         }
 
         return ret;
+    }
+
+    public boolean isFull() {
+        return numberOfPlayers == playerViewList.size();
     }
 
     public void setReloaded(boolean reloaded) {

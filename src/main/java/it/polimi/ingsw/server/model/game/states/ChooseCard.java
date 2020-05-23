@@ -75,7 +75,7 @@ public class ChooseCard implements GameState {
     public static void applyMalus(Game game, Timing timing) {
         Power p = game.getCurrentPlayer().getCard().getPower(0);
         if (p.getEffect().equals(Effect.MALUS) && p.getTiming().equals(timing)) {
-            ((MalusPower) p).usePower(game.getOpponents());
+            ((MalusPower) p).usePower(game.getOpponents(), game.getCurrentPlayer());
         }
     }
 }

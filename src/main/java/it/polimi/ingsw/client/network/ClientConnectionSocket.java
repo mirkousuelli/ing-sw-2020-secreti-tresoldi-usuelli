@@ -4,11 +4,8 @@ import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.xml.FileXML;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -16,12 +13,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
+public class ClientConnectionSocket<S> extends SantoriniRunnable {
 
     private final Socket socket;
     private final FileXML file;
     private ClientView<S> clientView;
-    private final List<Answer<S>> buffer;
+    private final LinkedList<Answer<S>> buffer;
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
@@ -45,7 +42,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         Answer<S> answer;
 
         synchronized (buffer) {
-            answer = buffer.remove(0);
+            answer = buffer.removeFirst();
         }
 
         return answer;
@@ -65,7 +62,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         Thread t = new Thread(
                 () -> {
                         try {
-                            Answer<S> temp;
+                            Answer temp;
                             while (isActive()) {
                                 if (socket.isConnected() && !socket.isClosed()) {
                                     synchronized (file.lockReceive) {
@@ -77,12 +74,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                         break;
                                     }
 
-                                    if (temp.getHeader().equals(AnswerType.CLOSE))
-                                        setActive(false);
-
                                     LOGGER.info("Queueing...");
                                     synchronized (buffer) {
-                                        buffer.add(temp);
+                                        buffer.addLast(temp);
                                         LOGGER.info("Queued!");
                                         buffer.notifyAll();
                                         LOGGER.info("READ");
@@ -103,10 +97,10 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         Thread t = new Thread(
                 () -> {
                         try {
-                            Demand<S> demand;
+                            Demand demand;
                             while (isActive()) {
-                                synchronized (clientView.lockDemand) {
-                                    while (!clientView.isChanged()) clientView.lockDemand.wait();
+                                synchronized (lockDemand) {
+                                    while (!clientView.isChanged()) lockDemand.wait();
                                     clientView.setChanged(false);
                                     demand = clientView.getDemand();
                                 }
@@ -158,6 +152,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
                             LOGGER.info("Consuming...");
                             synchronized (lockAnswer) {
+                                setAnswer(getAnswer());
                                 setChanged(true);
                                 lockAnswer.notifyAll();
                                 LOGGER.info("Consumed!");

@@ -78,26 +78,6 @@ public class Board implements Cloneable {
         return null;
     }
 
-    public List<Cell> getColumn(int col) {
-        /* @getter
-         * it gets the full column selected as a list
-         */
-
-        if (col >= 0 && col < 5) {
-            List<Cell> colList = new ArrayList<Cell>();
-
-            for (int i = 0; i < this.DIM; i++) {
-                // adding each cell of the same column
-                colList.add(this.getCell(i, col));
-            }
-
-            return colList;
-        }
-
-        return null;
-    }
-
-
     /**
      * Method that gets the 8 cells around the one passed as parameter
      *
@@ -185,6 +165,8 @@ public class Board implements Cloneable {
                 }
             }
         }
+
+        toReturn.removeIf(c -> c.getLevel().toInt() > player.getCurrentWorker().getLocation().getLevel().toInt() + 1);
 
         return toReturn;
     }
@@ -276,36 +258,6 @@ public class Board implements Cloneable {
                 }
             }
         }
-
-        // cannot move up malus active
-        /*if (this.player.cannotMoveUpActive()) {
-            // look for everything around
-            for (Cell around : this.currCell.getAround()) {
-                // checking level difference
-                if (this.currCell.getLevel().toInt() < around.getLevel().toInt()) {
-                    //removing from the list to return
-                    toReturn.remove(around);
-                }
-            }
-            // if everything is removed then i will return null
-        }
-
-        // must move up malus active
-        if (this.player.isMustMoveUpActive()) {
-            // look for everything around
-            for (Cell around : this.currCell.getAround()) {
-                // checking level difference
-                if (this.currCell.getLevel().toInt() > around.getLevel().toInt()) {
-                    //removing from the list to return
-                    toReturn.remove(around);
-                }
-            }
-
-            // in case i removed everything i reset around
-            if (toReturn == null) {
-                toReturn = this.currCell.getAround();
-            }
-        }*/
 
         // in case no malus has been active : normal getAround()
         // in case both malus are active : normal getAround()

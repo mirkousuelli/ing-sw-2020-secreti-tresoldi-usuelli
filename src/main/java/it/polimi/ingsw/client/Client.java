@@ -17,7 +17,7 @@ public class Client {
     public static void main(String[] args) {
         ClientView clientView;
 
-        int viewType = Client.askInt("Insert which UI you want: 1-CLI, 2-GUI");
+        int viewType = Client.askUI();
 
         switch (viewType) {
             case 1:
@@ -37,8 +37,8 @@ public class Client {
         ).start();
     }
 
-    private static int askInt(String message) {
-        out.println(message);
+    private static int askUI() {
+        out.println("Insert which UI you want: 1-CLI, 2-GUI");
         String value;
 
         do {
