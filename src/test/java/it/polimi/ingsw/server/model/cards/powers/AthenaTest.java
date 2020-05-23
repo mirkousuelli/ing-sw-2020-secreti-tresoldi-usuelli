@@ -45,14 +45,13 @@ public class AthenaTest {
         player2.setCurrentWorker(player2.getWorkers().get(0));
 
         //player1
-        //build
-        board.build(player1, emptyBuild);
+        emptyBuild.setLevel(Level.BOTTOM);
         //move
         board.move(player1, emptyBuild);
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
-        assertTrue(power1.usePower(opponents));
+        assertTrue(power1.usePower(opponents, player1));
 
         //player2
         //build
@@ -65,7 +64,7 @@ public class AthenaTest {
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
-        assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
+        assertNull(player1.getCurrentWorker().getPreviousBuild());
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(emptyBuild, player1.getCurrentWorker().getLocation());
         assertEquals(Level.BOTTOM, cannotMoveUpCell.getLevel());

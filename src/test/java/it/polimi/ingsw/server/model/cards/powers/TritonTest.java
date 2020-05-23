@@ -39,15 +39,14 @@ public class TritonTest {
         //move with power on perim
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
         assertTrue(power1.usePower(player1, emptyPower2, board.getAround(emptyPower2)));
-        assertTrue(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
-        assertFalse(power1.usePower(player1, emptyPower2, board.getAround(emptyPower2)));
+        assertFalse(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
 
 
 
 
-        assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
-        assertEquals(worker1Player1, player1.getWorkers().get(0).getLocation());
-        assertEquals(emptyPower2, player1.getWorkers().get(0).getPreviousLocation());
+        assertEquals(emptyPower2.getPawn(), player1.getWorkers().get(0));
+        assertEquals(emptyPower2, player1.getWorkers().get(0).getLocation());
+        assertEquals(emptyPower1, player1.getWorkers().get(0).getPreviousLocation());
     }
 
     @Test
@@ -69,15 +68,14 @@ public class TritonTest {
 
         //move with power on perim
         assertTrue(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
-        assertTrue(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
-        assertFalse(power1.usePower(player1, emptyPower1, board.getAround(emptyPower1)));
+        assertFalse(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
 
 
 
 
-        assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
-        assertEquals(worker1Player1, player1.getWorkers().get(0).getLocation());
-        assertEquals(emptyPower1, player1.getWorkers().get(0).getPreviousLocation());
+        assertEquals(emptyPower1.getPawn(), player1.getWorkers().get(0));
+        assertEquals(emptyPower1, player1.getWorkers().get(0).getLocation());
+        assertEquals(worker1Player1, player1.getWorkers().get(0).getPreviousLocation());
     }
 
     @Test

@@ -413,6 +413,10 @@ ________________________________________________________________________________
 
         game.setCurrentPlayer(p1);
         game.assignCard(God.ATHENA);
+        p1.initializeWorkerPosition(1, (Block) board.getCell(0, 0));
+        p1.setCurrentWorker(p1.getWorker(1));
+        board.getCell(0,1).setLevel(Level.BOTTOM);
+        board.move(p1, board.getCell(0 ,1));
         ChooseCard.applyMalus(game, Timing.END_TURN);
 
         game.setCurrentPlayer(p2);
@@ -846,6 +850,10 @@ ________________________________________________________________________________
 
         game.setCurrentPlayer(p1);
         game.assignCard(God.ATHENA);
+        p1.initializeWorkerPosition(1, (Block) board.getCell(0, 0));
+        p1.setCurrentWorker(p1.getWorker(1));
+        board.getCell(0,1).setLevel(Level.BOTTOM);
+        board.move(p1, board.getCell(0 ,1));
         ChooseCard.applyMalus(game, Timing.END_TURN);
 
         game.setCurrentPlayer(p2);

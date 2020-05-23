@@ -182,21 +182,25 @@ public abstract class ActivePower<S> extends Power<S> {
      * @param cellToUse the cell that gets checked
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
-    public static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
-        if (currentPlayer.getMalusList() != null) {
-            for (Malus malus : currentPlayer.getMalusList()) {
+    private static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
+        return verifyMalus(currentPlayer.getMalusList(), currentPlayer.getCurrentWorker().getLocation(), cellToUse);
+    }
+
+    public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
+        if (maluses!= null) {
+            for (Malus malus : maluses) {
                 for (MalusLevel direction : malus.getDirection()) {
                     switch (direction) {
                         case UP:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > cellToUse.getLevel().toInt())
+                            if (workerLocation.getLevel().toInt() < cellToUse.getLevel().toInt())
                                 return false;
                             break;
                         case DOWN:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() < cellToUse.getLevel().toInt())
+                            if (workerLocation.getLevel().toInt() > cellToUse.getLevel().toInt())
                                 return false;
                             break;
                         case SAME:
-                            if (currentPlayer.getCurrentWorker().getLocation().getLevel().toInt().equals(cellToUse.getLevel().toInt()))
+                            if (workerLocation.getLevel().toInt().equals(cellToUse.getLevel().toInt()))
                                 return false;
                             break;
                         case DEFAULT:

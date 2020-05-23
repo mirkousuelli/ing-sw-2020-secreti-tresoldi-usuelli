@@ -47,7 +47,7 @@ public class PersephoneTest {
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
-        assertTrue(power1.usePower(opponents));
+        assertTrue(power1.usePower(opponents, player1));
         //move up
         assertFalse(board.move(player2, emptyMove));
 
@@ -85,7 +85,7 @@ public class PersephoneTest {
         //power
         List<Player> opponents = new ArrayList<>();
         opponents.add(player2);
-        assertTrue(power1.usePower(opponents));
+        assertTrue(power1.usePower(opponents, player1));
         //move up
         assertTrue(board.move(player2, tower));
 
