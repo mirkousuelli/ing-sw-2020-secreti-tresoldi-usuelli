@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
 import it.polimi.ingsw.client.view.gui.component.JWorker;
-import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +15,8 @@ public class JMap extends JPanel implements ActionListener {
     private List<JCell> activeCells;
     private List<JCell> powerCells;
     private JWorker currentWorker;
-    private JCellStatus turn; // can be just MOVE or BUILD (it drives the use of usePower)
-    private boolean power;
+    private JCellStatus turn;
+    private JCellStatus power;
 
     public JMap() {
         super(new GridBagLayout());
@@ -25,7 +24,8 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
-        this.power = false;
+        this.power = JCellStatus.NONE;
+        this.turn = JCellStatus.NONE;
         activeCells = new ArrayList<>();
         powerCells = new ArrayList<>();
         cellButton = new JCell[DIM][DIM];
@@ -55,7 +55,6 @@ public class JMap extends JPanel implements ActionListener {
     public void setAround(List<JCell> where, JCellStatus how) {
         if (how.equals(JCellStatus.MOVE) || how.equals(JCellStatus.BUILD)) {
             activeCells.clear();
-            this.turn = how;
             for (JCell cell : where) {
                 activeCells.add(cell);
                 ((JBlockDecorator) cell).addDecoration(how);
@@ -72,16 +71,23 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void setPossibleMove(List<JCell> where) {
+        turn = JCellStatus.MOVE;
         setAround(where, JCellStatus.MOVE);
     }
 
     public void setPossibleBuild(List<JCell> where) {
+        turn = JCellStatus.BUILD;
         setAround(where, JCellStatus.BUILD);
     }
 
-    public void setPossibleUsePower(List<JCell> where) {
+    public void setPossibleUsePowerMove(List<JCell> where) {
+        power = JCellStatus.MOVE;
         setAround(where, JCellStatus.USE_POWER);
-        this.power = true;
+    }
+
+    public void setPossibleUsePowerBuild(List<JCell> where) {
+        power = JCellStatus.BUILD;
+        setAround(where, JCellStatus.USE_POWER);
     }
 
     public void setPossibleMalus(List<JCell> where) {
@@ -109,8 +115,10 @@ public class JMap extends JPanel implements ActionListener {
             ((JBlockDecorator)cell).removeDecoration();
 
         for (JCell cell : activeCells)
-            if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
+            if (((JBlockDecorator)cell).getDecoration() == null)
                 ((JBlockDecorator)cell).addDecoration(turn);
+            //if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
+                //((JBlockDecorator)cell).addDecoration(turn);
 
         repaint();
         validate();
@@ -121,7 +129,7 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public boolean isPowerActive() {
-        return this.power;
+        return !power.equals(JCellStatus.NONE);
     }
 
     @Override
@@ -143,12 +151,12 @@ public class JMap extends JPanel implements ActionListener {
                 else if (status.equals(JCellStatus.MOVE))
                     moveWorker(src);
                 else if (status.equals(JCellStatus.USE_POWER)) {
-                    if (turn.equals(JCellStatus.BUILD))
+                    if (power.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                    else if (turn.equals(JCellStatus.MOVE))
+                    else if (power.equals(JCellStatus.MOVE))
                         moveWorker(src);
+                    power = JCellStatus.NONE;
                 }
-                this.power = false;
 
                 validate();
                 repaint();

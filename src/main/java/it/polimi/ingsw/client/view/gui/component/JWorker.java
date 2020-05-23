@@ -9,13 +9,8 @@ public class JWorker {
     private JDecorator pawn;
     private JCell cell;
 
-    public JWorker() {
-        pawn = new JDecorator();
-        pawn.setDecoration(JCellStatus.NONE);
-    }
-
-    public JWorker(JDecorator pawn, JCell cell) {
-        this.pawn = pawn;
+    public JWorker(JCellStatus pawn, JCell cell) {
+        this.pawn = new JDecorator(pawn);
         this.cell = cell;
         ((JBlockDecorator) cell).addWorker(this);
     }
@@ -23,8 +18,8 @@ public class JWorker {
         return pawn;
     }
 
-    public void setPawn(JDecorator pawn) {
-        this.pawn = pawn;
+    public void setPawn(JCellStatus pawn) {
+        this.pawn.setDecoration(pawn);
     }
 
     public JCell getLocation() {

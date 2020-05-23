@@ -206,8 +206,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         cardButton.applyNormal();
     }
 
-    public void setPossibleUsePower(List<JCell> where) {
-        map.setPossibleUsePower(where);
+    public void setPossibleUsePowerMove(List<JCell> where) {
+        map.setPossibleUsePowerMove(where);
+        cardButton.applyPower();
+    }
+
+    public void setPossibleUsePowerBuild(List<JCell> where) {
+        map.setPossibleUsePowerBuild(where);
         cardButton.applyPower();
     }
 
@@ -215,6 +220,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         map.setPossibleMalus(where);
         cardButton.applyNormal();
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
