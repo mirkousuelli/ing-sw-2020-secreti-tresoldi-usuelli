@@ -74,14 +74,18 @@ public class ManagerPanel extends JPanel {
         deck = new JDeck(Arrays.asList(God.values()));
 
         /* ------------------------ZONA TESTING---------------------------- */
-        this.game = new JGame();
+        //TODO : devo rimuovere il deck
+        //TODO : devo fare il game panel
+        //TODO : devo fare il bottone di play again sugli end panel
+        //santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
+        /*this.game = new JGame();
         this.game.addPlayer("Mirko",0);
         this.game.addPlayer("Fabio", 1);
-        this.game.addPlayer("Riccardo", 2);
+        //this.game.addPlayer("Riccardo", 2);
         this.game.setCurrentPlayer(this.game.getPlayer(0));
         santoriniPanelList.add(new ChooseStarterPanel(cardLayout, this, game));
         ChooseStarterPanel panel = (ChooseStarterPanel) santoriniPanelList.get(0);
-        panel.addPlayers(this.game.getPlayerList());
+        panel.addPlayers(this.game.getPlayerList());*/
 
         /*santoriniPanelList.add(new GamePanel(cardLayout, this));
         GamePanel gamePanel = (GamePanel)getCurrentPanel();

@@ -57,12 +57,12 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         c.gridx = 0;
         c.gridy = this.game.getNumPlayer();
 
-        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+        ImageIcon icon = new ImageIcon("img/buttons/choose_starter.png");
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
         chooseButton = new JButton(icon);
-        chooseButton.setPreferredSize(new Dimension(BUTTON_SIZE,100));
+        chooseButton.setPreferredSize(new Dimension(BUTTON_SIZE,200));
         chooseButton.setOpaque(false);
         chooseButton.setContentAreaFilled(false);
         chooseButton.setBorderPainted(false);
