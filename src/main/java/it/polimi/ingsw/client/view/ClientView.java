@@ -53,12 +53,6 @@ public abstract class ClientView<S> extends SantoriniRunnable {
         }
     }
 
-    protected void endGame() {
-        setActive(false);
-        clientModel.setActive(false);
-        clientModel.getClientConnection().closeConnection();
-    }
-
     protected void setInitialRequest() {
         setFree(false);
 

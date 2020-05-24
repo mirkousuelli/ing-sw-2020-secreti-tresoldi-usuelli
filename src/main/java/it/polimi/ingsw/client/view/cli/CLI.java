@@ -7,6 +7,7 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public class CLI<S> extends ClientView<S> {
 
@@ -36,11 +37,6 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case DEFEAT:
-                out.printEnd(answerTemp.getHeader().toString());
-                if(clientModel.isYourTurn())
-                    endGame();
-                return;
-
             case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;

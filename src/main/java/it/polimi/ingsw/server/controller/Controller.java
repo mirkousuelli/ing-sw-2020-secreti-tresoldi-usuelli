@@ -38,7 +38,6 @@ public class Controller implements Observer<ActionToPerformView> {
         }
         else
             model.setState(returnContent.getState());
-
     }
 
     @Override

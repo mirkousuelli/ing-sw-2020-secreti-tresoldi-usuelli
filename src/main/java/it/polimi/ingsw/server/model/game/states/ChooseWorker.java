@@ -98,11 +98,22 @@ public class ChooseWorker implements GameState {
 
         // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
         if(cannotMoveAny()) {
-            returnContent.setAnswerType(AnswerType.DEFEAT);
-            returnContent.setPayload(game.getCurrentPlayer());
-            game.getPlayerList().remove(game.getCurrentPlayer());
-            returnContent.setState(State.CHOOSE_WORKER);
-            returnContent.setChangeTurn(true);
+            if (game.getNumPlayers() > 2) {
+                returnContent.setAnswerType(AnswerType.DEFEAT);
+                returnContent.setState(State.CHOOSE_WORKER);
+                returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+                returnContent.setChangeTurn(true);
+            }
+            else {
+                returnContent.setAnswerType(AnswerType.VICTORY);
+                returnContent.setState(State.VICTORY);
+                returnContent.setPayload(new ReducedPlayer(game.getPlayerList().stream()
+                        .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
+                        .reduce(null, (a, b) -> a != null ? a : b)
+                        .nickName
+                        )
+                );
+            }
 
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
@@ -117,6 +128,7 @@ public class ChooseWorker implements GameState {
                         returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
 
                         GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+                        GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
                         GameMemory.save(game, Lobby.backupPath);
                     }
                     break;
@@ -124,7 +136,6 @@ public class ChooseWorker implements GameState {
             }
         }
 
-        GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
 
         return returnContent;

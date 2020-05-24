@@ -52,6 +52,18 @@ public class ServerStub implements ServerClientHandler {
     }
 
     @Override
+    public boolean isCreator() {
+        //stub
+        return false;
+    }
+
+    @Override
+    public String getName() {
+        //stub
+        return null;
+    }
+
+    @Override
     public void setActive(boolean isActive) {
         //stub
     }

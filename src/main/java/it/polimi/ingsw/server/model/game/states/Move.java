@@ -80,7 +80,7 @@ public class Move implements GameState {
 
         List<Cell> remainingCells = around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
-                .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
+                .filter(c -> c.isFree() /*|| ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker())*/)
                 .filter(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1))
                 .collect(Collectors.toList());
 

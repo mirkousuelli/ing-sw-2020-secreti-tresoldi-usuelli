@@ -135,14 +135,14 @@ public class ServerConnectionSocket implements ServerConnection {
             c.setCreator(true);
             LOGGER.info("Created!");
 
-            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedMessage(lobby.getColor(c))));
+            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c), true)));
         }
         else if (!lobby.isReloaded() && lobby.getGame().getPlayer(name) == null &&
                  lobby.getNumberOfPlayers() != -1 && lobby.getNumberOfPlayers() > lobby.getReducedPlayerList().size()) {
             //join
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
-            c.send(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(c))));
+            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c))));
             LOGGER.info("Joined!");
         }
 
@@ -181,19 +181,27 @@ public class ServerConnectionSocket implements ServerConnection {
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
         if (response.equals("n")) {
+            if (c.isCreator() && lobby.getNumberOfReady() > 1)
+                lobby.setNewCreator(c).setCreator(true);
+
             lobby.deletePlayer(c);
             lobby.setNumberOfReady(lobby.getNumberOfReady() - 1);
             c.setLoggingOut(true);
             c.closeSocket();
-            System.out.println("Noooooo");
             return false;
         }
         else if (response.equals("y")) {
             lobby.setNumberOfReady(lobby.getNumberOfReady() + 1);
+
+            if (lobby.getNumberOfReady() == 2 * lobby.getNumberOfPlayers()) {
+                lobby.getGame().setState(State.START);
+                lobby.setNumberOfReady(lobby.getNumberOfPlayers());
+            }
             return false;
         }
 
         c.send(new Answer(AnswerType.ERROR));
+        System.out.println("Error");
         return true;
     }
 }

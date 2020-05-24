@@ -178,7 +178,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                                 if (newGame) { //newGame
                                     newGame(demand);
-                                    lobby.getGame().setState(State.START);
                                 }
                                 else { //normal gameFlow
                                     LOGGER.info("Consuming...");
@@ -281,6 +280,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         this.creator = creator;
     }
 
+    @Override
+    public boolean isCreator() {
+        return creator;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
     private void basicStart() throws InterruptedException {
         //wait
         List<ReducedPlayer> players;
@@ -349,9 +358,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 closeSocket();
             }
             else {
-                lobby.addPlayer(name, this);
-                send(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(this))));
-                LOGGER.info("Joined!");
+                if (!lobby.isPresentInGame(this)) {
+                    lobby.addPlayer(name, this);
+                    send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(name, lobby.getColor(this), creator)));
+                    LOGGER.info("Joined!");
+                }
             }
         }
     }

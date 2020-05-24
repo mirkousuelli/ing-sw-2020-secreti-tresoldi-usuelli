@@ -32,6 +32,7 @@ public class ClientModel<S> extends SantoriniRunnable {
     private boolean isInitializing = true;
     private boolean isReloaded;
     private boolean isNewGame = false;
+    private boolean isYourEnding = false;
     private boolean additionalPowerUsed = true;
 
     private DemandType nextState = DemandType.CONNECT;
@@ -57,16 +58,6 @@ public class ClientModel<S> extends SantoriniRunnable {
         this.clientConnection = clientConnection;
 
         isReloaded = false;
-    }
-
-    public ClientConnectionSocket<S> getClientConnection() {
-        ClientConnectionSocket<S> ret;
-
-        synchronized (lock) {
-            ret = clientConnection;
-        }
-
-        return ret;
     }
 
     public int getNumberOfPlayers() {
@@ -169,9 +160,14 @@ public class ClientModel<S> extends SantoriniRunnable {
             currentState = nextState;
 
         if (isNewGame) {
-            currentState = DemandType.CONNECT;
+            currentState = DemandType.START;
+            if (isCreator)
+                nextState = DemandType.CHOOSE_DECK;
+            else
+                nextState = DemandType.CHOOSE_CARD;
             isNewGame = false;
             isInitializing = true;
+            currentPlayer = null;
             deck.clear();
             opponents.clear();
             workers.clear();
@@ -205,9 +201,15 @@ public class ClientModel<S> extends SantoriniRunnable {
                 currentState = DemandType.NEW_GAME;
                 nextState = DemandType.START;
                 isNewGame = true;
+                isYourEnding = player.getNickname().equals(((ReducedPlayer) getAnswer().getPayload()).getNickname());
             }
             else if (answerTemp.getHeader().equals(AnswerType.RELOAD))
                 reloadGame();
+            else if (answerTemp.getHeader().equals(AnswerType.DEFEAT)) {
+                String playerToRemove = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+                if (!playerToRemove.equals(player.getNickname()))
+                    opponents.removeIf( o -> o.getNickname().equals(playerToRemove));
+            }
 
             updateNextState();
         }
@@ -240,6 +242,10 @@ public class ClientModel<S> extends SantoriniRunnable {
         currentPlayer = reducedGame.getCurrentPlayerIndex();
         workers = reducedGame.getReducedWorkerList();
         isInitializing = false;
+        isCreator = reducedGame.getReducedPlayerList().stream()
+                .filter(p -> p.getNickname().equals(player.getNickname()))
+                .reduce(null, (a, b) -> a != null ? a : b)
+                .isCreator();
 
         if (isYourTurn())
             currentState = reducedGame.getCurrentState();
@@ -268,7 +274,9 @@ public class ClientModel<S> extends SantoriniRunnable {
         switch (currentState) {
             case CREATE_GAME:
             case CONNECT:
-                player.setColor(((ReducedMessage) answerTemp.getPayload()).getMessage());
+                player.setColor(((ReducedPlayer) answerTemp.getPayload()).getNickname());
+                isCreator = ((ReducedPlayer) answerTemp.getPayload()).isCreator();
+                System.out.println(isCreator);
                 break;
 
             case START:
@@ -278,6 +286,7 @@ public class ClientModel<S> extends SantoriniRunnable {
 
                 for (ReducedPlayer o : opponents) {
                     if (o.getNickname().equals(player.getNickname())) {
+                        isCreator = o.isCreator();
                         opponents.remove(o);
                         break;
                     }
@@ -375,6 +384,10 @@ public class ClientModel<S> extends SantoriniRunnable {
        if (currentPlayer == null) return false;
 
        return player.getNickname().equals(currentPlayer);
+    }
+
+    public synchronized boolean isYours() {
+        return isYourEnding;
     }
 
     public synchronized boolean isCreator() {

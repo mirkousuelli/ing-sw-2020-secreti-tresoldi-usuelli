@@ -21,6 +21,10 @@ public interface ServerClientHandler {
 
     void setCreator(boolean creator);
 
+    boolean isCreator();
+
+    String getName();
+
     void setActive(boolean isActive);
 
     void setLoggingOut(boolean loggingOut);

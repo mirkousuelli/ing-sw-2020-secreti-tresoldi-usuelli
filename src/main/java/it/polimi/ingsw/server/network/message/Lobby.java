@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Lobby {
     private final Game game;
@@ -209,5 +210,14 @@ public class Lobby {
 
     public void setNumberOfReady(int numberOfReady) {
         this.numberOfReady = numberOfReady;
+    }
+
+    public ServerClientHandler setNewCreator(ServerClientHandler c) {
+        return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
+    }
+
+    public ServerClientHandler setNewCreator(String name) {
+        ServerClientHandler c = playingConnection.keySet().stream().filter(ch -> ch.getName().equals(name)).reduce(null, (a,b) -> a != null ? a : b);
+        return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 }
