@@ -8,7 +8,6 @@ import java.awt.*;
 
 public class WaitingRoomPanel extends SantoriniPanel {
     private static final String imgPath = "menu.png";
-    private JLabel stand;
 
     public WaitingRoomPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
@@ -20,7 +19,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         ImageIcon icon = new ImageIcon("img/buttons/waiting.png");
         Image img = icon.getImage().getScaledInstance( 800, 400, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
-        stand = new JLabel(icon);
+        JLabel stand = new JLabel(icon);
         stand.setOpaque(false);
 
         add(stand, new GridBagConstraints());

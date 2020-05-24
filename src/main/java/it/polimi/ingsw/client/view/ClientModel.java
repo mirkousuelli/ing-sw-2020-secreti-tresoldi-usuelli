@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -167,7 +168,14 @@ public class ClientModel<S> extends SantoriniRunnable {
                 nextState = DemandType.CHOOSE_CARD;
             isNewGame = false;
             isInitializing = true;
+            isReloaded = false;
             currentPlayer = null;
+            reducedBoard = new ReducedAnswerCell[5][5];
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    reducedBoard[i][j] = new ReducedAnswerCell(i, j, null);
+                }
+            }
             deck.clear();
             opponents.clear();
             workers.clear();
@@ -242,10 +250,6 @@ public class ClientModel<S> extends SantoriniRunnable {
         currentPlayer = reducedGame.getCurrentPlayerIndex();
         workers = reducedGame.getReducedWorkerList();
         isInitializing = false;
-        isCreator = reducedGame.getReducedPlayerList().stream()
-                .filter(p -> p.getNickname().equals(player.getNickname()))
-                .reduce(null, (a, b) -> a != null ? a : b)
-                .isCreator();
 
         if (isYourTurn())
             currentState = reducedGame.getCurrentState();
@@ -274,9 +278,8 @@ public class ClientModel<S> extends SantoriniRunnable {
         switch (currentState) {
             case CREATE_GAME:
             case CONNECT:
-                player.setColor(((ReducedPlayer) answerTemp.getPayload()).getNickname());
-                isCreator = ((ReducedPlayer) answerTemp.getPayload()).isCreator();
-                System.out.println(isCreator);
+                player.setColor(((ReducedPlayer) answerTemp.getPayload()).getColor());
+                isCreator = ((ReducedPlayer) answerTemp.getPayload()).isCreator() || currentState.equals(DemandType.CREATE_GAME);
                 break;
 
             case START:

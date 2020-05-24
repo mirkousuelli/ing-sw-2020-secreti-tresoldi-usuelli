@@ -275,6 +275,15 @@ public class Game extends Observable<Answer> {
         players.removeIf(p -> p.nickName.equals(player));
     }
 
+    public void clean() {
+        board.clean();
+        chosenGods.clear();
+        prevState = State.START;
+        currentPlayer = 0;
+        starter = -1;
+        players.forEach(Player::reset);
+    }
+
     /**
      * Method that represents the engine of the game and works differently depending on the current state
      * <p>

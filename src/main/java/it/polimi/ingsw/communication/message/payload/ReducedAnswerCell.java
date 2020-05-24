@@ -14,6 +14,8 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     private List<ReducedAction> actionList;
     private ReducedWorker worker;
 
+    public ReducedAnswerCell() {}
+
     public ReducedAnswerCell(int x, int y) {
         this(x, y , null);
     }
@@ -25,8 +27,6 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         actionList.add(ReducedAction.DEFAULT);
         this.worker = worker;
     }
-
-    public ReducedAnswerCell() {}
 
     public List<ReducedAction> getActionList() {
         return actionList;

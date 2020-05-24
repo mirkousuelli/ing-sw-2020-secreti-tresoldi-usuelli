@@ -360,7 +360,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             else {
                 if (!lobby.isPresentInGame(this)) {
                     lobby.addPlayer(name, this);
-                    send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(name, lobby.getColor(this), creator)));
+                    send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, lobby.getColor(this), creator)));
                     LOGGER.info("Joined!");
                 }
             }

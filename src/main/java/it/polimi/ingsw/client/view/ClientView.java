@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.network.ClientConnectionSocket;
-import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
@@ -61,11 +60,7 @@ public abstract class ClientView<S> extends SantoriniRunnable {
             setChanged(true);
         }
 
-        setFree(true);
-
-        synchronized (lockDemand) {
-            lockDemand.notifyAll();
-        }
+        becomeFree();
     }
 
     protected void createDemand(Demand<S> demand) {

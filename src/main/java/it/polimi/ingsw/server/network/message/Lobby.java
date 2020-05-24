@@ -69,12 +69,19 @@ public class Lobby {
                 for (View v : playerViewList) {
                     reducedPlayer = new ReducedPlayer(v.getPlayer());
                     reducedPlayer.setColor(playerColor.get(v).getColor());
+                    reducedPlayer.setCreator(getServerClientHandler(v).isCreator());
                     reducedPlayerList.add(reducedPlayer);
                 }
             }
         }
 
         return reducedPlayerList;
+    }
+
+    private ServerClientHandler getServerClientHandler(View v) {
+        return playingConnection.keySet().stream()
+                .filter(c -> playingConnection.get(c).equals(v))
+                .reduce(null, (a, b) -> a != null ? a : b);
     }
 
     public void setNumberOfPlayers(int numberOfPlayers) {
@@ -216,8 +223,7 @@ public class Lobby {
         return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 
-    public ServerClientHandler setNewCreator(String name) {
-        ServerClientHandler c = playingConnection.keySet().stream().filter(ch -> ch.getName().equals(name)).reduce(null, (a,b) -> a != null ? a : b);
-        return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
+    public void cleanGame() {
+        game.clean();
     }
 }

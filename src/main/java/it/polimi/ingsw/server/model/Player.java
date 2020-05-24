@@ -203,4 +203,13 @@ public class Player {
 
         return null;
     }
+
+    public void reset() {
+        removeMalus();
+        removePermanentMalus();
+        malusList.clear();
+        card = null;
+        workers.forEach(w -> w.getLocation().removePawn());
+        workers.clear();
+    }
 }

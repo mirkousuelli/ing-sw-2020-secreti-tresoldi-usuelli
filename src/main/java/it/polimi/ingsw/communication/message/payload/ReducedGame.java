@@ -76,9 +76,6 @@ public class ReducedGame {
                     rp.setCard(new ReducedCard(p.getCard()));
             }
         }
-
-        lobby.setNewCreator(playerList.get(0).nickName).setCreator(true);
-        reducedPlayerList.stream().filter(rp -> rp.getNickname().equals(playerList.get(0).nickName)).reduce(null, (a, b) -> a != null ? a : b).setCreator(true);
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {

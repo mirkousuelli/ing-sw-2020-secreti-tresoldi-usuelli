@@ -124,6 +124,9 @@ public class ServerConnectionSocket implements ServerConnection {
             //reload
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
+            if (lobby.getNumberOfReady() == 1)
+                c.setCreator(true);
+            System.out.println(c.isCreator());
             LOGGER.info("Reloaded!");
         }
         else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() == 0)) {
@@ -142,7 +145,7 @@ public class ServerConnectionSocket implements ServerConnection {
             //join
             lobby.addPlayer(name, c);
             c.setLobby(lobby);
-            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c))));
+            c.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c))));
             LOGGER.info("Joined!");
         }
 
@@ -192,10 +195,13 @@ public class ServerConnectionSocket implements ServerConnection {
         }
         else if (response.equals("y")) {
             lobby.setNumberOfReady(lobby.getNumberOfReady() + 1);
+            System.out.println(c.isCreator());
 
             if (lobby.getNumberOfReady() == 2 * lobby.getNumberOfPlayers()) {
                 lobby.getGame().setState(State.START);
                 lobby.setNumberOfReady(lobby.getNumberOfPlayers());
+                lobby.getGame().setState(State.START);
+                lobby.cleanGame();
             }
             return false;
         }
