@@ -117,8 +117,6 @@ public class JMap extends JPanel implements ActionListener {
         for (JCell cell : activeCells)
             if (((JBlockDecorator)cell).getDecoration() == null)
                 ((JBlockDecorator)cell).addDecoration(turn);
-            //if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
-                //((JBlockDecorator)cell).addDecoration(turn);
 
         repaint();
         validate();

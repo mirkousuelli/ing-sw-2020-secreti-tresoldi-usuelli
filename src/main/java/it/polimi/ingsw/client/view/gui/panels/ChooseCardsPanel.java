@@ -57,7 +57,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
             god.getMini().addActionListener(this);
         setChoice(deck, deck.getGod(0));
 
-        createSendButton();
+        createActiveButton();
         createRemoveButton();
     }
 
@@ -190,7 +190,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         deck.showMiniList();
     }
 
-    private void createSendButton() {
+    private void createActiveButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 0;
