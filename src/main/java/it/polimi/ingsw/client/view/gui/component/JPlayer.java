@@ -4,20 +4,46 @@ import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class JPlayer implements ActionListener {
+public class JPlayer extends JButton implements ActionListener {
     private final String nickname;
     private JGod god;
     private JWorker femaleWorker;
     private JWorker maleWorker;
-    private boolean current;
-    private boolean choose;
+    private boolean currentWorker;
+    private boolean chooseWorker;
+    private final String tagPath;
+    private final static String activePath = "img/labels/chosen_player.png";
+    private boolean active;
+    private JLabel text;
+    public static final int SIZE_X = 400;
+    public static final int SIZE_Y = 100;
 
-    public JPlayer(String nickname) {
+    public JPlayer(String nickname, int index) {
         this.nickname = nickname;
-        this.choose = false;
+        this.chooseWorker = false;
+        this.active = false;
+
+        setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
+        this.tagPath = "img/workers/worker_" + (index + 1) + "/tag.png";
+        ImageIcon icon = new ImageIcon(tagPath);
+        Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
+        setIcon(new ImageIcon(img));
+        setOpaque(false);
+        setLayout(new GridBagLayout());
+        setContentAreaFilled(false);
+        setBorderPainted(false);
+        setName("player");
+
+        text = new JLabel(this.nickname);
+        text.setForeground(Color.WHITE);
+        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 35));
+        text.setOpaque(false);
+        add(text, new GridBagConstraints());
     }
 
     public String getNickname() {
@@ -51,20 +77,44 @@ public class JPlayer implements ActionListener {
     public void chooseWorker() {
         ((JBlockDecorator) this.maleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
         ((JBlockDecorator) this.femaleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
-        choose = true;
+        chooseWorker = true;
     }
 
     public JWorker getCurrentWorker() {
-        return (current) ? maleWorker : femaleWorker;
+        return (currentWorker) ? maleWorker : femaleWorker;
+    }
+
+    public void active() {
+        this.active = true;
+
+        JLabel activeLabel = new JLabel();
+        ImageIcon icon = new ImageIcon(activePath);
+        Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
+        activeLabel.setIcon(icon);
+        activeLabel.setLayout(new GridBagLayout());
+        activeLabel.add(text, new GridBagConstraints());
+        add(activeLabel, new GridBagConstraints());
+        validate();
+        repaint();
+    }
+
+    public void disactive() {
+        this.active = false;
+
+        removeAll();
+        add(text, new GridBagConstraints());
+        validate();
+        repaint();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (choose) {
-            current = ((JBlockDecorator) e.getSource()).getWorker().equals(maleWorker.getPawn().getDecoration());
+        if (chooseWorker) {
+            currentWorker = ((JBlockDecorator) e.getSource()).getWorker().equals(maleWorker.getPawn().getDecoration());
             ((JBlockDecorator) this.maleWorker.getLocation()).removeDecoration();
             ((JBlockDecorator) this.femaleWorker.getLocation()).removeDecoration();
-            choose = false;
+            chooseWorker = false;
             System.out.println(getCurrentWorker().getPawn().getDecoration().path);
         }
     }

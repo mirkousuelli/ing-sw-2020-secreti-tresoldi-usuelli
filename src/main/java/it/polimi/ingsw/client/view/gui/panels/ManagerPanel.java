@@ -74,20 +74,33 @@ public class ManagerPanel extends JPanel {
         deck = new JDeck(Arrays.asList(God.values()));
 
         /* ------------------------ZONA TESTING---------------------------- */
-        santoriniPanelList.add(new GamePanel(cardLayout, this));
+        //TODO : devo rimuovere il deck
+        //TODO : devo fare il game panel
+        //TODO : devo fare il bottone di play again sugli end panel
+        //santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
+        /*this.game = new JGame();
+        this.game.addPlayer("Mirko",0);
+        this.game.addPlayer("Fabio", 1);
+        //this.game.addPlayer("Riccardo", 2);
+        this.game.setCurrentPlayer(this.game.getPlayer(0));
+        santoriniPanelList.add(new ChooseStarterPanel(cardLayout, this, game));
+        ChooseStarterPanel panel = (ChooseStarterPanel) santoriniPanelList.get(0);
+        panel.addPlayers(this.game.getPlayerList());*/
+
+        /*santoriniPanelList.add(new GamePanel(cardLayout, this));
         GamePanel gamePanel = (GamePanel)getCurrentPanel();
 
         JPlayer p = new JPlayer("mirko");
         JWorker w1 = new JWorker(JCellStatus.PLAYER_2_FEMALE, gamePanel.getJMap().getCell(2,2));
         JWorker w2 = new JWorker(JCellStatus.PLAYER_2_MALE, gamePanel.getJMap().getCell(0,0));
-        p.setWorkers(w1, w2);
+        p.setWorkers(w1, w2);*/
 
         // PER TESTARE CHOOSE WORKER
         /*p.chooseWorker();
         gamePanel.getJMap().setCurrentWorker(p.getCurrentWorker());*/
 
         // PER TESTARE MOVE/BUILD/USEPOWER
-        gamePanel.getJMap().setCurrentWorker(p.getFemaleWorker());
+        /*gamePanel.getJMap().setCurrentWorker(p.getFemaleWorker());
 
         List<JCell> around = new ArrayList<>();
         around.add(gamePanel.getJMap().getCell(2,1));
@@ -103,7 +116,7 @@ public class ManagerPanel extends JPanel {
         around.add(gamePanel.getJMap().getCell(2,2));
         gamePanel.setPossibleUsePowerBuild(around);
 
-        gamePanel.setPossibleMalus(Collections.singletonList(gamePanel.getJMap().getCell(1,3)));
+        gamePanel.setPossibleMalus(Collections.singletonList(gamePanel.getJMap().getCell(1,3)));*/
 
         /* ------------------------------------------------------------------- */
 
