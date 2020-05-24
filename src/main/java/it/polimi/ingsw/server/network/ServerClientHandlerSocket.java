@@ -348,8 +348,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 setLoggingOut(true);
                 closeSocket();
             }
-            else
+            else {
                 lobby.addPlayer(name, this);
+                send(new Answer<>(AnswerType.SUCCESS, new ReducedMessage(lobby.getColor(this))));
+                LOGGER.info("Joined!");
+            }
         }
     }
 
