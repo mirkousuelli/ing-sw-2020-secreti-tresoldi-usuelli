@@ -1,18 +1,18 @@
 package it.polimi.ingsw.client.view.gui.component;
 
-import it.polimi.ingsw.client.view.gui.component.deck.JGod;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JGame {
     private final List<JPlayer> players;
     private int current;
+    private final JDeck jDeck;
 
     public JGame(){
         this.players = new ArrayList<>();
+        jDeck = new JDeck();
     }
 
     public void addPlayer(String nickname, int index) {
@@ -42,5 +42,9 @@ public class JGame {
 
     public int getNumPlayer() {
         return this.players.size();
+    }
+
+    public JDeck getjDeck() {
+        return jDeck;
     }
 }
