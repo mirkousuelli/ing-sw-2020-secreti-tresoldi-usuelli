@@ -22,7 +22,6 @@ public class ManagerPanel extends JPanel {
     private final List<SantoriniPanel> santoriniPanelList;
     private int currentPanelIndex;
     private final GUI gui;
-    private JDeck deck; // da utilizzare quello in JGame
     private JGame game;
 
     enum SantoriniPanelEnum {
@@ -71,14 +70,15 @@ public class ManagerPanel extends JPanel {
         cardLayout = new CardLayout();
         setLayout(cardLayout);
 
-        deck = new JDeck(Arrays.asList(God.values()));
+        game = new JGame();
+        game.getJDeck().setGodList(Arrays.asList(God.values()));
 
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));
         santoriniPanelList.add(new NumPlayerPanel(cardLayout, this));
         santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
-        santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this, deck));
-        santoriniPanelList.add(new ChooseGodPanel(cardLayout, this, deck));
+        santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this, game.getJDeck()));
+        santoriniPanelList.add(new ChooseGodPanel(cardLayout, this, game.getJDeck()));
         santoriniPanelList.add(new GamePanel(cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.DEFEAT, cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.VICTORY, cardLayout, this));

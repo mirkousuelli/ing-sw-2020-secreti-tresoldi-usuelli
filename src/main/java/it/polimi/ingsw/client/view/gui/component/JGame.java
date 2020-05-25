@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.component;
 
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.map.JMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,13 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private final JDeck jDeck;
+    private final JDeck deck;
+    private final JMap map;
 
     public JGame(){
         this.players = new ArrayList<>();
-        jDeck = new JDeck();
+        deck = new JDeck();
+        map = new JMap();
     }
 
     public void addPlayer(String nickname, int index) {
@@ -44,7 +47,11 @@ public class JGame {
         return this.players.size();
     }
 
-    public JDeck getjDeck() {
-        return jDeck;
+    public JDeck getJDeck() {
+        return deck;
+    }
+
+    public JMap getJMap() {
+        return map;
     }
 }
