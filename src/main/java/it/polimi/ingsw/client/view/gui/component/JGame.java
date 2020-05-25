@@ -8,11 +8,15 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private final JDeck jDeck;
+    private JDeck deck;
+
+    public JGame(JDeck deck){
+        this.players = new ArrayList<>();
+        this.deck = deck;
+    }
 
     public JGame(){
-        this.players = new ArrayList<>();
-        jDeck = new JDeck();
+        this(new JDeck());
     }
 
     public void addPlayer(String nickname, int index) {
@@ -32,6 +36,17 @@ public class JGame {
         }
     }
 
+    public void setCurrentPlayer(String name) {
+        JPlayer newCurrentPlayer = players.stream()
+                .filter(p -> p.getNickname().equals(name))
+                .reduce(null, (a, b) -> a!= null
+                        ? a
+                        : b
+                );
+
+        current = players.indexOf(newCurrentPlayer);
+    }
+
     public JPlayer getCurrentPlayer() {
         return this.players.get(this.current);
     }
@@ -44,7 +59,11 @@ public class JGame {
         return this.players.size();
     }
 
-    public JDeck getjDeck() {
-        return jDeck;
+    public JDeck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(JDeck deck) {
+        this.deck = deck;
     }
 }
