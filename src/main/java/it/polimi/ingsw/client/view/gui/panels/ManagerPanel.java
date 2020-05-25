@@ -74,8 +74,8 @@ public class ManagerPanel extends JPanel {
 
         game = new JGame();
 
-        /* ------ */
-        game.getJDeck().setGodList(Arrays.asList(God.values()));
+        /* --- ZONA TESTING --- */
+        /*game.getJDeck().setGodList(Arrays.asList(God.values()));
 
         game.addPlayer("Mirko", 0);
         game.addPlayer("Alessia", 1);
@@ -104,7 +104,7 @@ public class ManagerPanel extends JPanel {
         around.add(game.getJMap().getCell(1,3));
         around.add(game.getJMap().getCell(3,3));
         around.add(game.getJMap().getCell(1,1));
-        panel.setPossibleUsePowerBuild(around);
+        panel.setPossibleUsePowerBuild(around);*/
         /* ------ */
 
         santoriniPanelList.add(new StartPanel(cardLayout, this));
