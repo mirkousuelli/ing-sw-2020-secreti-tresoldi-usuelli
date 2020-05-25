@@ -14,7 +14,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     private static final int BUTTON_SIZE = 175;
     private JButton sendButton;
     private JLabel stand;
-    private JTextArea nickText;
+    private JTextField nickText;
     private JComboBox connectType;
     private JComboBox serverAdd;
     private JComboBox serverPort;
@@ -46,8 +46,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         a.weightx = 1;
         a.weighty = 0.1;
         a.insets = new Insets(250,40,0,0);
-        nickText = new JTextArea(1,10);
-        nickText.setFont(nickText.getFont().deriveFont(18f));
+        nickText = new JTextField(10);
         nickText.setVisible(true);
         stand.add(nickText, a);
 

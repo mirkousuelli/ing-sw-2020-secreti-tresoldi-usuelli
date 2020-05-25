@@ -6,12 +6,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
-    private ArrayList<JGod> gods;
+    private List<JGod> gods;
     private int current;
 
     public JDeck(List<God> list) {
@@ -121,6 +123,15 @@ public class JDeck extends JPanel implements ActionListener {
 
     public List<God> getGodList() {
         return gods.stream().map(JGod::getGod).collect(Collectors.toList());
+    }
+
+    public void setGodList(List<God> gods) {
+        int i = 0;
+        for (God god : gods) {
+            this.gods.add(new JGod(god));
+            this.gods.get(i).getMini().addActionListener(this);
+            i++;
+        }
     }
 
     public void removeGod(God god) {
