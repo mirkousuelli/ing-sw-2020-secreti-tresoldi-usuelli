@@ -246,8 +246,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
             case "send":
                 //changing panel
                 ManagerPanel mg = (ManagerPanel) panels;
-                mg.getGame().setDeck(chosenDeck);
-                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getDeck()));
+                mg.getGame().setJDeck(chosenDeck);
+                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(false);
                 this.panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());

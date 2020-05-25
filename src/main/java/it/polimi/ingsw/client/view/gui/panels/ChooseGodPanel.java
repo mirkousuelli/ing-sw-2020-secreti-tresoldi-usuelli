@@ -172,8 +172,10 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
     void updateDeck(God godToRemove) {
         deck.pop(deck.getJGod(godToRemove));
-        setChoice(deck, deck.getCurrent());
-        deck.showMiniList();
+        if (!deck.getList().isEmpty()) {
+            setChoice(deck, deck.getCurrent());
+            deck.showMiniList();
+        }
     }
 
     void updateDeck() {
@@ -200,6 +202,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
                 if (gui.getClientModel().isCreator()) {
                     mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
+                    ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
                     this.panelIndex.next(this.panels);
                 }
 
@@ -215,20 +218,27 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
+        System.out.println(gui.getClientModel().isYourTurn());
         mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+        enableChoose(gui.getClientModel().isYourTurn());
 
         if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
             God godToRemove = deck.getList().stream()
                     .filter(jGod -> !gods.contains(jGod.getGod()))
-                    .reduce(null, (a, b) -> a != null ? a : b)
+                    .reduce(null, (a, b) -> a != null
+                            ? a
+                            : b
+                    )
                     .getGod();
 
             updateDeck(godToRemove);
         }
 
-        if (gui.getClientModel().getCurrentState().equals(DemandType.PLACE_WORKERS)) {
+        if (gods.isEmpty()) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
+            gui.free();
+            return;
         }
 
         if (!gui.getClientModel().isCreator()) return;

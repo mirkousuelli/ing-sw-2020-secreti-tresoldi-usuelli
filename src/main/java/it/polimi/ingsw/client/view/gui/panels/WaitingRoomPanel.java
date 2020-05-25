@@ -36,22 +36,22 @@ public class WaitingRoomPanel extends SantoriniPanel {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
-        if (mg.getGame().getDeck().getList().isEmpty()) {
+        if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
             List<God> godList = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
-            mg.getGame().setDeck(new JDeck(godList));
+            mg.getGame().setJDeck(new JDeck(godList));
         }
 
         switch (gui.getClientModel().getCurrentState()) {
             case CHOOSE_DECK:
-                mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getDeck()));
+                mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
                 ((ChooseCardsPanel) mg.getCurrentPanel()).enableChoose(true);
                 gui.free();
                 break;
 
             case CHOOSE_CARD:
-                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getDeck()));
+                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
                 break;
 
