@@ -73,13 +73,22 @@ public class ManagerPanel extends JPanel {
         game = new JGame();
         game.getJDeck().setGodList(Arrays.asList(God.values()));
 
+        /* ------ */
+        santoriniPanelList.add(new GamePanel(cardLayout, this, game));
+        GamePanel panel = (GamePanel) getCurrentPanel();
+        List<JCell> around = new ArrayList<>();
+        around.add(game.getJMap().getCell(2,2));
+        around.add(game.getJMap().getCell(2,1));
+        panel.setPossibleBuild(around);
+        /* ------ */
+
         santoriniPanelList.add(new StartPanel(cardLayout, this));
         santoriniPanelList.add(new NicknamePanel(cardLayout, this));
         santoriniPanelList.add(new NumPlayerPanel(cardLayout, this));
         santoriniPanelList.add(new WaitingRoomPanel(cardLayout, this));
         santoriniPanelList.add(new ChooseCardsPanel(cardLayout, this, game.getJDeck()));
         santoriniPanelList.add(new ChooseGodPanel(cardLayout, this, game.getJDeck()));
-        santoriniPanelList.add(new GamePanel(cardLayout, this));
+        //santoriniPanelList.add(new GamePanel(cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.DEFEAT, cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.VICTORY, cardLayout, this));
         santoriniPanelList.add(new EndPanel(EndPanel.SAVE, cardLayout, this));

@@ -9,8 +9,8 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private final JDeck deck;
-    private final JMap map;
+    private JDeck deck;
+    private JMap map;
 
     public JGame(){
         this.players = new ArrayList<>();

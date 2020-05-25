@@ -1,11 +1,12 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.component.JGame;
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.map.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,34 +14,34 @@ import java.util.List;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";
-    private JMap map;
+    private JGame game;
     private JPanel right;
     private JPanel lobby;
     private JPanel card;
     private JCard cardButton;
     private JPanel left;
-    private JPanel firstMalus;
-    private JPanel secondMalus;
+    //private JPanel firstMalus;
+    //private JPanel secondMalus;
     private JLabel lobbyStand;
     private JLabel[] player;
     private JButton quitButton;
 
-    public GamePanel(CardLayout panelIndex, JPanel panels) {
+    public GamePanel(CardLayout panelIndex, JPanel panels, JGame game) {
         super(imgPath, panelIndex, panels);
 
-        player = new JLabel[3];
+        this.game = game;
+        //player = new JLabel[3];
 
         createRightSection();
-        createLobbySection();
-        createLobbyPlayers();
-        createQuitButton();
+        //createQuitButton();
         createCardSection();
 
         createMap();
 
         createLeftSection();
-        createFirstMalusSection();
-        createSecondMalusSection();
+        for (JPlayer p : this.game.getPlayerList())
+            createFirstMalusSection();
+        //createSecondMalusSection();
     }
 
     void createMap() {
@@ -54,13 +55,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.weightx = 0.1;
         mapCon.weighty = 0.1;
         mapCon.fill = GridBagConstraints.BOTH;
-        mapCon.insets = new Insets(70,10,85,70);
+        mapCon.insets = new Insets(70,55,85,70);
 
-        map = new JMap();
-        map.setOpaque(false);
-        map.setVisible(true);
-        map.setBorder(new EmptyBorder(0,25,0,10));
-        add(map, mapCon);
+        add(this.game.getJMap(), mapCon);
     }
 
     void createRightSection() {
@@ -78,6 +75,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right = new JPanel(new GridLayout(2,1));
         right.setVisible(true);
         right.setOpaque(false);
+        right.setLayout(new GridBagLayout());
 
         add(right, rightCon);
     }
@@ -137,10 +135,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     void createCardSection() {
+        GridBagConstraints cardCon = new GridBagConstraints();
+        cardCon.insets = new Insets(0,20,0,0);
+
         card = new JPanel(new GridBagLayout());
         card.setOpaque(false);
         card.setVisible(true);
-        right.add(card);
+        right.add(card, cardCon);
 
         cardButton = new JCard(God.APOLLO);
         cardButton.addActionListener(this);
@@ -167,7 +168,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     void createFirstMalusSection() {
-        firstMalus = new JPanel(new GridBagLayout());
+        JPanel firstMalus = new JPanel(new GridBagLayout());
         firstMalus.setOpaque(false);
         firstMalus.setVisible(true);
         left.add(firstMalus);
@@ -179,7 +180,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         firstMalus.add(malus_1, new GridBagConstraints());
     }
 
-    void createSecondMalusSection() {
+    /*void createSecondMalusSection() {
         secondMalus = new JPanel(new GridBagLayout());
         secondMalus.setOpaque(false);
         secondMalus.setVisible(true);
@@ -190,34 +191,31 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         icon_2 = new ImageIcon( img_2 );
         JLabel malus_2 = new JLabel(icon_2);
         secondMalus.add(malus_2, new GridBagConstraints());
-    }
+    }*/
 
-    public JMap getJMap() {
-        return map;
-    }
 
     public void setPossibleMove(List<JCell> where) {
-        map.setPossibleMove(where);
+        this.game.getJMap().setPossibleMove(where);
         cardButton.applyNormal();
     }
 
     public void setPossibleBuild(List<JCell> where) {
-        map.setPossibleBuild(where);
+        this.game.getJMap().setPossibleBuild(where);
         cardButton.applyNormal();
     }
 
     public void setPossibleUsePowerMove(List<JCell> where) {
-        map.setPossibleUsePowerMove(where);
+        this.game.getJMap().setPossibleUsePowerMove(where);
         cardButton.applyPower();
     }
 
     public void setPossibleUsePowerBuild(List<JCell> where) {
-        map.setPossibleUsePowerBuild(where);
+        this.game.getJMap().setPossibleUsePowerBuild(where);
         cardButton.applyPower();
     }
 
     public void setPossibleMalus(List<JCell> where) {
-        map.setPossibleMalus(where);
+        this.game.getJMap().setPossibleMalus(where);
         cardButton.applyNormal();
     }
 
@@ -228,15 +226,15 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         switch (src.getName()) {
             case "card":
-                if (getJMap().isPowerActive()) {
-                    map.hidePowerCells();
+                if (this.game.getJMap().isPowerActive()) {
+                    this.game.getJMap().hidePowerCells();
                     cardButton.applyPower();
                 }
                 break;
 
             case "power":
-                if (getJMap().isPowerActive()) {
-                    map.showPowerCells();
+                if (this.game.getJMap().isPowerActive()) {
+                    this.game.getJMap().showPowerCells();
                     cardButton.applyNormal();
                 }
                 break;
