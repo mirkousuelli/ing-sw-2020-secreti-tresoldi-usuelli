@@ -6,7 +6,6 @@ import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.deck.JMini;
-import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -14,7 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
@@ -55,6 +53,11 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         createGodsList();
         createChoice();
         createChooseButton();
+
+        loadGods();
+        for (JGod god : deck.getList())
+            god.getMini().addActionListener(this);
+        setChoice(deck, deck.getGod(0));
     }
 
     void loadGods() {
@@ -163,17 +166,20 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
-    void nextPanel(boolean isChallenger) {
-        ManagerPanel mg = (ManagerPanel) panels;
+    void enableChoose(boolean enable) {
+        chooseButton.setEnabled(enable);
+    }
 
-        //TODO change to otherWait
-        if (isChallenger)
-            mg.setCurrentPanelIndex("game");
-        else
-            mg.setCurrentPanelIndex("waiting");
+    void updateDeck(God godToRemove) {
+        deck.pop(deck.getJGod(godToRemove));
+        if (!deck.getList().isEmpty()) {
+            setChoice(deck, deck.getCurrent());
+            deck.showMiniList();
+        }
+    }
 
-        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
-        this.panelIndex.next(this.panels);
+    void updateDeck() {
+        updateDeck(chosenGod);
     }
 
     @Override
@@ -188,8 +194,19 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
             case "choose":
                 ManagerPanel mg = (ManagerPanel) panels;
+                GUI gui = mg.getGui();
+
+                mg.getGame().getCurrentPlayer().setGod(deck.getJGod(chosenGod));
+                updateDeck();
+                chooseButton.setEnabled(false);
+
+                if (gui.getClientModel().isCreator()) {
+                    mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
+                    ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
+                    this.panelIndex.next(this.panels);
+                }
+
                 mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
-                deck.removeGod(chosenGod);
                 break;
         }
     }
@@ -200,28 +217,32 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
-        boolean isChallenger = gui.getClientModel().isCreator();
 
-        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
+        mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+        enableChoose(gui.getClientModel().isYourTurn());
+        System.out.println(gui.getClientModel().isYourTurn());
 
-        if (gods.size() > gui.getClientModel().getNumberOfPlayers()) {
+        if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
+            God godToRemove = deck.getList().stream()
+                    .filter(jGod -> !gods.contains(jGod.getGod()))
+                    .reduce(null, (a, b) -> a != null
+                            ? a
+                            : b
+                    )
+                    .getGod();
+
+            updateDeck(godToRemove);
+        }
+
+        System.out.println(gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator());
+        if (gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator()) {
+            mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+            this.panelIndex.next(this.panels);
             gui.free();
             return;
         }
 
-        if (deck.getList().size() >= gui.getClientModel().getNumberOfPlayers() || (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty())) {
-            List<JGod> jGodsToRemove = deck.getList().stream()
-                    .filter(jGod -> !gods.contains(jGod.getGod()))
-                    .collect(Collectors.toList());
-
-            deck.getList().removeIf(jGodsToRemove::contains);
-            loadGods();
-        }
-
-        if (gui.getClientModel().getCurrentPlayer().getCard() != null)
-            nextPanel(isChallenger);
-
-        if (!isChallenger) return;
+        if (!gui.getClientModel().isCreator()) return;
         gui.free();
     }
 }

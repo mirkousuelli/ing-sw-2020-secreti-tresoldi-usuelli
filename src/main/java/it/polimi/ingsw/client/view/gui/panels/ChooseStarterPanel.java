@@ -1,7 +1,10 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,8 +82,11 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
                 this.game.setCurrentPlayer((JPlayer) e.getSource());
                 break;
             case "choose":
-                ((ManagerPanel) panels).setCurrentPanelIndex("game");
+                ManagerPanel mg = (ManagerPanel) panels;
+
+                mg.addPanel(new GamePanel(panelIndex, panels));
                 this.panelIndex.next(this.panels);
+                mg.getGui().generateDemand(DemandType.CHOOSE_STARTER, new ReducedMessage(game.getCurrentPlayer().getNickname()));
                 break;
         }
     }

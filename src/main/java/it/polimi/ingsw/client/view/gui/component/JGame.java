@@ -9,13 +9,17 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private JDeck deck;
-    private JMap map;
+    private final JDeck deck;
+    private final JMap map;
+
+    public JGame(JDeck deck){
+        this.players = new ArrayList<>();
+        this.deck = deck;
+        map = new JMap();
+    }
 
     public JGame(){
-        this.players = new ArrayList<>();
-        deck = new JDeck();
-        map = new JMap();
+        this(new JDeck());
     }
 
     public void addPlayer(String nickname, int index) {
@@ -36,6 +40,17 @@ public class JGame {
         }
     }
 
+    public void setCurrentPlayer(String name) {
+        JPlayer newCurrentPlayer = players.stream()
+                .filter(p -> p.getNickname().equals(name))
+                .reduce(null, (a, b) -> a!= null
+                        ? a
+                        : b
+                );
+
+        current = players.indexOf(newCurrentPlayer);
+    }
+
     public JPlayer getCurrentPlayer() {
         return this.players.get(this.current);
     }
@@ -50,6 +65,10 @@ public class JGame {
 
     public JDeck getJDeck() {
         return deck;
+    }
+
+    public void setJDeck(JDeck deck) {
+        this.deck = deck;
     }
 
     public JMap getJMap() {

@@ -134,13 +134,12 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
 
         if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME))
-            mg.setCurrentPanelIndex("numOfPlayers");
+            mg.addPanel(new NumPlayerPanel(panelIndex, panels));
         else {
-            mg.setCurrentPanelIndex("waiting");
+            mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
             gui.free();
         }
 
-        mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
         this.panelIndex.next(this.panels);
     }
 }

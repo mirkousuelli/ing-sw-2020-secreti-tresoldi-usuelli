@@ -236,21 +236,19 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         cloudBack.add(removeButton, c);
     }
 
+    void enableChoose(boolean enable) {
+        activeButton.setEnabled(enable);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
-                // remove all gods from main deck
-                deck.getList().clear();
-
-                // adding the chosen ones
-                for (JGod god : chosenDeck.getList())
-                    deck.addGod(god);
-
                 //changing panel
                 ManagerPanel mg = (ManagerPanel) panels;
-                mg.setCurrentPanelIndex("chooseGod");
-                mg.add(mg.getSantoriniPanelList().get(mg.getCurrentPanelIndex()));
+                mg.getGame().setJDeck(chosenDeck);
+                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
+                ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(false);
                 this.panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;
