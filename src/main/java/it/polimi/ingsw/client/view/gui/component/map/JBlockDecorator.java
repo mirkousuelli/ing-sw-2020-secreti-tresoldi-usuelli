@@ -70,6 +70,10 @@ public class JBlockDecorator extends JCell {
         validate();
     }
 
+    public boolean isFree() {
+        return (worker == null);
+    }
+
     public JCellStatus getWorker() {
         return this.worker.getPawn().getDecoration();
     }

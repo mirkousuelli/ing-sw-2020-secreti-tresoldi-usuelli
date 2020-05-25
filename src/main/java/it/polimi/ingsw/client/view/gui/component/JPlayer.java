@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.component;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
+import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 
 public class JPlayer extends JButton implements ActionListener {
     private final String nickname;
+    private final int id;
     private JCard card;
     private JWorker femaleWorker;
     private JWorker maleWorker;
@@ -37,6 +39,7 @@ public class JPlayer extends JButton implements ActionListener {
 
     public JPlayer(String nickname, int index) {
         this.nickname = nickname;
+        this.id = index;
         this.chooseWorker = false;
         this.active = false;
         this.xSize = SIZE_X;
@@ -44,7 +47,7 @@ public class JPlayer extends JButton implements ActionListener {
         this.fontSize = FONT_SIZE;
 
         setPreferredSize(new Dimension(xSize, ySize));
-        this.tagPath = "img/workers/worker_" + (index + 1) + "/tag.png";
+        this.tagPath = "img/workers/worker_" + (id + 1) + "/tag.png";
         ImageIcon icon = new ImageIcon(tagPath);
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
@@ -59,6 +62,9 @@ public class JPlayer extends JButton implements ActionListener {
         text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
         text.setOpaque(false);
         add(text, new GridBagConstraints());
+
+        this.femaleWorker = null;
+        this.maleWorker = null;
     }
 
     public String getNickname() {
@@ -81,16 +87,19 @@ public class JPlayer extends JButton implements ActionListener {
         this.maleWorker.getLocation().addActionListener(this);
     }
 
+    public void setUpWorker(JCell position) {
+        if (femaleWorker == null)
+            femaleWorker = new JWorker(JCellStatus.getWorkerType(this.id, true), position);
+        else if (maleWorker == null)
+            maleWorker = new JWorker(JCellStatus.getWorkerType(this.id, false), position);
+    }
+
     public JWorker getFemaleWorker() {
         return this.femaleWorker;
     }
 
     public JWorker getMaleWorker() {
         return this.maleWorker;
-    }
-
-    public void workerPositioning() {
-
     }
 
     public void chooseWorker() {

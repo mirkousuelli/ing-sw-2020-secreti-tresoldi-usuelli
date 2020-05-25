@@ -19,7 +19,7 @@ public class JMap extends JPanel implements ActionListener {
     private JPlayer currentPlayer;
     private JCellStatus turn;
     private JCellStatus power;
-    private boolean positioning;
+    private int positioning;
 
     public JMap() {
         super(new GridBagLayout());
@@ -27,7 +27,7 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
-        this.positioning = false;
+        this.positioning = -1;
         this.power = JCellStatus.NONE;
         this.turn = JCellStatus.NONE;
 
@@ -50,7 +50,7 @@ public class JMap extends JPanel implements ActionListener {
         }
     }
 
-    public void setCurrentPlayer(JPlayer worker) {
+    public void setCurrentPlayer(JPlayer currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
 
@@ -144,34 +144,44 @@ public class JMap extends JPanel implements ActionListener {
         return !power.equals(JCellStatus.NONE);
     }
 
+    public void workersPositioning() {
+        this.positioning = 2;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
-        if (src.getName().equals("cell") && (activeCells.contains(src) || powerCells.contains(src))) {
-            JCellStatus status = ((JBlockDecorator) src).getDecoration();
-            if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
-                for (JCell cell : activeCells)
-                    ((JBlockDecorator) cell).clean();
-                activeCells.clear();
+        if (src.getName().equals("cell")) {
+            if (activeCells.contains(src) || powerCells.contains(src)) {
+                JCellStatus status = ((JBlockDecorator) src).getDecoration();
+                if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
+                    for (JCell cell : activeCells)
+                        ((JBlockDecorator) cell).clean();
+                    activeCells.clear();
 
-                for (JCell cell : powerCells)
-                    ((JBlockDecorator) cell).clean();
-                powerCells.clear();
+                    for (JCell cell : powerCells)
+                        ((JBlockDecorator) cell).clean();
+                    powerCells.clear();
 
-                if (status.equals(JCellStatus.BUILD))
-                    ((JBlockDecorator) src).buildUp();
-                else if (status.equals(JCellStatus.MOVE))
-                    moveWorker(src);
-                else if (status.equals(JCellStatus.USE_POWER)) {
-                    if (power.equals(JCellStatus.BUILD))
+                    if (status.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                    else if (power.equals(JCellStatus.MOVE))
+                    else if (status.equals(JCellStatus.MOVE))
                         moveWorker(src);
-                    power = JCellStatus.NONE;
-                }
+                    else if (status.equals(JCellStatus.USE_POWER)) {
+                        if (power.equals(JCellStatus.BUILD))
+                            ((JBlockDecorator) src).buildUp();
+                        else if (power.equals(JCellStatus.MOVE))
+                            moveWorker(src);
+                        power = JCellStatus.NONE;
+                    }
 
-                validate();
-                repaint();
+                    validate();
+                    repaint();
+                }
+            } else if (this.positioning > 0 && ((JBlockDecorator)src).isFree()) {
+                currentPlayer.setUpWorker(src);
+                this.positioning--;
+                revalidate();
             }
         }
     }
