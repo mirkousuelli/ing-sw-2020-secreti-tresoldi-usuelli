@@ -86,7 +86,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
 
                 mg.addPanel(new GamePanel(panelIndex, panels));
                 this.panelIndex.next(this.panels);
-                mg.getGui().generateDemand(DemandType.CHOOSE_STARTER, new ReducedMessage(((JButton)e.getSource()).getText()));
+                mg.getGui().generateDemand(DemandType.CHOOSE_STARTER, new ReducedMessage(game.getCurrentPlayer().getNickname()));
                 break;
         }
     }

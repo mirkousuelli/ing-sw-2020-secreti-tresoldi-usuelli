@@ -218,9 +218,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
-        System.out.println(gui.getClientModel().isYourTurn());
         mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
         enableChoose(gui.getClientModel().isYourTurn());
+        System.out.println(gui.getClientModel().isYourTurn());
 
         if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
             God godToRemove = deck.getList().stream()
@@ -234,7 +234,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             updateDeck(godToRemove);
         }
 
-        if (gods.isEmpty()) {
+        System.out.println(gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator());
+        if (gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator()) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
             gui.free();

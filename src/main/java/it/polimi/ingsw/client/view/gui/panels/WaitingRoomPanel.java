@@ -51,18 +51,22 @@ public class WaitingRoomPanel extends SantoriniPanel {
                 break;
 
             case CHOOSE_CARD:
-                mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
+                if (!gui.getClientModel().getCurrentPlayer().isCreator()) {
+                    mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
+                    ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
+                }
+                else
+                    return;
+                break;
+
+            case PLACE_WORKERS:
+                mg.addPanel(new GamePanel(panelIndex, panels));
                 break;
 
             case START:
                 setUpJPlayers();
                 gui.free();
                 return;
-
-            case PLACE_WORKERS:
-                mg.addPanel(new GamePanel(panelIndex, panels));
-                break;
 
             default:
                 gui.free();

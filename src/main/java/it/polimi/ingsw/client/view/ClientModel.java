@@ -280,6 +280,7 @@ public class ClientModel<S> extends SantoriniRunnable {
             case CONNECT:
                 player.setColor(((ReducedPlayer) answerTemp.getPayload()).getColor());
                 isCreator = ((ReducedPlayer) answerTemp.getPayload()).isCreator() || currentState.equals(DemandType.CREATE_GAME);
+                player.setCreator(isCreator);
                 break;
 
             case START:
