@@ -20,6 +20,7 @@ public class JMap extends JPanel implements ActionListener {
     private JCellStatus turn;
     private JCellStatus power;
     private int positioning;
+    private JButton gamePanelButton;
 
     public JMap() {
         super(new GridBagLayout());
@@ -148,6 +149,10 @@ public class JMap extends JPanel implements ActionListener {
         this.positioning = 2;
     }
 
+    public void powerButtonManager(JButton btn) {
+        this.gamePanelButton = btn;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
@@ -175,6 +180,9 @@ public class JMap extends JPanel implements ActionListener {
                         power = JCellStatus.NONE;
                     }
 
+                    /******* mi disabilita il bottone nel game panel *******************/
+                    this.gamePanelButton.setEnabled(false);
+                    /********************************************************************/
                     validate();
                     repaint();
                 }

@@ -30,12 +30,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         createRightSection();
         createPowerButton();
-        //createQuitButton();
+        createQuitButton();
         createCardSection();
-
         createMap();
-
         createLeftSection();
+
         int enemy = 0;
         for (JPlayer p : this.game.getPlayerList()) {
             if (!p.equals(this.clientPlayer))
@@ -80,7 +79,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(right, rightCon);
     }
 
-    /*void createQuitButton() {
+    void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon("img/buttons/quit_button.png");
@@ -88,20 +87,18 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         icon = new ImageIcon( img );
 
         c.gridx = 0;
-        c.gridy = 3;
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 0f;
-        c.weighty = 0f;
+        c.gridy = 0;
+        c.insets = new Insets(0,20,-70,0);
 
         quitButton = new JButton(icon);
+        quitButton.setPreferredSize(new Dimension(100,50));
         quitButton.setOpaque(false);
         quitButton.setContentAreaFilled(false);
         quitButton.setBorderPainted(false);
-        //quitButton.setBorder(new EmptyBorder(0,0,80,0));
+        right.add(quitButton, c);
 
-        //playButton.addActionListener(this);
-        lobbyStand.add(quitButton, c);
-    }*/
+        //quitButton.addActionListener(this); TODO : da mettere verso il SAVED PANEL
+    }
 
     void createPowerButton() {
         GridBagConstraints c = new GridBagConstraints();
@@ -111,7 +108,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         icon = new ImageIcon( img );
 
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0f;
         c.weighty = 0f;
@@ -124,6 +121,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         powerButton.addActionListener(this);
         powerButton.setName("off");
         powerButton.setEnabled(false);
+        this.game.getJMap().powerButtonManager(powerButton);
         right.add(powerButton, c);
     }
 
@@ -149,6 +147,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GridBagConstraints cardCon = new GridBagConstraints();
         GridBagConstraints playerCon = new GridBagConstraints();
 
+        cardCon.gridx = 0;
+        cardCon.gridy = 1;
         cardCon.insets = new Insets(60,20,0,0);
         playerCon.insets = new Insets(125,0,0,0);
 
@@ -218,7 +218,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         this.game.getJMap().setPossibleMalus(where);
         cardButton.applyNormal();
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {

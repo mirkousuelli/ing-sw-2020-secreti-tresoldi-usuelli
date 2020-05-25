@@ -91,8 +91,10 @@ public class ManagerPanel extends JPanel {
         game.setCurrentPlayer(clientPlayer);
 
         GamePanel panel = (GamePanel) getCurrentPanel();
-        game.getJMap().workersPositioning();
-        /*List<JCell> around = new ArrayList<>();
+
+        //game.getJMap().workersPositioning(); ---> POSITIONING
+
+        List<JCell> around = new ArrayList<>();
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
                 around.add(game.getJMap().getCell(i,j));
@@ -102,7 +104,7 @@ public class ManagerPanel extends JPanel {
         around.add(game.getJMap().getCell(1,3));
         around.add(game.getJMap().getCell(3,3));
         around.add(game.getJMap().getCell(1,1));
-        panel.setPossibleUsePowerBuild(around);*/
+        panel.setPossibleUsePowerBuild(around);
         /* ------ */
 
         santoriniPanelList.add(new StartPanel(cardLayout, this));
