@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component;
 
+import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
@@ -11,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class JPlayer extends JButton implements ActionListener {
     private final String nickname;
-    private JGod god;
+    private JCard card;
     private JWorker femaleWorker;
     private JWorker maleWorker;
     private boolean currentWorker;
@@ -20,18 +21,32 @@ public class JPlayer extends JButton implements ActionListener {
     private final static String activePath = "img/labels/chosen_player.png";
     private boolean active;
     private JLabel text;
+
     public static final int SIZE_X = 400;
     public static final int SIZE_Y = 100;
+    public static final int FONT_SIZE = 35;
+
+    public static final int CARD_SIZE_X = 150;
+    public static final int CARD_SIZE_Y = 35;
+    public static final int CARD_FONT_SIZE = 15;
+
+    private int xSize;
+    private int ySize;
+    private int fontSize;
+
 
     public JPlayer(String nickname, int index) {
         this.nickname = nickname;
         this.chooseWorker = false;
         this.active = false;
+        this.xSize = SIZE_X;
+        this.ySize = SIZE_Y;
+        this.fontSize = FONT_SIZE;
 
-        setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
+        setPreferredSize(new Dimension(xSize, ySize));
         this.tagPath = "img/workers/worker_" + (index + 1) + "/tag.png";
         ImageIcon icon = new ImageIcon(tagPath);
-        Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
         setOpaque(false);
         setLayout(new GridBagLayout());
@@ -41,7 +56,7 @@ public class JPlayer extends JButton implements ActionListener {
 
         text = new JLabel(this.nickname);
         text.setForeground(Color.WHITE);
-        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 35));
+        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
         text.setOpaque(false);
         add(text, new GridBagConstraints());
     }
@@ -50,12 +65,12 @@ public class JPlayer extends JButton implements ActionListener {
         return this.nickname;
     }
 
-    public void setGod(JGod god) {
-        this.god = god;
+    public void setJCard(JCard card) {
+        this.card = card;
     }
 
-    public JGod getGod() {
-        return this.god;
+    public JCard getJCard() {
+        return this.card;
     }
 
     public void setWorkers(JWorker female, JWorker male) {
@@ -74,6 +89,10 @@ public class JPlayer extends JButton implements ActionListener {
         return this.maleWorker;
     }
 
+    public void workerPositioning() {
+
+    }
+
     public void chooseWorker() {
         ((JBlockDecorator) this.maleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
         ((JBlockDecorator) this.femaleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
@@ -89,7 +108,7 @@ public class JPlayer extends JButton implements ActionListener {
 
         JLabel activeLabel = new JLabel();
         ImageIcon icon = new ImageIcon(activePath);
-        Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         activeLabel.setIcon(icon);
         activeLabel.setLayout(new GridBagLayout());
@@ -108,6 +127,26 @@ public class JPlayer extends JButton implements ActionListener {
         repaint();
     }
 
+    public void setCardViewSize(boolean view) {
+        if (view) {
+            this.xSize = CARD_SIZE_X;
+            this.ySize = CARD_SIZE_Y;
+            this.fontSize = CARD_FONT_SIZE;
+        } else {
+            this.xSize = SIZE_X;
+            this.ySize = SIZE_Y;
+            this.fontSize = FONT_SIZE;
+        }
+
+        setPreferredSize(new Dimension(xSize, ySize));
+        ImageIcon icon = new ImageIcon(tagPath);
+        Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
+        setIcon(new ImageIcon(img));
+        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
+
+        revalidate();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (chooseWorker) {
@@ -115,7 +154,6 @@ public class JPlayer extends JButton implements ActionListener {
             ((JBlockDecorator) this.maleWorker.getLocation()).removeDecoration();
             ((JBlockDecorator) this.femaleWorker.getLocation()).removeDecoration();
             chooseWorker = false;
-            System.out.println(getCurrentWorker().getPawn().getDecoration().path);
         }
     }
 }

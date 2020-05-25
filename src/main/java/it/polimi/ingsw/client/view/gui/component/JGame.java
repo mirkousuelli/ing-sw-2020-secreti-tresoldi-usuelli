@@ -32,6 +32,7 @@ public class JGame {
                 this.players.get(current).disactive();
             this.current = this.players.indexOf(chosen);
             this.players.get(current).active();
+            this.map.setCurrentPlayer(this.players.get(current));
         }
     }
 

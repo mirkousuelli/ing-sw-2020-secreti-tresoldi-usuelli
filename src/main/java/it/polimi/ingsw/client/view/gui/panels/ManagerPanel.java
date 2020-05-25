@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
+import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
@@ -23,6 +24,7 @@ public class ManagerPanel extends JPanel {
     private int currentPanelIndex;
     private final GUI gui;
     private JGame game;
+    private JPlayer clientPlayer;
 
     enum SantoriniPanelEnum {
         START,
@@ -71,15 +73,35 @@ public class ManagerPanel extends JPanel {
         setLayout(cardLayout);
 
         game = new JGame();
-        game.getJDeck().setGodList(Arrays.asList(God.values()));
 
         /* ------ */
-        santoriniPanelList.add(new GamePanel(cardLayout, this, game));
+        game.getJDeck().setGodList(Arrays.asList(God.values()));
+
+        game.addPlayer("Mirko", 0);
+        game.addPlayer("Alessia", 1);
+        game.addPlayer("Haze", 2);
+        clientPlayer = game.getPlayer(0);
+
+        game.getPlayer(0).setJCard(new JCard(God.CHRONUS));
+        game.getPlayer(1).setJCard(new JCard(God.TRITON));
+        game.getPlayer(2).setJCard(new JCard(God.ZEUS));
+
+
+        santoriniPanelList.add(new GamePanel(cardLayout, this, game, clientPlayer));
+        game.setCurrentPlayer(clientPlayer);
+
         GamePanel panel = (GamePanel) getCurrentPanel();
         List<JCell> around = new ArrayList<>();
-        around.add(game.getJMap().getCell(2,2));
-        around.add(game.getJMap().getCell(2,1));
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++)
+                around.add(game.getJMap().getCell(i,j));
         panel.setPossibleBuild(around);
+        around.clear();
+        around.add(game.getJMap().getCell(3,1));
+        around.add(game.getJMap().getCell(1,3));
+        around.add(game.getJMap().getCell(3,3));
+        around.add(game.getJMap().getCell(1,1));
+        panel.setPossibleUsePowerBuild(around);
         /* ------ */
 
         santoriniPanelList.add(new StartPanel(cardLayout, this));

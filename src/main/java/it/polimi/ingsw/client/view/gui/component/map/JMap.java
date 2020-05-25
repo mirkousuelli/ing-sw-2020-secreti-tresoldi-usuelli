@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 
 import javax.swing.*;
@@ -15,8 +16,10 @@ public class JMap extends JPanel implements ActionListener {
     private List<JCell> activeCells;
     private List<JCell> powerCells;
     private JWorker currentWorker;
+    private JPlayer currentPlayer;
     private JCellStatus turn;
     private JCellStatus power;
+    private boolean positioning;
 
     public JMap() {
         super(new GridBagLayout());
@@ -24,11 +27,14 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
+        this.positioning = false;
         this.power = JCellStatus.NONE;
         this.turn = JCellStatus.NONE;
+
         activeCells = new ArrayList<>();
         powerCells = new ArrayList<>();
         cellButton = new JCell[DIM][DIM];
+
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 GridBagConstraints c = new GridBagConstraints();
@@ -42,6 +48,14 @@ public class JMap extends JPanel implements ActionListener {
                 add(cellButton[i][j], c);
             }
         }
+    }
+
+    public void setCurrentPlayer(JPlayer worker) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public JPlayer getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public void setCurrentWorker(JWorker worker) {

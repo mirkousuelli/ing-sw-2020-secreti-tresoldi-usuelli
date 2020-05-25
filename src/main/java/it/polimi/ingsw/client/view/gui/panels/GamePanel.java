@@ -15,33 +15,33 @@ import java.util.List;
 public class GamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "map.png";
     private JGame game;
+    private JPlayer clientPlayer;
     private JPanel right;
-    private JPanel lobby;
-    private JPanel card;
     private JCard cardButton;
     private JPanel left;
-    //private JPanel firstMalus;
-    //private JPanel secondMalus;
-    private JLabel lobbyStand;
-    private JLabel[] player;
     private JButton quitButton;
+    private JButton powerButton;
 
-    public GamePanel(CardLayout panelIndex, JPanel panels, JGame game) {
+    public GamePanel(CardLayout panelIndex, JPanel panels, JGame game, JPlayer clientPlayer) {
         super(imgPath, panelIndex, panels);
 
         this.game = game;
-        //player = new JLabel[3];
+        this.clientPlayer = clientPlayer;
 
         createRightSection();
+        createPowerButton();
         //createQuitButton();
         createCardSection();
 
         createMap();
 
         createLeftSection();
-        for (JPlayer p : this.game.getPlayerList())
-            createFirstMalusSection();
-        //createSecondMalusSection();
+        int enemy = 0;
+        for (JPlayer p : this.game.getPlayerList()) {
+            if (!p.equals(this.clientPlayer))
+                createEnemySection(p, enemy++);
+            p.setCardViewSize(true);
+        }
     }
 
     void createMap() {
@@ -52,10 +52,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.gridy = 0;
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
-        mapCon.weightx = 0.1;
-        mapCon.weighty = 0.1;
+        mapCon.weightx = 0.05;
+        mapCon.weighty = 0.0975;
         mapCon.fill = GridBagConstraints.BOTH;
-        mapCon.insets = new Insets(70,55,85,70);
+        mapCon.insets = new Insets(70,30,85,70);
 
         add(this.game.getJMap(), mapCon);
     }
@@ -80,38 +80,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(right, rightCon);
     }
 
-    void createLobbySection() {
-        lobby = new JPanel(new GridBagLayout());
-        lobby.setVisible(true);
-        lobby.setOpaque(false);
-        right.add(lobby);
-
-        ImageIcon icon_1 = new ImageIcon("img/labels/lobby.png");
-        Image img_1 = icon_1.getImage().getScaledInstance( 220, 280, Image.SCALE_SMOOTH);
-        icon_1 = new ImageIcon( img_1 );
-        lobbyStand = new JLabel(icon_1);
-        lobbyStand.setLayout(new GridBagLayout());
-        lobby.add(lobbyStand, new GridBagConstraints());
-    }
-
-    void createLobbyPlayers() {
-        for (int i = 0; i < 3; i++) {
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = i;
-            c.fill = GridBagConstraints.BOTH;
-            c.weighty = 0f;
-            c.weightx = 1;
-            c.insets = (i == 0) ? new Insets(50,0,0,0) : new Insets(0,0,0,0);
-            ImageIcon icon = new ImageIcon("img/workers/worker_" + (i + 1) + "/tag.png");
-            Image img = icon.getImage().getScaledInstance( 200, 50, Image.SCALE_SMOOTH);
-            icon = new ImageIcon( img );
-            player[i] = new JLabel(icon);
-            lobbyStand.add(player[i], c);
-        }
-    }
-
-    void createQuitButton() {
+    /*void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon("img/buttons/quit_button.png");
@@ -132,20 +101,61 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         //playButton.addActionListener(this);
         lobbyStand.add(quitButton, c);
+    }*/
+
+    void createPowerButton() {
+        GridBagConstraints c = new GridBagConstraints();
+
+        ImageIcon icon = new ImageIcon("img/buttons/power_off.png");
+        Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0f;
+        c.weighty = 0f;
+        c.insets = new Insets(0,20,0,0);
+
+        powerButton = new JButton(icon);
+        powerButton.setOpaque(false);
+        powerButton.setContentAreaFilled(false);
+        powerButton.setBorderPainted(false);
+        powerButton.addActionListener(this);
+        powerButton.setName("off");
+        powerButton.setEnabled(false);
+        right.add(powerButton, c);
     }
 
-    void createCardSection() {
+    void activePowerButton(boolean active) {
+        powerButton.setEnabled(true);
+
+        if (active) {
+            ImageIcon icon = new ImageIcon("img/buttons/power_on.png");
+            Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
+            powerButton.setIcon(new ImageIcon(img));
+            powerButton.setName("on");
+        } else {
+            ImageIcon icon = new ImageIcon("img/buttons/power_off.png");
+            Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
+            powerButton.setIcon(new ImageIcon(img));
+            powerButton.setName("off");
+        }
+
+        revalidate();
+    }
+
+    private void createCardSection() {
         GridBagConstraints cardCon = new GridBagConstraints();
-        cardCon.insets = new Insets(0,20,0,0);
+        GridBagConstraints playerCon = new GridBagConstraints();
 
-        card = new JPanel(new GridBagLayout());
-        card.setOpaque(false);
-        card.setVisible(true);
-        right.add(card, cardCon);
+        cardCon.insets = new Insets(60,20,0,0);
+        playerCon.insets = new Insets(125,0,0,0);
 
-        cardButton = new JCard(God.APOLLO);
-        cardButton.addActionListener(this);
-        card.add(cardButton, new GridBagConstraints());
+        cardButton = this.clientPlayer.getJCard();
+        clientPlayer.setCardViewSize(true);
+        cardButton.add(clientPlayer, playerCon);
+        right.add(cardButton, cardCon);
     }
 
     void createLeftSection() {
@@ -163,36 +173,26 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         left = new JPanel(new GridLayout(2,1));
         left.setVisible(true);
         left.setOpaque(false);
+        left.setLayout(new GridBagLayout());
 
         add(left, leftCon);
     }
 
-    void createFirstMalusSection() {
-        JPanel firstMalus = new JPanel(new GridBagLayout());
-        firstMalus.setOpaque(false);
-        firstMalus.setVisible(true);
-        left.add(firstMalus);
+    private void createEnemySection(JPlayer player, int i) {
+        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints playerCon = new GridBagConstraints();
 
-        ImageIcon icon_1 = new ImageIcon("img/cards/persephone/malus.png");
-        Image img_1 = icon_1.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
-        icon_1 = new ImageIcon( img_1 );
-        JLabel malus_1 = new JLabel(icon_1);
-        firstMalus.add(malus_1, new GridBagConstraints());
+        c.gridx = 0;
+        c.gridy = i;
+        if (i > 0)
+            c.insets = new Insets(10,0,0,0);
+        playerCon. insets = new Insets(125,0,0,0);
+
+        JCard card = player.getJCard();
+        player.setCardViewSize(true);
+        card.add(player, playerCon);
+        left.add(player.getJCard(), c);
     }
-
-    /*void createSecondMalusSection() {
-        secondMalus = new JPanel(new GridBagLayout());
-        secondMalus.setOpaque(false);
-        secondMalus.setVisible(true);
-        left.add(secondMalus);
-
-        ImageIcon icon_2 = new ImageIcon("img/cards/athena/malus.png");
-        Image img_2 = icon_2.getImage().getScaledInstance( 170, 280, Image.SCALE_SMOOTH);
-        icon_2 = new ImageIcon( img_2 );
-        JLabel malus_2 = new JLabel(icon_2);
-        secondMalus.add(malus_2, new GridBagConstraints());
-    }*/
-
 
     public void setPossibleMove(List<JCell> where) {
         this.game.getJMap().setPossibleMove(where);
@@ -206,12 +206,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     public void setPossibleUsePowerMove(List<JCell> where) {
         this.game.getJMap().setPossibleUsePowerMove(where);
-        cardButton.applyPower();
+        activePowerButton(true);
     }
 
     public void setPossibleUsePowerBuild(List<JCell> where) {
         this.game.getJMap().setPossibleUsePowerBuild(where);
-        cardButton.applyPower();
+        activePowerButton(true);
     }
 
     public void setPossibleMalus(List<JCell> where) {
@@ -222,22 +222,27 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JCard src = (JCard)e.getSource();
+        if (this.game.getJMap().isPowerActive()) {
+            JButton src = (JButton) e.getSource();
 
-        switch (src.getName()) {
-            case "card":
-                if (this.game.getJMap().isPowerActive()) {
-                    this.game.getJMap().hidePowerCells();
-                    cardButton.applyPower();
-                }
-                break;
-
-            case "power":
-                if (this.game.getJMap().isPowerActive()) {
-                    this.game.getJMap().showPowerCells();
+            switch (src.getName()) {
+                case "off":
+                    activePowerButton(true);
                     cardButton.applyNormal();
-                }
-                break;
+                    this.game.getJMap().hidePowerCells();
+                    powerButton.setName("on");
+                    break;
+
+                case "on":
+                    activePowerButton(false);
+                    cardButton.applyPower();
+                    this.game.getJMap().showPowerCells();
+                    powerButton.setName("off");
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }
