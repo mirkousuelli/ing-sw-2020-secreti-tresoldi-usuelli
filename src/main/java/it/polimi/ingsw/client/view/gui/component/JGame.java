@@ -9,7 +9,7 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private final JDeck deck;
+    private JDeck deck;
     private final JMap map;
 
     public JGame(JDeck deck){

@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,6 +32,10 @@ public class ManagerPanel extends JPanel {
 
     public JGame getGame() {
         return game;
+    }
+
+    public JPlayer getClientPlayer() {
+        return clientPlayer;
     }
 
     public Component addPanel(Component comp) {

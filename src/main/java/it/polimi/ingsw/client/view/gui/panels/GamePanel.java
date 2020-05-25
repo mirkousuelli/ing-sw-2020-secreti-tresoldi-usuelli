@@ -22,11 +22,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JButton quitButton;
     private JButton powerButton;
 
-    public GamePanel(CardLayout panelIndex, JPanel panels, JGame game, JPlayer clientPlayer) {
+    public GamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 
-        this.game = game;
-        this.clientPlayer = clientPlayer;
+        this.game = ((ManagerPanel)panels).getGame();
+        this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();;
 
         createRightSection();
         createPowerButton();

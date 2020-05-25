@@ -26,7 +26,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private JDeck deck;
     private God chosenGod;
 
-
     public ChooseGodPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 
@@ -196,7 +195,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 ManagerPanel mg = (ManagerPanel) panels;
                 GUI gui = mg.getGui();
 
-                mg.getGame().getCurrentPlayer().setGod(deck.getJGod(chosenGod));
+                mg.getGame().getCurrentPlayer().setJCard(deck.getJGod(chosenGod).getCard());
                 updateDeck();
                 chooseButton.setEnabled(false);
 
