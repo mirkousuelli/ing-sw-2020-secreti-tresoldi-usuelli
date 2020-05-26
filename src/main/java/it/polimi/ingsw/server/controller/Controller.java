@@ -9,14 +9,28 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.view.ActionToPerformView;
 
+/**
+ * Class that represents the controller, which receives inputs from the user and then updates the model accordingly
+ */
 public class Controller implements Observer<ActionToPerformView> {
 
     private final Game model;
 
+    /**
+     * Constructor of the controller
+     * @param model the game which the controller is connected to
+     */
     public Controller(Game model) {
         this.model = model;
     }
 
+    /**
+     * Class that performs the action required, updating the model accordingly.
+     * If the player that tries to make an action cannot do it or isn't the current one, no action is performed: for
+     * example if the players tries to make a move but he should choose the worker, he is notified with an error
+     *
+     * @param actionToPerformView parameter that connects the controller to the view of the player requiring the action
+     */
     private synchronized void performAction(ActionToPerformView actionToPerformView) {
         if (!model.getCurrentPlayer().nickName.equals(actionToPerformView.getPlayer())) {
             actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not current player")));
@@ -40,6 +54,11 @@ public class Controller implements Observer<ActionToPerformView> {
             model.setState(returnContent.getState());
     }
 
+    /**
+     * Class that updates the game by performing the required action
+     *
+     * @param actionToPerformView parameter that connects the controller to the view of the player requiring the action
+     */
     @Override
     public void update(ActionToPerformView actionToPerformView) {
         performAction(actionToPerformView);

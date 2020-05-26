@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
-    private JLayeredPane layers;
+    private JPanel layers;
     private JLayeredPane godsList;
     private JLabel godsBack;
     private JPanel choice;
@@ -41,7 +41,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
         c.fill = GridBagConstraints.BOTH;
 
-        layers = new JLayeredPane();
+        layers = new JPanel();
         layers.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
         layers.setOpaque(false);
         layers.setVisible(true);
@@ -92,12 +92,12 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         godsList.setLayout(new OverlayLayout(godsList));
         godsList.setVisible(true);
         godsList.setOpaque(false);
-        godsList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 180));
+        godsList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 130));
 
-        layers.add(godsList, c, 1);
+        layers.add(godsList, c);
 
         ImageIcon icon = new ImageIcon("img/labels/gods_menu.png");
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 180, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         godsBack = new JLabel(icon);
         godsBack.setOpaque(false);
@@ -143,12 +143,13 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(30,0,0,0);
 
-        choice = new JPanel(new FlowLayout());
+        choice = new JPanel();
+        choice.setLayout(new GridBagLayout());
         choice.setVisible(true);
         choice.setOpaque(false);
         choice.setSize(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
 
-        layers.add(choice, c, 1);
+        layers.add(choice, c);
     }
 
     void setChoice(JDeck deck, JGod god) {
@@ -159,9 +160,16 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
 
         choice.removeAll();
+        choice.revalidate();
+        choice.repaint();
+
         choice.add(god.getCard(), c);
         deck.setCurrent(god);
+        choice.revalidate();
+        choice.repaint();
+
         chosenGod = god.getGod();
+
         validate();
         repaint();
     }
@@ -221,7 +229,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
         mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
-        System.out.println(gui.getClientModel().isYourTurn());
         enableChoose(gui.getClientModel().isYourTurn());
 
         if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
@@ -242,7 +249,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
             updateDeck(godToRemove);
         }
-
+        
         if (gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator()) {
             this.panelIndex.previous(this.panels);
             gui.free();

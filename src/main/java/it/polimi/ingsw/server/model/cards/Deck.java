@@ -34,10 +34,6 @@ public class Deck {
      * @throws SAXException
      */
     public Deck() throws ParserConfigurationException, SAXException {
-        /*@constructor
-         * it creates a list of the 14 chosen cards
-         */
-
         parser = new GodParser(this);
         cards = new ArrayList<>();
     }
@@ -61,7 +57,7 @@ public class Deck {
     /**
      * Method that adds a specific card to the list of cards
      *
-     * @param newCard Card that is added
+     * @param newCard the card that is added
      */
     public void addCard(Card newCard) {
         this.cards.add(newCard);
@@ -86,7 +82,7 @@ public class Deck {
     /**
      * Method that picks the selected card from the deck
      *
-     * @param god God that is chosen
+     * @param god the God that is chosen
      * @return the picked card
      */
     public Card popCard(God god) {
@@ -104,12 +100,24 @@ public class Deck {
         return pickedCard;
     }
 
+    /**
+     * Method that picks all Gods from the deck
+     *
+     * @param numberOfPlayers the number of players in the game
+     * @return the list of cards
+     */
     public List<ReducedCard> popAllGods(int numberOfPlayers) {
         fetchDeck();
 
         return cards.stream().filter(c -> c.getNumPlayer() >= numberOfPlayers).map(ReducedCard::new).collect(Collectors.toList());
     }
 
+    /**
+     * Method that picks the chosen Gods from the deck
+     *
+     * @param chosenGods list of cards that are picked
+     * @return the list of cards
+     */
     public List<ReducedCard> popChosenGods(List<Card> chosenGods) {
         Set<God> cardSet = chosenGods.stream()
                 .map(Card::getGod)

@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.cards.powers.tags;
 
 /**
  * Enumeration that represents the type of effect that a card has
+ * <p>
  * The effect can be an additional win condition (like for Chronus or Pan), a malus that is applied to the opponents
  * (like for Athena and Persephone), a special move or a special build
  */

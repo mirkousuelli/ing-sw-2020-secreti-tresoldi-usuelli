@@ -15,45 +15,43 @@ package it.polimi.ingsw.server.model.map;
  */
 public enum Level {
 
-    // level 0
     GROUND {
+        /**
+         * Method that doesn't allow the level to be reduced by one (since it's the lowest), returning "this" without
+         * further indexing complications
+         *
+         * @return {@code this}
+         */
         @Override
         public Level buildDown() {
-            /* @function
-             * when the current obj (who invokes this method) is immediately overridden for having an inferior limit
-             * returning "this" without further indexing complications.
-             */
-
-            return this;
+           return this;
         }
     },
 
-    // level 1
     BOTTOM,
 
-    // level 2
     MIDDLE,
 
-    // level 3
     TOP,
 
-    // level 4
     DOME {
+        /**
+         * Method that doesn't allow the level to be increased by one (since it's the highest), returning "this" without
+         * further indexing complications
+         *
+         * @return {@code this}
+         */
         @Override
         public Level buildUp() {
-            /* @function
-             * when the current obj (who invokes this method) is immediately overridden for having a superior limit
-             * returning "this" without further indexing complications.
-             */
-
             return this;
         }
     };
 
-    /* FUNCTION -------------------------------------------------------------------------------------------------------- */
 
     /**
      * Method that increases the level of the building by one
+     *
+     * @return the new level increased
      */
     public Level buildUp() {
         return values()[ordinal() + 1];
@@ -61,6 +59,8 @@ public enum Level {
 
     /**
      * Method that decreases the level of the building by one
+     *
+     * @return the new level decreased
      */
     public Level buildDown() {
         return values()[ordinal() - 1];
@@ -68,6 +68,7 @@ public enum Level {
 
     /**
      * Method that returns the string that corresponds to each level
+     *
      * @return the string that corresponds to the level
      */
     @Override
@@ -91,6 +92,7 @@ public enum Level {
 
     /**
      * Method that returns the integer value that corresponds to each level
+     *
      * @return the number that corresponds to the level
      */
     public Integer toInt() {

@@ -17,6 +17,7 @@ public enum State {
 
     /**
      * Method that prints what string corresponds to each state
+     *
      * @return the string corresponding to the state
      */
     @Override

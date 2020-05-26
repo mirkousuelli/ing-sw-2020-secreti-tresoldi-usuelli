@@ -45,6 +45,12 @@ public class JDeck extends JPanel implements ActionListener {
         this.setCurrent(god);
     }
 
+    public void addGod(God god) {
+        JGod jGod = new JGod(god);
+        this.gods.add(jGod);
+        this.setCurrent(jGod);
+    }
+
     public void setCurrent(JGod chosen) {
         if (gods.contains(chosen)) {
             if (current < this.getNum())

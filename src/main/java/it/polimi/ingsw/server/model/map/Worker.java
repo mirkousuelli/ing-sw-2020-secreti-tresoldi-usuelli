@@ -12,6 +12,7 @@ package it.polimi.ingsw.server.model.map;
 
 /**
  * Class that represents the pawn "worker"
+ * <p>
  * It contains its previous cell, previous build, gender and id
  */
 public class Worker extends Pawn {
@@ -20,11 +21,10 @@ public class Worker extends Pawn {
     private boolean gender;
     private int id;
 
-
     /**
      * Constructor of the worker, re-calling its super class Pawn
      *
-     * @param pos Block where the worker is placed
+     * @param pos the block where the worker is placed
      */
     public Worker(Block pos) {
         super(pos);
@@ -36,8 +36,8 @@ public class Worker extends Pawn {
     /**
      * Constructor of the worker, re-calling its super class Pawn
      *
-     * @param id Number that identifies the worker
-     * @param pos Block where the worker is placed
+     * @param id the number that identifies the worker
+     * @param pos the block where the worker is placed
      */
     public Worker(int id, Block pos) {
         super(pos);

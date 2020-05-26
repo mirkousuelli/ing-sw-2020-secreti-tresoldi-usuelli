@@ -22,8 +22,8 @@ import java.util.List;
 /**
  * Class that represents a player
  * <p>
- *     It contains its nickname, the list of workers, the card he owns, the worker he last picked as current and
- *     a list of maluses he has (caused by opponents' Gods)
+ * It contains its nickname, the list of workers, the card he owns, the worker he last picked as current and
+ * a list of maluses he has (caused by opponents' Gods)
  */
 public class Player {
     public final String nickName;
@@ -36,7 +36,7 @@ public class Player {
     /**
      * Constructor of the player, initialising elements like his workers and card
      *
-     * @param nickName String representing the nickname of the player
+     * @param nickName the string representing player's nickname
      */
     public Player(String nickName) {
         this.nickName = nickName;
@@ -46,16 +46,10 @@ public class Player {
         malusList = new ArrayList<>();
     }
 
-    /**
-     * @return the nickname of the player
-     */
     public String getNickName() {
         return nickName;
     }
 
-    /**
-     * @return the number of workers of the player
-     */
     public int getNumWorkers() {
         return NUM_WORKERS;
     }
@@ -63,9 +57,10 @@ public class Player {
     /**
      * Method that connects a worker with his owner and sets his initial position on the board
      *
-     * @param id Number between 0 and 1 that represents each worker of every player
-     * @param position Block where the worker is placed at the beginning
-     * @return {@code true} if the worker is initialised properly, {@code false} if the chosen id is not correct or if the chosen position is occupied
+     * @param id a number between 0 and 1 that identifies each worker of every player
+     * @param position the block where the worker is placed at the beginning
+     * @return {@code true} if the worker is initialised properly, {@code false} if the chosen id is not correct or
+     * if the chosen position is occupied
      */
     public boolean initializeWorkerPosition(int id, Block position) {
         if (!position.isFree()) return false;
@@ -87,7 +82,7 @@ public class Player {
     /**
      * Method that adds the worker to the list of workers of the player
      *
-     * @param newWorker Worker that is added
+     * @param newWorker the worker that is added
      * @return {@code true} if the worker is added properly, {@code false} if the player has already got both his workers
      */
     public boolean addWorker(Worker newWorker) {
@@ -104,28 +99,24 @@ public class Player {
     /**
      * Method that removes the worker from the list of workers of the player
      *
-     * @param worker Worker that is removed
+     * @param worker the worker that is removed
      */
     public void removeWorker(Worker worker) {
         workers.remove(worker);
     }
 
-    /**
-     * @return the list of workers of the player
-     */
     public List<Worker> getWorkers() {
         return new ArrayList<>(workers);
     }
 
-    /**
-     * @return the current worker
-     */
     public Worker getCurrentWorker() {
         return currentWorker;
     }
 
     /**
-     * @param id of the worker
+     * Method that returns the worker with the chosen id
+     *
+     * @param id worker's id
      * @return the worker with the chosen id
      */
     public Worker getWorker(int id) {
@@ -137,27 +128,14 @@ public class Player {
         return null;
     }
 
-    /**
-     * Method that sets the current worker of the player to the chosen one
-     *
-     * @param currentWorker the current worker of the player
-     */
     public void setCurrentWorker(Worker currentWorker) {
         this.currentWorker = currentWorker;
     }
 
-    /**
-     * @return the player's card
-     */
     public Card getCard() {
         return card;
     }
 
-    /**
-     * Method that sets the player's card
-     *
-     * @param card the current worker of the player
-     */
     public void setCard(Card card) {
         this.card = card;
     }
@@ -176,9 +154,6 @@ public class Player {
             malusList.add(malusPlayer);
     }
 
-    /**
-     * @return the list of the maluses that the player has
-     */
     public List<Malus> getMalusList() {
         return new ArrayList<>(malusList);
     }
@@ -192,6 +167,8 @@ public class Player {
 
     /**
      * Method that removes permanent malus from the player
+     *
+     * @return the permanent malus that is removed
      */
     public Malus removePermanentMalus() {
         for (Malus m : malusList) {
@@ -204,6 +181,9 @@ public class Player {
         return null;
     }
 
+    /**
+     * Method that resets a player: it removes maluses, his card, and his workers (that are also removed from the board)
+     */
     public void reset() {
         removeMalus();
         removePermanentMalus();
