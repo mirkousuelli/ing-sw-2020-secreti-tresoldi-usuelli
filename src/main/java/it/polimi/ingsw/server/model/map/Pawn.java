@@ -14,13 +14,18 @@ import java.util.Arrays;
 
 /**
  * Abstract class that represents a generic pawn, giving indication for how any object (different from a block) can
- * behave on the board.
+ * behave on the board
+ * <p>
+ * It contains the current cell on the board
+ * <p>
  * In our game it can only be a worker but some advanced God power may require the use of tokens, therefore making
  * it easier to add them into the game
+ * <p>
+ * It extends {@link Cell}
  */
 public abstract class Pawn implements Cell {
 
-    protected Block currCell; // current position in the grill
+    protected Block currCell;
 
     /**
      * Constructor of the pawn, adding it on the chosen block

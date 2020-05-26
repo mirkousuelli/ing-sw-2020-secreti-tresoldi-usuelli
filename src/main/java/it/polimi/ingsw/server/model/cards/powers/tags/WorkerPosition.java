@@ -2,7 +2,9 @@ package it.polimi.ingsw.server.model.cards.powers.tags;
 
 /**
  * Enumeration that represents the initial position of the worker to be able to use the power
+ * <p>
  * It can be any level from ground to top
+ * <p>
  * For example Poseidon requires a worker on the ground to perform its power
  */
 public enum WorkerPosition {

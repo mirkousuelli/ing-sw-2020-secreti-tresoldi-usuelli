@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 /**
  * Abstract class that represents an active power, which can be a move or a build
- * It extends the class Power
- * Many methods of this class are developed deeper by its subclasses MovePower and BuildPower
+ * <p>
+ * Many methods of this class are developed deeper by its subclasses {@link MovePower} and {@link BuildPower}
  */
 public abstract class ActivePower<S> extends Power<S> {
 
@@ -39,6 +39,7 @@ public abstract class ActivePower<S> extends Power<S> {
 
     /**
      * Constructor of the active power that recalls its super class
+     * <p>
      * It creates a map of constraints
      */
     public ActivePower() {
@@ -60,8 +61,8 @@ public abstract class ActivePower<S> extends Power<S> {
     /**
      * Method that controls that the constraints are verified and there's no active malus on the cell
      *
-     * @param currentPlayer
-     * @param cellToUse
+     * @param currentPlayer the current player
+     * @param cellToUse the cell where to control
      * @return {@code true} if the constraints are verified properly and the cell doesn't have any malus active,
      * {@code false} otherwise
      */
@@ -84,7 +85,6 @@ public abstract class ActivePower<S> extends Power<S> {
 
         if (!correctMalus.isEmpty() && !ActivePower.verifyMalus(correctMalus, workerToUse.getLocation(), cellToUse)) return false;
 
-        //verify constraints
         return verifyConstraints(cellToUse);
     }
 
@@ -126,7 +126,8 @@ public abstract class ActivePower<S> extends Power<S> {
 
     /**
      * Method that allows the player to use an active power: it checks that it is actually possible and then proceeds
-     * to use the power, reducing the number of actions by one (for God powers that can be used more than one time)
+     * to use the power, reducing the number of actions remaining by one (some God powers can be used more than once
+     * during the same turn)
      *
      * @param currentPlayer the current player
      * @param cellToUse the chosen cell
@@ -149,8 +150,9 @@ public abstract class ActivePower<S> extends Power<S> {
 
     /**
      * Abstract method that allows the player to use an active power
-     * It is defined inside the classes BuildPower and MovePower and it is developed by this classes depending
-     * on the power type
+     * <p>
+     * It is defined inside the classes {@link MovePower} and {@link BuildPower} and it is developed by this classes
+     * depending on the power type
      *
      * @param currentPlayer player that uses the power
      * @param cellToUse cell where to use the power
@@ -183,6 +185,7 @@ public abstract class ActivePower<S> extends Power<S> {
     /**
      * Method that checks if a certain player during his turn has a malus on the specified cell, not allowing him to
      * do specific actions on that
+     * <p>
      * The malus can depend on the direction (which can be different depending on the different Gods) that the malus
      * is applied to: for example Persephone forces opponents to move up whenever they can
      *
@@ -194,6 +197,17 @@ public abstract class ActivePower<S> extends Power<S> {
         return verifyMalus(currentPlayer.getMalusList(), currentPlayer.getCurrentWorker().getLocation(), cellToUse);
     }
 
+    /**
+     * Method that checks if a certain cell has any malus on it.
+     * <p>
+     * The malus can depend on the direction (which can be different depending on the different Gods) that the malus
+     * is applied to: for example Persephone forces opponents to move up whenever they can
+     *
+     * @param maluses list of maluses
+     * @param workerLocation the location of the worker
+     * @param cellToUse the cell that gets checked
+     * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
+     */
     public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
         if (maluses!= null) {
             for (Malus malus : maluses) {

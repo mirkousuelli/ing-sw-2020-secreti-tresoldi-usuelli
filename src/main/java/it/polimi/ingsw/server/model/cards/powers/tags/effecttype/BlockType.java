@@ -2,12 +2,13 @@ package it.polimi.ingsw.server.model.cards.powers.tags.effecttype;
 
 /**
  * Enumeration that represents the type of block that can be built by a God power
- * It can be a dome (like for Atlas), everything but a dome (like for Hephaestus) or everything
+ * <p>
+ * It can be a dome (like for Atlas), anything but a dome (like for Hephaestus) or everything
  */
 public enum BlockType {
-    DOME, // that means I can build only a dome
-    NOT_DOME, // that means I can build anything but a dome
-    DEFAULT; // that means I can build anything
+    DOME,
+    NOT_DOME,
+    DEFAULT;
 
     public static BlockType parseString(String str) {
         if (str.equalsIgnoreCase("DOME"))

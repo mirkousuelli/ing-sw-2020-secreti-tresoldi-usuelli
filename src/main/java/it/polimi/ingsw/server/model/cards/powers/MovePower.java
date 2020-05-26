@@ -21,12 +21,13 @@ import java.util.List;
 
 /**
  * Class that represents a move power
- * It extends the class ActivePower
+ * <p>
+ * It extends {@link ActivePower}
  */
 public class MovePower<S> extends ActivePower<S> {
 
     /**
-     * Constructor of the move power that recalls its super class ActivePower
+     * Constructor of the move power that recalls its super class {@link ActivePower}
      */
     public MovePower() {
         super();
@@ -77,14 +78,17 @@ public class MovePower<S> extends ActivePower<S> {
     }
 
     /**
-     * TODO
-     * Method that allows the current player to move
+     * Method that allows the current player to move to the designated cell, while it is occupied by an opponent's
+     * worker who is moved accordingly (who, depending on the current player's God power, is pushed back or swapped
+     * with the worker that is moving)
+     * <p>
+     * This method is used only for Minotaur and Apollo, whose power allows this kind of movement
      *
      * @param currentPlayer the current player
-     * @param cellToMove cell chosen where to move
-     * @param opponentWorker
-     * @param newPos
-     * @return {@code true} after the build is complete, {@code false}
+     * @param cellToMove the chosen cell where to move
+     * @param opponentWorker the worker that is pushed or swapped
+     * @param newPos the new block where the opponent's worker is moved
+     * @return {@code true} after the move is complete, {@code false} if the chosen cell has no opponent's worker
      */
     private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block newPos) {
         if (cellToMove.isFree()) return false;
@@ -111,8 +115,8 @@ public class MovePower<S> extends ActivePower<S> {
      * Method that identifies the direction where the opponent's worker will be forced to move
      *
      * @param currentPlayer the current player
-     * @param cell TODO
-     * @param adjacency list of cells around the worker
+     * @param cell the cell where to move
+     * @param adjacency the list of cells around the worker
      * @return the cell where the opponent's worker is forced to move
      */
     private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {

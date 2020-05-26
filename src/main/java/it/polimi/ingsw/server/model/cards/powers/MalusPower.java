@@ -18,16 +18,18 @@ import java.util.List;
 
 /**
  * Class that represents a malus power
- * It extends the class Power
  * <p>
  *     The only two Gods that can apply a malus to the opponents are Athena and Persephone
+ *     <p>
  *     Their effect becomes active during opponent's turn, when opponents cannot make specific actions or are forced
  *     to do something: Persephone, for example, forces the opponents to move one worker up whenever it is possible
+ * <p>
+ * It extends {@link Power}
  */
 public class MalusPower<S> extends Power<S> {
 
     /**
-     * Constructor of the malus power that recalls its super class
+     * Constructor of the malus power that recalls its super class {@link Power}
      */
     public MalusPower() {
         super();

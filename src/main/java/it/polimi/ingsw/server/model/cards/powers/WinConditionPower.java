@@ -15,7 +15,8 @@ import it.polimi.ingsw.server.model.game.Game;
 
 /**
  * Class that represents a win condition power
- * It extends the class Power
+ * <p>
+ * It extends the class {@link Power}
  * <p>
  *     The only two Gods that have an additional win condition are Chronus, that allows the player to win if there are
  *     at least five complete towers, and Pan, that is activated when a player's worker moves down two or more levels
@@ -29,7 +30,7 @@ import it.polimi.ingsw.server.model.game.Game;
 public class WinConditionPower<S> extends Power<S> {
 
     /**
-     * Constructor of the win condition power that recalls its super class
+     * Constructor of the win condition power that recalls its super class {@link Power}
      */
     public WinConditionPower() {
         super();

@@ -13,10 +13,10 @@ package it.polimi.ingsw.server.model.map;
 import java.util.Arrays;
 
 /**
- * Class that represents a block, the concrete object described by the cell
+ * Class that represents a block, the concrete object described by the {@link Cell}
  * <p>
- *     It contains its current and previous level, its coordinates (x and y) and the eventual pawn that can be on
- *     this block
+ * It contains its current and previous level, its coordinates (x and y) and the eventual pawn that can be on
+ * this block
  */
 public class Block implements Cell {
     private Level currLevel;
@@ -26,7 +26,7 @@ public class Block implements Cell {
     private Pawn pawn;
 
     /**
-     * Constructor of the block, initialising the proper cell with its coordinates and sets the level to GROUND
+     * Constructor of the block, initialising the proper cell with its coordinates and sets the level to ground
      *
      * @param x the x-coordinate of the cell
      * @param y the y-coordinate of the cell
@@ -41,7 +41,7 @@ public class Block implements Cell {
         }
     }
 
-    // public Block(){}
+    public Block(){}
 
     @Override
     public int getX() {
@@ -94,7 +94,8 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that tells if a worker can go to the block.
+     * Method that tells if a worker can go to the block
+     * <p>
      * It is always walkable unless the current level is a dome or if there is a pawn on it
      *
      * @return {@code true} if the block is walkable, {@code false} otherwise
@@ -115,7 +116,9 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that checks if the block is complete, which means that its level is dome
+     * Method that checks if the block is complete, which means that its current level is dome and the previous one
+     * is top. This last specification is important since Atlas can build a dome at any level, so if a dome is placed
+     * on the ground (or any other level that isn't top) the block is not complete
      *
      * @return {@code true} if the block is complete, {@code false} otherwise
      */
@@ -137,7 +140,7 @@ public class Block implements Cell {
     /**
      * Method that adds a pawn on the block (if it is walkable, otherwise it does nothing)
      *
-     * @param newPawn Pawn to add
+     * @param newPawn the pawn to add
      */
     public void addPawn(Pawn newPawn) {
         if (this.isWalkable()) {
