@@ -1,10 +1,10 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.map.*;
-import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "map.png";
     private JGame game;
     private JPlayer clientPlayer;
@@ -26,7 +27,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         super(imgPath, panelIndex, panels);
 
         this.game = ((ManagerPanel)panels).getGame();
-        this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();;
+        this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();
 
         createRightSection();
         createPowerButton();
@@ -242,6 +243,29 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 default:
                     break;
             }
+        }
+    }
+
+    @Override
+    public void updateFromModel() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        switch (gui.getClientModel().getCurrentState()) {
+            case PLACE_WORKERS:
+                break;
+
+            case CHOOSE_WORKER:
+                break;
+
+            case MOVE:
+                break;
+
+            case BUILD:
+                break;
+
+            case ASK_ADDITIONAL_POWER:
+                break;
         }
     }
 }

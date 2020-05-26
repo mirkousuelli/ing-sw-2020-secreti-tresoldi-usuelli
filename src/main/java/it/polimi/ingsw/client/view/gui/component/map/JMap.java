@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JMap extends JPanel implements ActionListener {
+
     public final static int DIM = 5;
     private JCell[][] cellButton;
     private List<JCell> activeCells;

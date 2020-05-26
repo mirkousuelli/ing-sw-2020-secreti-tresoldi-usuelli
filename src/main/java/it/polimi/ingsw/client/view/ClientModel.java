@@ -526,4 +526,8 @@ public class ClientModel<S> extends SantoriniRunnable {
 
         return null;
     }
+
+    public synchronized String getPrevPlayer() {
+        return prevPlayer;
+    }
 }
