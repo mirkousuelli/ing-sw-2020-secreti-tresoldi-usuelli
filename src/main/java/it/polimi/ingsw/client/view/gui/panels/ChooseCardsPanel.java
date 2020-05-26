@@ -16,14 +16,14 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     int numPlayer = 3;
     private JButton activeButton;
     private JButton removeButton;
-    private JLayeredPane godsList;
+    private JPanel godsList;
     private JLabel choice;
-    private JLayeredPane chosenList;
+    private JPanel chosenList;
     private JLabel godsBack;
     private JLabel cloudBack;
     private JDeck deck;
     private JDeck chosenDeck;
-    private JLayeredPane layers;
+    private JPanel layers;
 
     public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
@@ -39,7 +39,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
         c.fill = GridBagConstraints.BOTH;
 
-        layers = new JLayeredPane();
+        layers = new JPanel();
         layers.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
         layers.setOpaque(false);
         layers.setVisible(true);
@@ -73,13 +73,13 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
 
-        chosenList = new JLayeredPane();
+        chosenList = new JPanel();
         chosenList.setLayout(new GridBagLayout());
         chosenList.setVisible(true);
         chosenList.setOpaque(false);
         chosenList.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, 130));
 
-        layers.add(chosenList, c, 0);
+        layers.add(chosenList, c);
 
         ImageIcon icon = new ImageIcon("img/labels/clouds.png");
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
@@ -126,7 +126,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         choice.setVisible(true);
         choice.setOpaque(false);
 
-        layers.add(choice, c, 1);
+        layers.add(choice, c);
     }
 
     void setChoice(JDeck deck, JGod god) {
@@ -156,7 +156,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0,0,-20,0);
 
-        godsList = new JLayeredPane();
+        godsList = new JPanel();
         godsList.setLayout(new OverlayLayout(godsList));
         godsList.setVisible(true);
         godsList.setOpaque(false);
@@ -245,8 +245,20 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         switch(((JButton)e.getSource()).getName()) {
             case "send":
                 //changing panel
+                choice.removeAll();
+                godsList.removeAll();
+                chosenList.removeAll();
+                godsBack.removeAll();
+                cloudBack.removeAll();
+                layers.removeAll();
+
                 ManagerPanel mg = (ManagerPanel) panels;
-                mg.getGame().setJDeck(chosenDeck);
+
+                JDeck newDeck = new JDeck();
+                for (JGod god : chosenDeck.getList())
+                    newDeck.addGod(god.getGod());
+
+                mg.getGame().setJDeck(newDeck);
                 mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(false);
                 this.panelIndex.next(this.panels);
