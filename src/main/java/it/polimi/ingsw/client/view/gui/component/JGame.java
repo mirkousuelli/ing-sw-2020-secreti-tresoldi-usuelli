@@ -9,13 +9,17 @@ import java.util.List;
 public class JGame {
     private final List<JPlayer> players;
     private int current;
-    private final JDeck deck;
+    private JDeck deck;
     private final JMap map;
 
-    public JGame(){
+    public JGame(JDeck deck){
         this.players = new ArrayList<>();
-        deck = new JDeck();
+        this.deck = deck;
         map = new JMap();
+    }
+
+    public JGame(){
+        this(new JDeck());
     }
 
     public void addPlayer(String nickname, int index) {
@@ -32,7 +36,19 @@ public class JGame {
                 this.players.get(current).disactive();
             this.current = this.players.indexOf(chosen);
             this.players.get(current).active();
+            this.map.setCurrentPlayer(this.players.get(current));
         }
+    }
+
+    public void setCurrentPlayer(String name) {
+        JPlayer newCurrentPlayer = players.stream()
+                .filter(p -> p.getNickname().equals(name))
+                .reduce(null, (a, b) -> a!= null
+                        ? a
+                        : b
+                );
+
+        current = players.indexOf(newCurrentPlayer);
     }
 
     public JPlayer getCurrentPlayer() {
@@ -49,6 +65,10 @@ public class JGame {
 
     public JDeck getJDeck() {
         return deck;
+    }
+
+    public void setJDeck(JDeck deck) {
+        this.deck = deck;
     }
 
     public JMap getJMap() {

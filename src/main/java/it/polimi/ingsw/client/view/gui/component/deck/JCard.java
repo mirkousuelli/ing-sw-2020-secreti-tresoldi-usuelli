@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import javax.swing.*;
 import java.awt.*;
 
-public class JCard extends JButton {
+public class JCard extends JLabel {
     private final static int SIZE_X = 170; //190;
     private final static int SIZE_Y = 280 ; //= 310;
 
@@ -28,8 +28,8 @@ public class JCard extends JButton {
         setIcon(icon);
 
         setOpaque(false);
-        setContentAreaFilled(false);
-        setBorderPainted(false);
+        //setContentAreaFilled(false);
+        //setBorderPainted(false);
         setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
         setLayout(new GridBagLayout());
         setName("card");

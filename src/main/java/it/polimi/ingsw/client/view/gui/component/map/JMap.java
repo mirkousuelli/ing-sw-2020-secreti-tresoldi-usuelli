@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 
 import javax.swing.*;
@@ -15,8 +16,11 @@ public class JMap extends JPanel implements ActionListener {
     private List<JCell> activeCells;
     private List<JCell> powerCells;
     private JWorker currentWorker;
+    private JPlayer currentPlayer;
     private JCellStatus turn;
     private JCellStatus power;
+    private int positioning;
+    private JButton gamePanelButton;
 
     public JMap() {
         super(new GridBagLayout());
@@ -24,11 +28,14 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
+        this.positioning = -1;
         this.power = JCellStatus.NONE;
         this.turn = JCellStatus.NONE;
+
         activeCells = new ArrayList<>();
         powerCells = new ArrayList<>();
         cellButton = new JCell[DIM][DIM];
+
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 GridBagConstraints c = new GridBagConstraints();
@@ -42,6 +49,14 @@ public class JMap extends JPanel implements ActionListener {
                 add(cellButton[i][j], c);
             }
         }
+    }
+
+    public void setCurrentPlayer(JPlayer currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public JPlayer getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public void setCurrentWorker(JWorker worker) {
@@ -130,34 +145,51 @@ public class JMap extends JPanel implements ActionListener {
         return !power.equals(JCellStatus.NONE);
     }
 
+    public void workersPositioning() {
+        this.positioning = 2;
+    }
+
+    public void powerButtonManager(JButton btn) {
+        this.gamePanelButton = btn;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         JCell src = (JCell) e.getSource();
-        if (src.getName().equals("cell") && (activeCells.contains(src) || powerCells.contains(src))) {
-            JCellStatus status = ((JBlockDecorator) src).getDecoration();
-            if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
-                for (JCell cell : activeCells)
-                    ((JBlockDecorator) cell).clean();
-                activeCells.clear();
+        if (src.getName().equals("cell")) {
+            if (activeCells.contains(src) || powerCells.contains(src)) {
+                JCellStatus status = ((JBlockDecorator) src).getDecoration();
+                if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
+                    for (JCell cell : activeCells)
+                        ((JBlockDecorator) cell).clean();
+                    activeCells.clear();
 
-                for (JCell cell : powerCells)
-                    ((JBlockDecorator) cell).clean();
-                powerCells.clear();
+                    for (JCell cell : powerCells)
+                        ((JBlockDecorator) cell).clean();
+                    powerCells.clear();
 
-                if (status.equals(JCellStatus.BUILD))
-                    ((JBlockDecorator) src).buildUp();
-                else if (status.equals(JCellStatus.MOVE))
-                    moveWorker(src);
-                else if (status.equals(JCellStatus.USE_POWER)) {
-                    if (power.equals(JCellStatus.BUILD))
+                    if (status.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                    else if (power.equals(JCellStatus.MOVE))
+                    else if (status.equals(JCellStatus.MOVE))
                         moveWorker(src);
-                    power = JCellStatus.NONE;
-                }
+                    else if (status.equals(JCellStatus.USE_POWER)) {
+                        if (power.equals(JCellStatus.BUILD))
+                            ((JBlockDecorator) src).buildUp();
+                        else if (power.equals(JCellStatus.MOVE))
+                            moveWorker(src);
+                        power = JCellStatus.NONE;
+                    }
 
-                validate();
-                repaint();
+                    /******* mi disabilita il bottone nel game panel *******************/
+                    this.gamePanelButton.setEnabled(false);
+                    /********************************************************************/
+                    validate();
+                    repaint();
+                }
+            } else if (this.positioning > 0 && ((JBlockDecorator)src).isFree()) {
+                currentPlayer.setUpWorker(src);
+                this.positioning--;
+                revalidate();
             }
         }
     }

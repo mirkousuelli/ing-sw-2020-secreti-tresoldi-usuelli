@@ -1,37 +1,31 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
 public enum JCellStatus {
-    NONE(null, 0),
-    BOTTOM("img/blocks/bottom.png", 1),
-    MIDDLE("img/blocks/middle.png", 2),
-    TOP("img/blocks/top.png", 3),
-    DOME("img/blocks/dome.png", 4),
-    MOVE("img/blocks/move.png", 5),
-    BUILD("img/blocks/build.png", 6),
-    MALUS("img/blocks/malus.png", 7),
-    USE_POWER("img/blocks/use_power.png", 8),
-    CHOOSE_WORKER("img/blocks/choose_worker.png", 9),
-    PLAYER_1_FEMALE("img/workers/worker_1/female.png", 10),
-    PLAYER_1_MALE("img/workers/worker_1/male.png", 11),
-    PLAYER_2_FEMALE("img/workers/worker_2/female.png", 12),
-    PLAYER_2_MALE("img/workers/worker_2/male.png", 13),
-    PLAYER_3_FEMALE("img/workers/worker_3/female.png", 14),
-    PLAYER_3_MALE("img/workers/worker_3/male.png", 15);
+    NONE(null),
+    BOTTOM("img/blocks/bottom.png"),
+    MIDDLE("img/blocks/middle.png"),
+    TOP("img/blocks/top.png"),
+    DOME("img/blocks/dome.png"),
+    MOVE("img/blocks/move.png"),
+    BUILD("img/blocks/build.png"),
+    MALUS("img/blocks/malus.png"),
+    USE_POWER("img/blocks/use_power.png"),
+    CHOOSE_WORKER("img/blocks/choose_worker.png"),
+    PLAYER_1_FEMALE("img/workers/worker_1/female.png"),
+    PLAYER_1_MALE("img/workers/worker_1/male.png"),
+    PLAYER_2_FEMALE("img/workers/worker_2/female.png"),
+    PLAYER_2_MALE("img/workers/worker_2/male.png"),
+    PLAYER_3_FEMALE("img/workers/worker_3/female.png"),
+    PLAYER_3_MALE("img/workers/worker_3/male.png");
 
     public final String path;
-    public final int value;
 
-    JCellStatus(String path, int value) {
+    JCellStatus(String path) {
         this.path = path;
-        this.value = value;
     }
 
     public String getPath() {
         return this.path;
-    }
-
-    public int getValue() {
-        return this.value;
     }
 
     public JCellStatus getNext() {
@@ -42,6 +36,19 @@ public enum JCellStatus {
                 return MIDDLE;
             default:
                 return TOP;
+        }
+    }
+
+    public static JCellStatus getWorkerType(int index, boolean gender) {
+        switch (index) {
+            case 0:
+                return (gender) ? JCellStatus.PLAYER_1_FEMALE : JCellStatus.PLAYER_1_MALE;
+            case 1:
+                return (gender) ? JCellStatus.PLAYER_2_FEMALE : JCellStatus.PLAYER_2_MALE;
+            case 2:
+                return (gender) ? JCellStatus.PLAYER_3_FEMALE : JCellStatus.PLAYER_3_MALE;
+            default:
+                return null;
         }
     }
 }
