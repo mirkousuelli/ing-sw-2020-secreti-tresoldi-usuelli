@@ -21,12 +21,13 @@ import java.util.List;
 
 /**
  * Class that represents a build power
- * It extends the class ActivePower
+ * <p>
+ * It extends {@link ActivePower}
  */
 public class BuildPower<S> extends ActivePower<S> {
 
     /**
-     * Constructor of the build power that recalls its super class ActivePower
+     * Constructor of the build power that recalls its super class {@link ActivePower}
      */
     public BuildPower() {
         super();
@@ -53,7 +54,8 @@ public class BuildPower<S> extends ActivePower<S> {
     }
 
     /**
-     * Method that builds on the chosen cell at the designated level
+     * Method that builds on the chosen cell at the designated level. It is used for Atlas, who can decide to build a
+     * dome at any level
      *
      * @param cellToBuild chosen cell to build on
      * @param level level that wants to be built

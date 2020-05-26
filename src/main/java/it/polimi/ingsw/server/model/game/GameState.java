@@ -11,7 +11,8 @@
 package it.polimi.ingsw.server.model.game;
 
 /**
- * Abstract class that contains the states which the game is divided into
+ * Interface that represents the states which the game is divided into
+ * <p>
  * The methods of this class are implemented by each single state, working differently depending on which is
  * the current state
  */

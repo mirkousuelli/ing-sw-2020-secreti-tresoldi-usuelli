@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.cards.powers.tags.malus;
 
 /**
  * Enumeration that represents the type of malus that is applied to the opponents
+ * <p>
  * It can be a malus on the build or on the move
  */
 public enum MalusType {

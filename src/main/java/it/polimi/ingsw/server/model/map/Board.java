@@ -60,10 +60,6 @@ public class Board implements Cloneable {
     }
 
     public List<Cell> getRow(int row) {
-        /* @getter
-         * it gets the full row selected as a list
-         */
-
         if (row >= 0 && row < 5) {
             List<Cell> rowList = new ArrayList<Cell>();
 
@@ -81,7 +77,7 @@ public class Board implements Cloneable {
     /**
      * Method that gets the 8 cells around the one passed as parameter
      *
-     * @param cell Cell from which the cells around are calculated
+     * @param cell the cell from which the cells around are calculated
      * @return list of cells around the chosen one
      */
     public List<Cell> getAround(Cell cell) {
@@ -140,9 +136,9 @@ public class Board implements Cloneable {
     /**
      * Method that gets all the special moves that can be activated by some Gods
      *
-     * @param cell Cell from which the cells for special moves are calculated
-     * @param player Player who can make the eventual special move
-     * @param timing Timing that depends from the God
+     * @param cell the cell from which the cells for special moves are calculated
+     * @param player the player who can make the eventual special move
+     * @param timing the timing of the power, depending from the God
      * @return list of cells where a special move is possible
      */
     public List<Cell> getSpecialMoves(Cell cell, Player player, Timing timing) {
@@ -175,9 +171,9 @@ public class Board implements Cloneable {
      * Method that gets all the special builds that can be activated by some God powers, where around cell are busy
      * from other players' workers
      *
-     * @param cell Cell from which the cells for special build are calculated
-     * @param player Player who can make the eventual special build
-     * @param timing Timing that depends from the God
+     * @param cell the cell from which the cells for special build are calculated
+     * @param player the player who can make the eventual special build
+     * @param timing the timing of the power, that depends from the God
      * @return list of cells where a special build is possible
      */
     public List<Cell> getSpecialBuilds(Cell cell, Player player, Timing timing) {
@@ -203,6 +199,7 @@ public class Board implements Cloneable {
 
     /**
      * Method that gets then cell where the player can move to
+     * <p>
      * It takes all the cells around the current location and removes the one where the player cannot move, considering
      * all rules of moving and possible maluses
      *
@@ -266,10 +263,11 @@ public class Board implements Cloneable {
 
     /**
      * Method that gets then cell where the player can build
+     * <p>
      * It takes all the cells around the given cell and removes the one where the player cannot build, that are the
      * ones that are occupied by a worker or have a dome
      *
-     * @param cell Cell from which it calculates the possible builds
+     * @param cell the cell from which it calculates the possible builds
      * @return list of cells where the player can build
      */
     public List<Cell> getPossibleBuilds(Cell cell) {

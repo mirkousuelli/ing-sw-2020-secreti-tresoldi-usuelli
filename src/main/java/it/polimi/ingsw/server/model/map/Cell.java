@@ -11,8 +11,8 @@
 package it.polimi.ingsw.server.model.map;
 
 /**
- * Abstract class that represents the abstract object which composes the board game and which is developed deeper
- * by the Block class
+ * Interface that represents the abstract object of the cell, which composes the board game and that is developed deeper by
+ * {@link Block}
  */
 public interface Cell {
     int getX();

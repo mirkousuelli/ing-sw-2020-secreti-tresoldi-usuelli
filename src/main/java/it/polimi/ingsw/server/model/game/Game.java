@@ -22,7 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Class that represents a game and contains all the information useful for it.
+ * Class that represents a game and contains all the information useful for it: the list of players playing the match,
+ * the deck that is being used, a list of the chosen Gods, the board,the current (and previous) state, the current
+ * player, the number of players in the math, the request that is made and the starter of the game (who is picked later
+ * by the Challenger)
+ * <p>
  * It uses a state pattern, allowing the game to work according to the current state
  */
 public class Game extends Observable<Answer> {
@@ -76,7 +80,7 @@ public class Game extends Observable<Answer> {
     /**
      * Method that removes the God from the list of chosen Gods for the game
      *
-     * @param god God that is removed
+     * @param god the God that is removed
      */
     public void removeGod(Card god) {
         chosenGods.remove(god);
@@ -151,9 +155,6 @@ public class Game extends Observable<Answer> {
     }
 
     public Board getBoard() {
-        /* @getter
-         * it gets the board for the game
-         */
         return board;
     }
 
@@ -162,9 +163,6 @@ public class Game extends Observable<Answer> {
     }
 
     public Deck getDeck() {
-        /* @getter
-         * it gets the deck of cards in use
-         */
         return deck;
     }
 
@@ -173,30 +171,18 @@ public class Game extends Observable<Answer> {
     }
 
     public void setCurrentPlayer(Player currentPlayer) {
-        /* @setter
-         * it sets the current player to the designated one
-         */
         this.currentPlayer = this.players.indexOf(currentPlayer);
     }
 
     public Player getCurrentPlayer() {
-        /* @getter
-         * it gets the current player
-         */
         return this.players.get(this.currentPlayer);
     }
 
     public GameState getState() {
-        /* @getter
-         * it gets the current state of the game
-         */
         return state;
     }
 
     public void setState(GameState state) {
-        /* @setter
-         * it sets the current state to the designated one
-         */
         this.state = state;
     }
 
@@ -275,6 +261,10 @@ public class Game extends Observable<Answer> {
         players.removeIf(p -> p.nickName.equals(player));
     }
 
+    /**
+     * Method that resets the game: it cleans the board, removes the list of chosen Gods and the list of players
+     * and setting the previous state to start
+     */
     public void clean() {
         board.clean();
         chosenGods.clear();
@@ -287,8 +277,8 @@ public class Game extends Observable<Answer> {
     /**
      * Method that represents the engine of the game and works differently depending on the current state
      * <p>
-     *     In here it is used to change the current player and to control when the list of Gods is available, then
-     *     proceeding to notify the players of these changes
+     * In here it is used to change the current player and to control when the list of Gods is available, then
+     * proceeding to notify the players of these changes
      *
      * @return returnContent, which contains information like the outcome of the actions and the next state
      */

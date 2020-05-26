@@ -18,7 +18,8 @@ import java.util.List;
 
 /**
  * Class that represents the Card and contains the corresponding God, a description, the number of player that it can
- * be played with and a list of powers
+ * be played with and a list of powers: in our case the only God that has a restriction on the number of player is
+ * Chronus, that can only be played in a 2-players match
  */
 public class Card implements Cloneable {
     private God god;
@@ -27,7 +28,7 @@ public class Card implements Cloneable {
     private List<Power> powerList;
 
     /**
-     * Constructor of the card, that sets the attributes describing it
+     * Constructor of the card
      */
     public Card() {
         powerList = new ArrayList<>();
@@ -64,7 +65,7 @@ public class Card implements Cloneable {
     /**
      * Method that adds the power to the list of powers of the card
      *
-     * @param power Power that is added
+     * @param power the power that is added
      */
     public void addPower(Power power) {
         powerList.add(power);
@@ -88,7 +89,7 @@ public class Card implements Cloneable {
 
 
     /**
-     * Method that clones the card with his attributes
+     * Method that clones the card with his attributes (corresponding God, description and list of powers)
      *
      * @return the cloned card
      */
