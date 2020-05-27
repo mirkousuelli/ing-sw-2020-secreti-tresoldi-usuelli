@@ -260,7 +260,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
                 mg.getGame().setJDeck(newDeck);
                 mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(false);
                 this.panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;
@@ -308,5 +307,11 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void updateFromModel() {
+        System.out.println("00000000000000000000000000");
+        ((ManagerPanel) panels).getGui().free();
     }
 }

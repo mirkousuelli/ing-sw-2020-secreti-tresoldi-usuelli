@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
-import it.polimi.ingsw.communication.message.payload.ReducedAction;
+import it.polimi.ingsw.communication.message.header.DemandType;
 
 public enum JCellStatus {
     NONE(null),
@@ -51,6 +51,22 @@ public enum JCellStatus {
                 return (gender) ? JCellStatus.PLAYER_3_FEMALE : JCellStatus.PLAYER_3_MALE;
             default:
                 return null;
+        }
+    }
+
+    public static JCellStatus toJCellStatus(DemandType currentState) {
+        switch (currentState) {
+            case CHOOSE_WORKER:
+                return CHOOSE_WORKER;
+
+            case MOVE:
+                return MOVE;
+
+            case BUILD:
+                return BUILD;
+
+            default:
+                return NONE;
         }
     }
 }

@@ -73,7 +73,6 @@ public class PlaceWorkers implements GameState{
         returnContent.setChangeTurn(true);
         returnContent.setPayload(modifiedCell);
 
-        System.out.println(this.getName() + " " + returnContent.getAnswerType() + " " + game.getRequest().getPlayer());
         return returnContent;
     }
 }

@@ -419,6 +419,12 @@ public class ClientModel<S> extends SantoriniRunnable {
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
+    public synchronized ReducedAnswerCell getCell(int x, int y) {
+        if (checkCell(x, y)) return null;
+
+        return reducedBoard[x][y];
+    }
+
     public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
     }

@@ -6,12 +6,10 @@ import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.map.*;
+import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
-import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
-import it.polimi.ingsw.communication.message.payload.ReducedWorker;
+import it.polimi.ingsw.communication.message.payload.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -234,7 +232,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     public void generateDemand(List<JCell> chosenJCells) {
         GUI gui = ((ManagerPanel) panels).getGui();
-        DemandType demandType;
+        JMap map = game.getJMap();
+        DemandType currentState;
 
         if (!gui.getClientModel().isYourTurn()) return;
 
@@ -243,17 +242,17 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 .collect(Collectors.toList());
 
         if (powerButton.isEnabled())
-            demandType = DemandType.USE_POWER;
+            currentState = DemandType.USE_POWER;
         else
-            demandType = gui.getClientModel().getCurrentState();
+            currentState = gui.getClientModel().getCurrentState();
 
-        System.out.println(demandType);
-        payload.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY()));
-
-        gui.generateDemand(demandType, payload.size() > 1
+        gui.generateDemand(currentState, payload.size() > 1
                 ? payload
                 : payload.get(0)
         );
+
+        map.removeDecoration(JCellStatus.toJCellStatus(currentState));
+        map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
     }
 
     public void generateDemand(JCell chosenJCell) {
@@ -266,6 +265,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private void setJCellLAction(List<ReducedAnswerCell> reducedAnswerCellList, DemandType currentState) {
         GUI gui = ((ManagerPanel) panels).getGui();
         JMap map = game.getJMap();
+
+        if (reducedAnswerCellList.isEmpty()) return;
 
         List<JCell> jCellList = reducedAnswerCellList.stream()
                 .map(rac -> map.getCell(rac.getX(), rac.getY()))
@@ -286,6 +287,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 else if (gui.getClientModel().getNextState().equals(DemandType.CHOOSE_WORKER))
                     setPossibleBuild(jCellList);
                 break;
+
+            case USE_POWER:
+                if (gui.getClientModel().getCurrentState().equals(DemandType.MOVE))
+                    setPossibleUsePowerMove(jCellList);
+                else if (gui.getClientModel().getCurrentState().equals(DemandType.BUILD))
+                    setPossibleUsePowerBuild(jCellList);
         }
     }
 
@@ -345,9 +352,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
             case CHOOSE_WORKER:
                 if (gui.getClientModel().isYourTurn()) {
-                    game.getCurrentPlayer().getWorkers().stream().map(JWorker::getLocation).forEach(jCell -> jCell.setStatus(JCellStatus.CHOOSE_WORKER));
+                    game.getCurrentPlayer().chooseWorker();
                     map.validate();
-                    setJCellLAction(updatedCells, currentState);
                 }
 
                 List<String> owners = ((List<ReducedWorker>) gui.getClientModel().getWorkers()).stream()
@@ -363,6 +369,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
                         reducedWorkerList.forEach(w -> p.setUpWorker(game.getJMap().getCell(w.getX(), w.getY())));
                     }
+
+                    map.validate();
                 }
                 );
                 break;
@@ -370,7 +378,27 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case MOVE:
             case BUILD:
             case ASK_ADDITIONAL_POWER:
-               setJCellLAction(updatedCells, currentState);
+                if (gui.getClientModel().isYourTurn()) {
+                    updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
+                    setJCellLAction(updatedCells.stream().filter(rac -> rac.getActionList().contains(ReducedAction.parseString(currentState.toString()))).collect(Collectors.toList()), currentState);
+
+                    if (!currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
+                        setJCellLAction(updatedCells.stream().filter(rac -> rac.getActionList().contains(ReducedAction.parseString(DemandType.USE_POWER.toString()))).collect(Collectors.toList()), DemandType.USE_POWER);
+                }
+                else {
+                    List<JCell> cellsToModify = ((List<ReducedAnswerCell>) gui.getClientModel().getAnswer().getPayload()).stream()
+                            .filter(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT))
+                            .map(rac -> map.getCell(rac.getX(), rac.getY()))
+                            .collect(Collectors.toList());
+
+                    for (JCell c : cellsToModify) {
+                        ReducedAnswerCell rac = gui.getClientModel().getCell(c.getX(), c.getY());
+                        if (rac == null) break;
+
+                        if (rac.getLevel() != null && rac.getLevel().toInt() > ((JBlockDecorator) c).getDecoration().ordinal()) //build
+                            ((JBlockDecorator) c).buildUp();
+                    }
+                }
                 break;
         }
     }

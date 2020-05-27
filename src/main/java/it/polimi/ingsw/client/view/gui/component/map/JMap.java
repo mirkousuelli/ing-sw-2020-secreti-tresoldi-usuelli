@@ -142,6 +142,14 @@ public class JMap extends JPanel implements ActionListener {
         validate();
     }
 
+    public void removeDecoration(JCellStatus jCellStatus) {
+        Arrays.stream(cellButton)
+                .flatMap(Arrays::stream)
+                .filter(c -> ((JBlockDecorator) c).getDecoration() != null)
+                .filter(c -> ((JBlockDecorator) c).getDecoration().equals(jCellStatus))
+                .forEach(c -> ((JBlockDecorator) c).removeDecoration());
+    }
+
     public JCell getCell(int x, int y) {
         return cellButton[x][y];
     }
@@ -213,6 +221,9 @@ public class JMap extends JPanel implements ActionListener {
                     gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()));
 
                 revalidate();
+            } else if (!((JBlockDecorator)src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator)src).getJWorker())) {
+                gamePanel.generateDemand(((JBlockDecorator)src).getBlock());
+                currentWorker = ((JBlockDecorator)src).getJWorker();
             }
         }
     }

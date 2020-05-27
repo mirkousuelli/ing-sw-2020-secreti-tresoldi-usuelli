@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.panels;
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
@@ -37,6 +38,12 @@ public class WaitingRoomPanel extends SantoriniPanel {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
+        if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+            mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+            gui.free();
+            return;
+        }
+
         if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
             List<God> godList = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
@@ -47,7 +54,6 @@ public class WaitingRoomPanel extends SantoriniPanel {
             case CHOOSE_DECK:
                 mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
-                ((ChooseCardsPanel) mg.getCurrentPanel()).enableChoose(true);
                 gui.free();
                 break;
 
@@ -86,10 +92,10 @@ public class WaitingRoomPanel extends SantoriniPanel {
             mg.getGame().addPlayer(p.getNickname(), toColorIndex(p.getColor()));
 
             if (p.getNickname().equals(gui.getClientModel().getCurrentPlayer().getNickname()))
-                mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(mg.getGame().getNumPlayer() - 1));
+                mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(p.getNickname()));
 
             if (p.getNickname().equals(gui.getClientModel().getPlayer().getNickname()))
-                mg.setClientPlayer(mg.getGame().getPlayer(mg.getGame().getNumPlayer() - 1));
+                mg.setClientPlayer(mg.getGame().getPlayer(p.getNickname()));
         }
     }
 
