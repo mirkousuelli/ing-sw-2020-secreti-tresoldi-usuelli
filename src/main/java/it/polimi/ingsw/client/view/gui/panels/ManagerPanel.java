@@ -21,6 +21,7 @@ public class ManagerPanel extends JPanel {
 
         game = new JGame();
 
+        addPanel(new EndPanel(EndPanel.SAVE, cardLayout, this));
         addPanel(new StartPanel(cardLayout, this));
         addPanel(new NicknamePanel(cardLayout, this));
         cardLayout.show(this, "Card 1");
