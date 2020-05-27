@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
@@ -52,18 +53,11 @@ public class WaitingRoomPanel extends SantoriniPanel {
 
             case CHOOSE_CARD:
                 if (!gui.getClientModel().getCurrentPlayer().isCreator()) {
-                    System.out.println("NOOOOOOO");
                     mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
                     ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
                 }
-                else {
-                    System.out.println("oooook");
+                else
                     return;
-                }
-                break;
-
-            case PLACE_WORKERS:
-                mg.addPanel(new GamePanel(panelIndex, panels));
                 break;
 
             case START:
@@ -86,18 +80,32 @@ public class WaitingRoomPanel extends SantoriniPanel {
         List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
         playerList.add(gui.getClientModel().getPlayer());
 
-        List<String> playerNameList = playerList.stream().map(ReducedPlayer::getNickname).collect(Collectors.toList());
-
         if (mg.getGame().getNumPlayer() > 0) return;
 
-        for (String name : playerNameList) {
-            mg.getGame().addPlayer(name, mg.getGame().getNumPlayer());
+        for (ReducedPlayer p : playerList) {
+            mg.getGame().addPlayer(p.getNickname(), toColorIndex(p.getColor()));
 
-            if (name.equals(gui.getClientModel().getCurrentPlayer().getNickname()))
+            if (p.getNickname().equals(gui.getClientModel().getCurrentPlayer().getNickname()))
                 mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(mg.getGame().getNumPlayer() - 1));
 
-            if (name.equals(gui.getClientModel().getPlayer().getNickname()))
+            if (p.getNickname().equals(gui.getClientModel().getPlayer().getNickname()))
                 mg.setClientPlayer(mg.getGame().getPlayer(mg.getGame().getNumPlayer() - 1));
+        }
+    }
+
+    private int toColorIndex (String color) {
+        switch (color) {
+            case "cyan":
+                return 0;
+
+            case "yellow":
+                return 1;
+
+            case "purple":
+                return 2;
+
+            default:
+                return -1;
         }
     }
 }

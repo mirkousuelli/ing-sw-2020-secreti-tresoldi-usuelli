@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
@@ -291,8 +292,10 @@ public class Game extends Observable<Answer> {
                 setState(new ChangeTurn(this));
                  rc = state.gameEngine();
 
-                if (!rc.getAnswerType().equals(AnswerType.ERROR))
+                if (!rc.getAnswerType().equals(AnswerType.ERROR)) {
                     notify(new Answer(AnswerType.CHANGE_TURN, rc.getPayload()));
+                    System.out.println(AnswerType.CHANGE_TURN + " " + rc.getAnswerType() + " req: " + getRequest().getPlayer() + " new: " + ((ReducedPlayer) rc.getPayload()).getNickname());
+                }
             }
 
             notify(new Answer(returnContent.getAnswerType(), UpdatedPartType.parseString(returnContent.getState().toString()), returnContent.getPayload()));

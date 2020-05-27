@@ -63,6 +63,7 @@ public class ChooseStarter implements GameState {
             }
         }
 
+        System.out.println(this.getName() + " " + returnContent.getAnswerType() + " " + game.getRequest().getPlayer());
         return returnContent;
     }
 }

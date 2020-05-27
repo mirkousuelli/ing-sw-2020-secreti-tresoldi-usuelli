@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.gui.component;
 
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
-import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
@@ -10,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JPlayer extends JButton implements ActionListener {
     private final String nickname;
@@ -154,6 +155,18 @@ public class JPlayer extends JButton implements ActionListener {
         text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
 
         revalidate();
+    }
+
+    public List<JWorker> getWorkers() {
+        List<JWorker> workers = new ArrayList<>();
+
+        if (femaleWorker != null)
+            workers.add(femaleWorker);
+
+        if (maleWorker != null)
+            workers.add(maleWorker);
+
+        return workers;
     }
 
     @Override

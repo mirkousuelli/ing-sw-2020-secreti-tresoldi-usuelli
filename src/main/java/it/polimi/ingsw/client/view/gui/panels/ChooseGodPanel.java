@@ -2,11 +2,13 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.deck.JMini;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -181,6 +183,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     void updateDeck(God godToRemove) {
         deck.pop(deck.getJGod(godToRemove));
         if (!deck.getList().isEmpty()) {
+            deck.setCurrent(deck.getGod(0));
             setChoice(deck, deck.getCurrent());
             deck.showMiniList();
         }
@@ -204,21 +207,36 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 ManagerPanel mg = (ManagerPanel) panels;
                 GUI gui = mg.getGui();
 
-                mg.getGame().getCurrentPlayer().setJCard(deck.getJGod(chosenGod).getCard());
-                mg.getClientPlayer().setJCard(deck.getJGod(chosenGod).getCard());
-                mg.getClientPlayer().getJCard().setName(mg.getClientPlayer().getName());
+                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
+                mg.getGame().getCurrentPlayer().setJCard(new JCard(chosenGod));
+                mg.getClientPlayer().setJCard(mg.getGame().getCurrentPlayer().getJCard());
                 updateDeck();
                 chooseButton.setEnabled(false);
-                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
-                gui.free();
 
                 if (gui.getClientModel().isCreator()) {
+                    removeAllComponents();
+                    setGods();
                     mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
                     ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
                     this.panelIndex.next(this.panels);
                 }
                 break;
         }
+    }
+
+    private void removeAllComponents() {
+        choice.removeAll();
+        godsList.removeAll();
+        godsBack.removeAll();
+        layers.removeAll();
+
+        ManagerPanel mg = (ManagerPanel) panels;
+        JDeck newDeck = new JDeck();
+        for (JGod god : mg.getGame().getJDeck().getList()) {
+            newDeck.addGod(god.getGod());
+        }
+
+        mg.getGame().setJDeck(newDeck);
     }
 
     @Override
@@ -228,35 +246,51 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
-        mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
-        enableChoose(gui.getClientModel().isYourTurn());
-
-        if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
-            God godToRemove = deck.getList().stream()
-                    .filter(jGod -> gods.contains(jGod.getGod()))
-                    .map(JGod::getGod)
-                    .reduce(null, (a, b) -> a != null ? a : b);
-
-            if (godToRemove == null) return;
-
-            mg.getGame().getPlayerList().stream()
-                    .filter(jPlayer -> jPlayer.getNickname().equals(gui.getClientModel().getPrevPlayer()))
-                    .forEach(jPlayer -> {
-                        jPlayer.setJCard(deck.getJGod(godToRemove).getCard());
-                        jPlayer.getJCard().setName(jPlayer.getName());
-                        }
-                    );
-
-            updateDeck(godToRemove);
-        }
-        
-        if (gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator()) {
-            this.panelIndex.previous(this.panels);
+        if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+            mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+            enableChoose(gui.getClientModel().isYourTurn());
             gui.free();
             return;
         }
 
-        if (!gui.getClientModel().isCreator()) return;
+        if (gods.size() < gui.getClientModel().getNumberOfPlayers()) {
+            God godToRemove = deck.getList().stream()
+                    .filter(jGod -> !gods.contains(jGod.getGod()))
+                    .map(JGod::getGod)
+                    .reduce(null ,(a, b) -> a != null
+                            ? a
+                            : b
+                    );
+
+            if (godToRemove != null)
+                updateDeck(godToRemove);
+        }
+
+        if (gui.getClientModel().getCurrentState().equals(DemandType.PLACE_WORKERS)) {
+            removeAllComponents();
+            setGods();
+            mg.addPanel(new GamePanel(panelIndex, panels));
+            mg.getCurrentPanel().updateFromModel();
+            this.panelIndex.next(this.panels);
+            return;
+        }
+
         gui.free();
+    }
+
+    private void setGods() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
+        playerList.add(gui.getClientModel().getPlayer());
+
+        playerList.forEach(p -> {
+                    mg.getGame().getPlayer(p.getNickname()).setJCard(new JCard(p.getCard().getGod()));
+
+                    if (p.getNickname().equals(mg.getClientPlayer().getNickname()))
+                        mg.getClientPlayer().setJCard(mg.getGame().getPlayer(p.getNickname()).getJCard());
+                }
+        );
     }
 }

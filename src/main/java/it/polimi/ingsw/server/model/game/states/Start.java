@@ -72,6 +72,7 @@ public class Start implements GameState {
         returnContent.setPayload(game.getChosenGods().stream().map(ReducedCard::new).collect(Collectors.toList()));
         returnContent.setChangeTurn(true);
 
+        System.out.println(this.getName() + " " + returnContent.getAnswerType() + " " + game.getRequest().getPlayer());
         return returnContent;
     }
 }

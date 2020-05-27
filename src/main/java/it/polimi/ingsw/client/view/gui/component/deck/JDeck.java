@@ -119,7 +119,11 @@ public class JDeck extends JPanel implements ActionListener {
     }
 
     public JGod pop(JGod god) {
-        JGod toPop = this.gods.remove(this.gods.indexOf(god));
+        int index = this.gods.indexOf(god);
+
+        if (index == -1) return god;
+
+        JGod toPop = this.gods.remove(index);
         remove(toPop.getMini());
         toPop.getMini().disactive();
         if (this.gods.size() > 0)

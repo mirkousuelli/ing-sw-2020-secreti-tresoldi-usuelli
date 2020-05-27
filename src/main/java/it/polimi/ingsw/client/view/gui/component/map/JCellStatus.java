@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
+
 public enum JCellStatus {
     NONE(null),
     BOTTOM("img/blocks/bottom.png"),

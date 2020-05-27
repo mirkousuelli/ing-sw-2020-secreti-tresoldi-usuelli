@@ -81,8 +81,12 @@ public class ClientModel<S> extends SantoriniRunnable {
         return ret;
     }
 
-    public DemandType getCurrentState() {
+    public synchronized DemandType getCurrentState() {
         return currentState;
+    }
+
+    public synchronized DemandType getNextState() {
+        return nextState;
     }
 
     public synchronized void setNextState(DemandType nextState) {
@@ -270,8 +274,10 @@ public class ClientModel<S> extends SantoriniRunnable {
     }
 
     private synchronized void updateCurrentPlayer() {
-        prevPlayer = currentPlayer;
-        currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+        if (!currentPlayer.equals(((ReducedPlayer) getAnswer().getPayload()).getNickname())) {
+            prevPlayer = currentPlayer;
+            currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+        }
     }
 
     private synchronized void updateReducedObjectsInitialize(Answer answerTemp) {

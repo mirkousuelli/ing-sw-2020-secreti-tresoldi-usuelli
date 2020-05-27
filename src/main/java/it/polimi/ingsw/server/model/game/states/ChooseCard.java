@@ -69,6 +69,7 @@ public class ChooseCard implements GameState {
             ChooseCard.applyMalus(game, Timing.DEFAULT);
         }
 
+        System.out.println(this.getName() + " " + returnContent.getAnswerType() + " " + game.getRequest().getPlayer());
         return returnContent;
     }
 
