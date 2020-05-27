@@ -28,8 +28,6 @@ public class JCard extends JLabel {
         setIcon(icon);
 
         setOpaque(false);
-        //setContentAreaFilled(false);
-        //setBorderPainted(false);
         setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
         setLayout(new GridBagLayout());
         setName("card");
@@ -42,6 +40,10 @@ public class JCard extends JLabel {
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);
+
+        setOpaque(false);
+        setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
+        setLayout(new GridBagLayout());
         setName("card");
 
         repaint();
