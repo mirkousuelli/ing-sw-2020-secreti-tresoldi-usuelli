@@ -1,11 +1,14 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.deck.JMini;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +27,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JDeck deck;
     private JDeck chosenDeck;
     private JPanel layers;
+    private JCard retro;
+    private JLabel text;
 
     public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
@@ -39,6 +44,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
         c.fill = GridBagConstraints.BOTH;
 
+        retro = new JCard();
         layers = new JPanel();
         layers.setPreferredSize(new Dimension(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT));
         layers.setOpaque(false);
@@ -127,17 +133,35 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         choice.setOpaque(false);
 
         layers.add(choice, c);
+
+        retro = new JCard();
+        text = new JLabel();
+        retro.add(text, new GridBagConstraints());
     }
 
     void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 1;
+        c.weightx = 0f;
         c.weighty = 1;
+        c.insets = new Insets(0,0,0,20);
 
         choice.removeAll();
+        text.setOpaque(false);
+        text.setPreferredSize(new Dimension(130, 250));
+        String description = "<html>" + god.getDescription() + "</html>";
+        text.setText(description);
+        text.setForeground(Color.WHITE);
+        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
+        text.setHorizontalTextPosition(JLabel.CENTER);
+        text.setVerticalTextPosition(JLabel.CENTER);
+        choice.add(retro, c);
+
+        c.gridx = 1;
+        c.insets = new Insets(0,20,0,0);
         choice.add(god.getCard(), c);
+
         deck.setCurrent(god);
         validate();
         repaint();
@@ -255,8 +279,10 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 ManagerPanel mg = (ManagerPanel) panels;
 
                 JDeck newDeck = new JDeck();
-                for (JGod god : chosenDeck.getList())
+                for (JGod god : chosenDeck.getList()) {
                     newDeck.addGod(god.getGod());
+                    newDeck.getJGod(god.getGod()).setDescription(god.getDescription());
+                }
 
                 mg.getGame().setJDeck(newDeck);
                 mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));

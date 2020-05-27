@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
-import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
@@ -47,7 +47,13 @@ public class WaitingRoomPanel extends SantoriniPanel {
         if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
             List<God> godList = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
-            mg.getGame().setJDeck(new JDeck(godList));
+
+            int i = 0;
+            JDeck deck = new JDeck(godList);
+            for (JGod god : deck.getList())
+                god.setDescription(reducedCardList.get(i++).getDescription());
+
+            mg.getGame().setJDeck(deck);
         }
 
         switch (gui.getClientModel().getCurrentState()) {

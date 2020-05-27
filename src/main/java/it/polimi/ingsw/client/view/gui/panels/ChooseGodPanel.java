@@ -27,6 +27,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private JPanel choice;
     private JButton chooseButton;
     private JDeck deck;
+    private JCard retro;
     private God chosenGod;
 
     public ChooseGodPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
@@ -151,6 +152,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         choice.setOpaque(false);
         choice.setSize(BackgroundPanel.WIDTH, BackgroundPanel.HEIGHT);
 
+        retro = new JCard();
         layers.add(choice, c);
     }
 
@@ -158,20 +160,29 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 1;
+        c.weightx = 0f;
         c.weighty = 1;
+        c.insets = new Insets(0,0,0,20);
 
+        retro.removeAll();
         choice.removeAll();
-        choice.revalidate();
-        choice.repaint();
+        JLabel text = new JLabel();
+        text.setOpaque(false);
+        text.setPreferredSize(new Dimension(130, 250));
+        String description = "<html>" + god.getDescription() + "</html>";
+        text.setText(description);
+        text.setForeground(Color.WHITE);
+        text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
+        text.setHorizontalTextPosition(JLabel.CENTER);
+        text.setVerticalTextPosition(JLabel.CENTER);
+        retro.add(text, new GridBagConstraints());
+        choice.add(retro, c);
 
+        c.gridx = 1;
+        c.insets = new Insets(0,20,0,0);
         choice.add(god.getCard(), c);
+
         deck.setCurrent(god);
-        choice.revalidate();
-        choice.repaint();
-
-        chosenGod = god.getGod();
-
         validate();
         repaint();
     }
