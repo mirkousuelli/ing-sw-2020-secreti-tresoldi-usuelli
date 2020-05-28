@@ -76,8 +76,6 @@ public class Move implements GameState {
     }
 
     public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo, List<Cell> around) {
-        Player currentPlayer = game.getCurrentPlayer();
-
         List<Cell> remainingCells = around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
                 .filter(c -> c.isFree() /*|| ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker())*/)
@@ -185,6 +183,7 @@ public class Move implements GameState {
             returnContent.setPayload(payload);
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
 
         if(ChangeTurn.controlWinCondition(game)) {
@@ -228,7 +227,7 @@ public class Move implements GameState {
         tempList.add(temp);
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
-        if (state.equals(State.MOVE))
+        if (state.equals(State.MOVE) && temp.isFree())
             temp.replaceDefaultAction(ReducedAction.BUILD);
         tempList.add(temp);
 
