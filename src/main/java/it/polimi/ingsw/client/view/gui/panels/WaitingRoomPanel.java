@@ -46,7 +46,9 @@ public class WaitingRoomPanel extends SantoriniPanel {
 
         if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
-            List<God> godList = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
+            List<God> godList = reducedCardList.stream()
+                    .map(ReducedCard::getGod)
+                    .collect(Collectors.toList());
 
             int i = 0;
             JDeck deck = new JDeck(godList);

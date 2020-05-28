@@ -183,6 +183,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         choice.add(god.getCard(), c);
 
         deck.setCurrent(god);
+        chosenGod = god.getGod();
         validate();
         repaint();
     }
@@ -236,6 +237,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     }
 
     private void removeAllComponents() {
+        retro.removeAll();
         choice.removeAll();
         godsList.removeAll();
         godsBack.removeAll();
@@ -245,6 +247,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         JDeck newDeck = new JDeck();
         for (JGod god : mg.getGame().getJDeck().getList()) {
             newDeck.addGod(god.getGod());
+            newDeck.getJGod(god.getGod()).setDescription(god.getDescription());
         }
 
         mg.getGame().setJDeck(newDeck);
@@ -256,9 +259,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
-
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println(gui.getClientModel().getCurrentPlayer().getNickname());
 
         chooseButton.setEnabled(gui.getClientModel().isYourTurn());
 

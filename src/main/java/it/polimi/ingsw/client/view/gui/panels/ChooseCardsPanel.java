@@ -260,10 +260,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         cloudBack.add(removeButton, c);
     }
 
-    void enableChoose(boolean enable) {
-        activeButton.setEnabled(enable);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
@@ -333,11 +329,5 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
             default:
                 break;
         }
-    }
-
-    @Override
-    public void updateFromModel() {
-        System.out.println("00000000000000000000000000");
-        ((ManagerPanel) panels).getGui().free();
     }
 }
