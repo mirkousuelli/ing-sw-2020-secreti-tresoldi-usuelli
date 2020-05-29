@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.communication.message.header.DemandType;

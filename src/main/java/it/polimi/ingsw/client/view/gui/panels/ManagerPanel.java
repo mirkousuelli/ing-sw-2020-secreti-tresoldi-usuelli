@@ -38,6 +38,10 @@ public class ManagerPanel extends JPanel {
         return clientPlayer;
     }
 
+    public void setClientPlayer(JPlayer clientPlayer) {
+        this.clientPlayer = clientPlayer;
+    }
+
     public Component addPanel(Component comp) {
         currentPanel = (SantoriniPanel) comp;
         return this.add(comp);

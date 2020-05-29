@@ -260,10 +260,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         cloudBack.add(removeButton, c);
     }
 
-    void enableChoose(boolean enable) {
-        activeButton.setEnabled(enable);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         switch(((JButton)e.getSource()).getName()) {
@@ -286,7 +282,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
                 mg.getGame().setJDeck(newDeck);
                 mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(false);
                 this.panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;

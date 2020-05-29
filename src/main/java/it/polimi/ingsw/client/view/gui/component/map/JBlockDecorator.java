@@ -78,6 +78,10 @@ public class JBlockDecorator extends JCell {
         return this.worker.getPawn().getDecoration();
     }
 
+    public JWorker getJWorker() {
+        return worker;
+    }
+
     public JCell getBlock() {
         return this.origin;
     }

@@ -8,12 +8,14 @@ public class ReducedWorker {
     private int id;
     private int x;
     private int y;
+    private boolean gender;
 
     public ReducedWorker(Worker worker, String player) {
         this.owner = player;
-        this.id = worker.getId();
-        this.x = worker.getX();
-        this.y = worker.getY();
+        id = worker.getId();
+        x = worker.getX();
+        y = worker.getY();
+        gender = worker.isMale();
     }
 
     public ReducedWorker() {}
@@ -48,5 +50,13 @@ public class ReducedWorker {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isGender() {
+        return gender;
+    }
+
+    public void setGender(boolean gender) {
+        this.gender = gender;
     }
 }

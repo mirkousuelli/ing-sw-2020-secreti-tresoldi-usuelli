@@ -6,14 +6,17 @@ import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 import it.polimi.ingsw.client.view.gui.component.map.JDecorator;
 
 public class JWorker {
+
     private JDecorator pawn;
     private JCell cell;
+    private int id;
 
     public JWorker(JCellStatus pawn, JCell cell) {
         this.pawn = new JDecorator(pawn);
         this.cell = cell;
         ((JBlockDecorator) cell).addWorker(this);
     }
+
     public JDecorator getPawn() {
         return pawn;
     }
@@ -30,5 +33,13 @@ public class JWorker {
         ((JBlockDecorator) this.cell).removeWorker();
         this.cell = cell;
         ((JBlockDecorator) this.cell).addWorker(this);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

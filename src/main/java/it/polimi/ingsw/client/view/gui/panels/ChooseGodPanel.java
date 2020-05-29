@@ -2,11 +2,13 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.client.view.gui.component.deck.JMini;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
@@ -181,6 +183,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         choice.add(god.getCard(), c);
 
         deck.setCurrent(god);
+        chosenGod = god.getGod();
         validate();
         repaint();
     }
@@ -192,6 +195,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     void updateDeck(God godToRemove) {
         deck.pop(deck.getJGod(godToRemove));
         if (!deck.getList().isEmpty()) {
+            deck.setCurrent(deck.getGod(0));
             setChoice(deck, deck.getCurrent());
             deck.showMiniList();
         }
@@ -215,19 +219,38 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 ManagerPanel mg = (ManagerPanel) panels;
                 GUI gui = mg.getGui();
 
-                mg.getGame().getCurrentPlayer().setJCard(deck.getJGod(chosenGod).getCard());
-                updateDeck();
                 chooseButton.setEnabled(false);
+                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
+                mg.getGame().getCurrentPlayer().setJCard(new JCard(chosenGod));
+                mg.getClientPlayer().setJCard(mg.getGame().getCurrentPlayer().getJCard());
+                updateDeck();
 
                 if (gui.getClientModel().isCreator()) {
+                    removeAllComponents();
+                    setGods();
                     mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
                     ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
                     this.panelIndex.next(this.panels);
                 }
-
-                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
                 break;
         }
+    }
+
+    private void removeAllComponents() {
+        retro.removeAll();
+        choice.removeAll();
+        godsList.removeAll();
+        godsBack.removeAll();
+        layers.removeAll();
+
+        ManagerPanel mg = (ManagerPanel) panels;
+        JDeck newDeck = new JDeck();
+        for (JGod god : mg.getGame().getJDeck().getList()) {
+            newDeck.addGod(god.getGod());
+            newDeck.getJGod(god.getGod()).setDescription(god.getDescription());
+        }
+
+        mg.getGame().setJDeck(newDeck);
     }
 
     @Override
@@ -237,31 +260,53 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
-        mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
-        enableChoose(gui.getClientModel().isYourTurn());
-        //System.out.println(gui.getClientModel().isYourTurn());
+        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
 
-        if (gods.size() < gui.getClientModel().getNumberOfPlayers() && !gods.isEmpty()) {
-            God godToRemove = deck.getList().stream()
-                    .filter(jGod -> !gods.contains(jGod.getGod()))
-                    .reduce(null, (a, b) -> a != null
-                            ? a
-                            : b
-                    )
-                    .getGod();
-
-            updateDeck(godToRemove);
-        }
-
-        //System.out.println(gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator());
-        if (gui.getClientModel().getCurrentPlayer().isCreator() && !gui.getClientModel().isCreator()) {
-            mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
-            this.panelIndex.next(this.panels);
+        if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+            mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
             gui.free();
             return;
         }
 
-        if (!gui.getClientModel().isCreator()) return;
-        gui.free();
+        if (gods.size() < gui.getClientModel().getNumberOfPlayers()) {
+            God godToRemove = deck.getList().stream()
+                    .filter(jGod -> !gods.contains(jGod.getGod()))
+                    .map(JGod::getGod)
+                    .reduce(null ,(a, b) -> a != null
+                            ? a
+                            : b
+                    );
+
+            if (godToRemove != null)
+                updateDeck(godToRemove);
+        }
+
+        if (gui.getClientModel().getCurrentState().equals(DemandType.PLACE_WORKERS)) {
+            removeAllComponents();
+            setGods();
+            mg.addPanel(new GamePanel(panelIndex, panels));
+            mg.getCurrentPanel().updateFromModel();
+            this.panelIndex.next(this.panels);
+            return;
+        }
+
+        if (!gui.getClientModel().isYourTurn())
+            gui.free();
+    }
+
+    private void setGods() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
+        playerList.add(gui.getClientModel().getPlayer());
+
+        playerList.forEach(p -> {
+                    mg.getGame().getPlayer(p.getNickname()).setJCard(new JCard(p.getCard().getGod()));
+
+                    if (p.getNickname().equals(mg.getClientPlayer().getNickname()))
+                        mg.getClientPlayer().setJCard(mg.getGame().getPlayer(p.getNickname()).getJCard());
+                }
+        );
     }
 }

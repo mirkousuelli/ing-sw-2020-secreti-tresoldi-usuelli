@@ -4,12 +4,14 @@ import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
 
 public class ReducedCard {
 
     private God god;
     private String description;
     private Effect effect;
+    private boolean isDomePower;
     private boolean additionalPower;
 
     public ReducedCard() {}
@@ -19,6 +21,7 @@ public class ReducedCard {
         this.description = card.getDescription();
         effect = card.getPower(0).getEffect();
         additionalPower = card.getPower(0).getTiming().equals(Timing.ADDITIONAL);
+        isDomePower = effect.equals(Effect.BUILD) && card.getPower(0).getAllowedAction().equals(BlockType.DOME);
     }
 
     public God getGod() {
@@ -51,5 +54,13 @@ public class ReducedCard {
 
     public void setAdditionalPower(boolean additionalPower) {
         this.additionalPower = additionalPower;
+    }
+
+    public boolean isDomePower() {
+        return isDomePower;
+    }
+
+    public void setDomePower(boolean isDomePower) {
+        this.isDomePower = isDomePower;
     }
 }

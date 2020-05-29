@@ -168,6 +168,7 @@ public class ChooseWorker implements GameState {
         specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));
         toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
 
+        //personal malus
         Power power = game.getCurrentPlayer().getCard().getPower(0);
         Malus malus = power.getPersonalMalus();
         if (state.equals(State.CHOOSE_WORKER) && malus != null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) {

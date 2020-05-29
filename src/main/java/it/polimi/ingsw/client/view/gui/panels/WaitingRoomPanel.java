@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
@@ -37,9 +38,17 @@ public class WaitingRoomPanel extends SantoriniPanel {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
+        if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+            mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+            gui.free();
+            return;
+        }
+
         if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
-            List<God> godList = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
+            List<God> godList = reducedCardList.stream()
+                    .map(ReducedCard::getGod)
+                    .collect(Collectors.toList());
 
             int i = 0;
             JDeck deck = new JDeck(godList);
@@ -53,7 +62,6 @@ public class WaitingRoomPanel extends SantoriniPanel {
             case CHOOSE_DECK:
                 mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
                 ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
-                ((ChooseCardsPanel) mg.getCurrentPanel()).enableChoose(true);
                 gui.free();
                 break;
 
@@ -64,10 +72,6 @@ public class WaitingRoomPanel extends SantoriniPanel {
                 }
                 else
                     return;
-                break;
-
-            case PLACE_WORKERS:
-                mg.addPanel(new GamePanel(panelIndex, panels));
                 break;
 
             case START:
@@ -90,15 +94,32 @@ public class WaitingRoomPanel extends SantoriniPanel {
         List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
         playerList.add(gui.getClientModel().getPlayer());
 
-        List<String> playerNameList = playerList.stream().map(ReducedPlayer::getNickname).collect(Collectors.toList());
-
         if (mg.getGame().getNumPlayer() > 0) return;
 
-        for (String name : playerNameList) {
-            mg.getGame().addPlayer(name, mg.getGame().getNumPlayer());
+        for (ReducedPlayer p : playerList) {
+            mg.getGame().addPlayer(p.getNickname(), toColorIndex(p.getColor()));
 
-            if (name.equals(gui.getClientModel().getCurrentPlayer().getNickname()))
-                mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(mg.getGame().getNumPlayer() - 1));
+            if (p.getNickname().equals(gui.getClientModel().getCurrentPlayer().getNickname()))
+                mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(p.getNickname()));
+
+            if (p.getNickname().equals(gui.getClientModel().getPlayer().getNickname()))
+                mg.setClientPlayer(mg.getGame().getPlayer(p.getNickname()));
+        }
+    }
+
+    private int toColorIndex (String color) {
+        switch (color) {
+            case "cyan":
+                return 0;
+
+            case "yellow":
+                return 1;
+
+            case "purple":
+                return 2;
+
+            default:
+                return -1;
         }
     }
 }

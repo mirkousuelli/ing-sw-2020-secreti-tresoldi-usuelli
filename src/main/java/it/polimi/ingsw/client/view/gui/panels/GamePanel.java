@@ -1,18 +1,26 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
+import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.client.view.gui.component.map.*;
-import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
+import it.polimi.ingsw.communication.message.payload.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "map.png";
     private JGame game;
     private JPlayer clientPlayer;
@@ -26,7 +34,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         super(imgPath, panelIndex, panels);
 
         this.game = ((ManagerPanel)panels).getGame();
-        this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();;
+        this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();
 
         createRightSection();
         createPowerButton();
@@ -41,6 +49,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 createEnemySection(p, enemy++);
             p.setCardViewSize(true);
         }
+
+        game.getJMap().setGamePanel(this);
+        game.getJMap().setManagerPanel((ManagerPanel) panels);
     }
 
     void createMap() {
@@ -219,6 +230,79 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         cardButton.applyNormal();
     }
 
+    public void generateDemand(List<JCell> chosenJCells) {
+        GUI gui = ((ManagerPanel) panels).getGui();
+        JMap map = game.getJMap();
+        DemandType currentState;
+
+        if (!gui.getClientModel().isYourTurn()) return;
+
+        List<ReducedDemandCell> payload = chosenJCells.stream()
+                .map(jCell -> new ReducedDemandCell(jCell.getXCoordinate(), jCell.getYCoordinate()))
+                .collect(Collectors.toList());
+
+        if (powerButton.isEnabled())
+            currentState = DemandType.USE_POWER;
+        else
+            currentState = gui.getClientModel().getCurrentState();
+
+        if (currentState.equals(DemandType.PLACE_WORKERS))
+            payload.forEach(rdc -> rdc.setGender(((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0));
+
+        gui.generateDemand(currentState, payload.size() > 1
+                ? payload
+                : payload.get(0)
+        );
+
+        map.removeDecoration(JCellStatus.toJCellStatus(currentState));
+        map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
+    }
+
+    public void generateDemand(JCell chosenJCell) {
+        List<JCell> chosenCells = new ArrayList<>();
+
+        chosenCells.add(chosenJCell);
+        generateDemand(chosenCells);
+    }
+
+    private void setJCellLAction(List<ReducedAnswerCell> reducedAnswerCellList, DemandType currentState) {
+        GUI gui = ((ManagerPanel) panels).getGui();
+        JMap map = game.getJMap();
+
+        List<JCell> jCellList = reducedAnswerCellList.stream()
+                .filter(rac -> rac.getActionList().contains(ReducedAction.parseString(currentState.toString())))
+                .map(rac -> map.getCell(rac.getX(), rac.getY()))
+                .collect(Collectors.toList());
+
+        if (jCellList.isEmpty()) return;
+
+        System.out.println("setJCellAction " + currentState);
+        jCellList.forEach(jCell -> System.out.println(jCell.getXCoordinate() + "," + jCell.getYCoordinate()));
+
+        switch (currentState) {
+            case MOVE:
+                setPossibleMove(jCellList);
+                break;
+
+            case BUILD:
+                setPossibleBuild(jCellList);
+                break;
+
+            case ASK_ADDITIONAL_POWER:
+                if (gui.getClientModel().getNextState().equals(DemandType.BUILD))
+                    setPossibleUsePowerMove(jCellList);
+                else if (gui.getClientModel().getNextState().equals(DemandType.CHOOSE_WORKER))
+                    setPossibleBuild(jCellList);
+                break;
+
+            case USE_POWER:
+                if (gui.getClientModel().getCurrentState().equals(DemandType.MOVE))
+                    setPossibleUsePowerMove(jCellList);
+                else if (gui.getClientModel().getCurrentState().equals(DemandType.BUILD))
+                    setPossibleUsePowerBuild(jCellList);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (this.game.getJMap().isPowerActive()) {
@@ -243,5 +327,177 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     break;
             }
         }
+    }
+
+    @Override
+    public void updateFromModel() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        JMap map = game.getJMap();
+        DemandType currentState = gui.getClientModel().getCurrentState();
+
+        if (!gui.getClientModel().getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
+            if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+                mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
+                repaint();
+                validate();
+            }
+
+            gui.free();
+            return;
+        }
+
+        List<ReducedAnswerCell> updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
+
+        updateWorkers(updatedCells);
+
+        if (!gui.getClientModel().isYourTurn()) {
+            updateBuild(updatedCells);
+            updateMove();
+
+            map.repaint();
+            map.validate();
+
+            gui.free();
+            return;
+        }
+
+        switch (currentState) {
+            case PLACE_WORKERS:
+                map.workersPositioning();
+                break;
+
+            case CHOOSE_WORKER:
+                game.getCurrentPlayer().chooseWorker();
+                break;
+
+            case MOVE:
+            case BUILD:
+            case ASK_ADDITIONAL_POWER:
+                //updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
+                setJCellLAction(updatedCells, currentState);
+
+                if (!currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
+                    setJCellLAction(updatedCells, DemandType.USE_POWER);
+                break;
+        }
+    }
+
+    private void updateWorkers(List<ReducedAnswerCell> updatedCells) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        JMap map = game.getJMap();
+
+        JPlayer prevPlayer = game.getPlayer(gui.getClientModel().getPrevPlayer());
+
+        if (!prevPlayer.getWorkers().isEmpty()) return;
+        if (!gui.getAnswer().getContext().equals(UpdatedPartType.WORKER)) return;
+
+        if (!prevPlayer.getNickname().equals(gui.getClientModel().getPlayer().getNickname()))
+            updatedCells.forEach(updatedCell -> {
+                JCell jCellWorker = map.getCell(updatedCell.getX(), updatedCell.getY());
+
+                if (updatedCell.getWorker().isGender()) {
+                    prevPlayer.setUpMaleWorker(jCellWorker);
+                    prevPlayer.getMaleWorker().setId(updatedCell.getWorker().getId());
+
+                    //System.out.println("male " + prevPlayer.getMaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getMaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getMaleWorker().getId());
+                }
+
+                else {
+                    prevPlayer.setUpFemaleWorker(jCellWorker);
+                    prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
+
+
+                    //System.out.println("female " + prevPlayer.getFemaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getFemaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getFemaleWorker().getId());
+                }
+            });
+    }
+
+    private void updateBuild(List<ReducedAnswerCell> updatedCells) {
+        JMap map = game.getJMap();
+        JCell jCell;
+
+        for (ReducedAnswerCell rac : updatedCells) {
+            jCell = map.getCell(rac.getX(), rac.getY());
+
+            //System.out.print(jCell.getStatus() + " ");
+            //System.out.print(rac.getLevel() + " ");
+            //System.out.println(rac.getX() + "," + rac.getY());
+
+            if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
+                jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+        }
+    }
+
+    private void updateMove() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        JMap map = game.getJMap();
+
+        String prevPlayer = gui.getClientModel().getPrevPlayer();
+
+        //if (prevPlayer.equals(clientPlayer.getNickname())) return;
+        if (gui.getClientModel().getWorkers().isEmpty()) return;
+        if (!gui.getAnswer().getContext().equals(UpdatedPartType.BOARD)) return;
+
+        List<ReducedPlayer> playerList = (List<ReducedPlayer>) gui.getClientModel().getOpponents();
+        playerList.add(gui.getClientModel().getPlayer());
+
+        JPlayer jPlayer;
+        JWorker jWorker;
+        ReducedWorker reducedWorker;
+
+        ((List<ReducedWorker>) gui.getClientModel().getWorkers()).forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.getId()));
+
+        for (ReducedPlayer p : playerList) {
+            jPlayer = game.getPlayer(p.getNickname());
+
+            jWorker = jPlayer.getMaleWorker();
+            reducedWorker = getWorkerWithId(p, (List<ReducedWorker>) gui.getClientModel().getWorkers(), jWorker.getId());
+
+            /*System.out.print("\n\nmale before: ");
+            System.out.print("jWorker: " + jWorker.getId() + " ");
+            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
+            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+
+            if (isNotSameCell(jWorker.getLocation(), reducedWorker))
+                jWorker.setLocation(map.getCell(reducedWorker.getX(), reducedWorker.getY()));
+
+            /*System.out.print("male after: ");
+            System.out.print("jWorker: " + jWorker.getId() + " ");
+            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
+            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+
+            jWorker = jPlayer.getFemaleWorker();
+            reducedWorker = getWorkerWithId(p, (List<ReducedWorker>) gui.getClientModel().getWorkers(), jWorker.getId());
+
+            /*System.out.print("female before: ");
+            System.out.print("jWorker: " + jWorker.getId() + " ");
+            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
+            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+
+            if (isNotSameCell(jWorker.getLocation(), reducedWorker))
+                jWorker.setLocation(map.getCell(reducedWorker.getX(), reducedWorker.getY()));
+
+            /*System.out.print("female after: ");
+            System.out.print("jWorker: " + jWorker.getId() + " ");
+            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
+            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+        }
+    }
+
+    private boolean isNotSameCell(JCell jCell, ReducedWorker reducedWorker) {
+        return jCell.getXCoordinate() != reducedWorker.getX() || jCell.getYCoordinate() != reducedWorker.getY();
+    }
+
+    private ReducedWorker getWorkerWithId(ReducedPlayer player, List<ReducedWorker> workers, int workerId) {
+        return workers.stream()
+                .filter(w -> w.getOwner().equals(player.getNickname()))
+                .filter(w -> w.getId() == workerId)
+                .reduce(null, (a, b) -> a != null
+                        ? a
+                        : b
+                );
     }
 }

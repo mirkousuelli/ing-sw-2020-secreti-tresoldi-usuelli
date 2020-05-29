@@ -30,6 +30,12 @@ public class JGame {
         return players.get(index);
     }
 
+    public  JPlayer getPlayer(String name) {
+        return players.stream()
+                .filter(jPlayer -> jPlayer.getNickname().equals(name))
+                .reduce(null, (a, b) -> a != null ? a : b);
+    }
+
     public void setCurrentPlayer(JPlayer chosen) {
         if (players.contains(chosen)) {
             if (current < this.getNumPlayer())
@@ -48,7 +54,7 @@ public class JGame {
                         : b
                 );
 
-        current = players.indexOf(newCurrentPlayer);
+        setCurrentPlayer(newCurrentPlayer);
     }
 
     public JPlayer getCurrentPlayer() {

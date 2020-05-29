@@ -81,8 +81,12 @@ public class ClientModel<S> extends SantoriniRunnable {
         return ret;
     }
 
-    public DemandType getCurrentState() {
+    public synchronized DemandType getCurrentState() {
         return currentState;
+    }
+
+    public synchronized DemandType getNextState() {
+        return nextState;
     }
 
     public synchronized void setNextState(DemandType nextState) {
@@ -270,8 +274,10 @@ public class ClientModel<S> extends SantoriniRunnable {
     }
 
     private synchronized void updateCurrentPlayer() {
-        prevPlayer = currentPlayer;
-        currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+        if (!currentPlayer.equals(((ReducedPlayer) getAnswer().getPayload()).getNickname())) {
+            prevPlayer = currentPlayer;
+            currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+        }
     }
 
     private synchronized void updateReducedObjectsInitialize(Answer answerTemp) {
@@ -336,11 +342,11 @@ public class ClientModel<S> extends SantoriniRunnable {
                     chosen= chosenList.get(0);
 
                 ReducedPlayer current = opponents.stream()
-                                                  .filter(p -> p.getNickname().equals(prevPlayer))
-                                                  .reduce(null, (a, b) -> a != null
-                                                          ? a
-                                                          : b
-                                                  );
+                        .filter(p -> p.getNickname().equals(prevPlayer))
+                        .reduce(null, (a, b) -> a != null
+                                ? a
+                                : b
+                        );
 
                 if (current == null)
                     current = player;
@@ -371,6 +377,8 @@ public class ClientModel<S> extends SantoriniRunnable {
                         }
                     }
                 }
+
+                //workers.forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.isGender() + " " + w.getId()));
                 break;
 
             default:
@@ -413,6 +421,12 @@ public class ClientModel<S> extends SantoriniRunnable {
         return !checkCell(x, y) ? reducedBoard[x][y] : null;
     }
 
+    public synchronized ReducedAnswerCell getCell(int x, int y) {
+        if (checkCell(x, y)) return null;
+
+        return reducedBoard[x][y];
+    }
+
     public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
     }
@@ -438,8 +452,8 @@ public class ClientModel<S> extends SantoriniRunnable {
         if (checkCell(x, y)) return true;
 
         return workers.stream()
-                      .filter(w -> w.getOwner().equals(player.getNickname()))
-                      .noneMatch(w -> w.getX() == x && w.getY() == y);
+                .filter(w -> w.getOwner().equals(player.getNickname()))
+                .noneMatch(w -> w.getX() == x && w.getY() == y);
     }
 
     public synchronized boolean checkPlayer(String player) {
@@ -525,5 +539,9 @@ public class ClientModel<S> extends SantoriniRunnable {
         }
 
         return null;
+    }
+
+    public synchronized String getPrevPlayer() {
+        return prevPlayer;
     }
 }

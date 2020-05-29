@@ -1,6 +1,9 @@
 package it.polimi.ingsw.client.view.gui.component.map;
 
+import it.polimi.ingsw.communication.message.header.DemandType;
+
 public enum JCellStatus {
+
     NONE(null),
     BOTTOM("img/blocks/bottom.png"),
     MIDDLE("img/blocks/middle.png"),
@@ -25,7 +28,7 @@ public enum JCellStatus {
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 
     public JCellStatus getNext() {
@@ -49,6 +52,34 @@ public enum JCellStatus {
                 return (gender) ? JCellStatus.PLAYER_3_FEMALE : JCellStatus.PLAYER_3_MALE;
             default:
                 return null;
+        }
+    }
+
+    public static JCellStatus toJCellStatus(DemandType currentState) {
+        switch (currentState) {
+            case CHOOSE_WORKER:
+                return CHOOSE_WORKER;
+            case MOVE:
+                return MOVE;
+            case BUILD:
+                return BUILD;
+            default:
+                return NONE;
+        }
+    }
+
+    public static JCellStatus parseInt (int level) {
+        switch (level) {
+            case 1:
+                return BOTTOM;
+            case 2:
+                return MIDDLE;
+            case 3:
+                return TOP;
+            case 4:
+                return DOME;
+            default:
+                return NONE;
         }
     }
 }

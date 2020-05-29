@@ -53,10 +53,11 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         else if (e.getSource().equals(_3playersButton))
             numberOfPlayers = "3";
 
-        if (numberOfPlayers != null)
+        if (numberOfPlayers != null) {
             gui.generateDemand(DemandType.CREATE_GAME, new ReducedMessage(numberOfPlayers));
 
-        mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
-        this.panelIndex.next(this.panels);
+            mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+            this.panelIndex.next(this.panels);
+        }
     }
 }
