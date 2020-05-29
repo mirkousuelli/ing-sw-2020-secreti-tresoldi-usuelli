@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JPlayer extends JButton implements ActionListener {
+
     private final String nickname;
     private final int id;
     private JCard card;
@@ -40,15 +41,15 @@ public class JPlayer extends JButton implements ActionListener {
 
     public JPlayer(String nickname, int index) {
         this.nickname = nickname;
-        this.id = index;
-        this.chooseWorker = false;
-        this.active = false;
-        this.xSize = SIZE_X;
-        this.ySize = SIZE_Y;
-        this.fontSize = FONT_SIZE;
+        id = index;
+        chooseWorker = false;
+        active = false;
+        xSize = SIZE_X;
+        ySize = SIZE_Y;
+        fontSize = FONT_SIZE;
 
         setPreferredSize(new Dimension(xSize, ySize));
-        this.tagPath = "img/workers/worker_" + (id + 1) + "/tag.png";
+        tagPath = "img/workers/worker_" + (id + 1) + "/tag.png";
         ImageIcon icon = new ImageIcon(tagPath);
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
@@ -64,12 +65,12 @@ public class JPlayer extends JButton implements ActionListener {
         text.setOpaque(false);
         add(text, new GridBagConstraints());
 
-        this.femaleWorker = null;
-        this.maleWorker = null;
+        femaleWorker = null;
+        maleWorker = null;
     }
 
     public String getNickname() {
-        return this.nickname;
+        return nickname;
     }
 
     public void setJCard(JCard card) {
@@ -77,30 +78,38 @@ public class JPlayer extends JButton implements ActionListener {
     }
 
     public JCard getJCard() {
-        return this.card;
+        return card;
     }
 
     public void setWorkers(JWorker female, JWorker male) {
-        this.femaleWorker = female;
-        this.maleWorker = male;
+        femaleWorker = female;
+        maleWorker = male;
 
-        this.femaleWorker.getLocation().addActionListener(this);
-        this.maleWorker.getLocation().addActionListener(this);
+        femaleWorker.getLocation().addActionListener(this);
+        maleWorker.getLocation().addActionListener(this);
     }
 
     public void setUpWorker(JCell position) {
         if (femaleWorker == null)
-            femaleWorker = new JWorker(JCellStatus.getWorkerType(this.id, true), position);
+            setUpFemaleWorker(position);
         else if (maleWorker == null)
-            maleWorker = new JWorker(JCellStatus.getWorkerType(this.id, false), position);
+            setUpMaleWorker(position);
     }
 
     public JWorker getFemaleWorker() {
-        return this.femaleWorker;
+        return femaleWorker;
     }
 
     public JWorker getMaleWorker() {
-        return this.maleWorker;
+        return maleWorker;
+    }
+
+    public void setUpFemaleWorker(JCell position) {
+        femaleWorker = new JWorker(JCellStatus.getWorkerType(id, true), position);
+    }
+
+    public void setUpMaleWorker(JCell position) {
+        maleWorker = new JWorker(JCellStatus.getWorkerType(id, false), position);
     }
 
     public void chooseWorker() {
@@ -129,7 +138,7 @@ public class JPlayer extends JButton implements ActionListener {
     }
 
     public void disactive() {
-        this.active = false;
+        active = false;
 
         removeAll();
         add(text, new GridBagConstraints());
@@ -173,8 +182,8 @@ public class JPlayer extends JButton implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (chooseWorker) {
             currentWorker = ((JBlockDecorator) e.getSource()).getWorker().equals(maleWorker.getPawn().getDecoration());
-            ((JBlockDecorator) this.maleWorker.getLocation()).removeDecoration();
-            ((JBlockDecorator) this.femaleWorker.getLocation()).removeDecoration();
+            ((JBlockDecorator) maleWorker.getLocation()).removeDecoration();
+            ((JBlockDecorator) femaleWorker.getLocation()).removeDecoration();
             chooseWorker = false;
         }
     }

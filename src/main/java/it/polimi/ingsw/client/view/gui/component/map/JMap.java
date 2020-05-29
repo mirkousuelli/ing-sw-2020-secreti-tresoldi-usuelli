@@ -35,9 +35,9 @@ public class JMap extends JPanel implements ActionListener {
         setOpaque(false);
         setVisible(true);
 
-        this.positioning = -1;
-        this.power = JCellStatus.NONE;
-        this.turn = JCellStatus.NONE;
+        positioning = -1;
+        power = JCellStatus.NONE;
+        turn = JCellStatus.NONE;
 
         activeCells = new ArrayList<>();
         powerCells = new ArrayList<>();
@@ -67,7 +67,7 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void setCurrentWorker(JWorker worker) {
-        this.currentWorker = worker;
+        currentWorker = worker;
     }
 
     public JWorker getCurrentWorker() {
@@ -196,7 +196,7 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void powerButtonManager(JButton btn) {
-        this.gamePanelButton = btn;
+        gamePanelButton = btn;
     }
 
     @Override
@@ -214,14 +214,10 @@ public class JMap extends JPanel implements ActionListener {
                         ((JBlockDecorator) cell).clean();
                     powerCells.clear();
 
-                    if (status.equals(JCellStatus.BUILD)) {
+                    if (status.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
-                        gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
-                    }
-                    else if (status.equals(JCellStatus.MOVE)) {
+                    else if (status.equals(JCellStatus.MOVE))
                         moveWorker(src);
-                        gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
-                    }
                     else if (status.equals(JCellStatus.USE_POWER)) {
                         if (power.equals(JCellStatus.BUILD)) {
                             if (managerPanel.getGui().getClientModel().getCurrentPlayer().getCard().isDomePower())
@@ -232,18 +228,18 @@ public class JMap extends JPanel implements ActionListener {
                         else if (power.equals(JCellStatus.MOVE))
                             switchWorkers(src);
                         power = JCellStatus.NONE;
-                        gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
                     }
 
                     /*--------mi disabilita il bottone nel game panel---------*/
-                    this.gamePanelButton.setEnabled(false);
+                    gamePanelButton.setEnabled(false);
                     /*-------------------------------------------------------*/
+                    gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
                     validate();
                     repaint();
                 }
-            } else if (this.positioning > 0 && ((JBlockDecorator)src).isFree()) {
+            } else if (positioning > 0 && ((JBlockDecorator)src).isFree()) {
                 currentPlayer.setUpWorker(src);
-                this.positioning--;
+                positioning--;
 
                 if (positioning == 0)
                     gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()));

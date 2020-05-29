@@ -342,11 +342,11 @@ public class ClientModel<S> extends SantoriniRunnable {
                     chosen= chosenList.get(0);
 
                 ReducedPlayer current = opponents.stream()
-                                                  .filter(p -> p.getNickname().equals(prevPlayer))
-                                                  .reduce(null, (a, b) -> a != null
-                                                          ? a
-                                                          : b
-                                                  );
+                        .filter(p -> p.getNickname().equals(prevPlayer))
+                        .reduce(null, (a, b) -> a != null
+                                ? a
+                                : b
+                        );
 
                 if (current == null)
                     current = player;
@@ -377,6 +377,8 @@ public class ClientModel<S> extends SantoriniRunnable {
                         }
                     }
                 }
+
+                //workers.forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.isGender() + " " + w.getId()));
                 break;
 
             default:
@@ -450,8 +452,8 @@ public class ClientModel<S> extends SantoriniRunnable {
         if (checkCell(x, y)) return true;
 
         return workers.stream()
-                      .filter(w -> w.getOwner().equals(player.getNickname()))
-                      .noneMatch(w -> w.getX() == x && w.getY() == y);
+                .filter(w -> w.getOwner().equals(player.getNickname()))
+                .noneMatch(w -> w.getX() == x && w.getY() == y);
     }
 
     public synchronized boolean checkPlayer(String player) {

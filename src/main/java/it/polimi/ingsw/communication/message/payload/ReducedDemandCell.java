@@ -4,12 +4,20 @@ public class ReducedDemandCell {
 
     private int x;
     private int y;
+    private boolean isGender;
 
     public ReducedDemandCell(){}
 
     public ReducedDemandCell(int x, int y) {
         this.x = x;
         this.y = y;
+        isGender = false;
+    }
+
+    public ReducedDemandCell(ReducedWorker reducedWorker) {
+        x = reducedWorker.getX();
+        y = reducedWorker.getY();
+        isGender = reducedWorker.isGender();
     }
 
     public int getX() {
@@ -28,4 +36,11 @@ public class ReducedDemandCell {
         this.y = y;
     }
 
+    public boolean isGender() {
+        return isGender;
+    }
+
+    public void setGender(boolean gender) {
+        isGender = gender;
+    }
 }

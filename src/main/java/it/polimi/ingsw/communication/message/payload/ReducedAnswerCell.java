@@ -83,6 +83,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
                 for (Worker worker : p.getWorkers()) {
                     if (w.equals(worker)) {
                         temp.setWorker(new ReducedWorker(w, p.nickName));
+                        temp.getWorker().setId(w.getId());
                         break;
                     }
                 }

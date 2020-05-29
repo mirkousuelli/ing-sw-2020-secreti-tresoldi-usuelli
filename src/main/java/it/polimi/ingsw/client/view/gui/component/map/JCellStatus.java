@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.component.map;
 import it.polimi.ingsw.communication.message.header.DemandType;
 
 public enum JCellStatus {
+
     NONE(null),
     BOTTOM("img/blocks/bottom.png"),
     MIDDLE("img/blocks/middle.png"),
@@ -27,7 +28,7 @@ public enum JCellStatus {
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 
     public JCellStatus getNext() {
@@ -58,13 +59,10 @@ public enum JCellStatus {
         switch (currentState) {
             case CHOOSE_WORKER:
                 return CHOOSE_WORKER;
-
             case MOVE:
                 return MOVE;
-
             case BUILD:
                 return BUILD;
-
             default:
                 return NONE;
         }

@@ -40,7 +40,7 @@ public class GUI<S> extends ClientView<S> {
     @Override
     protected void update() {
         synchronized (clientModel.lock) {
-            System.out.println("EEEEEEEEEEEEEEEEEEEEE");
+            //System.out.println("EEEEEEEEEEEEEEEEEEEEE");
             ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel();
         }
     }
