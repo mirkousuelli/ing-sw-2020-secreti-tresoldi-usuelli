@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.component.map;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.panels.GamePanel;
+import it.polimi.ingsw.client.view.gui.panels.ManagerPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public class JMap extends JPanel implements ActionListener {
     private int positioning;
     private JButton gamePanelButton;
     private GamePanel gamePanel;
+    private ManagerPanel managerPanel;
 
     public JMap() {
         super(new GridBagLayout());
@@ -118,6 +120,24 @@ public class JMap extends JPanel implements ActionListener {
         currentWorker.setLocation(where);
     }
 
+    public void switchWorkers(JCell where) {
+        switchWorkers(currentWorker, where);
+    }
+
+    public void switchWorkers(JWorker worker, JCell where) {
+        if (((JBlockDecorator) where).isFree())
+            moveWorker(where);
+        else {
+            JWorker workerToSwitch = ((JBlockDecorator) where).getJWorker();
+            ((JBlockDecorator) where).removeWorker();
+            JCell workerPrevLocation = worker.getLocation();
+            worker.setLocation(where);
+
+            if (workerToSwitch != null && workerPrevLocation != null)
+                ((JBlockDecorator) workerPrevLocation).addWorker(workerToSwitch);
+        }
+    }
+
     public void showPowerCells() {
         for (JCell cell : activeCells)
             if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
@@ -171,6 +191,10 @@ public class JMap extends JPanel implements ActionListener {
         this.gamePanel = gamePanel;
     }
 
+    public void setManagerPanel(ManagerPanel managerPanel) {
+        this.managerPanel = managerPanel;
+    }
+
     public void powerButtonManager(JButton btn) {
         this.gamePanelButton = btn;
     }
@@ -199,10 +223,14 @@ public class JMap extends JPanel implements ActionListener {
                         gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
                     }
                     else if (status.equals(JCellStatus.USE_POWER)) {
-                        if (power.equals(JCellStatus.BUILD))
+                        if (power.equals(JCellStatus.BUILD)) {
+                            if (managerPanel.getGui().getClientModel().getCurrentPlayer().getCard().isDomePower())
+                                src.setStatus(JCellStatus.DOME);
+                            else
                             ((JBlockDecorator) src).buildUp();
+                        }
                         else if (power.equals(JCellStatus.MOVE))
-                            moveWorker(src);
+                            switchWorkers(src);
                         power = JCellStatus.NONE;
                         gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
                     }

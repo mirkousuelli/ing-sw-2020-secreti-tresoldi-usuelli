@@ -69,4 +69,19 @@ public enum JCellStatus {
                 return NONE;
         }
     }
+
+    public static JCellStatus parseInt (int level) {
+        switch (level) {
+            case 1:
+                return BOTTOM;
+            case 2:
+                return MIDDLE;
+            case 3:
+                return TOP;
+            case 4:
+                return DOME;
+            default:
+                return NONE;
+        }
+    }
 }
