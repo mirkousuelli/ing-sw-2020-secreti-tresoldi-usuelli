@@ -73,7 +73,7 @@ public abstract class ClientView<S> extends SantoriniRunnable {
     }
 
     protected Thread asyncReadFromModel() {
-        Thread t = new Thread(
+        Thread t = new Thread (
                 () -> {
                     try {
                         while (isActive()) {
@@ -113,7 +113,6 @@ public abstract class ClientView<S> extends SantoriniRunnable {
         clientModel = new ClientModel(name, clientConnectionSocket);
         setClientModel(clientModel);
         clientConnectionSocket.setClientView(this);
-        clientConnectionSocket.setClientModel(clientModel);
 
         setInitialRequest();
 

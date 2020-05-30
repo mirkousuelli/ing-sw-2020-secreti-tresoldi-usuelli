@@ -103,12 +103,12 @@ public class ClientModel<S> extends SantoriniRunnable {
     }
 
     private Thread asyncReadFromConnection() {
-        Thread t = new Thread(
+        Thread t = new Thread (
                 () -> {
                     try {
                         while (isActive()) {
-                            synchronized (lockAnswer) {
-                                while (!clientConnection.isChanged()) lockAnswer.wait();
+                            synchronized (clientConnection.lockAnswer) {
+                                while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
                                 clientConnection.setChanged(false);
                                 setAnswer(clientConnection.getAnswer());
                             }

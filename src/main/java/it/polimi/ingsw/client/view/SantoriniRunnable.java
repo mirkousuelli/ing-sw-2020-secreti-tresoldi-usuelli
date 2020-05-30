@@ -6,13 +6,13 @@ import it.polimi.ingsw.communication.message.Demand;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class SantoriniRunnable implements Runnable {
+public abstract class SantoriniRunnable<S> implements Runnable {
 
     private boolean isActive = false;
     private boolean isChanged = false;
 
-    private Demand demand;
-    private Answer answer;
+    private Demand<S> demand;
+    private Answer<S> answer;
 
     public final Object lockDemand = new Object();
     public final Object lockAnswer = new Object();
@@ -67,14 +67,14 @@ public abstract class SantoriniRunnable implements Runnable {
         }
     }
 
-    protected void setDemand(Demand demand) {
+    protected void setDemand(Demand<S> demand) {
         synchronized (lockDemand) {
             this.demand = demand;
         }
     }
 
-    public Demand getDemand() {
-        Demand temp;
+    public Demand<S> getDemand() {
+        Demand<S> temp;
 
         synchronized (lockDemand) {
             temp = demand;
@@ -82,8 +82,8 @@ public abstract class SantoriniRunnable implements Runnable {
         return temp;
     }
 
-    public Answer getAnswer() {
-        Answer temp;
+    public Answer<S> getAnswer() {
+        Answer<S> temp;
 
         synchronized (lockAnswer) {
             temp = answer;
@@ -92,7 +92,7 @@ public abstract class SantoriniRunnable implements Runnable {
         return temp;
     }
 
-    protected void setAnswer(Answer answer) {
+    protected void setAnswer(Answer<S> answer) {
         synchronized (lockAnswer) {
             this.answer = answer;
         }
