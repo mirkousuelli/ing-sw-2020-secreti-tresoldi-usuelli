@@ -260,8 +260,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
         List<God> gods = reducedCardList.stream().map(ReducedCard::getGod).collect(Collectors.toList());
 
-        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
-
         if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
             mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
             gui.free();
@@ -292,6 +290,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
         if (!gui.getClientModel().isYourTurn())
             gui.free();
+
+        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
     }
 
     private void setGods() {

@@ -230,9 +230,7 @@ public class JMap extends JPanel implements ActionListener {
                         power = JCellStatus.NONE;
                     }
 
-                    /*--------mi disabilita il bottone nel game panel---------*/
                     gamePanelButton.setEnabled(false);
-                    /*-------------------------------------------------------*/
                     gamePanel.generateDemand(((JBlockDecorator) src).getBlock(), status);
                     validate();
                     repaint();
