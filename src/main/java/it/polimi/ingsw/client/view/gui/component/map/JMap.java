@@ -221,9 +221,9 @@ public class JMap extends JPanel implements ActionListener {
                     else if (status.equals(JCellStatus.USE_POWER)) {
                         if (power.equals(JCellStatus.BUILD)) {
                             if (managerPanel.getGui().getClientModel().getCurrentPlayer().getCard().isDomePower())
-                                src.setStatus(JCellStatus.DOME);
+                                ((JBlockDecorator) src).addDecoration(JCellStatus.DOME);
                             else
-                            ((JBlockDecorator) src).buildUp();
+                                ((JBlockDecorator) src).buildUp();
                         }
                         else if (power.equals(JCellStatus.MOVE))
                             switchWorkers(src);
