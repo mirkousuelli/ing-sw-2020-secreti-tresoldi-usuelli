@@ -230,7 +230,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         cardButton.applyNormal();
     }
 
-    public void generateDemand(List<JCell> chosenJCells) {
+    public void generateDemand(List<JCell> chosenJCells, JCellStatus status) {
         GUI gui = ((ManagerPanel) panels).getGui();
         JMap map = game.getJMap();
         DemandType currentState;
@@ -241,7 +241,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 .map(jCell -> new ReducedDemandCell(jCell.getXCoordinate(), jCell.getYCoordinate()))
                 .collect(Collectors.toList());
 
-        if (powerButton.isEnabled())
+        if (status.equals(JCellStatus.USE_POWER))
             currentState = DemandType.USE_POWER;
         else
             currentState = gui.getClientModel().getCurrentState();
@@ -258,11 +258,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
     }
 
-    public void generateDemand(JCell chosenJCell) {
+    public void generateDemand(JCell chosenJCell, JCellStatus status) {
         List<JCell> chosenCells = new ArrayList<>();
 
         chosenCells.add(chosenJCell);
-        generateDemand(chosenCells);
+        generateDemand(chosenCells, status);
     }
 
     private void setJCellLAction(List<ReducedAnswerCell> reducedAnswerCellList, DemandType currentState) {

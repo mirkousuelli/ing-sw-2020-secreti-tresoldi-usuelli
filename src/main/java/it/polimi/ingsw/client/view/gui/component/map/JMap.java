@@ -233,7 +233,7 @@ public class JMap extends JPanel implements ActionListener {
                     /*--------mi disabilita il bottone nel game panel---------*/
                     gamePanelButton.setEnabled(false);
                     /*-------------------------------------------------------*/
-                    gamePanel.generateDemand(((JBlockDecorator) src).getBlock());
+                    gamePanel.generateDemand(((JBlockDecorator) src).getBlock(), status);
                     validate();
                     repaint();
                 }
@@ -242,11 +242,11 @@ public class JMap extends JPanel implements ActionListener {
                 positioning--;
 
                 if (positioning == 0)
-                    gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()));
+                    gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()), JCellStatus.NONE);
 
                 revalidate();
             } else if (!((JBlockDecorator)src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator)src).getJWorker())) {
-                gamePanel.generateDemand(((JBlockDecorator)src).getBlock());
+                gamePanel.generateDemand(((JBlockDecorator)src).getBlock(), JCellStatus.CHOOSE_WORKER);
                 currentWorker = ((JBlockDecorator)src).getJWorker();
             }
         }
