@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network;
 
+import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
@@ -18,6 +19,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
     private final Socket socket;
     private final FileXML file;
     private ClientView<S> clientView;
+    private ClientModel<S> clientModel;
     private final LinkedList<Answer<S>> buffer;
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
@@ -37,12 +39,18 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
         this.clientView = clientView;
     }
 
+    public void setClientModel(ClientModel<S> clientModel) {
+        this.clientModel = clientModel;
+    }
+
     @Override
     public Answer<S> getAnswer() {
         Answer<S> answer;
 
-        synchronized (buffer) {
-            answer = buffer.removeFirst();
+        synchronized (lockAnswer) {
+            synchronized (buffer) {
+                answer = buffer.removeFirst();
+            }
         }
 
         return answer;
@@ -62,7 +70,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
         Thread t = new Thread(
                 () -> {
                         try {
-                            Answer temp;
+                            Answer<S> temp;
                             while (isActive()) {
                                 if (socket.isConnected() && !socket.isClosed()) {
                                     synchronized (file.lockReceive) {
@@ -70,8 +78,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
                                     }
 
                                     if (temp == null) {
-                                        setActive(false);
-                                        break;
+                                        System.exit(1);
                                     }
 
                                     LOGGER.info("Queueing...");
@@ -99,8 +106,8 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
                         try {
                             Demand demand;
                             while (isActive()) {
-                                synchronized (lockDemand) {
-                                    while (!clientView.isChanged()) lockDemand.wait();
+                                synchronized (clientView.lockDemand) {
+                                    while (!clientView.isChanged()) clientView.lockDemand.wait();
                                     clientView.setChanged(false);
                                     demand = clientView.getDemand();
                                 }
@@ -151,10 +158,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
                             }
 
                             LOGGER.info("Consuming...");
-                            synchronized (lockAnswer) {
-                                setAnswer(getAnswer());
-                                setChanged(true);
-                                lockAnswer.notifyAll();
+                            synchronized (clientModel.lockAnswer) {
+                                synchronized (lock) {
+                                    setChanged(true);
+                                }
+                                clientModel.lockAnswer.notifyAll();
                                 LOGGER.info("Consumed!");
                             }
                         }
@@ -170,14 +178,13 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
     }
 
     @Override
-    protected void startThreads(Thread watchDogThread) throws InterruptedException {
+    protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromSocket();
         Thread write = asyncWriteToSocket();
         Thread consumer = consumerThread();
-        watchDogThread.join();
-        read.interrupt();
-        write.interrupt();
-        consumer.interrupt();
+        read.join();
+        write.join();
+        consumer.join();
     }
 
     public synchronized void closeConnection() {

@@ -77,9 +77,10 @@ public abstract class ClientView<S> extends SantoriniRunnable {
                 () -> {
                     try {
                         while (isActive()) {
-                            synchronized (lockAnswer) {
-                                while (!clientModel.isChanged()) lockAnswer.wait();
+                            synchronized (clientModel.lockAnswer) {
+                                while (!clientModel.isChanged()) clientModel.lockAnswer.wait();
                                 clientModel.setChanged(false);
+                                setAnswer(clientModel.getAnswer());
                             }
 
                             LOGGER.info("Receiving...");
@@ -112,6 +113,7 @@ public abstract class ClientView<S> extends SantoriniRunnable {
         clientModel = new ClientModel(name, clientConnectionSocket);
         setClientModel(clientModel);
         clientConnectionSocket.setClientView(this);
+        clientConnectionSocket.setClientModel(clientModel);
 
         setInitialRequest();
 

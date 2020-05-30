@@ -27,20 +27,18 @@ public class GUI<S> extends ClientView<S> {
     }
 
     @Override
-    protected void startThreads(Thread watchDogThread) throws InterruptedException {
+    protected void startThreads() throws InterruptedException {
         synchronized (lockReady) {
             while (!isReady) lockReady.wait();
         }
 
         Thread read = asyncReadFromModel();
-        watchDogThread.join();
-        read.interrupt();
+        read.join();
     }
 
     @Override
     protected void update() {
         synchronized (clientModel.lock) {
-            //System.out.println("EEEEEEEEEEEEEEEEEEEEE");
             ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel();
         }
     }

@@ -11,7 +11,6 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -111,14 +110,15 @@ public class ClientModel<S> extends SantoriniRunnable {
                             synchronized (lockAnswer) {
                                 while (!clientConnection.isChanged()) lockAnswer.wait();
                                 clientConnection.setChanged(false);
+                                setAnswer(clientConnection.getAnswer());
                             }
 
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
                                 updateModel();
                                 LOGGER.info("updated!");
-                                LOGGER.info("curr: " + currentState);
-                                LOGGER.info("next: " + nextState);
+                                LOGGER.info(() -> "curr: " + currentState);
+                                LOGGER.info(() -> "next: " + nextState);
                             }
                         }
                     } catch (Exception e){
@@ -132,10 +132,9 @@ public class ClientModel<S> extends SantoriniRunnable {
     }
 
     @Override
-    protected void startThreads(Thread watchDogThread) throws InterruptedException {
+    protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromConnection();
-        watchDogThread.join();
-        read.interrupt();
+        read.join();
     }
 
     private synchronized void updateStateInitial(Answer<S> answerTemp) {
@@ -160,6 +159,8 @@ public class ClientModel<S> extends SantoriniRunnable {
         synchronized (lockAnswer) {
             answerTemp = getAnswer();
         }
+
+        System.out.println("MODEL " + getCurrentState() + " " + getAnswer().getHeader() + " " + getAnswer().getContext());
 
         if (!isCreator && isInitializing)
             currentState = nextState;

@@ -105,8 +105,6 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.BUILD, this::parseCommand);
         payloadMap.put(DemandType.USE_POWER, this::parseCommand);
         payloadMap.put(DemandType.NEW_GAME, this::parseString);
-
-        close();
     }
 
     public void setClientModel(ClientModel<S> clientModel) {
@@ -163,12 +161,9 @@ public class CLIScanner<S> {
             payload = null;
 
             out.printString(messageMap.get(demandType));
-            if (!clientModel.isActive())
-                return null;
-            nextLine();
 
-            if (value == null)
-                break;
+            value = readLine();
+            if (value == null) return null;
 
             toRepeatFunction = toRepeatMap.get(demandType);
             if (toRepeatFunction != null)
@@ -177,7 +172,7 @@ public class CLIScanner<S> {
             if (demandType.equals(DemandType.ASK_ADDITIONAL_POWER)) {
                 if (value.equals("y")) {
                     out.printString(ADDITIONALPOWERREQ);
-                    nextLine();
+                    readLine();
                     if (value == null)
                         break;
                     payload = parseCommand(value);
@@ -215,9 +210,6 @@ public class CLIScanner<S> {
             }
         } while (toRepeat || incrementIndex);
 
-        value = null;
-        read = null;
-
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
 
@@ -227,62 +219,13 @@ public class CLIScanner<S> {
         return new Demand<>(demandType, payload);
     }
 
-    private void nextLine() {
-        read = readThread();
+    String readLine() {
         try {
-            read.join();
-        } catch (InterruptedException e) {
-            LOGGER.info(e.getMessage());
+            return in.readLine();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException", e);
         }
-    }
 
-    public String getValue() {
-        nextLine();
-
-        return value;
-    }
-
-    public Thread readThread() {
-        Thread t = new Thread(
-                () -> {
-                    try {
-                        while (!in.ready()) {
-                            Thread.sleep(50);
-                        }
-
-                        if (!isClosed)
-                            value = in.readLine();
-                    } catch (Exception e) {
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.SEVERE, "Got an Exception", e);
-                    }
-                }
-        );
-
-        t.start();
-        return t;
-    }
-
-    public void close() {
-        Thread t = new Thread(
-                () -> {
-                    try {
-                        synchronized (SantoriniRunnable.lockWatchDog) {
-                            while (clientModel.isActive()) SantoriniRunnable.lockWatchDog.wait();
-                            if (read != null && read.isAlive()) {
-                                isClosed = true;
-                                in.close();
-                                read.interrupt();
-                            }
-                        }
-                    } catch (Exception e) {
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.SEVERE, "Got an Exception", e);
-                    }
-                }
-        );
-
-        t.setDaemon(true);
-        t.start();
+        return null;
     }
 }
