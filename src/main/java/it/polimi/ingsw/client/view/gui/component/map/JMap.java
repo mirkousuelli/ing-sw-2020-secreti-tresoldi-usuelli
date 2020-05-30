@@ -90,6 +90,9 @@ public class JMap extends JPanel implements ActionListener {
                 ((JBlockDecorator) cell).addDecoration(how);
             }
         }
+
+        repaint();
+        validate();
     }
 
     public void setPossibleMove(List<JCell> where) {

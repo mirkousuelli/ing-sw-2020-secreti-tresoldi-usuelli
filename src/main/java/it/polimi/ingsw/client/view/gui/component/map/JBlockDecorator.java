@@ -24,9 +24,6 @@ public class JBlockDecorator extends JCell {
 
         if (worker != null)
             this.decoration.addOver(worker.getPawn().getComponent());
-
-        repaint();
-        validate();
     }
 
     public void removeDecoration() {

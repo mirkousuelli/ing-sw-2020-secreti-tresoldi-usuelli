@@ -174,7 +174,7 @@ public class JPlayer extends JButton implements ActionListener {
             this.disactive();
             this.active();
         }
-        
+
         revalidate();
     }
 
