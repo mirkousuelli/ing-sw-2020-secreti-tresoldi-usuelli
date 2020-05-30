@@ -160,7 +160,7 @@ public class ClientModel<S> extends SantoriniRunnable {
             answerTemp = getAnswer();
         }
 
-        System.out.println("MODEL " + getCurrentState() + " " + getAnswer().getHeader() + " " + getAnswer().getContext());
+        //System.out.println("MODEL " + getCurrentState() + " " + getAnswer().getHeader() + " " + getAnswer().getContext());
 
         if (!isCreator && isInitializing)
             currentState = nextState;
