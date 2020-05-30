@@ -106,10 +106,12 @@ public class JPlayer extends JButton implements ActionListener {
 
     public void setUpFemaleWorker(JCell position) {
         femaleWorker = new JWorker(JCellStatus.getWorkerType(id, true), position);
+        femaleWorker.setId(1);
     }
 
     public void setUpMaleWorker(JCell position) {
         maleWorker = new JWorker(JCellStatus.getWorkerType(id, false), position);
+        maleWorker.setId(2);
     }
 
     public void chooseWorker() {

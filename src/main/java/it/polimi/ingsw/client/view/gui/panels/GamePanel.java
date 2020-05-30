@@ -350,9 +350,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         List<ReducedAnswerCell> updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
 
         updateWorkers(updatedCells);
+        updateBuild(updatedCells);
+
+        map.repaint();
+        map.validate();
 
         if (!gui.getClientModel().isYourTurn()) {
-            updateBuild(updatedCells);
             updateMove();
 
             map.repaint();
@@ -391,27 +394,27 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         JPlayer prevPlayer = game.getPlayer(gui.getClientModel().getPrevPlayer());
 
         if (!prevPlayer.getWorkers().isEmpty()) return;
+        if (prevPlayer.getNickname().equals(gui.getClientModel().getPlayer().getNickname())) return;
         if (!gui.getAnswer().getContext().equals(UpdatedPartType.WORKER)) return;
 
-        if (!prevPlayer.getNickname().equals(gui.getClientModel().getPlayer().getNickname()))
-            updatedCells.forEach(updatedCell -> {
-                JCell jCellWorker = map.getCell(updatedCell.getX(), updatedCell.getY());
+        updatedCells.forEach(updatedCell -> {
+            JCell jCellWorker = map.getCell(updatedCell.getX(), updatedCell.getY());
 
-                if (updatedCell.getWorker().isGender()) {
-                    prevPlayer.setUpMaleWorker(jCellWorker);
-                    prevPlayer.getMaleWorker().setId(updatedCell.getWorker().getId());
+            if (updatedCell.getWorker().isGender()) {
+                prevPlayer.setUpMaleWorker(jCellWorker);
+                prevPlayer.getMaleWorker().setId(updatedCell.getWorker().getId());
 
-                    //System.out.println("male " + prevPlayer.getMaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getMaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getMaleWorker().getId());
-                }
+                //System.out.println("male " + prevPlayer.getMaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getMaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getMaleWorker().getId());
+            }
 
-                else {
-                    prevPlayer.setUpFemaleWorker(jCellWorker);
-                    prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
+            else {
+                prevPlayer.setUpFemaleWorker(jCellWorker);
+                prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
 
 
-                    //System.out.println("female " + prevPlayer.getFemaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getFemaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getFemaleWorker().getId());
-                }
-            });
+                //System.out.println("female " + prevPlayer.getFemaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getFemaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getFemaleWorker().getId());
+            }
+        });
     }
 
     private void updateBuild(List<ReducedAnswerCell> updatedCells) {
@@ -421,9 +424,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         for (ReducedAnswerCell rac : updatedCells) {
             jCell = map.getCell(rac.getX(), rac.getY());
 
-            //System.out.print(jCell.getStatus() + " ");
-            //System.out.print(rac.getLevel() + " ");
-            //System.out.println(rac.getX() + "," + rac.getY());
+            /*System.out.print(jCell.getStatus() + " ");
+            System.out.print(rac.getLevel() + " ");
+            System.out.println(rac.getX() + "," + rac.getY());*/
 
             if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
                 jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
@@ -435,9 +438,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
 
-        String prevPlayer = gui.getClientModel().getPrevPlayer();
+        //System.out.println(gui.getClientModel().getCurrentState() + " " + gui.getAnswer().getHeader() + " " + gui.getAnswer().getContext());
 
-        //if (prevPlayer.equals(clientPlayer.getNickname())) return;
         if (gui.getClientModel().getWorkers().isEmpty()) return;
         if (!gui.getAnswer().getContext().equals(UpdatedPartType.BOARD)) return;
 
@@ -448,7 +450,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         JWorker jWorker;
         ReducedWorker reducedWorker;
 
-        ((List<ReducedWorker>) gui.getClientModel().getWorkers()).forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.getId()));
+        /*((List<ReducedWorker>) gui.getClientModel().getWorkers()).forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.getId()));
+        game.getPlayerList().forEach(p -> {
+            System.out.println("male " + p.getMaleWorker().getLocation().getXCoordinate() + "," + p.getMaleWorker().getLocation().getYCoordinate() + " " + p.getNickname() + " " + p.getMaleWorker().getId());
+            System.out.println("female " + p.getFemaleWorker().getLocation().getXCoordinate() + "," + p.getFemaleWorker().getLocation().getYCoordinate() + " " + p.getNickname() + " " + p.getFemaleWorker().getId());
+                }
+        );*/
 
         for (ReducedPlayer p : playerList) {
             jPlayer = game.getPlayer(p.getNickname());
