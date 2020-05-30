@@ -35,6 +35,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         this.game = ((ManagerPanel)panels).getGame();
         this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();
+        this.clientPlayer.setCardViewSize(true);
 
         createRightSection();
         createPowerButton();
@@ -45,9 +46,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         int enemy = 0;
         for (JPlayer p : this.game.getPlayerList()) {
-            if (!p.equals(this.clientPlayer))
+            if (!p.equals(this.clientPlayer)) {
                 createEnemySection(p, enemy++);
-            p.setCardViewSize(true);
+                p.setCardViewSize(true);
+            }
         }
 
         game.getJMap().setGamePanel(this);
@@ -430,6 +432,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
             if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
                 jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+                //((JBlockDecorator) jCell).buildUp();
         }
     }
 

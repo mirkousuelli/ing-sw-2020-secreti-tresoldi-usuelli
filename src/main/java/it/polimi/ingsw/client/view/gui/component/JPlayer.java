@@ -148,7 +148,12 @@ public class JPlayer extends JButton implements ActionListener {
         repaint();
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     public void setCardViewSize(boolean view) {
+
         if (view) {
             this.xSize = CARD_SIZE_X;
             this.ySize = CARD_SIZE_Y;
@@ -164,6 +169,11 @@ public class JPlayer extends JButton implements ActionListener {
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
         text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));
+
+        if (this.isActive()) {
+            this.disactive();
+            this.active();
+        }
 
         revalidate();
     }
