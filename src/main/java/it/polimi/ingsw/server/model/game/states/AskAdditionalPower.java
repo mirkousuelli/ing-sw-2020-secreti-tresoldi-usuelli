@@ -42,7 +42,7 @@ public class AskAdditionalPower implements GameState {
             returnContent.setAnswerType(AnswerType.SUCCESS);
             if (prevState.equals(State.MOVE)) {
                 returnContent.setState(State.BUILD);
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+                returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
             } else if (prevState.equals(State.BUILD)) {
                 returnContent.setState(State.CHOOSE_WORKER);
                 returnContent.setChangeTurn(true);
@@ -59,9 +59,9 @@ public class AskAdditionalPower implements GameState {
             Power p = game.getCurrentPlayer().getCard().getPower(0);
 
             if (effect.equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL))
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
+                returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
             else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL))
-                returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
+                returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
         }
 
         return returnContent;

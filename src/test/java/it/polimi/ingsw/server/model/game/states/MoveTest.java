@@ -372,7 +372,7 @@ ________________________________________________________________________________
 
         // check that the state is still move since Artemis power allows the player to move a second time
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+        assertEquals(State.ASK_ADDITIONAL_POWER, returnContent.getState());
         assertNull(worker1Player1.getPawn());
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
@@ -496,7 +496,7 @@ ________________________________________________________________________________
 
 
     // PAN: You also win if your worker moves down two or more levels
-    // @Test
+    @Test
     void winningWithPan() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks that if the player has Pan as God and moves down of 2 levels or more, he wins
@@ -711,11 +711,11 @@ ________________________________________________________________________________
 
         // check that the state is still move since Artemis power allows the player to move a second time
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
+        assertEquals(State.ASK_ADDITIONAL_POWER, returnContent.getState());
         assertNull(worker1Player1.getPawn());
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
-        game.setState(State.ADDITIONAL_POWER);
+        /*game.setState(State.ADDITIONAL_POWER);
         game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
@@ -724,7 +724,7 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(State.BUILD, rc.getState());
         assertNull(cell2.getPawn());
-        assertEquals(cell1.getPawn(), p1.getCurrentWorker());
+        assertEquals(cell1.getPawn(), p1.getCurrentWorker());*/
     }
 
 

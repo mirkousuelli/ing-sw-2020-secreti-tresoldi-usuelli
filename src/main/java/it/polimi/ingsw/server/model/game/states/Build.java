@@ -71,77 +71,20 @@ public class Build implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent;
 
-        Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToBuildUp = game.getBoard().getCell(cell.getX(), cell.getY());
 
-        returnContent.setAnswerType(AnswerType.ERROR);
-        returnContent.setState(State.BUILD);
 
         //validate input
-        if (cellToBuildUp == null)
-            return returnContent;
-        if (cellToBuildUp.isComplete())
-            return returnContent;
+        if (cellToBuildUp == null || cellToBuildUp.isComplete())
+            returnError();
 
-        List<ReducedAnswerCell> toReturn = new ArrayList<>();
-
-        if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
-            Power p = currentPlayer.getCard().getPower(0);
-
-            if (((BuildPower) p).usePower(currentPlayer, cellToBuildUp, game.getBoard().getAround(cellToBuildUp))) {
-                ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousBuild(), game.getPlayerList());
-                toReturn.add(temp);
-
-                returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.CHOOSE_WORKER);
-                returnContent.setChangeTurn(true);
-                returnContent.setPayload(toReturn);
-
-                GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
-                GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-            }
-        }
-        else {
-            // if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
-            if (isBuildPossible(cellToBuildUp)) {
-                game.getBoard().build(currentPlayer, cellToBuildUp);
-
-                returnContent.setAnswerType(AnswerType.SUCCESS);
-
-                Power p = game.getCurrentPlayer().getCard().getPower(0);
-                if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) {
-                    toReturn = Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
-
-                    if (toReturn.stream()
-                            .map(ReducedAnswerCell::getActionList)
-                            .flatMap(List::stream)
-                            .distinct()
-                            .allMatch(action -> action.equals(ReducedAction.DEFAULT))
-                       ) {
-                        returnContent.setState(State.CHOOSE_WORKER);
-                        returnContent.setChangeTurn(true);
-                    }
-                    else {
-                        returnContent.setState(State.ASK_ADDITIONAL_POWER);
-                        toReturn = new ArrayList<>();
-                    }
-                }
-                else {
-                    returnContent.setState(State.CHOOSE_WORKER);
-                    returnContent.setChangeTurn(true);
-                }
-
-                toReturn = ChooseWorker.mergeReducedAnswerCellList(toReturn, ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
-
-                GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
-                GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-
-                returnContent.setPayload(toReturn);
-            }
-        }
+        if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) //if it is asked to use a power
+            returnContent = usePower(); //then usePower
+        else
+            returnContent = build(); //else it must be a build (verified in Controller), so build!
 
         if (ChangeTurn.controlWinCondition(game)) {
             returnContent.setState(State.VICTORY);
@@ -149,7 +92,7 @@ public class Build implements GameState {
         }
 
         if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
-            toReturn = ChooseWorker.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), removeBlockedWorkers(game));
+            List<ReducedAnswerCell> toReturn = PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
             returnContent.setPayload(toReturn);
         }
 
@@ -158,38 +101,105 @@ public class Build implements GameState {
         return returnContent;
     }
 
-    static List<ReducedAnswerCell> removeBlockedWorkers(Game game) {
-        List<Player> playerList = game.getPlayerList();
-        List<Worker> workerList = playerList.stream()
-                        .map(Player::getWorkers)
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
+    private ReturnContent returnError() {
+        ReturnContent returnContent = new ReturnContent();
 
-        List<ReducedAnswerCell> toReturn = new ArrayList<>();
-        List<Cell> around;
-        boolean toRemove = true;
-        for (Worker w : workerList) {
-            around = game.getBoard().getAround(w.getLocation());
-            for (Cell c : around) {
-                if (c.isWalkable())
-                    toRemove = false;
-            }
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.BUILD);
 
-            if (toRemove) {
-                toReturn.add(ReducedAnswerCell.prepareCell(w.getLocation(), playerList));
-                Build.removeWorkerFromGame(game, w);
-            }
-        }
-
-        return toReturn;
+        return returnContent;
     }
 
-    private static void removeWorkerFromGame(Game game, Worker w) {
-        for (Player p : game.getPlayerList()) {
-            if (p.getWorkers().contains(w)) {
-                p.removeWorker(w);
-                return;
-            }
+    private ReturnContent usePower() {
+        ReturnContent returnContent = null;
+
+        Player currentPlayer = game.getCurrentPlayer();
+        ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
+        Cell cellToBuildUp = game.getBoard().getCell(cell.getX(), cell.getY());
+        Power p = currentPlayer.getCard().getPower(0);
+
+        List<ReducedAnswerCell> toReturn = new ArrayList<>();
+
+        if (((BuildPower) p).usePower(currentPlayer, cellToBuildUp, game.getBoard().getAround(cellToBuildUp))) { //if building power is successful
+            ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousBuild(), game.getPlayerList());
+            toReturn.add(temp);
+
+            returnContent = new ReturnContent();
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            returnContent.setState(State.CHOOSE_WORKER);
+            returnContent.setChangeTurn(true);
+            returnContent.setPayload(toReturn);
+
+            //save
+            GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
         }
+
+        if (returnContent == null)
+            return returnError();
+
+        return returnContent;
+    }
+
+    private ReturnContent build() {
+        ReturnContent returnContent = null;
+
+        Player currentPlayer = game.getCurrentPlayer();
+        ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
+        Cell cellToBuildUp = game.getBoard().getCell(cell.getX(), cell.getY());
+
+        List<ReducedAnswerCell> toReturn = new ArrayList<>();
+
+        //if the player chose a possible cell, the game actually builds on it and then proceed to change the turn
+        if (isBuildPossible(cellToBuildUp)) {
+            game.getBoard().build(currentPlayer, cellToBuildUp);
+
+            returnContent = new ReturnContent();
+
+            Power p = game.getCurrentPlayer().getCard().getPower(0);
+            if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) //if the current player's god has an additional power
+                returnContent = additionalPower(); //then evaluate if it can be used
+            else {
+                returnContent.setState(State.CHOOSE_WORKER); //else end his turn and start a new one
+                returnContent.setChangeTurn(true);
+            }
+
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
+
+            //save
+            GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+
+            returnContent.setPayload(toReturn);
+        }
+
+        if (returnContent == null)
+            return returnError();
+
+        return returnContent;
+    }
+
+    private ReturnContent additionalPower() {
+        ReturnContent returnContent = new ReturnContent();
+        List<ReducedAnswerCell> toReturn;
+
+        toReturn = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
+
+        returnContent.setAnswerType(AnswerType.SUCCESS);
+
+        if (toReturn.stream()
+                .map(ReducedAnswerCell::getActionList)
+                .flatMap(List::stream)
+                .distinct()
+                .allMatch(action -> action.equals(ReducedAction.DEFAULT)) //if there are no cell where the additional power can be used
+        ) {
+            returnContent.setState(State.CHOOSE_WORKER); //then end the turn and start a new one
+            returnContent.setChangeTurn(true);
+        }
+        else
+            returnContent.setState(State.ASK_ADDITIONAL_POWER); //else ask if the current player wants to use the additional power
+
+        return returnContent;
     }
 }

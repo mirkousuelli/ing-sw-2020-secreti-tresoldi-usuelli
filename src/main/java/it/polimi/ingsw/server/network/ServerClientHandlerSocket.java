@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.game.states.ChooseWorker;
 import it.polimi.ingsw.server.model.game.states.Move;
+import it.polimi.ingsw.server.model.game.states.PreparePayload;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -375,16 +376,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 List<ReducedAnswerCell> payload = new ArrayList<>();
 
                 if (loadedGame.getState().getName().equals(State.MOVE.toString()))
-                    payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
+                    payload = PreparePayload.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
 
                 if (loadedGame.getState().getName().equals(State.BUILD.toString()))
-                    payload = Move.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
+                    payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
 
                 if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
                     if (loadedGame.getPrevState().equals(State.MOVE))
-                        payload = ChooseWorker.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
+                        payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
                     if (loadedGame.getPrevState().equals(State.BUILD))
-                        payload = Move.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
+                        payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
                 }
 
                 send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));

@@ -30,48 +30,93 @@ public class AdditionalPower implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent;
 
         ReducedDemandCell response = (ReducedDemandCell) game.getRequest().getDemand().getPayload();
         Cell c = game.getBoard().getCell(response.getX(), response.getY());
         State prevState = game.getPrevState();
-        Power p = game.getCurrentPlayer().getCard().getPower(0);
+
+        //validate input
+        if (c == null)
+            return returnError();
+
+
+        if (prevState.equals(State.MOVE))
+            returnContent = movePower();
+        else if (prevState.equals(State.BUILD))
+            returnContent = buildPower();
+        else
+            returnContent = returnError();
+
+        //save
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+
+        return returnContent;
+    }
+
+    private ReturnContent returnError() {
+        ReturnContent returnContent = new ReturnContent();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ADDITIONAL_POWER);
 
-        //validate input
-        if (c == null)
-            return returnContent;
+        return returnContent;
+    }
 
-        if (prevState.equals(State.MOVE)) {
-            if (!Move.isPresentAtLeastOneCellToMoveTo(game, c))
-                return returnContent;
+    private ReturnContent movePower() {
+        ReturnContent returnContent = null;
 
-            if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
-                returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.BUILD);
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+        ReducedDemandCell response = (ReducedDemandCell) game.getRequest().getDemand().getPayload();
+        Cell c = game.getBoard().getCell(response.getX(), response.getY());
+        Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-                GameMemory.save((Block) c, Lobby.backupPath);
-                GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.backupPath);
-            }
-        }
-        else if (prevState.equals(State.BUILD)) {
-            if (c.isComplete())
-                return returnContent;
+        if (!Move.isPresentAtLeastOneCellToMoveTo(game, c))
+            return returnError();
 
-            if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
-                returnContent.setAnswerType(AnswerType.SUCCESS);
-                returnContent.setState(State.CHOOSE_WORKER);
-                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
-                returnContent.setChangeTurn(true);
 
-                GameMemory.save((Block) c, Lobby.backupPath);
-            }
+        if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
+            returnContent = new ReturnContent();
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            returnContent.setState(State.BUILD);
+            returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+
+            //save
+            GameMemory.save((Block) c, Lobby.backupPath);
+            GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.backupPath);
         }
 
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+
+        if (returnContent == null)
+            return returnError();
+
+        return returnContent;
+    }
+
+    private ReturnContent buildPower() {
+        ReturnContent returnContent = null;
+
+        ReducedDemandCell response = (ReducedDemandCell) game.getRequest().getDemand().getPayload();
+        Cell c = game.getBoard().getCell(response.getX(), response.getY());
+        Power p = game.getCurrentPlayer().getCard().getPower(0);
+
+        if (c.isComplete())
+            return returnError();
+
+
+        if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
+            returnContent = new ReturnContent();
+            returnContent.setAnswerType(AnswerType.SUCCESS);
+            returnContent.setState(State.CHOOSE_WORKER);
+            returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+            returnContent.setChangeTurn(true);
+
+            //save
+            GameMemory.save((Block) c, Lobby.backupPath);
+        }
+
+
+        if (returnContent == null)
+            return returnError();
 
         return returnContent;
     }
