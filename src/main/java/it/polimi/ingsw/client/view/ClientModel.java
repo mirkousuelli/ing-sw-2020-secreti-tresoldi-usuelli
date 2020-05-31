@@ -40,7 +40,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
     private static final int DIM = 5;
 
-
     public ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
         super();
         reducedBoard = new ReducedAnswerCell[DIM][DIM];
@@ -74,8 +73,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                             clientConnection.setChanged(false);
                             setAnswer(clientConnection.getFirstAnswer());
 
-                            //System.out.println("MODEL: " + getAnswer().getHeader() + " " + getAnswer().getContext() + " " + getAnswer().getPayload().toString());
-
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
                                 updateModel();
@@ -106,7 +103,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
 
     /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-    //TODO REFACTOR UPDATE
     private void updateModel() {
         Answer<S> answerTemp;
 
@@ -168,7 +164,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
 
         additionalPower();
-    } //NOOOOOOOOO
+    } //OK
 
     private void additionalPower() {
         if (additionalPowerUsed || player.getCard() == null || !player.getCard().isAdditionalPower()) {
@@ -380,108 +376,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     } //OK
     /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-
-
-    /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-    //TODO REFACTOR CLISCANNER
-    public synchronized ReducedAnswerCell getReducedCell(String cellString) {
-        List<Integer> coord = stringToInt(cellString);
-
-        if (coord.isEmpty()) return null;
-
-        int x = coord.get(0);
-        int y = coord.get(1);
-
-        return !checkCell(x, y) ? reducedBoard[x][y] : null;
-    }
-
-    public boolean checkGod(String godString) {
-        List<ReducedCard> dk;
-        God god = God.parseString(godString);
-        if (god == null) return true;
-
-        synchronized (lock) {
-            dk = deck;
-        }
-
-        return dk.stream()
-                    .noneMatch(g -> g.getGod().equals(god));
-    }
-
-    public synchronized boolean checkWorker(String workerString) {
-        List<Integer> coord = stringToInt(workerString);
-        int x = coord.get(0);
-        int y = coord.get(1);
-
-        if (checkCell(x, y)) return true;
-
-        return workers.stream()
-                .filter(w -> w.getOwner().equals(player.getNickname()))
-                .noneMatch(w -> w.getX() == x && w.getY() == y);
-    }
-
-    public synchronized boolean checkPlayer(String player) {
-        for (ReducedPlayer p : opponents) {
-            if (p.getNickname().equals(player))
-                return false;
-        }
-
-        return !currentPlayer.equals(player);
-    }
-
-    public synchronized boolean evalToRepeat(String string) {
-        String[] input = string.split(" ");
-        if (input.length > 2) return true;
-
-        List<Integer> coord = stringToInt(input[1]);
-        int x = coord.get(0);
-        int y = coord.get(1);
-
-        if (checkCell(x, y)) return true;
-
-        for (ReducedAction ra : reducedBoard[x][y].getActionList()) {
-            if (input[0].equals(ra.getName())) {
-                switch (ra) {
-                    case BUILD:
-                    case MOVE:
-                        return !reducedBoard[x][y].isFree();
-
-                    case DEFAULT:
-                        return true;
-
-                    case USEPOWER:
-                        return false;
-
-                    default:
-                        throw new NotAValidInputRunTimeException("Not a valid turn");
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public synchronized boolean evalToUsePower(String string) {
-        String[] input = string.split(" ");
-
-        List<Integer> coord = stringToInt(input[1]);
-        int x = coord.get(0);
-        int y = coord.get(1);
-
-        return reducedBoard[x][y].getActionList().contains(ReducedAction.USEPOWER) && ReducedAction.USEPOWER.getName().equals(input[0]);
-    }
-
-    private synchronized List<Integer> stringToInt(String string) {
-        if (string.length() != 3) return new ArrayList<>();
-
-        List<Integer> ret = new ArrayList<>();
-
-        ret.add(0, string.charAt(0) - 48);
-        ret.add(1, string.charAt(2) - 48);
-
-        return ret;
-    }
-    /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
     /*------------------------------------------------------GET-------------------------------------------------------*/

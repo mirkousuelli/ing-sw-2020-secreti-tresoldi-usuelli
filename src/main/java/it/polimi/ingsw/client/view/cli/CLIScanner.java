@@ -3,8 +3,7 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedMessage;
-import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.io.*;
@@ -69,23 +68,23 @@ public class CLIScanner<S> {
         messageMap.put(DemandType.NEW_GAME, NEW_GAME);
 
         toRepeatMap.put(DemandType.CREATE_GAME, index -> Integer.parseInt(index) < 2 || Integer.parseInt(index) > 3);
-        toRepeatMap.put(DemandType.CHOOSE_DECK, clientModel::checkGod);
-        toRepeatMap.put(DemandType.CHOOSE_CARD, clientModel::checkGod);
-        toRepeatMap.put(DemandType.CHOOSE_STARTER, clientModel::checkPlayer);
-        toRepeatMap.put(DemandType.PLACE_WORKERS, value -> !clientModel.getReducedCell(value).isFree());
-        toRepeatMap.put(DemandType.CHOOSE_WORKER, clientModel::checkWorker);
-        toRepeatMap.put(DemandType.MOVE, clientModel::evalToRepeat);
-        toRepeatMap.put(DemandType.BUILD, clientModel::evalToRepeat);
-        toRepeatMap.put(DemandType.USE_POWER, clientModel::evalToRepeat);
+        toRepeatMap.put(DemandType.CHOOSE_DECK, this::checkGod);
+        toRepeatMap.put(DemandType.CHOOSE_CARD, this::checkGod);
+        toRepeatMap.put(DemandType.CHOOSE_STARTER, this::checkPlayer);
+        toRepeatMap.put(DemandType.PLACE_WORKERS, this::checkCell);
+        toRepeatMap.put(DemandType.CHOOSE_WORKER, this::checkWorker);
+        toRepeatMap.put(DemandType.MOVE, this::isToRepeat);
+        toRepeatMap.put(DemandType.BUILD, this::isToRepeat);
+        toRepeatMap.put(DemandType.USE_POWER, this::isToRepeat);
         toRepeatMap.put(DemandType.NEW_GAME, value -> !value.equals("y") && !value.equals("n"));
         toRepeatMap.put(DemandType.ASK_ADDITIONAL_POWER, value -> !value.equals("y") && !value.equals("n"));
 
         indexMap.put(DemandType.CHOOSE_DECK, index -> index < clientModel.getOpponents().size());
         indexMap.put(DemandType.PLACE_WORKERS, index -> index < 1);
 
-        toUsePowerMap.put(DemandType.MOVE, clientModel::evalToUsePower);
-        toUsePowerMap.put(DemandType.BUILD, clientModel::evalToUsePower);
-        toUsePowerMap.put(DemandType.USE_POWER, clientModel::evalToUsePower);
+        toUsePowerMap.put(DemandType.MOVE, this::isToUsePower);
+        toUsePowerMap.put(DemandType.BUILD, this::isToUsePower);
+        toUsePowerMap.put(DemandType.USE_POWER, this::isToUsePower);
 
         payloadMap.put(DemandType.CREATE_GAME, this::parseString);
         payloadMap.put(DemandType.CHOOSE_DECK, this::parseStringGod);
@@ -106,30 +105,7 @@ public class CLIScanner<S> {
         initializeMaps();
     }
 
-    private S parseString(String string) {
-        return (S) (new ReducedMessage(string));
-    }
 
-    private S parseStringReducedDemandCell(String string) {
-        int x = string.charAt(0) - 48;
-        int y = string.charAt(2) - 48;
-
-        if(clientModel.checkCell(x, y)) return null;
-
-        return (S) (new ReducedDemandCell(x, y));
-    }
-
-    private S parseCommand(String string) {
-        String[] input = string.split(" ");
-
-        if (input.length != 2) return null;
-
-        return parseStringReducedDemandCell(input[1]);
-    }
-
-    private S parseStringGod(String string) {
-        return (S) (God.parseString(string));
-    }
 
     Demand<S> requestInput(DemandType currentState) {
         boolean toRepeat;
@@ -207,6 +183,144 @@ public class CLIScanner<S> {
 
         return null;
     }
+
+
+
+    private S parseString(String string) {
+        return (S) (new ReducedMessage(string));
+    } //OK
+
+    private S parseStringReducedDemandCell(String string) {
+        ReducedAnswerCell cell = getReducedCell(string);
+
+        if (cell == null) return null;
+
+        return (S) (new ReducedDemandCell(cell.getX(), cell.getY()));
+    } //OK
+
+    private S parseCommand(String string) {
+        String[] input = string.split(" ");
+
+        if (input.length != 2) return null;
+
+        return parseStringReducedDemandCell(input[1]);
+    } //OK
+
+    private S parseStringGod(String string) {
+        return (S) (God.parseString(string));
+    } //OK
+
+
+
+    private boolean checkGod(String godString) {
+        List<ReducedCard> deck;
+        God god = God.parseString(godString);
+        if (god == null) return true;
+
+        synchronized (clientModel.lock) {
+            deck = clientModel.getDeck();
+        }
+
+        return deck.stream()
+                .noneMatch(g -> g.getGod().equals(god));
+    } //OK
+
+    private boolean checkWorker(String workerString) {
+        ReducedAnswerCell workerCell = getReducedCell(workerString);
+
+        if (workerCell == null) return true;
+
+        return clientModel.getWorkers().stream()
+                .filter(w -> w.getOwner().equals(clientModel.getPlayer().getNickname()))
+                .noneMatch(w -> w.getX() == workerCell.getX() && w.getY() == workerCell.getY());
+    } //OK
+
+    private boolean checkPlayer(String player) {
+        for (ReducedPlayer p : clientModel.getOpponents()) {
+            if (p.getNickname().equals(player))
+                return false;
+        }
+
+        return !clientModel.getPlayer().getNickname().equals(player);
+    } //OK
+
+    private boolean checkCell(String cellString) {
+        ReducedAnswerCell cell = getReducedCell(cellString);
+
+        return  cell == null;
+    } //OK
+
+    private boolean isToRepeat(String string) {
+        String[] input = string.split(" ");
+
+        if (input.length != 2) return true;
+
+        ReducedAnswerCell cell = getReducedCell(input[1]);
+
+        if (cell == null) return true;
+
+        for (ReducedAction ra : cell.getActionList()) {
+            if (input[0].equals(ra.getName())) {
+                switch (ra) {
+                    case BUILD:
+                    case MOVE:
+                        return !cell.isFree();
+
+                    case DEFAULT:
+                        return true;
+
+                    case USEPOWER:
+                        return false;
+
+                    default:
+                        throw new NotAValidInputRunTimeException("Not a valid turn");
+                }
+            }
+        }
+
+        return true;
+    } //OK
+
+    private boolean isToUsePower(String string) {
+        String[] input = string.split(" ");
+
+        ReducedAnswerCell cell = getReducedCell(input[1]);
+
+        if (cell == null) return true;
+
+        return cell.getActionList().contains(ReducedAction.USEPOWER) && ReducedAction.USEPOWER.getName().equals(input[0]);
+    } //OK
+
+    private ReducedAnswerCell getReducedCell(String cellString) {
+        List<Integer> coordinate = stringToInt(cellString);
+
+        if (coordinate == null) return null;
+
+        int x = coordinate.get(0);
+        int y = coordinate.get(1);
+
+        return clientModel.getCell(x, y);
+    } //OK
+
+    private List<Integer> stringToInt(String string) {
+        if (string.length() != 3) return null;
+
+        List<Integer> ret = new ArrayList<>();
+
+        String[] input = string.split(",");
+
+        if (input.length != 2) return null;
+        if (Arrays.stream(input).anyMatch(i -> i.length() != 1)) return null;
+
+        ret.add(string.charAt(0) - 48);
+        ret.add(string.charAt(2) - 48);
+
+        if(clientModel.checkCell(ret.get(0), ret.get(1))) return null;
+
+        return ret;
+    } //OK
+
+
 
     private void skipAdditionalPower(String value) {
         if (!(clientModel.getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))) return;
