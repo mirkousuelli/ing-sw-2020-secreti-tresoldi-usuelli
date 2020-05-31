@@ -6,11 +6,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
-public interface ServerConnection {
+interface ServerConnection {
 
     void startServer() throws IOException;
 
-    void connect(ServerClientHandler c, String name) throws ParserConfigurationException, SAXException;
+    boolean connect(ServerClientHandler c, String name);
+
+    boolean canStart();
 
     boolean numOfPlayers(ServerClientHandler c, Demand demand);
 

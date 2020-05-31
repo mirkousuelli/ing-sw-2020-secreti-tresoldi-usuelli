@@ -15,10 +15,6 @@ public interface ServerClientHandler {
 
     void send(Answer message);
 
-    Lobby getLobby();
-
-    void setLobby(Lobby lobby);
-
     void setCreator(boolean creator);
 
     boolean isCreator();

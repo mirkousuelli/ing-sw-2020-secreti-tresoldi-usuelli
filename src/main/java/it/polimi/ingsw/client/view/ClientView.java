@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class ClientView<S> extends SantoriniRunnable {
+public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected ClientModel<S> clientModel;
     private boolean isFree;
@@ -101,16 +101,16 @@ public abstract class ClientView<S> extends SantoriniRunnable {
     }
 
     protected void runThreads(String name, String ip, int port) {
-        ClientConnectionSocket clientConnectionSocket = null;
-        ClientModel clientModel;
+        ClientConnectionSocket<S> clientConnectionSocket = null;
+        ClientModel<S> clientModel;
 
         try {
-            clientConnectionSocket = new ClientConnectionSocket(ip, port);
+            clientConnectionSocket = new ClientConnectionSocket<S>(ip, port);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException");
         }
 
-        clientModel = new ClientModel(name, clientConnectionSocket);
+        clientModel = new ClientModel<S>(name, clientConnectionSocket);
         setClientModel(clientModel);
         clientConnectionSocket.setClientView(this);
 

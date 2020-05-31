@@ -1,8 +1,6 @@
 package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
-import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
@@ -21,16 +19,16 @@ public class CLIScanner<S> {
     private final BufferedReader in;
     private final CLIPrinter<S> out;
 
-    private static final String CREATEGAME = "Insert the number of players:\n";
-    private static final String CHOOSEDECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
-    private static final String CHOOSECARD = "Insert the name of the chosen god [godName]\n";
-    private static final String CHOOSESTARTER = "Insert the name of the starter: [playerName]\n";
-    private static final String PLACEWORKERS = "Insert the initial locations of your worker: [x,y]\n";
-    private static final String CHOOSEWORKERS = "Select a worker: [x,y]\n";
+    private static final String CREATE_GAME = "Insert the number of players:\n";
+    private static final String CHOOSE_DECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
+    private static final String CHOOSE_CARD = "Insert the name of the chosen god [godName]\n";
+    private static final String CHOOSE_STARTER = "Insert the name of the starter: [playerName]\n";
+    private static final String PLACE_WORKERS = "Insert the initial locations of your worker: [x,y]\n";
+    private static final String CHOOSE_WORKERS = "Select a worker: [x,y]\n";
     private static final String ACTION = "Make your action [action x,y]\n";
-    private static final String ADDITIONALPOWER  = "Do you want to use the additional power of your god? [y/n]\n";
-    private static final String ADDITIONALPOWERREQ  = "Select a cell: [action x,y]\n";
-    private static final String NEWGAME = "Do you want to play again? [y/n]\n";
+    private static final String ASK_ADDITIONAL_POWER = "Do you want to use the additional power of your god? [y/n]\n";
+    private static final String ADDITIONAL_POWER = "Select a cell: [action x,y]\n";
+    private static final String NEW_GAME = "Do you want to play again? [y/n]\n";
 
     private final Map<DemandType, String> messageMap;
     private final Map<DemandType, Function<String, Boolean>> toRepeatMap;
@@ -38,15 +36,9 @@ public class CLIScanner<S> {
     private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
-    private volatile String value;
-    private volatile Thread read;
-    private volatile boolean isClosed = false;
-
-    private DemandType demandType;
-
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
-    public CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
+    CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
         in = new BufferedReader(new InputStreamReader(inputStream));
         this.out = out;
         this.clientModel = clientModel;
@@ -60,22 +52,21 @@ public class CLIScanner<S> {
 
         if (clientModel != null)
             initializeMaps();
-
-        value = null;
     }
 
-    public void initializeMaps() {
-        messageMap.put(DemandType.CREATE_GAME, CREATEGAME);
-        messageMap.put(DemandType.CHOOSE_DECK, CHOOSEDECK);
-        messageMap.put(DemandType.CHOOSE_CARD, CHOOSECARD);
-        messageMap.put(DemandType.CHOOSE_STARTER, CHOOSESTARTER);
-        messageMap.put(DemandType.PLACE_WORKERS, PLACEWORKERS);
-        messageMap.put(DemandType.CHOOSE_WORKER, CHOOSEWORKERS);
+    void initializeMaps() {
+        messageMap.put(DemandType.CREATE_GAME, CREATE_GAME);
+        messageMap.put(DemandType.CHOOSE_DECK, CHOOSE_DECK);
+        messageMap.put(DemandType.CHOOSE_CARD, CHOOSE_CARD);
+        messageMap.put(DemandType.CHOOSE_STARTER, CHOOSE_STARTER);
+        messageMap.put(DemandType.PLACE_WORKERS, PLACE_WORKERS);
+        messageMap.put(DemandType.CHOOSE_WORKER, CHOOSE_WORKERS);
         messageMap.put(DemandType.MOVE, ACTION);
         messageMap.put(DemandType.BUILD, ACTION);
         messageMap.put(DemandType.USE_POWER, ACTION);
-        messageMap.put(DemandType.ASK_ADDITIONAL_POWER, ADDITIONALPOWER);
-        messageMap.put(DemandType.NEW_GAME, NEWGAME);
+        messageMap.put(DemandType.ASK_ADDITIONAL_POWER, ASK_ADDITIONAL_POWER);
+        messageMap.put(DemandType.ADDITIONAL_POWER, ADDITIONAL_POWER);
+        messageMap.put(DemandType.NEW_GAME, NEW_GAME);
 
         toRepeatMap.put(DemandType.CREATE_GAME, index -> Integer.parseInt(index) < 2 || Integer.parseInt(index) > 3);
         toRepeatMap.put(DemandType.CHOOSE_DECK, clientModel::checkGod);
@@ -87,6 +78,7 @@ public class CLIScanner<S> {
         toRepeatMap.put(DemandType.BUILD, clientModel::evalToRepeat);
         toRepeatMap.put(DemandType.USE_POWER, clientModel::evalToRepeat);
         toRepeatMap.put(DemandType.NEW_GAME, value -> !value.equals("y") && !value.equals("n"));
+        toRepeatMap.put(DemandType.ASK_ADDITIONAL_POWER, value -> !value.equals("y") && !value.equals("n"));
 
         indexMap.put(DemandType.CHOOSE_DECK, index -> index < clientModel.getOpponents().size());
         indexMap.put(DemandType.PLACE_WORKERS, index -> index < 1);
@@ -104,10 +96,12 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.MOVE, this::parseCommand);
         payloadMap.put(DemandType.BUILD, this::parseCommand);
         payloadMap.put(DemandType.USE_POWER, this::parseCommand);
+        payloadMap.put(DemandType.ASK_ADDITIONAL_POWER, this::parseString);
+        payloadMap.put(DemandType.ADDITIONAL_POWER, this::parseCommand);
         payloadMap.put(DemandType.NEW_GAME, this::parseString);
     }
 
-    public void setClientModel(ClientModel<S> clientModel) {
+    void setClientModel(ClientModel<S> clientModel) {
         this.clientModel = clientModel;
         initializeMaps();
     }
@@ -140,14 +134,14 @@ public class CLIScanner<S> {
         return (S) (God.parseString(string));
     }
 
-    public Demand<S> requestInput(DemandType currentState) {
+    Demand<S> requestInput(DemandType currentState) {
         boolean toRepeat;
         boolean toUsePower;
         boolean incrementIndex;
         int i = 0;
         List<S> payloadList = new ArrayList<>();
         S payload;
-        demandType = currentState;
+        String value;
 
         Function <String, Boolean> toRepeatFunction;
         Function <Integer, Boolean> indexFunction;
@@ -160,49 +154,34 @@ public class CLIScanner<S> {
             incrementIndex = false;
             payload = null;
 
-            out.printString(messageMap.get(demandType));
+            out.printString(messageMap.get(currentState));
 
             value = readLine();
             if (value == null) return null;
 
-            toRepeatFunction = toRepeatMap.get(demandType);
+            toRepeatFunction = toRepeatMap.get(currentState);
             if (toRepeatFunction != null)
                 toRepeat = toRepeatFunction.apply(value);
-
-            if (demandType.equals(DemandType.ASK_ADDITIONAL_POWER)) {
-                if (value.equals("y")) {
-                    out.printString(ADDITIONALPOWERREQ);
-                    readLine();
-                    if (value == null)
-                        break;
-                    payload = parseCommand(value);
-                }
-                else if (value.equals("n")) {
-                    payload = (S) new ReducedDemandCell(-1, -1);
-                }
-                else
-                    toRepeat = true;
-            }
 
             if (toRepeat)
                 out.printError();
             else {
-                powerFunction = toUsePowerMap.get(demandType);
+                powerFunction = toUsePowerMap.get(currentState);
                 if (powerFunction != null)
                     toUsePower = powerFunction.apply(value);
 
-                payloadFunction = payloadMap.get(demandType);
+                payloadFunction = payloadMap.get(currentState);
                 if (payloadFunction != null) {
-                    payload = payloadMap.get(demandType).apply(value);
+                    payload = payloadMap.get(currentState).apply(value);
                     payloadList.add(payload);
                 }
 
                 if (payload == null)
                     toRepeat = true;
                 else {
-                    indexFunction = indexMap.get(demandType);
+                    indexFunction = indexMap.get(currentState);
                     if (indexFunction != null)
-                        incrementIndex = indexMap.get(demandType).apply(i);
+                        incrementIndex = indexMap.get(currentState).apply(i);
 
                     if (incrementIndex)
                         i++;
@@ -214,9 +193,9 @@ public class CLIScanner<S> {
             return new Demand<>(DemandType.USE_POWER, payload);
 
         if (i > 0)
-            return new Demand<>(demandType, (S) payloadList);
+            return new Demand<>(currentState, (S) payloadList);
 
-        return new Demand<>(demandType, payload);
+        return new Demand<>(currentState, payload);
     }
 
     String readLine() {

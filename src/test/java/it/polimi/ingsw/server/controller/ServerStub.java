@@ -36,17 +36,6 @@ public class ServerStub implements ServerClientHandler {
     }
 
     @Override
-    public Lobby getLobby() {
-        //stub
-        return null;
-    }
-
-    @Override
-    public void setLobby(Lobby lobby) {
-        //stub
-    }
-
-    @Override
     public void setCreator(boolean creator) {
         //stub
     }

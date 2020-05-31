@@ -38,6 +38,10 @@ public class ReducedPlayer {
         this(player, color, null, isCreator);
     }
 
+    public ReducedPlayer(String player,boolean isCreator) {
+        this(player, null, null, isCreator);
+    }
+
 
     public String getNickname() {
         return nickname;

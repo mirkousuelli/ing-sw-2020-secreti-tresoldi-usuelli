@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view.cli;
 
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.communication.Color;
-import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
@@ -28,7 +27,6 @@ public class CLIPrinter<S> {
     private static final String CONNECT = "Connected!\n";
     private static final String START = "Starting!!\n";
     private static final String RELOAD = "Reloaded!\n";
-    private static final String CREATEGAME = "Waiting other players...\n";
 
     private static final String LOGO = "\n" +
             "  ______                             _       _ \n" +
@@ -39,7 +37,7 @@ public class CLIPrinter<S> {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    public CLIPrinter(PrintStream out, ClientModel<S> clientModel) {
+    CLIPrinter(PrintStream out, ClientModel<S> clientModel) {
         this.out = out;
         this.clientModel = clientModel;
 
@@ -49,11 +47,9 @@ public class CLIPrinter<S> {
 
         stringMap.put(DemandType.CONNECT, CONNECT);
         stringMap.put(DemandType.START, START);
-        stringMap.put(DemandType.CREATE_GAME, CREATEGAME);
 
         initialMap.put(DemandType.CONNECT, this::printString);
         initialMap.put(DemandType.START, this::printStart);
-        initialMap.put(DemandType.CREATE_GAME, this::printString);
 
         changesMap.put(UpdatedPartType.GOD, this::printAvailableGods);
         changesMap.put(UpdatedPartType.CARD, this::printAvailableGods);
@@ -62,19 +58,19 @@ public class CLIPrinter<S> {
         changesMap.put(UpdatedPartType.BOARD, this::printAll);
     }
 
-    public void setClientModel(ClientModel<S> clientModel) {
+    void setClientModel(ClientModel<S> clientModel) {
         this.clientModel = clientModel;
     }
 
-    public void printLogo() {
+    void printLogo() {
         out.println(LOGO);
     }
 
-    public void printString(String message) {
+    void printString(String message) {
         out.print(message);
     }
 
-    public void printStart(String message) {
+    void printStart(String message) {
         out.println(message);
         printLogo();
         printOpponents();
@@ -253,7 +249,7 @@ public class CLIPrinter<S> {
         printGods();
     }
 
-    public void printCurrentPlayer() {
+    void printCurrentPlayer() {
         boolean isYourTurn = false;
         ReducedPlayer currentPlayer;
 
@@ -269,26 +265,26 @@ public class CLIPrinter<S> {
             printString(Color.RESET + Color.parseString(currentPlayer.getColor()) + currentPlayer.getNickname() + Color.RESET + " is the current player!\n");
     }
 
-    public void printError() {
+    void printError() {
         out.println("Error, try again");
     }
 
-    public void printSuccess() {
+    void printSuccess() {
         out.println("Done!");
     }
 
-    public void printReload() {
+    void printReload() {
         out.println(RELOAD);
     }
 
-    public void printEnd(String context) {
-        if (clientModel.isYours())
+    void printEnd(String context) {
+        if (clientModel.IsEnded())
             out.println("It's your " + context + "!");
         else
             out.println("It's " + ((ReducedPlayer) clientModel.getAnswer().getPayload()).getNickname() + "'s " + context + "!");
     }
 
-    public boolean printChanges(DemandType demandType) {
+    boolean printChanges(DemandType demandType) {
         boolean ret;
         Consumer<String> initlaFunct = initialMap.get(demandType);
         Runnable changesMapFunct = changesMap.get(UpdatedPartType.parseString(demandType.toString()));

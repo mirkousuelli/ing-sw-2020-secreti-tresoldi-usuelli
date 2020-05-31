@@ -14,6 +14,7 @@ public enum DemandType {
     MOVE,
     BUILD,
     ASK_ADDITIONAL_POWER,
+    ADDITIONAL_POWER,
     USE_POWER,
     NEW_GAME;
 
@@ -43,6 +44,8 @@ public enum DemandType {
                 return USE_POWER;
             case "askAdditionalPower":
                 return ASK_ADDITIONAL_POWER;
+            case "additionalPower":
+                return ADDITIONAL_POWER;
             case "newGame":
                 return NEW_GAME;
             default:
@@ -77,6 +80,8 @@ public enum DemandType {
                 return "usePower";
             case ASK_ADDITIONAL_POWER:
                 return "askAdditionalPower";
+            case ADDITIONAL_POWER:
+                return "additionalPower";
             case NEW_GAME:
                 return "newGame";
             default:
@@ -107,7 +112,7 @@ public enum DemandType {
                 return PLACE_WORKERS;
         }
 
-        if (currentState.equals(ASK_ADDITIONAL_POWER) || currentState.equals(BUILD))
+        if (currentState.equals(ADDITIONAL_POWER) || currentState.equals(BUILD))
             return CHOOSE_WORKER;
 
         //repeat

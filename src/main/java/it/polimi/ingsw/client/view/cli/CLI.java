@@ -50,8 +50,6 @@ public class CLI<S> extends ClientView<S> {
 
             case CHANGE_TURN:
                 out.printCurrentPlayer();
-                if (clientModel.getCurrentState().equals(DemandType.CREATE_GAME))
-                    isYourTurn = out.printChanges(clientModel.getCurrentState());
                 break;
 
             case RELOAD:

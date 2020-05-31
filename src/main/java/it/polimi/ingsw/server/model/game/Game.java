@@ -222,6 +222,9 @@ public class Game extends Observable<Answer> {
             case BUILD:
                 state = new Build(this);
                 break;
+            case ASK_ADDITIONAL_POWER:
+                state = new AskAdditionalPower(this);
+                break;
             case ADDITIONAL_POWER:
                 state = new AdditionalPower(this);
                 break;

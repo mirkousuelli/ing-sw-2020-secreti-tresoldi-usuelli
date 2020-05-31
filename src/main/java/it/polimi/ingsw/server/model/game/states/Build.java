@@ -125,8 +125,10 @@ public class Build implements GameState {
                         returnContent.setState(State.CHOOSE_WORKER);
                         returnContent.setChangeTurn(true);
                     }
-                    else
-                        returnContent.setState(State.ADDITIONAL_POWER);
+                    else {
+                        returnContent.setState(State.ASK_ADDITIONAL_POWER);
+                        toReturn = new ArrayList<>();
+                    }
                 }
                 else {
                     returnContent.setState(State.CHOOSE_WORKER);

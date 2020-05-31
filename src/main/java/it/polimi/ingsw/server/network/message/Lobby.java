@@ -15,16 +15,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Lobby {
+
     private final Game game;
     private final Controller controller;
-    private final List<View> playerViewList;
-    public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
-    private final Map<ServerClientHandler, View> playingConnection;
-    private final Map<View, ReducedPlayer> playerColor;
+
     private int numberOfPlayers;
     private int numberOfReady;
     private boolean reloaded;
+
+    private final List<View> playerViewList;
+    private final Map<ServerClientHandler, View> playingConnection;
+    private final Map<View, ReducedPlayer> playerColor;
+
     public final Object lockLobby;
+
+    public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
 
     public Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
@@ -189,6 +194,10 @@ public class Lobby {
 
     public boolean isPresentInGame(ServerClientHandler c) {
         return playingConnection.get(c) != null;
+    }
+
+    public boolean isPresentInGame(String name) {
+        return game.getPlayer(name) != null;
     }
 
     public String getColor(ServerClientHandler c) {
