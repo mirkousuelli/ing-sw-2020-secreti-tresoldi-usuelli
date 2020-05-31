@@ -68,12 +68,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                     synchronized (file.lockReceive) {
                                         temp = (Answer<S>) file.receive();
 
-                                        //System.out.println(temp.getHeader() + " " + temp.getContext() + " " + temp.getPayload().toString());
                                     }
 
-                                    /*if (temp == null) {
+                                    if (temp == null) {
                                         System.exit(1);
-                                    }*/
+                                    }
 
                                     LOGGER.info("Queueing...");
                                     synchronized (buffer) {
