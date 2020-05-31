@@ -124,9 +124,6 @@ public class CLIScanner<S> {
 
         if (input.length != 2) return null;
 
-        if (clientModel.getCurrentState().equals(DemandType.MOVE) && input[0].equals("usePower"))
-            clientModel.setNextState(DemandType.MOVE);
-
         return parseStringReducedDemandCell(input[1]);
     }
 
@@ -189,6 +186,9 @@ public class CLIScanner<S> {
             }
         } while (toRepeat || incrementIndex);
 
+        skipAdditionalPower(value);
+        skipToBuild();
+
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
 
@@ -206,5 +206,23 @@ public class CLIScanner<S> {
         }
 
         return null;
+    }
+
+    private void skipAdditionalPower(String value) {
+        if (!(clientModel.getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))) return;
+        if (!value.equals("n")) return;
+
+        if (clientModel.getPrevState().equals(DemandType.MOVE))
+            clientModel.setNextState(DemandType.BUILD);
+
+        if (clientModel.getPrevState().equals(DemandType.BUILD))
+            clientModel.setNextState(DemandType.CHOOSE_WORKER);
+    }
+
+    private void skipToBuild() {
+        if (!clientModel.getCurrentState().equals(DemandType.ADDITIONAL_POWER)) return;
+
+        if (clientModel.getPrevState().equals(DemandType.MOVE))
+            clientModel.setNextState(DemandType.BUILD);
     }
 }

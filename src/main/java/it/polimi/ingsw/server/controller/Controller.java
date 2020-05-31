@@ -53,7 +53,7 @@ public class Controller implements Observer<ActionToPerformView> {
         ReturnContent returnContent = model.gameEngine();
 
         if (returnContent == null || returnContent.getAnswerType().equals(AnswerType.ERROR)) {
-            actionToPerformView.getIView().reportError(new Answer(AnswerType.ERROR, new ReducedMessage("Error")));
+            actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Error")));
             LOGGER.info(() -> "Error!");
         }
         else

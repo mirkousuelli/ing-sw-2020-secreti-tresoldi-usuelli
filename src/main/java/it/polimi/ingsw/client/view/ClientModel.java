@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
-import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.gods.God;
@@ -36,6 +35,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private DemandType nextState = DemandType.CONNECT;
     private DemandType currentState = DemandType.CONNECT;
+    private DemandType prevState = DemandType.CONNECT;
 
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
     private static final int DIM = 5;
@@ -171,20 +171,21 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     } //NOOOOOOOOO
 
     private void additionalPower() {
-        if (!additionalPowerUsed && player.getCard() != null && player.getCard().isAdditionalPower() && currentState.equals(DemandType.BUILD) && player.getCard().getEffect().equals(Effect.MOVE)) {
+        if (additionalPowerUsed || player.getCard() == null || !player.getCard().isAdditionalPower()) {
+            if (currentState.equals(DemandType.MOVE)) //reset additionalPowerUsed
+                additionalPowerUsed = false;
+
+            return;
+        }
+
+        Effect effect = player.getCard().getEffect();
+        if ((currentState.equals(DemandType.BUILD) && effect.equals(Effect.MOVE)) ||
+                (currentState.equals(DemandType.CHOOSE_WORKER) && effect.equals(Effect.BUILD))) { //additionalMovePower || additionalBuildPower
             currentState = DemandType.ASK_ADDITIONAL_POWER;
-            nextState = DemandType.BUILD;
+            nextState = DemandType.ADDITIONAL_POWER;
             additionalPowerUsed = true;
         }
-
-        if (!additionalPowerUsed && player.getCard() != null && player.getCard().isAdditionalPower() && nextState.equals(DemandType.CHOOSE_WORKER) && player.getCard().getEffect().equals(Effect.BUILD)) {
-            nextState = DemandType.ASK_ADDITIONAL_POWER;
-            additionalPowerUsed = true;
-        }
-
-        if (currentState.equals(DemandType.MOVE))
-            additionalPowerUsed = false;
-    } //NOOOOOO
+    }
 
     private void clearAll() {
         currentState = DemandType.START;
@@ -210,6 +211,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private void updateCurrentState() {
         if (isYourTurn()) {
             if (!isReloaded) {
+                if (!currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
+                    prevState = currentState;
+
                 if (nextState.ordinal() >= DemandType.USE_POWER.ordinal())
                     currentState = DemandType.CHOOSE_WORKER;
                 else
@@ -258,7 +262,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     } //OK
 
-    private synchronized void updateReducedObjectsInitialize(Answer answerTemp) {
+    private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
         switch (currentState) {
             case CONNECT:
                 player.setCreator(((ReducedPlayer) answerTemp.getPayload()).isCreator());
@@ -293,13 +297,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     } //OK
 
-    private synchronized void updateReduceObjects(Answer answer) {
+    private synchronized void updateReduceObjects(Answer<S> answer) {
         System.out.println(answer.getContext());
         switch (answer.getContext()) {
             case GOD:
             case PLAYER:
             case CARD:
-                List<ReducedCard> reducedCardList = ((List<ReducedCard> ) answer.getPayload());
+                List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
                 if (reducedCardList == null || reducedCardList.isEmpty()) return;
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) {
@@ -509,6 +513,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
 
         return ret;
+    }
+
+    public synchronized DemandType getPrevState() {
+        return prevState;
     }
 
     public synchronized DemandType getCurrentState() {
