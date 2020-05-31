@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -50,7 +52,16 @@ public class AskAdditionalPower implements GameState {
         else {
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.ADDITIONAL_POWER);
-            returnContent.setPayload(Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
+
+
+
+            Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
+            Power p = game.getCurrentPlayer().getCard().getPower(0);
+
+            if (effect.equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL))
+                returnContent.setPayload(Move.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
+            else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL))
+                returnContent.setPayload(ChooseWorker.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
         }
 
         return returnContent;

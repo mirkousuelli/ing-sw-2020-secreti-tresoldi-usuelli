@@ -6,7 +6,7 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
-import it.polimi.ingsw.server.network.message.Lobby;
+import it.polimi.ingsw.server.network.Lobby;
 
 import java.util.ArrayList;
 import java.util.List;

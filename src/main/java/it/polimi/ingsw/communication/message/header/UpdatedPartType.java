@@ -29,7 +29,7 @@ public enum UpdatedPartType {
             case "move":
             case "build":
             case "askAdditionalPower":
-            case "AdditionalPower":
+            case "additionalPower":
                 return BOARD;
 
             default:

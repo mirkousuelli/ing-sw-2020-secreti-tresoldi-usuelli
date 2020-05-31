@@ -18,7 +18,6 @@ import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
-import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -28,16 +27,14 @@ import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
-import it.polimi.ingsw.server.network.message.Lobby;
+import it.polimi.ingsw.server.network.Lobby;
 
-import javax.print.DocFlavor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ChooseWorker implements GameState {
      /* @abstractClass

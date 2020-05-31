@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public class Game extends Observable<Answer> {
 
-    private List<Player> players;
+    private final List<Player> players;
     private Deck deck;
     private List<Card> chosenGods;
     private Board board;
@@ -192,7 +192,8 @@ public class Game extends Observable<Answer> {
     }
 
     public void setState(State state) {
-        prevState = State.parseString(this.state.getName());
+        if (!this.state.getName().equals(State.ASK_ADDITIONAL_POWER.toString()))
+            prevState = State.parseString(this.state.getName());
 
         this.state = parseState(state);
     }

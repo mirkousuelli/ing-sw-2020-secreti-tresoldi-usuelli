@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClientConnectionSocket<S> extends SantoriniRunnable {
+public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
     private final Socket socket;
     private final FileXML file;
@@ -36,8 +36,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
         this.clientView = clientView;
     }
 
-    @Override
-    public Answer<S> getAnswer() {
+    public Answer<S> getFirstAnswer() {
         Answer<S> answer;
 
         synchronized (lockAnswer) {
@@ -68,11 +67,13 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable {
                                 if (socket.isConnected() && !socket.isClosed()) {
                                     synchronized (file.lockReceive) {
                                         temp = (Answer<S>) file.receive();
+
+                                        //System.out.println(temp.getHeader() + " " + temp.getContext() + " " + temp.getPayload().toString());
                                     }
 
-                                    if (temp == null) {
+                                    /*if (temp == null) {
                                         System.exit(1);
-                                    }
+                                    }*/
 
                                     LOGGER.info("Queueing...");
                                     synchronized (buffer) {

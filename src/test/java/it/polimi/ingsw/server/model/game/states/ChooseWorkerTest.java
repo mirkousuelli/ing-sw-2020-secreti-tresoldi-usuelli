@@ -12,7 +12,7 @@ import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.storage.GameMemory;
-import it.polimi.ingsw.server.network.message.Lobby;
+import it.polimi.ingsw.server.network.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 

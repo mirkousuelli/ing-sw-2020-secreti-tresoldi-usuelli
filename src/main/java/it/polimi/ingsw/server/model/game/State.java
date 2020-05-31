@@ -40,9 +40,9 @@ public enum State {
             case BUILD:
                 return "build";
             case ASK_ADDITIONAL_POWER:
-                return "AskAdditionalPower";
+                return "askAdditionalPower";
             case ADDITIONAL_POWER:
-                return "AdditionalPower";
+                return "additionalPower";
             case CHANGE_TURN:
                 return "changeTurn";
             case VICTORY:
@@ -73,7 +73,7 @@ public enum State {
             return BUILD;
         else if (str.equalsIgnoreCase("askAdditionalPower"))
             return ASK_ADDITIONAL_POWER;
-        else if (str.equalsIgnoreCase("AdditionalPower"))
+        else if (str.equalsIgnoreCase("additionalPower"))
             return ADDITIONAL_POWER;
         else if (str.equalsIgnoreCase("changeTurn"))
             return CHANGE_TURN;

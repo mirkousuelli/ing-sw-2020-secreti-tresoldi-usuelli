@@ -12,7 +12,6 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.game.states.ChooseWorker;
 import it.polimi.ingsw.server.model.game.states.Move;
-import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -53,7 +52,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         this.isActive = isActive;
     }
 
-    public synchronized boolean isActive() {
+    private synchronized boolean isActive() {
         return isActive;
     }
 
@@ -152,9 +151,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 else //joinGame
                                     waitNumberOfPlayers();
 
-                                synchronized (server) {
-                                    while (!server.canStart()) server.wait();
-                                }
+                                waitStart(); //wait other players
 
                                 if (!isActive) {
                                     Thread.currentThread().interrupt();
@@ -334,6 +331,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    private void waitStart() throws InterruptedException {
+        synchronized (server) {
+            while (!server.canStart()) server.wait();
+        }
+    }
+
     private void basicStart() {
         //wait
         Lobby lobby = server.getLobby();
@@ -347,7 +350,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         //start
         send(new Answer(AnswerType.SUCCESS, players));
         synchronized (lobby.lockLobby) {
-            send(new Answer(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getGame().getCurrentPlayer().nickName)));
             if (isCreator())
                 send(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
@@ -390,7 +392,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
-    private void newGame(Demand demand) {
+    private void newGame(Demand demand) throws InterruptedException {
         boolean toRepeat;
 
         do {
@@ -402,7 +404,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 demand = read();
         } while (toRepeat);
 
-        if (!loggingOut)
+        if (!loggingOut) {
+            waitStart();
             basicStart();
+        }
     }
 }

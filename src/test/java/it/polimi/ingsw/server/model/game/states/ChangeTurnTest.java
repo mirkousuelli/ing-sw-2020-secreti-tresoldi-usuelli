@@ -1,14 +1,11 @@
 package it.polimi.ingsw.server.model.game.states;
 
-import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
-import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.network.message.Lobby;
+import it.polimi.ingsw.server.network.Lobby;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 

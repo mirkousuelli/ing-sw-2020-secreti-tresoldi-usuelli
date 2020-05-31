@@ -69,13 +69,18 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                         while (isActive()) {
                             synchronized (clientConnection.lockAnswer) {
                                 while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
-                                clientConnection.setChanged(false);
-                                setAnswer(clientConnection.getAnswer());
                             }
+
+                            clientConnection.setChanged(false);
+                            setAnswer(clientConnection.getFirstAnswer());
+
+                            //System.out.println("MODEL: " + getAnswer().getHeader() + " " + getAnswer().getContext() + " " + getAnswer().getPayload().toString());
 
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
                                 updateModel();
+                                setChanged(true);
+                                lockAnswer.notifyAll();
                                 LOGGER.info("updated!");
                                 LOGGER.info(() -> "curr: " + currentState);
                                 LOGGER.info(() -> "next: " + nextState);
@@ -115,9 +120,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         if (isNewGame)
             clearAll();
 
-        //updateStateInitial(answerTemp);
-
-        switch ((AnswerType) answerTemp.getHeader()) {
+        switch (answerTemp.getHeader()) {
             case CHANGE_TURN:
                 updateCurrentPlayer();
                 additionalPowerUsed = true;
@@ -164,6 +167,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 throw new NotAValidInputRunTimeException("Not a valid answerType" + answerTemp.getHeader());
         }
 
+        additionalPower();
+    } //NOOOOOOOOO
+
+    private void additionalPower() {
         if (!additionalPowerUsed && player.getCard() != null && player.getCard().isAdditionalPower() && currentState.equals(DemandType.BUILD) && player.getCard().getEffect().equals(Effect.MOVE)) {
             currentState = DemandType.ASK_ADDITIONAL_POWER;
             nextState = DemandType.BUILD;
@@ -177,12 +184,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
         if (currentState.equals(DemandType.MOVE))
             additionalPowerUsed = false;
-
-        synchronized (lockAnswer) {
-            setChanged(true);
-            lockAnswer.notifyAll();
-        }
-    } //NOOOOOOOOO
+    } //NOOOOOO
 
     private void clearAll() {
         currentState = DemandType.START;
@@ -204,18 +206,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         opponents.clear();
         workers.clear();
     } //OK
-
-    /*private synchronized void updateStateInitial(Answer<S> answerTemp) {
-        if (!isInitializing) return;
-
-        if (currentState.equals(DemandType.CONNECT) && answerTemp.getHeader().equals(AnswerType.CHANGE_TURN)) {
-            isCreator = true;
-            currentPlayer = player.getNickname();
-            answerTemp.setHeader(AnswerType.SUCCESS);
-        }
-
-        updateNextState();
-    }*/
 
     private void updateCurrentState() {
         if (isYourTurn()) {
@@ -284,6 +274,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 opponents = ((List<ReducedPlayer>) answerTemp.getPayload());
 
                 for (ReducedPlayer o : opponents) {
+                    if (o.isCreator())
+                        currentPlayer = o.getNickname();
+
                     if (o.getNickname().equals(player.getNickname())) {
                         player.setColor(o.getColor());
                         player.setCreator(o.isCreator());
@@ -301,6 +294,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     } //OK
 
     private synchronized void updateReduceObjects(Answer answer) {
+        System.out.println(answer.getContext());
         switch (answer.getContext()) {
             case GOD:
             case PLAYER:
@@ -348,7 +342,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case WORKER:
             case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
-                if (reducedAnswerCellList.isEmpty()) return;
 
                 //reset board
                 for (int i = 0; i < 5; i++) {
@@ -356,6 +349,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                         reducedBoard[i][j].resetAction();
                     }
                 }
+
+                if (reducedAnswerCellList.isEmpty()) return;
 
                 updateReducedBoard(reducedAnswerCellList);
 
@@ -372,7 +367,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             default:
                 throw new NotAValidInputRunTimeException("Not a valid turn");
         }
-    } //MEH
+    } //OK
 
     private synchronized void updateReducedBoard(List<ReducedAnswerCell> cells) {
         for (ReducedAnswerCell c : cells) {

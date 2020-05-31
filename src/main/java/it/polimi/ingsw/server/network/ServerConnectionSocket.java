@@ -9,7 +9,6 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
-import it.polimi.ingsw.server.network.message.Lobby;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -24,13 +24,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ServerConnectionSocket {
     private final int port;
-    private static final String BACKUPPATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
+    private static final String BACKUP_PATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(128);
     private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
 
     private Lobby lobby;
@@ -51,9 +51,9 @@ public class ServerConnectionSocket {
         Game loadedGame = null;
 
         try {
-            File f = new File(BACKUPPATH);
+            File f = new File(BACKUP_PATH);
             if (f.exists()) {
-                loadedGame = GameMemory.load(BACKUPPATH);
+                loadedGame = GameMemory.load(BACKUP_PATH);
                 if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
                     loadedGame = null;
             }
@@ -70,12 +70,12 @@ public class ServerConnectionSocket {
     private void createLobby(ServerClientHandler c) {
         try {
             lobby = new Lobby();
+            c.setCreator(true);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot create a lobby!", e);
             c.closeSocket();
             isActive = false;
         }
-        c.setCreator(true);
     }
 
 
@@ -132,7 +132,7 @@ public class ServerConnectionSocket {
             ch.closeSocket();
         }
 
-        lobby.setNumberOfReady(0);
+        waitingConnection.clear();
         File f = new File(Lobby.backupPath);
         if (f.exists())
             lobby.setReloaded(true);
@@ -162,9 +162,10 @@ public class ServerConnectionSocket {
                     return true; //toRepeat
                 }
 
-                if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side (??? c.closeSocket <=/=> send error)
-                    c.send(new Answer(AnswerType.ERROR));
-                    return true; //toRepeat
+                if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side
+                    c.closeSocket();
+                    c.setLoggingOut(false);
+                    return false; //not toRepeat because it has to stop
                 }
             }
         }
@@ -173,7 +174,7 @@ public class ServerConnectionSocket {
 
         waitingConnection.put(name, c); //creator or joiner
 
-        if(canStart()) //add everyone to the game if the chosen number of players is reached
+        if(canStart()) //add everyone to the game if the number of players is reached
             startMatch();
 
         c.send(new Answer(AnswerType.SUCCESS, new ReducedPlayer(name, c.isCreator())));
@@ -219,13 +220,21 @@ public class ServerConnectionSocket {
     private void startMatch() {
         AtomicInteger i = new AtomicInteger();
 
-        waitingConnection.keySet().forEach(playerName -> {
-            if (i.get() <= lobby.getNumberOfPlayers()) {
-                lobby.addPlayer(playerName, waitingConnection.get(playerName));
-                i.getAndIncrement();
-            } else
-                waitingConnection.get(playerName).closeSocket();
-        });
+        waitingConnection.values().stream()
+                .sorted(Comparator.comparing(ServerClientHandler::isCreator, Comparator.reverseOrder()))
+                .collect(Collectors.toList())
+                .forEach( c -> {
+                    if (i.get() <= lobby.getNumberOfPlayers()) {
+                        lobby.addPlayer(c.getName(), c);
+                        i.getAndIncrement();
+                    } else
+                        c.closeSocket();
+
+                    if (c.isCreator())
+                        lobby.setCurrentPlayer(c.getName());
+                });
+
+        //waitingConnection.clear();
 
         synchronized (this) {
             notifyAll();
@@ -266,23 +275,21 @@ public class ServerConnectionSocket {
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
         if (response.equals("n")) {
-            if (c.isCreator() && lobby.getNumberOfReady() > 1)
+            if (c.isCreator() && waitingConnection.keySet().size() > 1)
                 lobby.setNewCreator(c).setCreator(true);
 
             lobby.deletePlayer(c);
-            lobby.setNumberOfReady(lobby.getNumberOfReady() - 1);
             c.setLoggingOut(true);
             c.closeSocket();
             return false;
         }
         else if (response.equals("y")) {
-            lobby.setNumberOfReady(lobby.getNumberOfReady() + 1);
+            waitingConnection.put(c.getName(), c);
 
-            if (lobby.getNumberOfReady() == 2 * lobby.getNumberOfPlayers()) {
-                lobby.getGame().setState(State.START);
-                lobby.setNumberOfReady(lobby.getNumberOfPlayers());
+            if (canStart()) {
                 lobby.getGame().setState(State.START);
                 lobby.cleanGame();
+                startMatch();
             }
             return false;
         }

@@ -1,10 +1,9 @@
-package it.polimi.ingsw.server.network.message;
+package it.polimi.ingsw.server.network;
 
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.controller.Controller;
 import it.polimi.ingsw.server.model.game.Game;
-import it.polimi.ingsw.server.network.ServerClientHandler;
 import it.polimi.ingsw.server.view.RemoteView;
 import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
@@ -20,18 +19,17 @@ public class Lobby {
     private final Controller controller;
 
     private int numberOfPlayers;
-    private int numberOfReady;
     private boolean reloaded;
 
     private final List<View> playerViewList;
     private final Map<ServerClientHandler, View> playingConnection;
     private final Map<View, ReducedPlayer> playerColor;
 
-    public final Object lockLobby;
+    final Object lockLobby;
 
     public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
 
-    public Lobby() throws ParserConfigurationException, SAXException {
+    Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
         reloaded = false;
 
@@ -50,12 +48,11 @@ public class Lobby {
 
         lockLobby = new Object();
         numberOfPlayers = -1;
-        numberOfReady = 0;
 
         reloaded = true;
     }
 
-    public int getNumberOfPlayers() {
+    int getNumberOfPlayers() {
         int ret;
 
         synchronized (lockLobby) {
@@ -89,13 +86,13 @@ public class Lobby {
                 .reduce(null, (a, b) -> a != null ? a : b);
     }
 
-    public void setNumberOfPlayers(int numberOfPlayers) {
+    void setNumberOfPlayers(int numberOfPlayers) {
         synchronized (lockLobby) {
             this.numberOfPlayers = numberOfPlayers;
         }
     }
 
-    public void deletePlayer(ServerClientHandler player) {
+    void deletePlayer(ServerClientHandler player) {
         synchronized (playingConnection) {
             View playerToRemove = playingConnection.get(player);
 
@@ -108,19 +105,15 @@ public class Lobby {
             }
             playingConnection.remove(player);
         }
-
-        synchronized (lockLobby) {
-            numberOfReady--;
-        }
     }
 
-    public void setCurrentPlayer(String player) {
+    void setCurrentPlayer(String player) {
         synchronized (game) {
             game.setCurrentPlayer(game.getPlayer(player));
         }
     }
 
-    public boolean isReloaded() {
+    boolean isReloaded() {
         boolean ret;
 
         synchronized (lockLobby) {
@@ -130,11 +123,11 @@ public class Lobby {
         return ret;
     }
 
-    public boolean isFull() {
+    boolean isFull() {
         return numberOfPlayers == playerViewList.size();
     }
 
-    public void setReloaded(boolean reloaded) {
+    void setReloaded(boolean reloaded) {
         synchronized (lockLobby) {
             this.reloaded = reloaded;
         }
@@ -148,8 +141,8 @@ public class Lobby {
         return controller;
     }
 
-    public synchronized boolean addPlayer(String player, ServerClientHandler serverClientHandler) {
-        if (playingConnection.size() == numberOfPlayers) return false;
+    synchronized void addPlayer(String player, ServerClientHandler serverClientHandler) {
+        if (playingConnection.size() == numberOfPlayers) return;
 
         RemoteView v = new RemoteView(player, serverClientHandler);
 
@@ -162,25 +155,9 @@ public class Lobby {
 
         if (!reloaded)
             game.addPlayer(player);
-
-        numberOfReady++;
-
-        return true;
     }
 
-    public boolean canStart() {
-        int numOfPl;
-        int numOfRd;
-
-        synchronized (lockLobby) {
-            numOfPl = numberOfPlayers;
-            numOfRd = numberOfReady;
-        }
-
-        return numOfRd == numOfPl;
-    }
-
-    public boolean isCurrentPlayerInGame(ServerClientHandler c) {
+    boolean isCurrentPlayerInGame(ServerClientHandler c) {
         boolean ret;
 
         synchronized (game) {
@@ -192,15 +169,15 @@ public class Lobby {
         return ret;
     }
 
-    public boolean isPresentInGame(ServerClientHandler c) {
+    boolean isPresentInGame(ServerClientHandler c) {
         return playingConnection.get(c) != null;
     }
 
-    public boolean isPresentInGame(String name) {
+    boolean isPresentInGame(String name) {
         return game.getPlayer(name) != null;
     }
 
-    public String getColor(ServerClientHandler c) {
+    String getColor(ServerClientHandler c) {
         String color;
 
         synchronized (playerColor) {
@@ -212,27 +189,19 @@ public class Lobby {
         return color;
     }
 
-    public String getPlayer(ServerClientHandler c) {
+    String getPlayer(ServerClientHandler c) {
         return playerColor.get(playingConnection.get(c)).getNickname();
     }
 
-    public List<ServerClientHandler> getServerClientHandlerList() {
+    List<ServerClientHandler> getServerClientHandlerList() {
         return new ArrayList<>(playingConnection.keySet());
     }
 
-    public int getNumberOfReady() {
-        return numberOfReady;
-    }
-
-    public void setNumberOfReady(int numberOfReady) {
-        this.numberOfReady = numberOfReady;
-    }
-
-    public ServerClientHandler setNewCreator(ServerClientHandler c) {
+    ServerClientHandler setNewCreator(ServerClientHandler c) {
         return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 
-    public void cleanGame() {
+    void cleanGame() {
         game.clean();
     }
 }

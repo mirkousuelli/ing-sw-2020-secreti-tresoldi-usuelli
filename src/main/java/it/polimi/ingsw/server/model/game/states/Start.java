@@ -13,15 +13,12 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.storage.GameMemory;
-import it.polimi.ingsw.server.network.message.Lobby;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +49,9 @@ public class Start implements GameState {
         ReturnContent returnContent = new ReturnContent();
 
         //set challenger
-        Player currentPlayer = game.getPlayer(0);
-        game.setCurrentPlayer(currentPlayer);
+        //Player currentPlayer = game.getPlayer(0);
+        //game.setCurrentPlayer(currentPlayer);
+        game.setCurrentPlayer(game.getPlayer(game.getRequest().getPlayer()));
         List<God> chosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
 
         returnContent.setAnswerType(AnswerType.ERROR);
