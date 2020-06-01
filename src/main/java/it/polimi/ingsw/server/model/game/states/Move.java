@@ -163,17 +163,17 @@ public class Move implements GameState {
 
             returnContent = new ReturnContent();
 
-            if (reachedThirdLevel(game)) {
-                returnContent.setAnswerType(AnswerType.VICTORY);
+            if (reachedThirdLevel(game)) { //if the current worker reached the third level
+                returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
                 returnContent.setState(State.VICTORY);
                 returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
             }
-            else { //which means that no one won in this turn, the game switches to AdditionalPower state
+            else { //else, which means that no one won in this turn, the game switches to the next state
                 returnContent.setAnswerType(AnswerType.SUCCESS);
 
                 Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
                 if (effect.equals(Effect.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)) //if the current player's god has an additional power
-                    returnContent = additionalPower(); //then evaluate if it can be used
+                    returnContent = additionalPower(); //then evaluate if it can be used (go to AskAdditionalPower if it can be used, go to build otherwise)
                 else {
                     returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE)); //else go to build
                     returnContent.setState(State.BUILD);
@@ -196,14 +196,14 @@ public class Move implements GameState {
 
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-        if (p.getEffect().equals(Effect.MOVE) && ((MovePower) p).usePower(currentPlayer, cellToMoveTo, game.getBoard().getAround(cellToMoveTo)))
-            returnContent = movePower();
+        if (p.getEffect().equals(Effect.MOVE) && ((MovePower) p).usePower(currentPlayer, cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) //if it's a movePower and usePower goes well
+            returnContent = movePower(); //then evaluate next state (if it can move multiple time then stay in move else go to build)
         else if (p.getEffect().equals(Effect.BUILD) && p.getPersonalMalus() != null && p.getPersonalMalus().getMalusType().equals(MalusType.MOVE) &&
-                ((BuildPower) p).usePower(currentPlayer, cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) {
-            returnContent = buildPower();
+                ((BuildPower) p).usePower(currentPlayer, cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) { //else if it's a build power with a move malus and usePower goes well
+            returnContent = buildPower(); //go to build
         }
-        else
-            returnContent = returnError();
+        else //if it isn't an active power or usePower doesn't go well
+            returnContent = returnError(); //then report error
 
         return returnContent;
     }
@@ -218,11 +218,11 @@ public class Move implements GameState {
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
 
-        if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) {
-            returnContent.setState(State.MOVE);
+        if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) { //if the current player can move multiple times
+            returnContent.setState(State.MOVE); //then remain in move
             returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         }
-        else {
+        else { //else go to build
             returnContent.setState(State.BUILD);
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
         }
@@ -266,11 +266,11 @@ public class Move implements GameState {
                 .map(ReducedAnswerCell::getActionList)
                 .flatMap(List::stream)
                 .distinct()
-                .allMatch(action -> action.equals(ReducedAction.DEFAULT))
+                .allMatch(action -> action.equals(ReducedAction.DEFAULT))//if there are no cell where the additional power can be used
         )
-            returnContent.setState(State.BUILD);
+            returnContent.setState(State.BUILD); //then go to build
         else
-            returnContent.setState(State.ASK_ADDITIONAL_POWER);
+            returnContent.setState(State.ASK_ADDITIONAL_POWER); //else ask if the current player wants to use the additional power
 
         return returnContent;
     }

@@ -97,7 +97,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         Thread t = new Thread (
                 () -> {
                         try {
-                            Demand demand;
+                            Demand<S> demand;
                             while (isActive()) {
                                 synchronized (clientView.lockDemand) {
                                     while (!clientView.isChanged()) clientView.lockDemand.wait();

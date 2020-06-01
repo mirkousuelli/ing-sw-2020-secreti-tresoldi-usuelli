@@ -38,18 +38,18 @@ public class AskAdditionalPower implements GameState {
         returnContent.setState(State.ASK_ADDITIONAL_POWER);
 
 
-        if (response.getMessage().equals("n")) {
+        if (response.getMessage().equals("n")) { //if the current player does not want to use his additional power
             returnContent.setAnswerType(AnswerType.SUCCESS);
-            if (prevState.equals(State.MOVE)) {
-                returnContent.setState(State.BUILD);
+            if (prevState.equals(State.MOVE)) { //then if it's an additional move power
+                returnContent.setState(State.BUILD); //then go to build
                 returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
-            } else if (prevState.equals(State.BUILD)) {
-                returnContent.setState(State.CHOOSE_WORKER);
+            } else if (prevState.equals(State.BUILD)) { //then if it's an additional build power
+                returnContent.setState(State.CHOOSE_WORKER); //then go to choose worker, end  the current turn and start a new one
                 returnContent.setChangeTurn(true);
                 returnContent.setPayload(new ArrayList<ReducedAnswerCell>());
             }
         }
-        else {
+        else { //else,it has to be that he wants to use his additional power, so go to additional power!
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.ADDITIONAL_POWER);
 
@@ -58,9 +58,9 @@ public class AskAdditionalPower implements GameState {
             Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
             Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-            if (effect.equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL))
+            if (effect.equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) //if it's an additional build power
                 returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
-            else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL))
+            else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL)) //if it's an additional move power
                 returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
         }
 

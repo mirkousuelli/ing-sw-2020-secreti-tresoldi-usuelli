@@ -41,11 +41,11 @@ public class AdditionalPower implements GameState {
             return returnError();
 
 
-        if (prevState.equals(State.MOVE))
-            returnContent = movePower();
-        else if (prevState.equals(State.BUILD))
-            returnContent = buildPower();
-        else
+        if (prevState.equals(State.MOVE)) //if it's an additional move power
+            returnContent = movePower(); //then
+        else if (prevState.equals(State.BUILD)) //else if it's an additional move power
+            returnContent = buildPower(); //then
+        else //else report error
             returnContent = returnError();
 
         //save
@@ -70,11 +70,11 @@ public class AdditionalPower implements GameState {
         Cell c = game.getBoard().getCell(response.getX(), response.getY());
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-        if (!Move.isPresentAtLeastOneCellToMoveTo(game, c))
-            return returnError();
+        if (!Move.isPresentAtLeastOneCellToMoveTo(game, c)) // if the current worker is not movable
+            return returnError(); //report error
 
 
-        if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
+        if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) { //if usePower goes well then go to build
             returnContent = new ReturnContent();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.BUILD);
@@ -86,8 +86,8 @@ public class AdditionalPower implements GameState {
         }
 
 
-        if (returnContent == null)
-            return returnError();
+        if (returnContent == null) //if usePower went wrong
+            return returnError(); //then report error
 
         return returnContent;
     }
@@ -99,11 +99,11 @@ public class AdditionalPower implements GameState {
         Cell c = game.getBoard().getCell(response.getX(), response.getY());
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-        if (c.isComplete())
-            return returnError();
+        if (c.isComplete()) //if the chosen cell cannot be built up
+            return returnError(); //then report error
 
 
-        if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) {
+        if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) { //if usePower goes well then go to choose worker, end the current turn and start a new one
             returnContent = new ReturnContent();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHOOSE_WORKER);
@@ -115,8 +115,8 @@ public class AdditionalPower implements GameState {
         }
 
 
-        if (returnContent == null)
-            return returnError();
+        if (returnContent == null) //if usePower went wrong
+            return returnError(); //then report error
 
         return returnContent;
     }

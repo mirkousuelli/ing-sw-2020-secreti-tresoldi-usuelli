@@ -102,7 +102,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
 
 
-    /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+    /*-------------------------------------------------------UPDATE---------------------------------------------------*/
     private void updateModel() {
         Answer<S> answerTemp;
 
@@ -181,7 +181,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             nextState = DemandType.ADDITIONAL_POWER;
             additionalPowerUsed = true;
         }
-    }
+    } //OK
 
     private void clearAll() {
         currentState = DemandType.START;
@@ -375,7 +375,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             reducedBoard[c.getX()][c.getY()] = c;
         }
     } //OK
-    /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+    /*----------------------------------------------------------------------------------------------------------------*/
 
 
 
