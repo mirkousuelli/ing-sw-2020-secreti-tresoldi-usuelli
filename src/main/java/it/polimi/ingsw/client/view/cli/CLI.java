@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public class CLI<S> extends ClientView<S> {
 
@@ -34,6 +35,13 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case DEFEAT:
+                out.printEnd(answerTemp.getHeader().toString());
+                if (((ReducedPlayer) answerTemp.getPayload()).getNickname().equals(clientModel.getPlayer().getNickname()))
+                    System.exit(1);
+                else
+                    isYourTurn = true;
+                break;
+
             case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;

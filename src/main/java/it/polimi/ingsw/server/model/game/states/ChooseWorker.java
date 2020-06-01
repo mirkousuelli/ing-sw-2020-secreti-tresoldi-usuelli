@@ -87,7 +87,14 @@ public class ChooseWorker implements GameState {
             if (game.getNumPlayers() > 2) {
                 returnContent.setAnswerType(AnswerType.DEFEAT);
                 returnContent.setState(State.CHOOSE_WORKER);
-                returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+                returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
+
+                int newCurrentPlayerIndex = (game.getIndex(currentPlayer) - 1) & game.getNumPlayers();
+                String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
+                game.removePlayer(currentPlayer.getNickName());
+                game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
+                game.setNumPlayers(game.getNumPlayers() - 1);
+
                 returnContent.setChangeTurn(true);
             }
             else {

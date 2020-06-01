@@ -18,6 +18,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -131,6 +132,18 @@ public class ServerConnectionSocket {
     }
 
     void SuddenDisconnection() {
+        if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
+            List<String> names = waitingConnection.keySet().stream().filter(name -> lobby.isPresentInGame(name)).collect(Collectors.toList());
+            waitingConnection.keySet().forEach(name -> {
+                if(!names.contains(name)) {
+                    lobby.deletePlayer(waitingConnection.get(name));
+                    lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
+                }
+            });
+            waitingConnection.keySet().removeIf(name -> !names.contains(name));
+            return;
+        }
+
         for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
             ch.closeSocket();
         }
