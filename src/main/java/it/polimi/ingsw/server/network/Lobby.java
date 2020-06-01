@@ -104,6 +104,7 @@ public class Lobby {
                 playerViewList.remove(playerToRemove);
             }
             playingConnection.remove(player);
+            playerColor.remove(playerToRemove);
         }
     }
 
@@ -201,7 +202,14 @@ public class Lobby {
         return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 
-    void cleanGame() {
+    void clean() {
+        playerViewList.forEach(v -> v.removeObserver(controller));
+        playerViewList.forEach(game::removeObserver);
+        playerColor.clear();
+        playerViewList.clear();
+        playingConnection.clear();
+        reloaded = false;
+        numberOfPlayers = -1;
         game.clean();
     }
 }

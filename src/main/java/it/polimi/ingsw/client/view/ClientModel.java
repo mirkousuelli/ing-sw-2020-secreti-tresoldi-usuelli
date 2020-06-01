@@ -184,11 +184,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     } //OK
 
     private void clearAll() {
-        currentState = DemandType.START;
-        if (player.isCreator())
-            nextState = DemandType.CHOOSE_DECK;
-        else
-            nextState = DemandType.CHOOSE_CARD;
+        currentState = DemandType.CONNECT;
         isNewGame = false;
         isInitializing = true;
         isReloaded = false;

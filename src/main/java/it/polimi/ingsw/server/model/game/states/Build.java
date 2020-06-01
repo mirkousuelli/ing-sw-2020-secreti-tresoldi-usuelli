@@ -182,23 +182,25 @@ public class Build implements GameState {
 
     private ReturnContent additionalPower() {
         ReturnContent returnContent = new ReturnContent();
-        List<ReducedAnswerCell> toReturn;
+        List<ReducedAnswerCell> payload;
 
-        toReturn = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
+        payload = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
 
-        if (toReturn.stream()
+        if (payload.stream()
                 .map(ReducedAnswerCell::getActionList)
                 .flatMap(List::stream)
                 .distinct()
                 .allMatch(action -> action.equals(ReducedAction.DEFAULT)) //if there are no cell where the additional power can be used
         ) {
-            returnContent.setState(State.CHOOSE_WORKER); //then end the turn and start a new one
+            returnContent.setState(State.CHOOSE_WORKER); //then go to choose worker, end the current turn and start a new one
             returnContent.setChangeTurn(true);
         }
         else
             returnContent.setState(State.ASK_ADDITIONAL_POWER); //else ask if the current player wants to use the additional power
+
+        returnContent.setPayload(payload);
 
         return returnContent;
     }

@@ -112,20 +112,19 @@ public class Move implements GameState {
            returnContent = move(); //else it must be a move (verified in Controller), so move!
 
 
+        if(ChangeTurn.controlWinCondition(game)) { //if the current player has won, then notify its victory to everyone!
+            returnContent.setState(State.VICTORY);
+            returnContent.setAnswerType(AnswerType.VICTORY);
+            //returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
+            returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
+        }
+
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) { //if the action was successful, then save!
             //save
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
             GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
-
-
-        if(ChangeTurn.controlWinCondition(game)) { //if the current player has won, then notify its victory to everyone!
-            returnContent.setState(State.VICTORY);
-            returnContent.setAnswerType(AnswerType.VICTORY);
-            returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
-        }
-
 
         if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS)) { //if the current player has activated ihs god's personal malus
             ChooseCard.applyMalus(game, Timing.END_TURN); //then add it to the player
@@ -166,7 +165,8 @@ public class Move implements GameState {
             if (reachedThirdLevel(game)) { //if the current worker reached the third level
                 returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
                 returnContent.setState(State.VICTORY);
-                returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
+                //returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
+                returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
             }
             else { //else, which means that no one won in this turn, the game switches to the next state
                 returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -271,6 +271,8 @@ public class Move implements GameState {
             returnContent.setState(State.BUILD); //then go to build
         else
             returnContent.setState(State.ASK_ADDITIONAL_POWER); //else ask if the current player wants to use the additional power
+
+        returnContent.setPayload(payload);
 
         return returnContent;
     }

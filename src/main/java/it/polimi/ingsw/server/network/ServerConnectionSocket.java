@@ -28,13 +28,15 @@ import java.util.stream.Collectors;
 
 public class ServerConnectionSocket {
     private final int port;
-    private static final String BACKUP_PATH = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
+    private static final String BACKUP_PATH = Lobby.backupPath;
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
+    private final Map<String, ServerClientHandler> waitingConnectionFromReload = new HashMap<>();
 
     private Lobby lobby;
     private boolean isActive;
+    private boolean alreadyNewGame;
 
     public ServerConnectionSocket(int port) {
         this.port = port;
@@ -43,6 +45,7 @@ public class ServerConnectionSocket {
         loadLobby();
 
         isActive = false;
+        alreadyNewGame = false;
     }
 
 
@@ -243,22 +246,23 @@ public class ServerConnectionSocket {
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
         if (response.equals("n")) {
-            if (c.isCreator() && waitingConnection.keySet().size() > 1)
-                lobby.setNewCreator(c).setCreator(true);
-
-            lobby.deletePlayer(c);
             c.setLoggingOut(true);
             c.closeSocket();
             return false;
         }
         else if (response.equals("y")) {
-            waitingConnection.put(c.getName(), c);
-
-            if (canStart()) {
-                lobby.getGame().setState(State.START);
-                lobby.cleanGame();
-                startMatch();
+            if (!alreadyNewGame) {
+                waitingConnection.clear();
+                waitingConnectionFromReload.clear();
+                lobby.clean();
+                lobby = null;
+                File file = new File(BACKUP_PATH);
+                boolean b = file.delete();
+                alreadyNewGame = true;
             }
+
+            c.setCreator(false);
+            waitingConnectionFromReload.put(c.getName(), c);
             return false;
         }
 
@@ -281,6 +285,16 @@ public class ServerConnectionSocket {
 
         synchronized (this) {
             toReturn = lobby;
+        }
+
+        return toReturn;
+    }
+
+    boolean isInWaitingConnectionFromReload(ServerClientHandler c) {
+        boolean toReturn;
+
+        synchronized (waitingConnectionFromReload) {
+            toReturn = waitingConnectionFromReload.get(c.getName()) != null;
         }
 
         return toReturn;

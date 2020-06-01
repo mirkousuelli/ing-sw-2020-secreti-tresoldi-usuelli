@@ -134,58 +134,59 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         boolean newGame;
 
                         try {
-                            //connect
-                            logIn();
-
-                            if (!isActive) {
-                                Thread.currentThread().interrupt();
-                                return;
-                            }
-
-                            synchronized (server) {
-                                reload = server.isLobbyReloaded();
-                            }
-
-                            if(!reload) {
-                                if (creator) //createGame
-                                    numberOfPlayers();
-                                else //joinGame
-                                    waitNumberOfPlayers();
+                            do {
+                                //connect
+                                logIn();
 
                                 if (!isActive) {
                                     Thread.currentThread().interrupt();
                                     return;
                                 }
 
-                                waitStart(); //wait other players
-
-                                basicStart(); //start
-                            }
-                            else
-                                reloadStart(); //reload
-
-                            Demand demand;
-                            Lobby lobby = server.getLobby();
-                            while(isActive) {
-                                demand = read();
-
-                                synchronized (lobby.lockLobby) {
-                                    newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
-                                    lobby.setReloaded(false);
+                                synchronized (server) {
+                                    reload = server.isLobbyReloaded();
                                 }
 
-                                if (newGame) { //newGame
-                                    newGame(demand);
-                                }
-                                else { //normal gameFlow
-                                    LOGGER.info("Consuming...");
-                                    synchronized (buffer) {
-                                        buffer.addLast(demand);
-                                        buffer.notifyAll();
+                                if (!reload) {
+                                    if (creator) //createGame
+                                        numberOfPlayers();
+                                    else //joinGame
+                                        waitNumberOfPlayers();
+
+                                    if (!isActive) {
+                                        Thread.currentThread().interrupt();
+                                        return;
                                     }
-                                    LOGGER.info("Consumed!");
+
+                                    waitStart(); //wait other players
+
+                                    basicStart(); //start
+                                } else
+                                    reloadStart(); //reload
+
+                                Demand demand;
+                                Lobby lobby = server.getLobby();
+                                while (isActive) {
+                                    demand = read();
+
+                                    synchronized (lobby.lockLobby) {
+                                        newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
+                                        lobby.setReloaded(false);
+                                    }
+
+                                    if (newGame) { //newGame
+                                        newGame(demand);
+                                        break;
+                                    } else { //normal gameFlow
+                                        LOGGER.info("Consuming...");
+                                        synchronized (buffer) {
+                                            buffer.addLast(demand);
+                                            buffer.notifyAll();
+                                        }
+                                        LOGGER.info("Consumed!");
+                                    }
                                 }
-                            }
+                            } while (isActive);
                         } catch (Exception e) {
                             if (!(e instanceof InterruptedException))
                                 LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
@@ -291,8 +292,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         boolean toRepeat;
 
         do {
-            demand = read();
-            name = ((ReducedMessage) demand.getPayload()).getMessage();
+            if (!server.isInWaitingConnectionFromReload(this)) {
+                demand = read();
+                name = ((ReducedMessage) demand.getPayload()).getMessage();
+            }
+
             synchronized (server) {
                 toRepeat = server.connect(this, name);
             }
@@ -390,7 +394,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
-    private void newGame(Demand demand) throws InterruptedException {
+    private void newGame(Demand demand) {
         boolean toRepeat;
 
         do {
@@ -401,10 +405,5 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             if (toRepeat)
                 demand = read();
         } while (toRepeat);
-
-        if (!loggingOut) {
-            waitStart();
-            basicStart();
-        }
     }
 }
