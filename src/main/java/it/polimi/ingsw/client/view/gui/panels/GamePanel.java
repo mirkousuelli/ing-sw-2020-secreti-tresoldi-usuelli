@@ -35,6 +35,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         this.game = ((ManagerPanel)panels).getGame();
         this.clientPlayer = ((ManagerPanel)panels).getClientPlayer();
+        this.clientPlayer.setCardViewSize(true);
 
         createRightSection();
         createPowerButton();
@@ -45,9 +46,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         int enemy = 0;
         for (JPlayer p : this.game.getPlayerList()) {
-            if (!p.equals(this.clientPlayer))
+            if (!p.equals(this.clientPlayer)) {
                 createEnemySection(p, enemy++);
-            p.setCardViewSize(true);
+                p.setCardViewSize(true);
+            }
         }
 
         game.getJMap().setGamePanel(this);
@@ -62,8 +64,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.gridy = 0;
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
-        mapCon.weightx = 0.05;
-        mapCon.weighty = 0.0975;
+        mapCon.weightx = 0.075; //0.05
+        mapCon.weighty = 1;//0.0975;
         mapCon.fill = GridBagConstraints.BOTH;
         mapCon.insets = new Insets(70,30,85,70);
 
@@ -99,10 +101,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         c.gridx = 0;
         c.gridy = 0;
-        c.insets = new Insets(0,20,-70,0);
+        c.insets = new Insets(0,20,-50,0);
 
         quitButton = new JButton(icon);
-        quitButton.setPreferredSize(new Dimension(100,50));
+        quitButton.setPreferredSize(new Dimension(100,60));
         quitButton.setOpaque(false);
         quitButton.setContentAreaFilled(false);
         quitButton.setBorderPainted(false);
@@ -160,7 +162,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         cardCon.gridx = 0;
         cardCon.gridy = 1;
-        cardCon.insets = new Insets(60,20,0,0);
+        cardCon.insets = new Insets(55,20,0,0);
         playerCon.insets = new Insets(125,0,0,0);
 
         cardButton = this.clientPlayer.getJCard();
@@ -430,6 +432,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
             if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
                 jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+                //((JBlockDecorator) jCell).buildUp();
         }
     }
 

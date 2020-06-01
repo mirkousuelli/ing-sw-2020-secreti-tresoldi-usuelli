@@ -81,6 +81,10 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
                 this.game.setCurrentPlayer((JPlayer) e.getSource());
                 break;
             case "choose":
+                for (JPlayer p : this.game.getPlayerList()) {
+                    p.removeActionListener(this);
+                }
+
                 ManagerPanel mg = (ManagerPanel) panels;
 
                 mg.addPanel(new GamePanel(panelIndex, panels));
