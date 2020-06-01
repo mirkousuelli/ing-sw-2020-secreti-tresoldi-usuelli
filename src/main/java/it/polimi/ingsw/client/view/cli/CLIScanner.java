@@ -167,6 +167,7 @@ public class CLIScanner<S> {
 
         skipAdditionalPower(value);
         skipToBuild();
+        changeNickname(value);
 
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
@@ -341,5 +342,11 @@ public class CLIScanner<S> {
 
         if (clientModel.getPrevState().equals(DemandType.MOVE))
             clientModel.setNextState(DemandType.BUILD);
+    }
+
+    private void changeNickname(String value) {
+        if (!clientModel.getCurrentState().equals(DemandType.CONNECT)) return;
+
+        clientModel.getPlayer().setNickname(value);
     }
 }

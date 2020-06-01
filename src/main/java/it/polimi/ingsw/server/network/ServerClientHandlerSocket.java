@@ -344,7 +344,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
 
         //start
-        send(new Answer(AnswerType.SUCCESS, players));
+        send(new Answer<>(AnswerType.SUCCESS, players));
         synchronized (lobby.lockLobby) {
             if (isCreator())
                 send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));

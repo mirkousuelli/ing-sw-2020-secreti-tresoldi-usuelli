@@ -179,7 +179,7 @@ public class ServerConnectionSocket {
 
         if (!isLobbyReloaded())
             c.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, c.isCreator())));
-        
+
         return false; //not toRepeat
     }
 
@@ -217,6 +217,8 @@ public class ServerConnectionSocket {
             numOfPl = lobby.getNumberOfPlayers();
         }
 
+        if (numOfPl == -1) return false;
+
         return waitingConnectionSize == numOfPl;
     }
 
@@ -227,6 +229,8 @@ public class ServerConnectionSocket {
         if (demand.getHeader() == DemandType.CREATE_GAME) {
             if (numOfPls == 2 || numOfPls == 3) {
                 lobby.setNumberOfPlayers(numOfPls);
+                if(canStart()) //add everyone to the game if the number of players is reached
+                    startMatch();
                 return false;
             }
         }
