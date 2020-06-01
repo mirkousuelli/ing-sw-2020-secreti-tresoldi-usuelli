@@ -120,7 +120,7 @@ public class ServerConnectionSocket {
 
     void deregisterConnection(ServerClientHandler c) {
         for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
-            ch.asyncSend(new Answer(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c))));
+            ch.asyncSend(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c))));
         }
 
         c.setActive(false);
@@ -149,7 +149,7 @@ public class ServerConnectionSocket {
             if (lobby.isReloaded()) {
                 if (!lobby.isPresentInGame(name)) {
                     if (waitingConnection.keySet().size() > 0) { //not present in reloaded lobby and someone is already waiting --> changeName or exit client-side
-                        c.send(new Answer(AnswerType.ERROR));
+                        c.send(new Answer<>(AnswerType.ERROR));
                         return true; //toRepeat
                     }
                     else //not present in reloaded lobby but no waiting players, so create a new lobby
@@ -158,7 +158,7 @@ public class ServerConnectionSocket {
             }
             else {
                 if (waitingConnection.get(name) != null) { //userName already exists --> changeName or exit client-side
-                    c.send(new Answer(AnswerType.ERROR));
+                    c.send(new Answer<>(AnswerType.ERROR));
                     return true; //toRepeat
                 }
 
@@ -177,45 +177,11 @@ public class ServerConnectionSocket {
         if(canStart()) //add everyone to the game if the number of players is reached
             startMatch();
 
-        c.send(new Answer(AnswerType.SUCCESS, new ReducedPlayer(name, c.isCreator())));
+        if (!isLobbyReloaded())
+            c.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, c.isCreator())));
+        
         return false; //not toRepeat
-
-        /*if (lobby != null && lobby.isReloaded() && lobby.getGame().getPlayer(name) != null) {
-            //reload
-            lobby.addPlayer(name, c);
-            c.setLobby(lobby);
-            if (lobby.getNumberOfReady() == 1)
-                c.setCreator(true);
-            LOGGER.info("Reloaded!");
-        }
-        else if (lobby == null || (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() == 0)) {
-            //create
-            lobby = new Lobby();
-            lobby.addPlayer(name, c);
-            lobby.setCurrentPlayer(lobby.getReducedPlayerList().get(0).getNickname());
-            c.setLobby(lobby);
-            c.setCreator(true);
-            LOGGER.info("Created!");
-
-            c.send(new Answer<>(AnswerType.CHANGE_TURN, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c), true)));
-        }
-        else if (!lobby.isReloaded() && lobby.getGame().getPlayer(name) == null &&
-                 lobby.getNumberOfPlayers() != -1 && lobby.getNumberOfPlayers() > lobby.getReducedPlayerList().size()) {
-            //join
-            lobby.addPlayer(name, c);
-            c.setLobby(lobby);
-            c.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c), lobby.getColor(c))));
-            LOGGER.info("Joined!");
-        }
-
-        if (lobby.isReloaded() && lobby.getGame().getPlayer(name) == null && lobby.getNumberOfReady() != 0) { //reloaded lobby is full
-            c.setLoggingOut(true);
-            c.closeSocket();
-        }
-        else
-            c.setLobby(lobby);*/
     }
-
 
     private void startMatch() {
         AtomicInteger i = new AtomicInteger();
@@ -233,8 +199,6 @@ public class ServerConnectionSocket {
                     if (c.isCreator())
                         lobby.setCurrentPlayer(c.getName());
                 });
-
-        //waitingConnection.clear();
 
         synchronized (this) {
             notifyAll();
@@ -294,7 +258,7 @@ public class ServerConnectionSocket {
             return false;
         }
 
-        c.send(new Answer(AnswerType.ERROR));
+        c.send(new Answer<>(AnswerType.ERROR));
         return true;
     }
 

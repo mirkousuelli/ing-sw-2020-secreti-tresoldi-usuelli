@@ -26,7 +26,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private final FileXML file;
     private final ServerConnectionSocket server;
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
-    private final List<Demand> buffer;
+    private final LinkedList<Demand> buffer;
 
     private boolean isActive;
     private boolean creator;
@@ -71,7 +71,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         Demand demand;
 
         synchronized (buffer) {
-            demand = buffer.remove(0);
+            demand = buffer.removeFirst();
         }
 
         return demand;
@@ -152,12 +152,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 else //joinGame
                                     waitNumberOfPlayers();
 
-                                waitStart(); //wait other players
-
                                 if (!isActive) {
                                     Thread.currentThread().interrupt();
                                     return;
                                 }
+
+                                waitStart(); //wait other players
 
                                 basicStart(); //start
                             }
@@ -180,7 +180,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 else { //normal gameFlow
                                     LOGGER.info("Consuming...");
                                     synchronized (buffer) {
-                                        buffer.add(demand);
+                                        buffer.addLast(demand);
                                         buffer.notifyAll();
                                     }
                                     LOGGER.info("Consumed!");
@@ -286,11 +286,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return name;
     }
 
-
-
-
-
-
     private void logIn() {
         Demand demand;
         boolean toRepeat;
@@ -352,14 +347,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         send(new Answer(AnswerType.SUCCESS, players));
         synchronized (lobby.lockLobby) {
             if (isCreator())
-                send(new Answer(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+                send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
     }
 
-    private void reloadStart() {
+    private void reloadStart() throws InterruptedException {
         ReducedGame reducedGame;
         Game loadedGame;
         Lobby lobby = server.getLobby();
+
+        waitStart(); //wait other players
 
         synchronized (lobby.lockLobby) {
             lobby.lockLobby.notifyAll();

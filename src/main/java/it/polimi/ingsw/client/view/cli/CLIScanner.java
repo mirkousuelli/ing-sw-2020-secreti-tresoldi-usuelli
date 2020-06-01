@@ -18,6 +18,7 @@ public class CLIScanner<S> {
     private final BufferedReader in;
     private final CLIPrinter<S> out;
 
+    private static final String CONNECT = "Insert your name:\n";
     private static final String CREATE_GAME = "Insert the number of players:\n";
     private static final String CHOOSE_DECK = "Insert the name of one the gods which will be used in this match: [godName]\n";
     private static final String CHOOSE_CARD = "Insert the name of the chosen god [godName]\n";
@@ -54,6 +55,7 @@ public class CLIScanner<S> {
     }
 
     void initializeMaps() {
+        messageMap.put(DemandType.CONNECT, CONNECT);
         messageMap.put(DemandType.CREATE_GAME, CREATE_GAME);
         messageMap.put(DemandType.CHOOSE_DECK, CHOOSE_DECK);
         messageMap.put(DemandType.CHOOSE_CARD, CHOOSE_CARD);
@@ -86,6 +88,7 @@ public class CLIScanner<S> {
         toUsePowerMap.put(DemandType.BUILD, this::isToUsePower);
         toUsePowerMap.put(DemandType.USE_POWER, this::isToUsePower);
 
+        payloadMap.put(DemandType.CONNECT, this::parseString);
         payloadMap.put(DemandType.CREATE_GAME, this::parseString);
         payloadMap.put(DemandType.CHOOSE_DECK, this::parseStringGod);
         payloadMap.put(DemandType.CHOOSE_CARD, this::parseStringGod);

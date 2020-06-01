@@ -30,7 +30,7 @@ public class CLI<S> extends ClientView<S> {
         switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
-                isYourTurn = out.printChanges(clientModel.getCurrentState());
+                isYourTurn = true;//out.printChanges(clientModel.getCurrentState());
                 break;
 
             case DEFEAT:
@@ -71,7 +71,7 @@ public class CLI<S> extends ClientView<S> {
     private void startUI() {
         if (clientModel.getCurrentState().equals(DemandType.START)) return;
 
-        if (clientModel.isYourTurn() || getAnswer().getHeader().equals(AnswerType.VICTORY))
+        if (clientModel.isYourTurn() || getAnswer().getHeader().equals(AnswerType.VICTORY) || getAnswer().getHeader().equals(AnswerType.ERROR))
             createDemand(in.requestInput(clientModel.getCurrentState()));
     }
 

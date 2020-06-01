@@ -244,7 +244,7 @@ public class CLIPrinter<S> {
 
     private void printAll() {
         printBoard();
-        if (clientModel.isYourTurn() && !clientModel.isReloaded())
+        if (clientModel.isYourTurn() && !clientModel.isReloaded() && !clientModel.getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))
             printPossibleActions();
         printGods();
     }

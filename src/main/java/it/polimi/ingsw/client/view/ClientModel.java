@@ -243,6 +243,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             if (o.getNickname().equals(player.getNickname())) {
                 player.setCard(o.getCard());
                 player.setColor(o.getColor());
+                player.setCreator(o.isCreator());
                 opponents.remove(o);
                 break;
             }
