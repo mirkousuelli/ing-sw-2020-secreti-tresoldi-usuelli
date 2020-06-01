@@ -58,7 +58,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.clientConnection = clientConnection;
 
         isReloaded = false;
-    } //OK
+    }
 
     /*------------------------------------------------------THREAD----------------------------------------------------*/
     private Thread asyncReadFromConnection() {
@@ -91,13 +91,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         );
         t.start();
         return t;
-    } //OK
+    }
 
     @Override
     protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromConnection();
         read.join();
-    } //OK
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -164,7 +164,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
 
         additionalPower();
-    } //OK
+    }
 
     private void additionalPower() {
         if (additionalPowerUsed || player.getCard() == null || !player.getCard().isAdditionalPower()) {
@@ -181,7 +181,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             nextState = DemandType.ADDITIONAL_POWER;
             additionalPowerUsed = true;
         }
-    } //OK
+    }
 
     private void clearAll() {
         currentState = DemandType.CONNECT;
@@ -198,7 +198,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         deck.clear();
         opponents.clear();
         workers.clear();
-    } //OK
+    }
 
     private void updateCurrentState() {
         if (isYourTurn()) {
@@ -214,11 +214,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             else
                 isReloaded = false;
         }
-    } //OK
+    }
 
     private synchronized void updateNextState() {
         nextState = DemandType.getNextState(currentState, player.isCreator());
-    } //OK
+    }
 
     private synchronized void reloadGame() {
         ReducedGame reducedGame = ((ReducedGame) getAnswer().getPayload());
@@ -246,14 +246,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
 
         isReloaded = true;
-    } //OK
+    }
 
     private synchronized void updateCurrentPlayer() {
         if (!currentPlayer.equals(((ReducedPlayer) getAnswer().getPayload()).getNickname())) {
             prevPlayer = currentPlayer;
             currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
         }
-    } //OK
+    }
 
     private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
         switch (currentState) {
@@ -288,7 +288,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             default:
                 throw new NotAValidInputRunTimeException("Not a valid turn: " + currentState);
         }
-    } //OK
+    }
 
     private synchronized void updateReduceObjects(Answer<S> answer) {
         System.out.println(answer.getContext());
@@ -364,13 +364,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             default:
                 throw new NotAValidInputRunTimeException("Not a valid turn");
         }
-    } //OK
+    }
 
     private synchronized void updateReducedBoard(List<ReducedAnswerCell> cells) {
         for (ReducedAnswerCell c : cells) {
             reducedBoard[c.getX()][c.getY()] = c;
         }
-    } //OK
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 

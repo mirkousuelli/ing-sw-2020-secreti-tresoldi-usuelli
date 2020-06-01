@@ -49,41 +49,6 @@ public class ServerConnectionSocket {
         alreadyNewGame = false;
     }
 
-
-
-    private void loadLobby() {
-        Game loadedGame = null;
-
-        try {
-            File f = new File(BACKUP_PATH);
-            if (f.exists()) {
-                loadedGame = GameMemory.load(BACKUP_PATH);
-                if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
-                    loadedGame = null;
-            }
-        } catch (ParserConfigurationException | SAXException e) {
-            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
-        }
-
-        if (loadedGame != null) {
-            lobby = new Lobby(loadedGame);
-            lobby.setNumberOfPlayers(loadedGame.getNumPlayers());
-        }
-    }
-
-    private void createLobby(ServerClientHandler c) {
-        try {
-            lobby = new Lobby();
-            c.setCreator(true);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Cannot create a lobby!", e);
-            c.closeSocket();
-            isActive = false;
-        }
-    }
-
-
-
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ServerClientHandlerSocket handler;
@@ -119,17 +84,37 @@ public class ServerConnectionSocket {
     }
 
 
+    private void loadLobby() {
+        Game loadedGame = null;
 
-
-
-    void deregisterConnection(ServerClientHandler c) {
-        for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
-            ch.asyncSend(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(lobby.getPlayer(c))));
+        try {
+            File f = new File(BACKUP_PATH);
+            if (f.exists()) {
+                loadedGame = GameMemory.load(BACKUP_PATH);
+                if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
+                    loadedGame = null;
+            }
+        } catch (ParserConfigurationException | SAXException e) {
+            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
         }
 
-        c.setActive(false);
-        lobby.deletePlayer(c);
+        if (loadedGame != null) {
+            lobby = new Lobby(loadedGame);
+            lobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+        }
     }
+
+    private void createLobby(ServerClientHandler c) {
+        try {
+            lobby = new Lobby();
+            c.setCreator(true);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Cannot create a lobby!", e);
+            c.closeSocket();
+            isActive = false;
+        }
+    }
+
 
     void SuddenDisconnection() {
         if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
@@ -155,8 +140,6 @@ public class ServerConnectionSocket {
         else
             lobby = null;
     }
-
-
 
 
 
@@ -282,6 +265,8 @@ public class ServerConnectionSocket {
         c.send(new Answer<>(AnswerType.ERROR));
         return true;
     }
+
+
 
     boolean isLobbyReloaded() {
         boolean isReloaded;

@@ -192,7 +192,7 @@ public class CLIScanner<S> {
 
     private S parseString(String string) {
         return (S) (new ReducedMessage(string));
-    } //OK
+    }
 
     private S parseStringReducedDemandCell(String string) {
         ReducedAnswerCell cell = getReducedCell(string);
@@ -200,7 +200,7 @@ public class CLIScanner<S> {
         if (cell == null) return null;
 
         return (S) (new ReducedDemandCell(cell.getX(), cell.getY()));
-    } //OK
+    }
 
     private S parseCommand(String string) {
         String[] input = string.split(" ");
@@ -208,11 +208,11 @@ public class CLIScanner<S> {
         if (input.length != 2) return null;
 
         return parseStringReducedDemandCell(input[1]);
-    } //OK
+    }
 
     private S parseStringGod(String string) {
         return (S) (God.parseString(string));
-    } //OK
+    }
 
 
 
@@ -227,7 +227,7 @@ public class CLIScanner<S> {
 
         return deck.stream()
                 .noneMatch(g -> g.getGod().equals(god));
-    } //OK
+    }
 
     private boolean checkWorker(String workerString) {
         ReducedAnswerCell workerCell = getReducedCell(workerString);
@@ -237,7 +237,7 @@ public class CLIScanner<S> {
         return clientModel.getWorkers().stream()
                 .filter(w -> w.getOwner().equals(clientModel.getPlayer().getNickname()))
                 .noneMatch(w -> w.getX() == workerCell.getX() && w.getY() == workerCell.getY());
-    } //OK
+    }
 
     private boolean checkPlayer(String player) {
         for (ReducedPlayer p : clientModel.getOpponents()) {
@@ -246,13 +246,13 @@ public class CLIScanner<S> {
         }
 
         return !clientModel.getPlayer().getNickname().equals(player);
-    } //OK
+    }
 
     private boolean checkCell(String cellString) {
         ReducedAnswerCell cell = getReducedCell(cellString);
 
         return  cell == null;
-    } //OK
+    }
 
     private boolean isToRepeat(String string) {
         String[] input = string.split(" ");
@@ -283,7 +283,7 @@ public class CLIScanner<S> {
         }
 
         return true;
-    } //OK
+    }
 
     private boolean isToUsePower(String string) {
         String[] input = string.split(" ");
@@ -293,7 +293,7 @@ public class CLIScanner<S> {
         if (cell == null) return true;
 
         return cell.getActionList().contains(ReducedAction.USEPOWER) && ReducedAction.USEPOWER.getName().equals(input[0]);
-    } //OK
+    }
 
     private ReducedAnswerCell getReducedCell(String cellString) {
         List<Integer> coordinate = stringToInt(cellString);
@@ -304,7 +304,7 @@ public class CLIScanner<S> {
         int y = coordinate.get(1);
 
         return clientModel.getCell(x, y);
-    } //OK
+    }
 
     private List<Integer> stringToInt(String string) {
         if (string.length() != 3) return null;
@@ -322,7 +322,7 @@ public class CLIScanner<S> {
         if(clientModel.checkCell(ret.get(0), ret.get(1))) return null;
 
         return ret;
-    } //OK
+    }
 
 
 

@@ -10,8 +10,6 @@ import it.polimi.ingsw.communication.observer.Observable;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.game.states.ChooseWorker;
-import it.polimi.ingsw.server.model.game.states.Move;
 import it.polimi.ingsw.server.model.game.states.PreparePayload;
 
 import java.io.IOException;
