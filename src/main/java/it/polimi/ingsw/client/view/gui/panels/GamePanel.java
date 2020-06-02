@@ -65,7 +65,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
         mapCon.weightx = 0.075; //0.05
-        mapCon.weighty = 1;//0.0975;
+        mapCon.weighty = 1; //0.0975;
         mapCon.fill = GridBagConstraints.BOTH;
         mapCon.insets = new Insets(70,30,85,70);
 
