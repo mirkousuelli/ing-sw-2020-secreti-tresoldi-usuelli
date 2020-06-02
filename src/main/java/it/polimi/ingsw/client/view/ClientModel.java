@@ -66,13 +66,20 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         Thread t = new Thread (
                 () -> {
                     try {
+                        Answer<S> answerTemp;
                         while (isActive()) {
                             synchronized (clientConnection.lockAnswer) {
                                 while (!clientConnection.isChanged()) clientConnection.lockAnswer.wait();
+                                clientConnection.setChanged(false);
                             }
 
-                            clientConnection.setChanged(false);
-                            setAnswer(clientConnection.getFirstAnswer());
+                            synchronized (clientConnection.lockAnswer) {
+                                while (!clientConnection.hasAnswer()) clientConnection.lockAnswer.wait();
+                                clientConnection.setChanged(false);
+                            }
+
+                            answerTemp = clientConnection.getFirstAnswer();
+                            setAnswer(answerTemp);
 
                             LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
@@ -110,6 +117,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         synchronized (lockAnswer) {
             answerTemp = getAnswer();
         }
+
+        System.out.println(answerTemp.getHeader() + " " + answerTemp.getContext() + " " + answerTemp.getPayload().toString());
 
         if (!player.isCreator() && isInitializing)
             currentState = nextState;

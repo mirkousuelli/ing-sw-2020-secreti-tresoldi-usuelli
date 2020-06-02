@@ -39,10 +39,8 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
     public Answer<S> getFirstAnswer() {
         Answer<S> answer;
 
-        synchronized (lockAnswer) {
-            synchronized (buffer) {
-                answer = buffer.removeFirst();
-            }
+        synchronized (buffer) {
+            answer = buffer.remove();
         }
 
         return answer;
@@ -76,7 +74,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
                                     LOGGER.info("Queueing...");
                                     synchronized (buffer) {
-                                        buffer.addLast(temp);
+                                        buffer.add(temp);
                                         LOGGER.info("Queued!");
                                         buffer.notifyAll();
                                         LOGGER.info("READ");

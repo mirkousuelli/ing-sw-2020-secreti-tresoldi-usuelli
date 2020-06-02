@@ -6,22 +6,24 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected ClientModel<S> clientModel;
-    private boolean isFree;
+    private boolean isFree = false;
     public final Object lockFree;
     private static final Logger LOGGER = Logger.getLogger(ClientView.class.getName());
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public ClientView(ClientModel<S> clientModel) {
         super();
         this.clientModel = clientModel;
 
         lockFree = new Object();
-        setFree(true);
     }
 
     public ClientView() {
@@ -53,8 +55,6 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     protected void setInitialRequest() {
-        setFree(false);
-
         synchronized (clientModel.lock) {
             setDemand(new Demand<>(DemandType.CONNECT, (S) (new ReducedMessage(clientModel.getPlayer().getNickname()))));
             setChanged(true);
@@ -118,13 +118,8 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
         setInitialRequest();
 
-        new Thread(
-                clientConnectionSocket
-        ).start();
-
-        new Thread(
-                clientModel
-        ).start();
+        executor.execute(clientConnectionSocket);
+        executor.execute(clientModel);
     }
 
     protected void becomeFree() {

@@ -41,6 +41,8 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!e.getSource().equals(playButton)) return;
+
         this.panelIndex.next(this.panels);
     }
 }
