@@ -65,7 +65,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
         mapCon.weightx = 0.075; //0.05
-        mapCon.weighty = 1;//0.0975;
+        mapCon.weighty = 1; //0.0975;
         mapCon.fill = GridBagConstraints.BOTH;
         mapCon.insets = new Insets(70,30,85,70);
 
@@ -430,9 +430,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             System.out.print(rac.getLevel() + " ");
             System.out.println(rac.getX() + "," + rac.getY());*/
 
-            if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
-                jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+            //if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
                 //((JBlockDecorator) jCell).buildUp();
+                //jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+            if (rac.getLevel().toInt() == jCell.getStatus().ordinal() + 1)
+                ((JBlockDecorator) jCell).buildUp();
+            else if (rac.getLevel().toInt() > jCell.getStatus().ordinal() + 1)
+                ((JBlockDecorator) jCell).addDecoration(JCellStatus.DOME);
         }
     }
 
