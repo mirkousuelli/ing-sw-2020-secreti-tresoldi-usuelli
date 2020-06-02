@@ -16,7 +16,7 @@ public enum UpdatedPartType {
 
             case "god":
             case "chooseDeck":
-            case "availableGods":
+            //case "availableGods":
                 return GOD;
 
             case "chooseCard":

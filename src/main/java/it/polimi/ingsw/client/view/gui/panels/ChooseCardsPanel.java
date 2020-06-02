@@ -297,7 +297,6 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                     activeButton.setIcon(icon);
                     activeButton.setName("send");
                 }
-                // TODO: get god's description from model
                 break;
 
             case "remove":

@@ -1,8 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     private JComboBox connectType;
     private JComboBox serverAdd;
     private JComboBox serverPort;
+
+    private boolean error = false;
 
     public NicknamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
@@ -119,13 +122,19 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         if (!e.getSource().equals(sendButton)) return;
         if (name == null || name.equals("")) return;
 
-        gui.initialRequest(
-                name,
-                (String) serverAdd.getSelectedItem(),
-                serverPort.getSelectedItem() == null
-                        ? Integer.parseInt((String) serverPort.getItemAt(0))
-                        : Integer.parseInt((String) serverPort.getSelectedItem())
-        );
+        if (error) {
+            gui.getClientModel().getPlayer().setNickname(name);
+            gui.generateDemand(DemandType.CONNECT, new ReducedMessage(name));
+            error = false;
+        }
+        else
+            gui.initialRequest(
+                    name,
+                    (String) serverAdd.getSelectedItem(),
+                    serverPort.getSelectedItem() == null
+                            ? Integer.parseInt((String) serverPort.getItemAt(0))
+                            : Integer.parseInt((String) serverPort.getSelectedItem())
+            );
     }
 
     @Override
@@ -133,13 +142,16 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
-        if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME))
+        if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
-        else {
+            this.panelIndex.next(this.panels);
+        }
+        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR))
+            error = true;
+        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+            this.panelIndex.next(this.panels);
             gui.free();
         }
-
-        this.panelIndex.next(this.panels);
     }
 }

@@ -42,6 +42,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     public ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
         super();
+
         reducedBoard = new ReducedAnswerCell[DIM][DIM];
         deck = new ArrayList<>();
         workers = new ArrayList<>();
@@ -190,11 +191,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isReloaded = false;
         currentPlayer = null;
         reducedBoard = new ReducedAnswerCell[DIM][DIM];
+
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 reducedBoard[i][j] = new ReducedAnswerCell(i, j, null);
             }
         }
+
         deck.clear();
         opponents.clear();
         workers.clear();
@@ -291,66 +294,66 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private synchronized void updateReduceObjects(Answer<S> answer) {
-        System.out.println(answer.getContext());
         switch (answer.getContext()) {
             case GOD:
             case PLAYER:
             case CARD:
                 List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
-                if (reducedCardList == null || reducedCardList.isEmpty()) return;
-                if (deck.isEmpty() || deck.size() > opponents.size() + 1) {
+                if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
+                if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;
                 }
 
-                Set<God> gods = reducedCardList.stream()
+                Set<God> gods = reducedCardList.stream() //creates a set of the chosen gods by the prev player (it must be only one)
                         .map(ReducedCard::getGod)
                         .collect(Collectors.toSet());
 
-                List<ReducedCard> chosenList = deck.stream()
+                List<ReducedCard> chosenList = deck.stream() //contains only the corresponding card of the god chosen by the previous player (it must be only one)
                         .filter(card -> !gods.contains(card.getGod()))
                         .collect(Collectors.toList());
 
-                if (chosenList.size() > 1) return;
+                if (chosenList.size() > 1) return; //safety check, cannot happen normally!
 
                 ReducedCard chosen;
-                if (chosenList.isEmpty()) {
-                    chosen = reducedCardList.get(0);
+                if (chosenList.isEmpty()) { //if the chosen card is not present in deck
+                    chosen = reducedCardList.get(0); //then pick it form the answer
                     prevPlayer = currentPlayer;
                 }
                 else
-                    chosen= chosenList.get(0);
+                    chosen = chosenList.get(0); //picks the card chosen by the prev player
 
-                ReducedPlayer current = opponents.stream()
+                ReducedPlayer current = opponents.stream() //finds prev player within the opponents
                         .filter(p -> p.getNickname().equals(prevPlayer))
                         .reduce(null, (a, b) -> a != null
                                 ? a
                                 : b
                         );
 
-                if (current == null)
+                if (current == null) //if the prev player is not an opponent, then it must be you!
                     current = player;
 
-                current.setCard(chosen);
-                deck.remove(chosen);
+                current.setCard(chosen); //assigns to the prev player the card he chose
+                deck.remove(chosen); //removes the chosen card from the deck
                 break;
 
             case WORKER:
             case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
 
-                //reset board
-                for (int i = 0; i < 5; i++) {
-                    for (int j = 0; j < 5; j++) {
+                //resets board
+                for (int i = 0; i < DIM; i++) {
+                    for (int j = 0; j < DIM; j++) {
                         reducedBoard[i][j].resetAction();
                     }
                 }
 
-                if (reducedAnswerCellList.isEmpty()) return;
+                if (reducedAnswerCellList.isEmpty()) return; //safety check, cannot happen normally!
 
                 updateReducedBoard(reducedAnswerCellList);
 
+                //resets and sets workers
                 workers = new ArrayList<>();
                 for (int i = 0; i < DIM; i++) {
                     for (int j = 0; j < DIM; j++) {

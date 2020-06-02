@@ -251,13 +251,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         if (currentState.equals(DemandType.PLACE_WORKERS))
             payload.forEach(rdc -> rdc.setGender(((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0));
 
+        map.removeDecoration(JCellStatus.toJCellStatus(currentState));
+        map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
+
         gui.generateDemand(currentState, payload.size() > 1
                 ? payload
                 : payload.get(0)
         );
-
-        map.removeDecoration(JCellStatus.toJCellStatus(currentState));
-        map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
     }
 
     public void generateDemand(JCell chosenJCell, JCellStatus status) {

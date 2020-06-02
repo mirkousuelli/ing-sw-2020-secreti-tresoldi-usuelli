@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
@@ -220,7 +221,6 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 GUI gui = mg.getGui();
 
                 chooseButton.setEnabled(false);
-                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
                 mg.getGame().getCurrentPlayer().setJCard(new JCard(chosenGod));
                 mg.getClientPlayer().setJCard(mg.getGame().getCurrentPlayer().getJCard());
                 updateDeck();
@@ -232,6 +232,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                     ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
                     this.panelIndex.next(this.panels);
                 }
+                mg.getGui().generateDemand(DemandType.CHOOSE_CARD, chosenGod);
                 break;
         }
     }
@@ -266,17 +267,12 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             return;
         }
 
-        if (gods.size() < gui.getClientModel().getNumberOfPlayers()) {
-            God godToRemove = deck.getList().stream()
-                    .filter(jGod -> !gods.contains(jGod.getGod()))
-                    .map(JGod::getGod)
-                    .reduce(null ,(a, b) -> a != null
-                            ? a
-                            : b
-                    );
+        //if (gods.size() < gui.getClientModel().getNumberOfPlayers()) {
+        if (gui.getAnswer().getContext().equals(UpdatedPartType.CARD)) {
+            if (gods.size() > 1) return; //safety check, cannot happen normally!
+            if (gui.getClientModel().getPrevPlayer().equals(mg.getClientPlayer().getNickname())) return; //already did in actionPerformed!
 
-            if (godToRemove != null)
-                updateDeck(godToRemove);
+            updateDeck(gods.get(0)); //remove from JDeck the gods chosen by the previous player
         }
 
         if (gui.getClientModel().getCurrentState().equals(DemandType.PLACE_WORKERS)) {
@@ -288,10 +284,10 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             return;
         }
 
+        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
+
         if (!gui.getClientModel().isYourTurn())
             gui.free();
-
-        chooseButton.setEnabled(gui.getClientModel().isYourTurn());
     }
 
     private void setGods() {
