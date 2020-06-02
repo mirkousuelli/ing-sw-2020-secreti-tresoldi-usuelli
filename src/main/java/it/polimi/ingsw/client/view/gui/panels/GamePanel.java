@@ -430,9 +430,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             System.out.print(rac.getLevel() + " ");
             System.out.println(rac.getX() + "," + rac.getY());*/
 
-            if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
-                jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+            //if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
                 //((JBlockDecorator) jCell).buildUp();
+                //jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
+            if (rac.getLevel().toInt() == jCell.getStatus().ordinal() + 1)
+                ((JBlockDecorator) jCell).buildUp();
+            else if (rac.getLevel().toInt() > jCell.getStatus().ordinal() + 1)
+                ((JBlockDecorator) jCell).addDecoration(JCellStatus.DOME);
         }
     }
 
