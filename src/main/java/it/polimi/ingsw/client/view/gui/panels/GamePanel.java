@@ -155,14 +155,14 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0f;
         c.insets = new Insets(0,20,0,0);
 
-        powerButton = new JButton(icon);
-        powerButton.setOpaque(false);
-        powerButton.setContentAreaFilled(false);
-        powerButton.setBorderPainted(false);
-        powerButton.addActionListener(this);
-        powerButton.setName("endTurn");
-        powerButton.setEnabled(false);
-        right.add(powerButton, c);
+        endTurnButton = new JButton(icon);
+        endTurnButton.setOpaque(false);
+        endTurnButton.setContentAreaFilled(false);
+        endTurnButton.setBorderPainted(false);
+        endTurnButton.addActionListener(this);
+        endTurnButton.setName("endTurn");
+        endTurnButton.setEnabled(false);
+        right.add(endTurnButton, c);
     }
 
     void activePowerButton(boolean active) {
