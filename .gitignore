@@ -28,4 +28,4 @@ lib
 target
 out
 .scannerwork
-out/production/Santorini/it/polimi/ingsw
+src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml
