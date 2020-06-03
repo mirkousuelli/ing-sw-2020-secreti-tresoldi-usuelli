@@ -4,6 +4,8 @@ import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.client.view.gui.component.deck.JGod;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
@@ -58,27 +60,29 @@ public class WaitingRoomPanel extends SantoriniPanel {
             mg.getGame().setJDeck(deck);
         }
 
-        switch (gui.getClientModel().getCurrentState()) {
-            case CHOOSE_DECK:
-                mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
-                this.panelIndex.next(this.panels);
-                break;
+        if (gui.getClientModel().getCurrentState() != null && gui.getClientModel().getCurrentState().equals(DemandType.START))
+            setUpJPlayers();
 
-            case CHOOSE_CARD:
-                if (!gui.getClientModel().getCurrentPlayer().isCreator()) {
-                    mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                    ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
+        if (gui.getClientModel().getAnswer().getContext() != null) {
+            switch (gui.getAnswer().getContext()) {
+                case GOD:
+                    mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
+                    ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
                     this.panelIndex.next(this.panels);
-                }
-                break;
+                    break;
 
-            case START:
-                setUpJPlayers();
-                break;
+                case CARD:
+                    if (!gui.getClientModel().getCurrentPlayer().isCreator()) {
+                        mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
+                        ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
+                        mg.getCurrentPanel().updateFromModel();
+                        this.panelIndex.next(this.panels);
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
 
         gui.free();

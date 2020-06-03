@@ -10,6 +10,7 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.*;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import javax.swing.*;
 import java.awt.*;
@@ -277,6 +278,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         if (currentState.equals(DemandType.PLACE_WORKERS))
             payload.forEach(rdc -> rdc.setGender(((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0));
 
+        if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER)) {
+            if (endTurnButton.isEnabled())
+                gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("no"));
+            else
+                gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("yes"));
+        }
+
         map.removeDecoration(JCellStatus.toJCellStatus(currentState));
         map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
 
@@ -317,10 +325,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case ASK_ADDITIONAL_POWER:
-                if (gui.getClientModel().getNextState().equals(DemandType.BUILD))
+                if (gui.getClientModel().getPrevState().equals(DemandType.MOVE))
                     setPossibleUsePowerMove(jCellList);
-                else if (gui.getClientModel().getNextState().equals(DemandType.CHOOSE_WORKER))
+                else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD))
                     setPossibleBuild(jCellList);
+
                 break;
 
             case USE_POWER:
@@ -352,7 +361,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     break;
 
                 case "endTurn":
-                    // TODO : per divinità con il power additivo
+                    endTurnButton.setEnabled(false);
                     break;
 
                 default:
@@ -370,6 +379,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         if (!gui.getClientModel().getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+                if (gui.getClientModel().getPlayer().getCard().isAdditionalPower() && gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.BUILD)) {
+                    endTurnButton.setEnabled(true);
+                }
                 mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
                 repaint();
                 validate();

@@ -51,20 +51,19 @@ public class ChooseCard implements GameState {
         }
 
         if (chosenCard != null) {
+            List<ReducedCard> toReturn = new ArrayList<>();
+
             game.removeGod(chosenCard);
             currentPlayer.setCard(chosenCard);
 
             returnContent.setAnswerType(AnswerType.SUCCESS);
-            if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName())) {
+            if (game.getPlayer(0).getNickName().equals(game.getCurrentPlayer().getNickName()))
                 returnContent.setState(State.CHOOSE_STARTER);
-                List<ReducedCard> toReturn = new ArrayList<>();
-                toReturn.add(new ReducedCard(chosenCard));
-                returnContent.setPayload(toReturn);
-            }
-            else {
+            else
                 returnContent.setChangeTurn(true);
-                returnContent.setPayload(game.getChosenGods().stream().map(ReducedCard::new).collect(Collectors.toList()));
-            }
+
+            toReturn.add(new ReducedCard(chosenCard));
+            returnContent.setPayload(toReturn);
 
             ChooseCard.applyMalus(game, Timing.DEFAULT);
         }

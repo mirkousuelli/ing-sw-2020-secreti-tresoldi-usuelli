@@ -185,6 +185,8 @@ public class Build implements GameState {
         List<ReducedAnswerCell> payload;
 
         payload = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
+        PreparePayload.mergeReducedAnswerCellList(payload, PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.BUILD));
+
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
 

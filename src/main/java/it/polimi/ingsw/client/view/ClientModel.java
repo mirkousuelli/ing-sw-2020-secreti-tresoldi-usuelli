@@ -315,23 +315,13 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     return;
                 }
 
-                Set<God> gods = reducedCardList.stream() //creates a set of the chosen gods by the prev player (it must be only one)
-                        .map(ReducedCard::getGod)
-                        .collect(Collectors.toSet());
-
-                List<ReducedCard> chosenList = deck.stream() //contains only the corresponding card of the god chosen by the previous player (it must be only one)
-                        .filter(card -> !gods.contains(card.getGod()))
-                        .collect(Collectors.toList());
-
-                if (chosenList.size() > 1) return; //safety check, cannot happen normally!
+                if (reducedCardList.size() > 1) return; //safety check, cannot happen normally!
 
                 ReducedCard chosen;
-                if (chosenList.isEmpty()) { //if the chosen card is not present in deck
-                    chosen = reducedCardList.get(0); //then pick it form the answer
+                if (deck.size() == 1) //if the chosen card is not present in deck
                     prevPlayer = currentPlayer;
-                }
-                else
-                    chosen = chosenList.get(0); //picks the card chosen by the prev player
+
+                chosen = reducedCardList.get(0); //picks the card chosen by the prev player
 
                 ReducedPlayer current = opponents.stream() //finds prev player within the opponents
                         .filter(p -> p.getNickname().equals(prevPlayer))
@@ -344,7 +334,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     current = player;
 
                 current.setCard(chosen); //assigns to the prev player the card he chose
-                deck.remove(chosen); //removes the chosen card from the deck
+                deck.removeIf(card -> card.getGod().equals(chosen.getGod())); //removes the chosen card from the deck
                 break;
 
             case WORKER:
@@ -443,7 +433,15 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     public synchronized ReducedPlayer getCurrentPlayer() {
-        if (player.getNickname().equals(currentPlayer)) return player;
+        return getPlayer(currentPlayer);
+    }
+
+    public synchronized ReducedPlayer getPreviousPlayer() {
+        return getPlayer(prevPlayer);
+    }
+
+    public synchronized ReducedPlayer getPlayer(String name) {
+        if (player.getNickname().equals(name)) return player;
 
         for (ReducedPlayer o : opponents) {
             if (o.getNickname().equals(currentPlayer))

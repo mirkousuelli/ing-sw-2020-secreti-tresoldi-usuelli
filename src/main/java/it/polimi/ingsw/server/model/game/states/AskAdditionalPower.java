@@ -60,6 +60,8 @@ public class AskAdditionalPower implements GameState {
             else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL)) //if it's an additional move power
                 returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
         }
+        else if (response.getMessage().equals("yes"))
+            returnContent.setState(State.ADDITIONAL_POWER);
 
         return returnContent;
     }
