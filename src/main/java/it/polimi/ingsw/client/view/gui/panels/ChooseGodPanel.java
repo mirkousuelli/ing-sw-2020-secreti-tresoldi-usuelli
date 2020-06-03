@@ -290,7 +290,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             updateDeck(reducedCardList.get(0).getGod()); //remove from JDeck the gods chosen by the previous player
         }
 
-        if (gui.getClientModel().getCurrentState().equals(DemandType.PLACE_WORKERS)) {
+        if (gui.getAnswer().getContext().equals(UpdatedPartType.WORKER)) {
             removeAllComponents();
             setGods();
             mg.addPanel(new GamePanel(panelIndex, panels));
