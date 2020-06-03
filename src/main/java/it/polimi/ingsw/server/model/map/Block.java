@@ -116,11 +116,9 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that checks if the block is complete, which means that its current level is dome and the previous one
-     * is top. This last specification is important since Atlas can build a dome at any level, so if a dome is placed
-     * on the ground (or any other level that isn't top) the block is not complete
+     * Method that checks if the block has a dome on it
      *
-     * @return {@code true} if the block is complete, {@code false} otherwise
+     * @return {@code true} if there is a dome on the block, {@code false} otherwise
      */
     @Override
     public boolean isComplete() {

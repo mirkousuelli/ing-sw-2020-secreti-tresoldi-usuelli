@@ -102,9 +102,9 @@ public abstract class Pawn implements Cell {
     }
 
     /**
-     * Method that checks if the current cell is complete
+     * Method that checks if the cell has a dome on it
      *
-     * @return {@code true} if the cell is complete, {@code false} otherwise
+     * @return {@code true} if there is a dome on the cell, {@code false} otherwise
      */
     @Override
     public boolean isComplete() {
