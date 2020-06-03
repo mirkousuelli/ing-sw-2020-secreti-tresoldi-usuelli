@@ -6,6 +6,12 @@ import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
 
+/**
+ * Class that represents the reduced version of a card and is used as payload in the messages
+ * <p>
+ * It contains the God corresponding to this card, its description, the effect and information if the card is an
+ * additional power or not and if the power allows the player to build a dome (like for Atlas)
+ */
 public class ReducedCard {
 
     private God god;
@@ -16,6 +22,11 @@ public class ReducedCard {
 
     public ReducedCard() {}
 
+    /**
+     * Constructor of the reduced card, initialising its attribute from the regular version of the card
+     *
+     * @param card the card which the reduced version wants to be obtained from
+     */
     public ReducedCard(Card card) {
         this.god = card.getGod();
         this.description = card.getDescription();

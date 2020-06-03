@@ -5,6 +5,16 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
+/**
+ * Class that represents the answer that the player receives after he sends a demand
+ * <p>
+ * For example if the player requires to make an irregular move, he receives an answer that contains an
+ * {@link AnswerType} of {@code ERROR}
+ * <p>
+ * It extends {@link Message}
+ *
+ * @param <S> the payload containing the modified object
+ */
 public class Answer<S> extends Message<AnswerType, S> {
 
     protected UpdatedPartType context;

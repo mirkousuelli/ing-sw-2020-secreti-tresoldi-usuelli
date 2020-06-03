@@ -8,6 +8,13 @@ import it.polimi.ingsw.server.model.map.Worker;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the reduced version of a cell that the player receives as payload in a message. It extends
+ * {@link ReducedDemandCell} by adding new attributes and methods.
+ * <p>
+ * It contains the coordinates of this cell and the gender of the worker on the cell (if the cell is occupied by a
+ * worker), adding information like its level, the list of possible actions and the worker that can be on this cell
+ */
 public class ReducedAnswerCell extends ReducedDemandCell {
 
     private ReducedLevel level;
@@ -20,6 +27,16 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this(x, y , null);
     }
 
+    /**
+     * Constructor of the reduced answer cell, which recalls its super class
+     * <p>
+     * It initialises its attributes, setting its coordinates to the designated one and all the other attributes to
+     * the classic behaviour (for example setting its level to ground and the list of action to default)
+     *
+     * @param x x-coordinate of the cell
+     * @param y y-coordinate of the cell
+     * @param worker the worker that can be on this cell
+     */
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
         super(x, y);
         level = ReducedLevel.GROUND;
@@ -36,11 +53,19 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.actionList = actionList;
     }
 
+    /**
+     * Method that replaces the default action by creating a list of action and adding the new action
+     *
+     * @param action the action that is added to the list of actions
+     */
     public void replaceDefaultAction(ReducedAction action) {
         actionList = new ArrayList<>();
         actionList.add(action);
     }
 
+    /**
+     * Method that resets the list of actions to default
+     */
     public void resetAction() {
         replaceDefaultAction(ReducedAction.DEFAULT);
     }
@@ -73,6 +98,14 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.worker = worker;
     }
 
+    /**
+     * Method that prepares the cell passed as parameter, returning its reduced version after setting its coordinates
+     * and its level. If the chosen cell is occupied by a worker it also initialises the worker (and his id) on the cell
+     *
+     * @param c the cell that the reduced version is obtained from
+     * @param playerList list of players
+     * @return the reduced version of the cell (with the eventual worker on it)
+     */
     public static ReducedAnswerCell prepareCell(Cell c, List<Player> playerList) {
         ReducedAnswerCell temp = new ReducedAnswerCell(c.getX(), c.getY());
         temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));

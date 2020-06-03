@@ -1,5 +1,11 @@
 package it.polimi.ingsw.communication.message.header;
 
+/**
+ * Enumeration that contains the type of answer that the player receives after he makes an action and represents its
+ * outcome
+ * <p>
+ * It is used as header of the message received by the player
+ */
 public enum AnswerType {
     ERROR,
     SUCCESS,
