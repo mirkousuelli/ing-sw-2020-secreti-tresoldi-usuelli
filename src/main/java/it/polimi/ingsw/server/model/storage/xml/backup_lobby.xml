@@ -3,29 +3,29 @@
 <game>
     <lobby>
         <player>
-            <nickname>ciccio</nickname>
-            <god>CHRONUS</god>
+            <nickname>yy</nickname>
+            <god>ARTEMIS</god>
             <pawns>
                 <worker current="false" gender="male">
-                    <x>1</x>
+                    <x>0</x>
                     <y>3</y>
                 </worker>
                 <worker current="true" gender="female">
                     <x>2</x>
-                    <y>3</y>
+                    <y>2</y>
                 </worker>
             </pawns>
         </player>
         <player>
-            <nickname>gamer</nickname>
-            <god>PAN</god>
+            <nickname>xx</nickname>
+            <god>APOLLO</god>
             <pawns>
                 <worker current="true" gender="male">
                     <x>1</x>
                     <y>1</y>
                 </worker>
                 <worker current="false" gender="female">
-                    <x>3</x>
+                    <x>2</x>
                     <y>1</y>
                 </worker>
             </pawns>
@@ -65,7 +65,7 @@
         <cell>
             <x>1</x>
             <y>1</y>
-            <level>BOTTOM</level>
+            <level>GROUND</level>
         </cell>
         <cell>
             <x>1</x>
@@ -75,7 +75,7 @@
         <cell>
             <x>1</x>
             <y>3</y>
-            <level>BOTTOM</level>
+            <level>GROUND</level>
         </cell>
         <cell>
             <x>1</x>
@@ -95,12 +95,12 @@
         <cell>
             <x>2</x>
             <y>2</y>
-            <level>BOTTOM</level>
+            <level>GROUND</level>
         </cell>
         <cell>
             <x>2</x>
             <y>3</y>
-            <level>TOP</level>
+            <level>GROUND</level>
         </cell>
         <cell>
             <x>2</x>
@@ -120,7 +120,7 @@
         <cell>
             <x>3</x>
             <y>2</y>
-            <level>MIDDLE</level>
+            <level>GROUND</level>
         </cell>
         <cell>
             <x>3</x>

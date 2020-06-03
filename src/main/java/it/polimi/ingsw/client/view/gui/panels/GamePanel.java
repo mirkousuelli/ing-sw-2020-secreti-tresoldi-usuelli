@@ -29,6 +29,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JPanel left;
     private JButton quitButton;
     private JButton powerButton;
+    private JButton endTurnButton;
 
     public GamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
@@ -39,6 +40,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         createRightSection();
         createPowerButton();
+        createEndTurnButton();
         createQuitButton();
         createCardSection();
         createMap();
@@ -101,7 +103,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         c.gridx = 0;
         c.gridy = 0;
-        c.insets = new Insets(0,20,-50,0);
+        c.insets = new Insets(30,20,-70,0);
 
         quitButton = new JButton(icon);
         quitButton.setPreferredSize(new Dimension(100,60));
@@ -125,7 +127,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0f;
         c.weighty = 0f;
-        c.insets = new Insets(0,20,0,0);
+        c.insets = new Insets(10,20,0,0);
 
         powerButton = new JButton(icon);
         powerButton.setOpaque(false);
@@ -135,6 +137,30 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         powerButton.setName("off");
         powerButton.setEnabled(false);
         this.game.getJMap().powerButtonManager(powerButton);
+        right.add(powerButton, c);
+    }
+
+    void createEndTurnButton() {
+        GridBagConstraints c = new GridBagConstraints();
+
+        ImageIcon icon = new ImageIcon("img/buttons/end_turn.png");
+        Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
+        icon = new ImageIcon( img );
+
+        c.gridx = 0;
+        c.gridy = 3;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0f;
+        c.weighty = 0f;
+        c.insets = new Insets(0,20,0,0);
+
+        powerButton = new JButton(icon);
+        powerButton.setOpaque(false);
+        powerButton.setContentAreaFilled(false);
+        powerButton.setBorderPainted(false);
+        powerButton.addActionListener(this);
+        powerButton.setName("endTurn");
+        powerButton.setEnabled(false);
         right.add(powerButton, c);
     }
 
@@ -162,7 +188,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         cardCon.gridx = 0;
         cardCon.gridy = 1;
-        cardCon.insets = new Insets(55,20,0,0);
+        cardCon.insets = new Insets(100,20,0,0);
         playerCon.insets = new Insets(125,0,0,0);
 
         cardButton = this.clientPlayer.getJCard();
@@ -323,6 +349,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     cardButton.applyPower();
                     this.game.getJMap().showPowerCells();
                     powerButton.setName("off");
+                    break;
+
+                case "endTurn":
+                    // TODO : per divinità con il power additivo
                     break;
 
                 default:
