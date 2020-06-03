@@ -278,8 +278,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         if (jCellList.isEmpty()) return;
 
-        System.out.println("setJCellAction " + currentState);
-        jCellList.forEach(jCell -> System.out.println(jCell.getXCoordinate() + "," + jCell.getYCoordinate()));
+        //System.out.println("setJCellAction " + currentState);
+        //jCellList.forEach(jCell -> System.out.println(jCell.getXCoordinate() + "," + jCell.getYCoordinate()));
 
         switch (currentState) {
             case MOVE:

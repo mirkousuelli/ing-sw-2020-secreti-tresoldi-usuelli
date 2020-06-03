@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.server.model.cards.powers.Power;
@@ -33,10 +34,8 @@ public class AskAdditionalPower implements GameState {
         ReducedMessage response = (ReducedMessage) game.getRequest().getDemand().getPayload();
         State prevState = game.getPrevState();
 
-
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ASK_ADDITIONAL_POWER);
-
 
         if (response.getMessage().equals("n")) { //if the current player does not want to use his additional power
             returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -49,11 +48,9 @@ public class AskAdditionalPower implements GameState {
                 returnContent.setPayload(new ArrayList<ReducedAnswerCell>());
             }
         }
-        else { //else,it has to be that he wants to use his additional power, so go to additional power!
+        else if (response.getMessage().equals("y")) { //else, it has to be that he wants to use his additional power, so go to additional power!
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.ADDITIONAL_POWER);
-
-
 
             Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
             Power p = game.getCurrentPlayer().getCard().getPower(0);
