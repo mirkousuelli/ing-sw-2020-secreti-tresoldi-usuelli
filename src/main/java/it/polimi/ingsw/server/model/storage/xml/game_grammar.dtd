@@ -15,8 +15,7 @@
             <!ELEMENT pawns (worker*)>
                 <!ELEMENT worker (x, y)>
                 <!ATTLIST worker
-                        gender (male | female) #REQUIRED>
-                <!ATTLIST worker
+                        gender (male | female) #REQUIRED
                         current (true | false) #REQUIRED>
                     <!ELEMENT x (#PCDATA)>
                     <!ELEMENT y (#PCDATA)>
@@ -32,5 +31,6 @@
     <!-- current board before the stoppage composed by 25 cells -->
     <!ELEMENT board (cell+)>
         <!-- every cell containing coordinates, level and presence of worker -->
-        <!ELEMENT cell (x, y, level)>
+        <!ELEMENT cell (x, y, level, prev)>
             <!ELEMENT level (#PCDATA)>
+            <!ELEMENT prev (#PCDATA)>
