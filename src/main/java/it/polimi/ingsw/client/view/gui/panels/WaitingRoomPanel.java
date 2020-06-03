@@ -113,10 +113,10 @@ public class WaitingRoomPanel extends SantoriniPanel {
             case "cyan":
                 return 0;
 
-            case "yellow":
+            case "red":
                 return 1;
 
-            case "purple":
+            case "yellow":
                 return 2;
 
             default:
