@@ -11,6 +11,7 @@ import java.util.List;
 public class ReducedAnswerCell extends ReducedDemandCell {
 
     private ReducedLevel level;
+    private ReducedLevel prevLevel;
     private List<ReducedAction> actionList;
     private ReducedWorker worker;
 
@@ -23,6 +24,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
         super(x, y);
         level = ReducedLevel.GROUND;
+        prevLevel = ReducedLevel.GROUND;
         actionList = new ArrayList<>();
         actionList.add(ReducedAction.DEFAULT);
         this.worker = worker;
@@ -73,9 +75,18 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.worker = worker;
     }
 
+    public ReducedLevel getPrevLevel() {
+        return prevLevel;
+    }
+
+    public void setPrevLevel(ReducedLevel prevLevel) {
+        this.prevLevel = prevLevel;
+    }
+
     public static ReducedAnswerCell prepareCell(Cell c, List<Player> playerList) {
         ReducedAnswerCell temp = new ReducedAnswerCell(c.getX(), c.getY());
         temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
+        temp.setPrevLevel(ReducedLevel.parseInt(((Block) c).getPreviousLevel().toInt()));
 
         if (!c.isFree()) {
             Worker w = ((Worker) ((Block) c).getPawn());

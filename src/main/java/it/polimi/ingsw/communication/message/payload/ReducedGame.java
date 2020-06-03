@@ -3,6 +3,7 @@ package it.polimi.ingsw.communication.message.payload;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
@@ -40,6 +41,7 @@ public class ReducedGame {
             for (int j = 0; j < 5; j++) {
                 reducedBoard[i][j] = new ReducedAnswerCell(i, j);
                 reducedBoard[i][j].setLevel(ReducedLevel.parseInt(board.map[i][j].getLevel().toInt()));
+                reducedBoard[i][j].setPrevLevel(ReducedLevel.parseInt(((Block) board.map[i][j]).getPreviousLevel().toInt()));
                 reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
             }
         }
