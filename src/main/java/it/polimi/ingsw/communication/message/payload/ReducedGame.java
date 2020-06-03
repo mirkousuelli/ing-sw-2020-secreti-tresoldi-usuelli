@@ -12,6 +12,12 @@ import it.polimi.ingsw.server.network.Lobby;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class the represents the reduced version of the game, which contains all the main pieces of information
+ * <p>
+ * It contains the board (composed by reduced version of cells), the list of players (in their reduced version), the
+ * list of workers (in their reduced version), current player's index, current worker's index and the current state
+ */
 public class ReducedGame {
 
     private ReducedAnswerCell[][] reducedBoard;
@@ -23,6 +29,11 @@ public class ReducedGame {
 
     public ReducedGame() {}
 
+    /**
+     * Constructor of the reduced game, which is initialised starting from the lobby
+     *
+     * @param lobby the lobby which the pieces of information are obtained from
+     */
     public ReducedGame(Lobby lobby) {
         Game loadedGame = lobby.getGame();
         Board board = loadedGame.getBoard();

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.communication.message.payload;
 
+/**
+ * Enumeration that represents the level which each block can be at, standardizing it for a better reading
+ */
 public enum ReducedLevel {
-    /* @enum
-     * it standardize level layers for a better reading.
-     */
 
     // level 0
     GROUND,
@@ -22,9 +22,6 @@ public enum ReducedLevel {
 
     @Override
     public String toString() {
-        /* @function
-         * it prints what string corresponds to each level
-         */
 
         switch (this) {
             case GROUND:
@@ -43,9 +40,6 @@ public enum ReducedLevel {
     }
 
     public Integer toInt() {
-        /* @function
-         * it returns the correspondent integer value
-         */
 
         switch (this) {
             case GROUND:
@@ -64,9 +58,6 @@ public enum ReducedLevel {
     }
 
     public static ReducedLevel parseInt(int level) {
-        /* @function
-         * it returns the correspondent level enum from an integer input
-         */
 
         switch (level) {
             case 0:

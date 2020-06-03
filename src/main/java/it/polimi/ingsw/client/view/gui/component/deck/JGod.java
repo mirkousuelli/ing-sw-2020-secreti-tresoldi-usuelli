@@ -32,6 +32,7 @@ public class JGod {
 
     public void setDescription(String description) {
         this.description = description;
+        //this.card.setToolTipText(description);
     }
 
     public String getDescription() {

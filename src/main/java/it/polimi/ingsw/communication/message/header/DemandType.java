@@ -2,6 +2,12 @@ package it.polimi.ingsw.communication.message.header;
 
 import java.util.Arrays;
 
+/**
+ * Enumeration that contains the type of demand that the player sends and represents the type of action that the
+ * player wants to make
+ * <p>
+ * It is used as header of the message sent by the player
+ */
 public enum DemandType {
     CONNECT,
     CREATE_GAME,
@@ -89,6 +95,13 @@ public enum DemandType {
         }
     }
 
+    /**
+     * Method that returns the following state, depending on the current one
+     *
+     * @param currentState the current state of the game
+     * @param isCreator parameter that tells if the player is the creator of the lobby
+     * @return the next state based on the current one
+     */
     public static DemandType getNextState(DemandType currentState, boolean isCreator) {
         if (currentState.equals(CONNECT)) {
             if (isCreator)

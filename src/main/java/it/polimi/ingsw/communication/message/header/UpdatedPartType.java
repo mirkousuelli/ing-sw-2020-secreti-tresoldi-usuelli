@@ -1,5 +1,8 @@
 package it.polimi.ingsw.communication.message.header;
 
+/**
+ * Enumeration that contains the type of part that is updated with a specific action
+ */
 public enum UpdatedPartType {
     WORKER,
     PLAYER,

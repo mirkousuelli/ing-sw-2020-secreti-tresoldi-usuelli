@@ -45,6 +45,7 @@ public class GameMemory {
     private static final int X = 0;
     private static final int Y = 1;
     private static final int LEVEL = 2;
+    private static final int PREV = 3;
 
     private static void write(Document doc, String path) throws TransformerException, FileNotFoundException {
         Transformer tr = TransformerFactory.newInstance().newTransformer();
@@ -145,6 +146,7 @@ public class GameMemory {
                     Element xNode = doc.createElement("x");
                     Element yNode = doc.createElement("y");
                     Element levelNode = doc.createElement("level");
+                    Element prevNode = doc.createElement("prev");
                     Block cell = (Block) game.getBoard().getCell(m, n);
 
                     xNode.setTextContent(String.valueOf(m));
@@ -155,6 +157,9 @@ public class GameMemory {
 
                     levelNode.setTextContent(cell.getLevel().getName());
                     cellNode.appendChild(levelNode);
+
+                    prevNode.setTextContent(cell.getPreviousLevel().getName());
+                    cellNode.appendChild(prevNode);
 
                     boardNode.appendChild(cellNode);
                 }
@@ -186,6 +191,7 @@ public class GameMemory {
                 k++;
             }
             cellNode.item(k).getChildNodes().item(LEVEL).setTextContent(block.getLevel().getName());
+            cellNode.item(k).getChildNodes().item(PREV).setTextContent(block.getPreviousLevel().getName());
             factory.setIgnoringElementContentWhitespace(false);
             GameMemory.write(doc, path);
         } catch (ParserConfigurationException | TransformerException | IOException | SAXException e) {
@@ -493,6 +499,7 @@ public class GameMemory {
                 Block cell = (Block) game.getBoard().getCell(x ,y);
 
                 cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
+                cell.setPreviousLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
             }
         }
         catch (SAXException | IOException | ParserConfigurationException e) {

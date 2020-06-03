@@ -1,5 +1,8 @@
 package it.polimi.ingsw.communication;
 
+/**
+ * Enumeration that contains colors
+ */
 public enum Color {
     ANSI_PURPLE("\u001B[35m"),
     ANSI_CYAN("\u001B[36m"),
