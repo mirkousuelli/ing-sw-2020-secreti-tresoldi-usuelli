@@ -260,7 +260,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     public void generateDemand(List<JCell> chosenJCells, JCellStatus status) {
-        GUI gui = ((ManagerPanel) panels).getGui();
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState;
 
@@ -275,8 +276,14 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         else
             currentState = gui.getClientModel().getCurrentState();
 
-        if (currentState.equals(DemandType.PLACE_WORKERS))
-            payload.forEach(rdc -> rdc.setGender(((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0));
+        if (currentState.equals(DemandType.PLACE_WORKERS)) {
+            List<ReducedWorker> reducedWorkerList = payload.stream()
+                    .map(rdc -> new ReducedWorker(mg.getClientPlayer().getNickname(), rdc.getX(), rdc.getY(), ((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0))
+                    .collect(Collectors.toList());
+
+            gui.generateDemand(DemandType.PLACE_WORKERS, reducedWorkerList);
+            return;
+        }
 
         if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER)) {
             if (endTurnButton.isEnabled())
@@ -379,7 +386,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         if (!gui.getClientModel().getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
-                if (gui.getClientModel().getPlayer().getCard().isAdditionalPower() && gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.BUILD)) {
+                if (gui.getClientModel().getPlayer().getCard().isAdditionalPower() && gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER)) {
                     endTurnButton.setEnabled(true);
                 }
                 mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
