@@ -10,6 +10,9 @@
 
 package it.polimi.ingsw.server.model.cards.powers;
 
+import it.polimi.ingsw.client.view.gui.component.JWorker;
+import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
+import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.map.Block;
@@ -55,7 +58,13 @@ public class MovePower<S> extends ActivePower<S> {
             return move(currentPlayer, cellToMove, opponentWorker, newPos);
         }
         else if (getAllowedAction().equals(MovementType.PUSH)) {
-            newPos = (Block) find(currentPlayer, cellToMove, adjacency);
+            if (currentPlayer.getCurrentWorker().getLocation().equals(cellToMove)) return false;
+
+            Cell c = MovePower.lineEqTwoPoints(currentPlayer.getCurrentWorker().getLocation(), cellToMove);
+
+            if (c == null) return false;
+
+            newPos = (Block) findCell(adjacency, c.getX(), c.getY());
 
             if (newPos == null) return false;
             if (!newPos.isFree()) return false;
@@ -158,11 +167,49 @@ public class MovePower<S> extends ActivePower<S> {
      * @return the cell where the opponent's worker is
      */
     private Cell findCell(List<Cell> list, int x, int y) {
-             for (Cell c: list){
-            if (c.getX() == x && c.getY() == y)
+        for (Cell c: list){
+            if (c.getX() == x && c.getY() == y && c.isFree())
                 return c;
         }
 
         return null;
+    }
+
+    public static Cell lineEqTwoPoints(Cell from, Cell to) {
+        if (to.getX() == from.getX() && to.getY() == from.getY()) return null; //from and to cannot be the same cell!
+
+        if (to.getX() != from.getX()) { //y = mx + q (slope-intercept)
+            float m = ((float) (to.getY() - from.getY())) / ((float) (to.getX() - from.getX())); //slope
+            float q = from.getY() - m*from.getX(); //intercept
+
+            return MovePower.fetchNextCell(from, to, m ,q);
+        }
+        else { //x = k (vertical line)
+            int y;
+            if (from.getY() > to.getY())
+                y = to.getY() - 1;
+            else
+                y = to.getY() + 1;
+
+            if (y >= 0 && y <= 4)
+                return new Block(to.getX(), y);
+            else
+                return null;
+
+        }
+    }
+
+    public static Cell fetchNextCell(Cell from, Cell to, float m, float q) {
+        int newX;
+
+        if (from.getX() < to.getX())
+            newX = to.getX() + 1;
+        else
+            newX = to.getX() - 1;
+
+        if (newX >= 0 && newX <= 4)
+            return new Block(newX, (int) (m*newX + q));
+        else
+            return null;
     }
 }
