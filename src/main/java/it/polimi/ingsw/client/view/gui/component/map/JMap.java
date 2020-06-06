@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.panels.GamePanel;
 import it.polimi.ingsw.client.view.gui.panels.ManagerPanel;
+import it.polimi.ingsw.communication.message.header.DemandType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -220,14 +221,10 @@ public class JMap extends JPanel implements ActionListener {
                         ((JBlockDecorator) cell).clean();
                     powerCells.clear();
 
-                    if (status.equals(JCellStatus.BUILD)) {
-                        if (((JBlockDecorator) src).isFree())
-                            ((JBlockDecorator) src).buildUp();
-                    }
-                    else if (status.equals(JCellStatus.MOVE)) {
-                        if (((JBlockDecorator) src).isFree())
+                    if (status.equals(JCellStatus.BUILD))
+                        ((JBlockDecorator) src).buildUp();
+                    else if (status.equals(JCellStatus.MOVE))
                             moveWorker(src);
-                    }
                     else if (status.equals(JCellStatus.USE_POWER)) {
                         if (power.equals(JCellStatus.BUILD)) {
                             if (managerPanel.getGui().getClientModel().getPlayer().getCard().isDomePower())
@@ -257,7 +254,7 @@ public class JMap extends JPanel implements ActionListener {
                     gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()), JCellStatus.NONE);
 
                 revalidate();
-            } else if (!((JBlockDecorator)src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator)src).getJWorker())) {
+            } else if (!((JBlockDecorator)src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator)src).getJWorker()) && managerPanel.getGui().getClientModel().getCurrentState().equals(DemandType.CHOOSE_WORKER)) {
                 gamePanel.generateDemand(((JBlockDecorator)src).getBlock(), JCellStatus.CHOOSE_WORKER);
                 currentWorker = ((JBlockDecorator)src).getJWorker();
             }
