@@ -220,10 +220,14 @@ public class JMap extends JPanel implements ActionListener {
                         ((JBlockDecorator) cell).clean();
                     powerCells.clear();
 
-                    if (status.equals(JCellStatus.BUILD))
-                        ((JBlockDecorator) src).buildUp();
-                    else if (status.equals(JCellStatus.MOVE))
-                        moveWorker(src);
+                    if (status.equals(JCellStatus.BUILD)) {
+                        if (((JBlockDecorator) src).isFree())
+                            ((JBlockDecorator) src).buildUp();
+                    }
+                    else if (status.equals(JCellStatus.MOVE)) {
+                        if (((JBlockDecorator) src).isFree())
+                            moveWorker(src);
+                    }
                     else if (status.equals(JCellStatus.USE_POWER)) {
                         if (power.equals(JCellStatus.BUILD)) {
                             if (managerPanel.getGui().getClientModel().getPlayer().getCard().isDomePower())
