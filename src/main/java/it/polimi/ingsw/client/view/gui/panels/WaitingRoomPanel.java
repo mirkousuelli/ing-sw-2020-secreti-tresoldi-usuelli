@@ -61,7 +61,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         }
 
         if (gui.getClientModel().getCurrentState() != null && gui.getClientModel().getCurrentState().equals(DemandType.START))
-            setUpJPlayers();
+            WaitingRoomPanel.setUpJPlayers((ManagerPanel) panels);
 
         if (gui.getClientModel().getAnswer().getContext() != null) {
             switch (gui.getAnswer().getContext()) {
@@ -88,8 +88,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         gui.free();
     }
 
-    private void setUpJPlayers() {
-        ManagerPanel mg = (ManagerPanel) panels;
+    static void setUpJPlayers(ManagerPanel mg) {
         GUI gui = mg.getGui();
 
         List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
@@ -98,7 +97,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         if (mg.getGame().getNumPlayer() > 0) return;
 
         for (ReducedPlayer p : playerList) {
-            mg.getGame().addPlayer(p.getNickname(), toColorIndex(p.getColor()));
+            mg.getGame().addPlayer(p.getNickname(), WaitingRoomPanel.toColorIndex(p.getColor()));
 
             if (p.getNickname().equals(gui.getClientModel().getCurrentPlayer().getNickname()))
                 mg.getGame().setCurrentPlayer(mg.getGame().getPlayer(p.getNickname()));
@@ -108,7 +107,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         }
     }
 
-    private int toColorIndex (String color) {
+    private static int toColorIndex (String color) {
         switch (color) {
             case "cyan":
                 return 0;

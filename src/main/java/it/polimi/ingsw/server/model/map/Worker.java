@@ -59,6 +59,10 @@ public class Worker extends Pawn {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setPreviousLocation(Cell prevCell) {
         if ((prevCell.getX() < 5 && prevCell.getX() >= 0) && (prevCell.getY() < 5 && prevCell.getY() >= 0)) {
             this.prevCell = (Block) prevCell;

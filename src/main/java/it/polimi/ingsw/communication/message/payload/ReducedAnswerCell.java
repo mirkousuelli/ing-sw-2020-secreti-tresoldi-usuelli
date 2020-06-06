@@ -126,7 +126,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
             for (Player p : playerList) {
                 for (Worker worker : p.getWorkers()) {
                     if (w.equals(worker)) {
-                        temp.setWorker(new ReducedWorker(w, p.nickName));
+                        temp.setWorker(new ReducedWorker(w, p));
                         temp.getWorker().setId(w.getId());
                         break;
                     }

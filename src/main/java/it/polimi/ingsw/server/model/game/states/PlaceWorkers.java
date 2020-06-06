@@ -62,7 +62,7 @@ public class PlaceWorkers implements GameState{
             chosenCell.addPawn(currentPlayer.getWorker(id));
 
             temp = new ReducedAnswerCell(chosenCell.getX(), chosenCell.getY());
-            temp.setWorker(new ReducedWorker(currentPlayer.getWorker(id), currentPlayer.nickName));
+            temp.setWorker(new ReducedWorker(currentPlayer.getWorker(id), currentPlayer));
             temp.getWorker().setGender(currentPlayer.getWorkers().size() != 1);
             modifiedCell.add(temp);
         }

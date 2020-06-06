@@ -238,6 +238,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         reducedBoard = reducedGame.getReducedBoard();
         opponents = reducedGame.getReducedPlayerList();
         currentPlayer = reducedGame.getCurrentPlayerIndex();
+        prevPlayer = currentPlayer;
         workers = reducedGame.getReducedWorkerList();
         isInitializing = false;
 

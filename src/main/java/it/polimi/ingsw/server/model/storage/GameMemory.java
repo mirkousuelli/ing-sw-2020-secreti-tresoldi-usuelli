@@ -458,6 +458,11 @@ public class GameMemory {
                     Worker worker = new Worker((Block) game.getBoard().getCell(x, y));
                     worker.setGender(workerNode.item(j).getAttributes().getNamedItem("gender").getTextContent().equals("male"));
 
+                    if (worker.isMale())
+                        worker.setId(2);
+                    else
+                        worker.setId(1);
+
                     player.addWorker(worker);
 
                     if (workerNode.item(j).getAttributes().getNamedItem("current").getTextContent().equals("true")) {

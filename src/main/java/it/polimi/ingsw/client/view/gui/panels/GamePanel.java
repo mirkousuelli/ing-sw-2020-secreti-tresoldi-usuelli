@@ -439,9 +439,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 }
                 break;
 
-            case RELOAD:
-                break;
-
             case ERROR:
                 break;
 
@@ -491,7 +488,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
                 //System.out.println("male " + prevPlayer.getMaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getMaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getMaleWorker().getId());
             }
-
             else {
                 prevPlayer.setUpFemaleWorker(jCellWorker);
                 prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
@@ -513,9 +509,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             System.out.print(rac.getLevel() + " ");
             System.out.println(rac.getX() + "," + rac.getY());*/
 
-            //if (jCell.getStatus().ordinal() <= JCellStatus.DOME.ordinal() && jCell.getStatus().ordinal() != rac.getLevel().toInt())
-                //((JBlockDecorator) jCell).buildUp();
-                //jCell.setStatus(JCellStatus.parseInt(rac.getLevel().toInt()));
             if (rac.getLevel().toInt() == jCell.getStatus().ordinal() + 1)
                 ((JBlockDecorator) jCell).buildUp();
             else if (rac.getLevel().toInt() > jCell.getStatus().ordinal() + 1)

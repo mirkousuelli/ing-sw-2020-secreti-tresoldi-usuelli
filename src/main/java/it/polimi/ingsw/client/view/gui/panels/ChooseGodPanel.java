@@ -233,7 +233,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                     reducedCard.setGod(god);
                     gui.getClientModel().getCurrentPlayer().setCard(reducedCard);
 
-                    setGods();
+                    ChooseGodPanel.setGods((ManagerPanel) panels);
                     mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
                     ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
                     this.panelIndex.next(this.panels);
@@ -292,7 +292,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
         if (gui.getAnswer().getContext().equals(UpdatedPartType.WORKER)) {
             removeAllComponents();
-            setGods();
+            ChooseGodPanel.setGods((ManagerPanel) panels);
             mg.addPanel(new GamePanel(panelIndex, panels));
             mg.getCurrentPanel().updateFromModel();
             this.panelIndex.next(this.panels);
@@ -303,8 +303,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             gui.free();
     }
 
-    private void setGods() {
-        ManagerPanel mg = (ManagerPanel) panels;
+    static void setGods(ManagerPanel mg) {
         GUI gui = mg.getGui();
 
         List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();

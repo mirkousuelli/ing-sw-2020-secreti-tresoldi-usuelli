@@ -79,7 +79,8 @@ public class ReducedGame {
 
         for (Player p : playerList) {
             for (Worker w : p.getWorkers()) {
-                ReducedWorker work = new ReducedWorker(w, p.nickName);
+                ReducedWorker work = new ReducedWorker(w, p);
+                work.setGender(w.isMale());
                 reducedWorkerList.add(work);
                 reducedBoard[w.getX()][w.getY()].setWorker(work);
             }
