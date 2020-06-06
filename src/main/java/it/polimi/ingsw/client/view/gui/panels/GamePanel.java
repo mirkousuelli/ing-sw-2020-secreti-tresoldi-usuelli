@@ -137,6 +137,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         powerButton.addActionListener(this);
         powerButton.setName("off");
         powerButton.setEnabled(false);
+        powerButton.setVisible(false);
         this.game.getJMap().powerButtonManager(powerButton);
         right.add(powerButton, c);
     }
@@ -162,6 +163,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         endTurnButton.addActionListener(this);
         endTurnButton.setName("endTurn");
         endTurnButton.setEnabled(false);
+        endTurnButton.setVisible(false);
         right.add(endTurnButton, c);
     }
 
@@ -271,8 +273,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 .map(jCell -> new ReducedDemandCell(jCell.getXCoordinate(), jCell.getYCoordinate()))
                 .collect(Collectors.toList());
 
-        if (status.equals(JCellStatus.USE_POWER))
+        if (status.equals(JCellStatus.USE_POWER)) {
             currentState = DemandType.USE_POWER;
+            powerButton.setVisible(false);
+        }
         else
             currentState = gui.getClientModel().getCurrentState();
 
@@ -290,6 +294,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("no"));
             else
                 gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("yes"));
+
+            powerButton.setVisible(false);
+            endTurnButton.setVisible(false);
         }
 
         map.removeDecoration(JCellStatus.toJCellStatus(currentState));
@@ -334,9 +341,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case ASK_ADDITIONAL_POWER:
                 if (gui.getClientModel().getPrevState().equals(DemandType.MOVE))
                     setPossibleUsePowerMove(jCellList);
-                else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD))
+                else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD)) {
                     setPossibleBuild(jCellList);
+                    endTurnButton.setVisible(true);
+                }
 
+                powerButton.setVisible(true);
                 break;
 
             case USE_POWER:
@@ -344,6 +354,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     setPossibleUsePowerMove(jCellList);
                 else if (gui.getClientModel().getCurrentState().equals(DemandType.BUILD))
                     setPossibleUsePowerBuild(jCellList);
+
+                powerButton.setVisible(true);
+                break;
         }
     }
 
