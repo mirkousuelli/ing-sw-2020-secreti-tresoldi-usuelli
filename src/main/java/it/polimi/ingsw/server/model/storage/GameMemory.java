@@ -499,7 +499,7 @@ public class GameMemory {
                 Block cell = (Block) game.getBoard().getCell(x ,y);
 
                 cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
-                cell.setPreviousLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
+                cell.setPreviousLevel(Level.parseString(cellNode.getChildNodes().item(PREV).getTextContent()));
             }
         }
         catch (SAXException | IOException | ParserConfigurationException e) {
