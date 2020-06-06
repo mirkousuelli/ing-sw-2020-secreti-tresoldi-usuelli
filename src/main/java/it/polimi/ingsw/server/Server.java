@@ -2,7 +2,6 @@ package it.polimi.ingsw.server;
 
 
 import it.polimi.ingsw.server.network.ServerConnectionSocket;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

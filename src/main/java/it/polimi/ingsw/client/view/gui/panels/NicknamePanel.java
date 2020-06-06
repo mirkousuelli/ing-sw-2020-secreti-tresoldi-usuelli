@@ -19,6 +19,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     private JComboBox connectType;
     private JComboBox serverAdd;
     private JComboBox serverPort;
+    private JLabel errorMessage;
 
     private boolean error = false;
 
@@ -28,6 +29,23 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         createWaitStand();
         createFormat();
         createSendButton();
+        createErrorMessage();
+
+        stand.revalidate();
+        stand.repaint();
+    }
+
+    private void createErrorMessage() {
+        GridBagConstraints a = new GridBagConstraints();
+        a.gridx = 0;
+        a.gridy = 2;
+        a.insets = new Insets(0,-5,50,0);
+
+        errorMessage = new JLabel("Nickname already existing!");
+        errorMessage.setForeground(Color.RED);
+        errorMessage.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        stand.add(errorMessage, a);
+        errorMessage.setVisible(false);
     }
 
     public void createWaitStand() {
@@ -47,9 +65,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         a.gridy = 0;
         a.anchor = GridBagConstraints.WEST;
         a.weightx = 1;
-        a.weighty = 0.1;
-        a.insets = new Insets(250,40,0,0);
-        nickText = new JTextField(10);
+        a.weighty = 0f;
+        a.insets = new Insets(250,30,0,0);
+        nickText = new JTextField(14);
         nickText.setVisible(true);
         stand.add(nickText, a);
 
@@ -100,10 +118,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         c.gridy = 3;
         c.gridx = 1;
         c.anchor = GridBagConstraints.SOUTH;
-        //c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
-        //c.insets = new Insets(0,0,20,152);
 
         sendButton = new JButton(icon);
         sendButton.setOpaque(false);
@@ -146,8 +162,10 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
         }
-        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR))
+        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
             error = true;
+            errorMessage.setVisible(true);
+        }
         else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
