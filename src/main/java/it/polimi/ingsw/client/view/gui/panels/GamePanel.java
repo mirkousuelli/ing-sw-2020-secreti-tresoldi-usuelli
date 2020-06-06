@@ -113,7 +113,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         quitButton.setBorderPainted(false);
         right.add(quitButton, c);
 
-        //quitButton.addActionListener(this); TODO : da mettere verso il SAVED PANEL
+        quitButton.addActionListener(this);
     }
 
     void createPowerButton() {
@@ -382,6 +382,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
                 case "endTurn":
                     endTurnButton.setEnabled(false);
+                    break;
+
+                case "quit":
+                    ManagerPanel mg = (ManagerPanel) panels;
+                    mg.addPanel(new EndPanel("save", panelIndex, panels));
+                    this.panelIndex.next(this.panels);
                     break;
 
                 default:
