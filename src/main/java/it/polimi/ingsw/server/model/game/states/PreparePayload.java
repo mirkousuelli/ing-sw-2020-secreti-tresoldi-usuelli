@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.game.states;
 
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.server.model.Player;
@@ -8,6 +9,7 @@ import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
@@ -154,6 +156,20 @@ public class PreparePayload {
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
         tempList.add(temp);
+
+        Power power = game.getCurrentPlayer().getCard().getPower(0);
+        if (power.getEffect().equals(Effect.MOVE) && power.getAllowedAction().equals(MovementType.PUSH) &&
+                game.getState().getName().equals(State.MOVE.toString()) && game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
+            Worker worker = game.getPlayerList().stream()
+                    .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
+                    .map(Player::getWorkers)
+                    .flatMap(List::stream)
+                    .filter(w -> w.getPreviousLocation().equals(game.getCurrentPlayer().getCurrentWorker().getLocation()))
+                    .reduce(null, (a, b) -> a != null ? a : b);
+
+            temp = ReducedAnswerCell.prepareCell(worker.getLocation(), game.getPlayerList());
+            tempList.add(temp);
+        }
 
         temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
         if (state.equals(State.MOVE) && temp.isFree())

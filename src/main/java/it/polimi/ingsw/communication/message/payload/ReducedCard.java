@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
+import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 
 /**
  * Class that represents the reduced version of a card and is used as payload in the messages
@@ -16,11 +17,11 @@ public class ReducedCard {
 
     private God god;
     private String description;
-    private Effect effect;
-    private boolean isDomePower;
-    private boolean additionalPower;
 
-    public ReducedCard() {}
+    private Effect effect;
+    private MovementType movePower;
+    private  BlockType buildPower;
+    private boolean additionalPower;
 
     /**
      * Constructor of the reduced card, initialising its attribute from the regular version of the card
@@ -32,8 +33,12 @@ public class ReducedCard {
         this.description = card.getDescription();
         effect = card.getPower(0).getEffect();
         additionalPower = card.getPower(0).getTiming().equals(Timing.ADDITIONAL);
-        isDomePower = effect.equals(Effect.BUILD) && card.getPower(0).getAllowedAction().equals(BlockType.DOME);
+
+        movePower = effect.equals(Effect.MOVE) ? (MovementType) card.getPower(0).getAllowedAction() : null;
+        buildPower = effect.equals(Effect.BUILD) ? (BlockType) card.getPower(0).getAllowedAction() : null;
     }
+
+    public ReducedCard() {}
 
     public God getGod() {
         return god;
@@ -68,10 +73,30 @@ public class ReducedCard {
     }
 
     public boolean isDomePower() {
-        return isDomePower;
+        return buildPower != null && buildPower.equals(BlockType.DOME);
     }
 
-    public void setDomePower(boolean isDomePower) {
-        this.isDomePower = isDomePower;
+    public boolean isPushPower() {
+        return movePower != null && movePower.equals(MovementType.PUSH);
+    }
+
+    public boolean isSwapPower() {
+        return movePower != null && movePower.equals(MovementType.SWAP);
+    }
+
+    public MovementType getMovePower() {
+        return movePower;
+    }
+
+    public void setMovePower(MovementType movePower) {
+        this.movePower = movePower;
+    }
+
+    public BlockType getBuildPower() {
+        return buildPower;
+    }
+
+    public void setBuildPower(BlockType buildPower) {
+        this.buildPower = buildPower;
     }
 }

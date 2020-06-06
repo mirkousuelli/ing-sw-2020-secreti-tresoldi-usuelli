@@ -383,37 +383,51 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState = gui.getClientModel().getCurrentState();
+        List<ReducedAnswerCell> updatedCells;
 
-        if (!gui.getClientModel().getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
-            if (gui.getClientModel().getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
+        AnswerType answerType = (AnswerType) gui.getClientModel().getAnswer().getHeader();
+        switch (answerType) {
+            case CHANGE_TURN:
                 if (gui.getClientModel().getPlayer().getCard().isAdditionalPower() && gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER)) {
                     endTurnButton.setEnabled(true);
                 }
                 mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
-                repaint();
-                validate();
-            }
+                gui.free();
+                return;
 
-            gui.free();
-            return;
-        }
+            case DEFEAT:
+            case CLOSE:
+                mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
+                this.panelIndex.next(this.panels);
+                return;
 
-        List<ReducedAnswerCell> updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
+            case VICTORY:
+                String player = ((ReducedPlayer) gui.getAnswer().getPayload()).getNickname();
+                mg.addPanel(new EndPanel(player.equals(gui.getClientModel().getPlayer().getNickname()) ? "victory" : "lost", panelIndex, panels));
+                this.panelIndex.next(this.panels);
+                return;
 
-        updateWorkers(updatedCells);
-        updateBuild(updatedCells);
+            case SUCCESS:
+                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
 
-        map.repaint();
-        map.validate();
+                updateWorkers(updatedCells);
+                updateBuild(updatedCells);
 
-        if (!gui.getClientModel().isYourTurn()) {
-            updateMove();
+                if (!gui.getClientModel().isYourTurn()) {
+                    updateMove();
+                    gui.free();
+                    return;
+                }
+                break;
 
-            map.repaint();
-            map.validate();
+            case RELOAD:
+                break;
 
-            gui.free();
-            return;
+            case ERROR:
+                break;
+
+            default:
+                break;
         }
 
         switch (currentState) {
@@ -429,6 +443,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case BUILD:
             case ASK_ADDITIONAL_POWER:
                 //updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
+                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
                 setJCellLAction(updatedCells, currentState);
 
                 if (!currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
@@ -492,9 +507,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private void updateMove() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
-        JMap map = game.getJMap();
-
-        //System.out.println(gui.getClientModel().getCurrentState() + " " + gui.getAnswer().getHeader() + " " + gui.getAnswer().getContext());
 
         if (gui.getClientModel().getWorkers().isEmpty()) return;
         if (!gui.getAnswer().getContext().equals(UpdatedPartType.BOARD)) return;
@@ -503,54 +515,36 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         playerList.add(gui.getClientModel().getPlayer());
 
         JPlayer jPlayer;
-        JWorker jWorker;
-        ReducedWorker reducedWorker;
-
-        /*((List<ReducedWorker>) gui.getClientModel().getWorkers()).forEach(w -> System.out.println(w.getX() + "," + w.getY() + " " + w.getOwner() + " " + w.getId()));
-        game.getPlayerList().forEach(p -> {
-            System.out.println("male " + p.getMaleWorker().getLocation().getXCoordinate() + "," + p.getMaleWorker().getLocation().getYCoordinate() + " " + p.getNickname() + " " + p.getMaleWorker().getId());
-            System.out.println("female " + p.getFemaleWorker().getLocation().getXCoordinate() + "," + p.getFemaleWorker().getLocation().getYCoordinate() + " " + p.getNickname() + " " + p.getFemaleWorker().getId());
-                }
-        );*/
 
         for (ReducedPlayer p : playerList) {
             jPlayer = game.getPlayer(p.getNickname());
 
-            jWorker = jPlayer.getMaleWorker();
-            reducedWorker = getWorkerWithId(p, (List<ReducedWorker>) gui.getClientModel().getWorkers(), jWorker.getId());
+            moveJWorker(p, jPlayer.getMaleWorker());
+            moveJWorker(p, jPlayer.getFemaleWorker());
+        }
+    }
 
-            /*System.out.print("\n\nmale before: ");
-            System.out.print("jWorker: " + jWorker.getId() + " ");
-            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
-            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+    private void moveJWorker(ReducedPlayer p, JWorker jWorker) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        JMap map = game.getJMap();
 
-            if (isNotSameCell(jWorker.getLocation(), reducedWorker))
-                jWorker.setLocation(map.getCell(reducedWorker.getX(), reducedWorker.getY()));
+        ReducedWorker reducedWorker = getWorkerWithId(p, (List<ReducedWorker>) gui.getClientModel().getWorkers(), jWorker.getId());
+        JCell cellToMove = map.getCell(reducedWorker.getX(), reducedWorker.getY());
 
-            /*System.out.print("male after: ");
-            System.out.print("jWorker: " + jWorker.getId() + " ");
-            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
-            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
-
-            jWorker = jPlayer.getFemaleWorker();
-            reducedWorker = getWorkerWithId(p, (List<ReducedWorker>) gui.getClientModel().getWorkers(), jWorker.getId());
-
-            /*System.out.print("female before: ");
-            System.out.print("jWorker: " + jWorker.getId() + " ");
-            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
-            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
-
-            if (isNotSameCell(jWorker.getLocation(), reducedWorker))
-                jWorker.setLocation(map.getCell(reducedWorker.getX(), reducedWorker.getY()));
-
-            /*System.out.print("female after: ");
-            System.out.print("jWorker: " + jWorker.getId() + " ");
-            System.out.print(jWorker.getLocation().getXCoordinate() + "," + jWorker.getLocation().getYCoordinate() + " ");
-            System.out.println(reducedWorker.getX() + "," + reducedWorker.getY());*/
+        if (isNotSameCell(jWorker.getLocation(), reducedWorker)) {
+            if (gui.getClientModel().getCurrentPlayer().getCard().isPushPower())
+                map.pushWorker(jWorker, cellToMove);
+            else if (gui.getClientModel().getCurrentPlayer().getCard().isSwapPower())
+                map.switchWorkers(jWorker, cellToMove);
+            else
+                jWorker.setLocation(cellToMove);
         }
     }
 
     private boolean isNotSameCell(JCell jCell, ReducedWorker reducedWorker) {
+        if (jCell == null) return false;
+
         return jCell.getXCoordinate() != reducedWorker.getX() || jCell.getYCoordinate() != reducedWorker.getY();
     }
 
