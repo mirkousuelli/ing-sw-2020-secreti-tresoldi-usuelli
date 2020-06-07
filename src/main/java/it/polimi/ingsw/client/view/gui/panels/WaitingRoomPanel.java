@@ -46,6 +46,12 @@ public class WaitingRoomPanel extends SantoriniPanel {
             return;
         }
 
+        if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
+            mg.addPanel(new NumPlayerPanel(panelIndex, panels));
+            this.panelIndex.next(this.panels);
+            return;
+        }
+
         if (mg.getGame().getJDeck().getList().isEmpty()) {
             List<ReducedCard> reducedCardList = gui.getClientModel().getDeck();
             List<God> godList = reducedCardList.stream()

@@ -97,6 +97,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
                     mg.getGame().clean();
 
                     mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+                    mg.getCurrentPanel().updateFromModel();
                     this.panelIndex.next(this.panels);
                     gui.free();
                 }

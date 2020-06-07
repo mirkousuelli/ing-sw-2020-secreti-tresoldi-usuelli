@@ -80,7 +80,7 @@ public class JGame {
 
     public void clean() {
         players.clear();
-        current = -1;
+        current = 0;
         deck.clean();
         map.clean();
     }

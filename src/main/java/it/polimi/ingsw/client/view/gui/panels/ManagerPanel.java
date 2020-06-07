@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.view.gui.panels;
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.JGame;
 import it.polimi.ingsw.client.view.gui.component.JPlayer;
-import it.polimi.ingsw.client.view.gui.component.JWorker;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ManagerPanel extends JPanel {
+
     private final CardLayout cardLayout;
     private SantoriniPanel currentPanel;
     private final GUI gui;

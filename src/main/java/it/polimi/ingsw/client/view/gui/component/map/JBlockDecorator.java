@@ -92,10 +92,7 @@ public class JBlockDecorator extends JCell {
         }
     }
 
-    @Override
     public void clean() {
-        super.clean();
-
         if (decoration != null) {
             JCellStatus curr = decoration.getDecoration();
 
@@ -104,5 +101,16 @@ public class JBlockDecorator extends JCell {
                 removeDecoration();
             }
         }
+    }
+
+    @Override
+    void clear() {
+        super.clear();
+
+        if (!isFree())
+            removeWorker();
+
+        if (decoration != null)
+            removeDecoration();
     }
 }

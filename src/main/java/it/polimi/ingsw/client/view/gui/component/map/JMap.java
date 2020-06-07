@@ -304,11 +304,14 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void clean() {
-        Arrays.stream(cellButton).flatMap(Arrays::stream).forEach(JCell::clean);
+        Arrays.stream(cellButton).flatMap(Arrays::stream).forEach(JCell::clear);
         activeCells.clear();
         powerCells.clear();
         currentWorker = null;
         currentPlayer = null;
         positioning = 2;
+
+        repaint();
+        validate();
     }
 }

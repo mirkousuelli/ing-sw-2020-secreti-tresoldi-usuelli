@@ -41,7 +41,10 @@ public abstract class JCell extends JButton {
         return this.y_coo;
     }
 
-    public void clean() {
+    void clear() {
         status = JCellStatus.NONE;
+
+        repaint();
+        validate();
     }
 }
