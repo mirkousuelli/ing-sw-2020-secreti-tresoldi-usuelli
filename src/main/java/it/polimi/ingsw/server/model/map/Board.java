@@ -155,8 +155,15 @@ public class Board implements Cloneable {
                             toReturn.add(c);
                     }
                     else if (!player.getWorkers().contains((Worker) (((Block) c).getPawn()))) {
-                        if (!mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing))
-                            toReturn.add(c);
+                        if (!mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing)) {
+                            if (mp.getAllowedAction().equals(MovementType.PUSH)) {
+                                Cell nc = MovePower.lineEqTwoPoints(player.getCurrentWorker().getLocation(), c);
+                                if (nc != null && nc.isFree() && !nc.getLevel().equals(Level.DOME) && nc.getLevel().toInt() - c.getLevel().toInt() <= 1)
+                                    toReturn.add(c);
+                            }
+                            else
+                                toReturn.add(c);
+                        }
                     }
                 }
             }

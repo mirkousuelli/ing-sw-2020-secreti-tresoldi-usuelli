@@ -93,7 +93,7 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.CHOOSE_DECK, this::parseStringGod);
         payloadMap.put(DemandType.CHOOSE_CARD, this::parseStringGod);
         payloadMap.put(DemandType.CHOOSE_STARTER, this::parseString);
-        payloadMap.put(DemandType.PLACE_WORKERS, this::parseStringReducedDemandCell);
+        payloadMap.put(DemandType.PLACE_WORKERS, this::parseStringReducedWorker);
         payloadMap.put(DemandType.CHOOSE_WORKER, this::parseStringReducedDemandCell);
         payloadMap.put(DemandType.MOVE, this::parseCommand);
         payloadMap.put(DemandType.BUILD, this::parseCommand);
@@ -200,6 +200,14 @@ public class CLIScanner<S> {
         if (cell == null) return null;
 
         return (S) (new ReducedDemandCell(cell.getX(), cell.getY()));
+    }
+
+    private S parseStringReducedWorker(String string) {
+        ReducedAnswerCell cell = getReducedCell(string);
+
+        if (cell == null) return null;
+
+        return (S) (new ReducedWorker(clientModel.getPlayer().getNickname(), cell.getX(), cell.getY(), false));
     }
 
     private S parseCommand(String string) {

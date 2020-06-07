@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.communication.message.payload.ReducedWorker;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
@@ -33,15 +34,15 @@ public class PlaceWorkersTest {
         game.addPlayer(p1);
         game.addPlayer(p2);
 
-        List<ReducedDemandCell> workersPlayer1 = new ArrayList<>();
-        ReducedDemandCell w1p1 = new ReducedDemandCell(0,0);
-        ReducedDemandCell w2p1 = new ReducedDemandCell(2,4);
+        List<ReducedWorker> workersPlayer1 = new ArrayList<>();
+        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0,0, false);
+        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2,4, true);
         workersPlayer1.add(w1p1);
         workersPlayer1.add(w2p1);
 
-        List<ReducedDemandCell> workersPlayer2 = new ArrayList<>();
-        ReducedDemandCell w1p2 = new ReducedDemandCell(1,3);
-        ReducedDemandCell w2p2 = new ReducedDemandCell(2,2);
+        List<ReducedWorker> workersPlayer2 = new ArrayList<>();
+        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1,3, false);
+        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 2,2, true);
         workersPlayer2.add(w1p2);
         workersPlayer2.add(w2p2);
 
@@ -90,15 +91,15 @@ public class PlaceWorkersTest {
         game.addPlayer(p1);
         game.addPlayer(p2);
 
-        List<ReducedDemandCell> workersPlayer1 = new ArrayList<>();
-        ReducedDemandCell w1p1 = new ReducedDemandCell(0,0);
-        ReducedDemandCell w2p1 = new ReducedDemandCell(2,4);
+        List<ReducedWorker> workersPlayer1 = new ArrayList<>();
+        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0,0, false);
+        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2,4, true);
         workersPlayer1.add(w1p1);
         workersPlayer1.add(w2p1);
 
-        List<ReducedDemandCell> workersPlayer2 = new ArrayList<>();
-        ReducedDemandCell w1p2 = new ReducedDemandCell(1,3);
-        ReducedDemandCell w2p2 = new ReducedDemandCell(0,0);
+        List<ReducedWorker> workersPlayer2 = new ArrayList<>();
+        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1,3, false);
+        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 0,0, true);
         workersPlayer2.add(w1p2);
         workersPlayer2.add(w2p2);
 

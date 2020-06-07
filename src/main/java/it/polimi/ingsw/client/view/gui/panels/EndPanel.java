@@ -1,5 +1,9 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +21,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
     public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
         super(type, panelIndex, panels);
-        this.type = type;
+        this.type = type + ".png";
 
         createPlayAgainButton();
         createQuitButton();
@@ -44,6 +48,9 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         playAgainButton.setBorderPainted(false);
 
         add(playAgainButton, c);
+
+        if (type.equals(VICTORY))
+            playAgainButton.setVisible(true);
 
         validate();
         repaint();
@@ -77,13 +84,24 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
         JButton src = ((JButton) e.getSource());
 
         switch(src.getName()) {
             case "playAgain":
+                if (type.equals(VICTORY)) {
+                    gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("y"));
+                    mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+                    this.panelIndex.next(this.panels);
+                }
                 break;
 
             case "quit":
+                if (type.equals(VICTORY)) {
+                    gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("n"));
+                    System.exit(1);
+                }
                 break;
 
             default:

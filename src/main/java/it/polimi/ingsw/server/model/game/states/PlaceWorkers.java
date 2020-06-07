@@ -37,7 +37,7 @@ public class PlaceWorkers implements GameState{
         ReturnContent returnContent = new ReturnContent();
 
         Player currentPlayer = game.getCurrentPlayer();
-        List<ReducedDemandCell> workersLocations = ((List<ReducedDemandCell>) game.getRequest().getDemand().getPayload());
+        List<ReducedWorker> workersLocations = ((List<ReducedWorker>) game.getRequest().getDemand().getPayload());
         List<ReducedAnswerCell> modifiedCell = new ArrayList<>();
         ReducedAnswerCell temp;
         Block chosenCell;
@@ -48,13 +48,13 @@ public class PlaceWorkers implements GameState{
         returnContent.setState(State.PLACE_WORKERS);
 
 
-        for (ReducedDemandCell c : workersLocations) {
+        for (ReducedWorker c : workersLocations) {
             chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
             if (!chosenCell.isFree())
                 return returnContent;
         }
 
-        for (ReducedDemandCell c : workersLocations) {
+        for (ReducedWorker c : workersLocations) {
             chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());
             id = currentPlayer.getWorkers().size() + 1;
 
@@ -63,7 +63,7 @@ public class PlaceWorkers implements GameState{
 
             temp = new ReducedAnswerCell(chosenCell.getX(), chosenCell.getY());
             temp.setWorker(new ReducedWorker(currentPlayer.getWorker(id), currentPlayer.nickName));
-            temp.getWorker().setGender(c.isGender());
+            temp.getWorker().setGender(currentPlayer.getWorkers().size() != 1);
             modifiedCell.add(temp);
         }
 

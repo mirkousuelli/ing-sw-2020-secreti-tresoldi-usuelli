@@ -227,10 +227,12 @@ public class ServerConnectionSocket {
 
         if (demand.getHeader() == DemandType.CREATE_GAME) {
             if (numOfPls == 2 || numOfPls == 3) {
-                lobby.setNumberOfPlayers(numOfPls);
-                if(canStart()) //add everyone to the game if the number of players is reached
-                    startMatch();
-                return false;
+                if (!lobby.isReloaded() || numOfPls == lobby.getGame().getNumPlayers()) {
+                    lobby.setNumberOfPlayers(numOfPls);
+                    if (canStart()) //add everyone to the game if the number of players is reached
+                        startMatch();
+                    return false;
+                }
             }
         }
 

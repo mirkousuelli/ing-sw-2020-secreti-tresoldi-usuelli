@@ -23,11 +23,16 @@ public class ReducedWorker {
      * @param player the player that owns this worker
      */
     public ReducedWorker(Worker worker, String player) {
-        this.owner = player;
+        this(player, worker.getX(), worker.getY(), worker.isMale());
         id = worker.getId();
-        x = worker.getX();
-        y = worker.getY();
-        gender = worker.isMale();
+    }
+
+    public ReducedWorker(String owner, int x, int y, boolean gender) {
+        this.owner = owner;
+        id = 0;
+        this.x = x;
+        this.y = y;
+        this.gender = gender;
     }
 
     public ReducedWorker() {}
