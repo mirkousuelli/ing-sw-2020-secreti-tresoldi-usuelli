@@ -73,8 +73,7 @@ public class ManagerPanel extends JPanel {
         //board
         updateBuild(Arrays.stream(gui.getClientModel().getReducedBoard())
                 .flatMap(Arrays::stream)
-                .filter(ReducedAnswerCell::isFree)
-                .filter(rac -> rac.getLevel().toInt() > 0)
+                .filter(rac -> !rac.getLevel().equals(ReducedLevel.GROUND))
                 .collect(Collectors.toList())
         );
 
