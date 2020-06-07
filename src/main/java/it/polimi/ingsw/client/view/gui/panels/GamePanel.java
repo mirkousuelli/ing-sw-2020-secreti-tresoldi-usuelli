@@ -367,7 +367,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER)) {
                         if (gui.getClientModel().getPrevState().equals(DemandType.MOVE)) {
                             setPossibleUsePowerMove(jCellList);
-                            //setPossibleBuild(jCellList);
                         }
                         else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD)) {
                             setPossibleUsePowerBuild(jCellList);

@@ -77,4 +77,11 @@ public class JGame {
     public JMap getJMap() {
         return map;
     }
+
+    public void clean() {
+        players.clear();
+        current = -1;
+        deck.clean();
+        map.clean();
+    }
 }

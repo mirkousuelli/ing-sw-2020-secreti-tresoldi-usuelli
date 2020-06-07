@@ -155,4 +155,9 @@ public class JDeck extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         setCurrent(getJGod(((JMini) e.getSource()).getGod()));
     }
+
+    public void clean() {
+        gods.clear();
+        current = -1;
+    }
 }

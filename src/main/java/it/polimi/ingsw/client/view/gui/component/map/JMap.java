@@ -302,4 +302,13 @@ public class JMap extends JPanel implements ActionListener {
 
         return getCell(newX, (int) (m*newX + q));
     }
+
+    public void clean() {
+        Arrays.stream(cellButton).flatMap(Arrays::stream).forEach(JCell::clean);
+        activeCells.clear();
+        powerCells.clear();
+        currentWorker = null;
+        currentPlayer = null;
+        positioning = 2;
+    }
 }
