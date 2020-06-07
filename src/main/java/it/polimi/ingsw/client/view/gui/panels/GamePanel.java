@@ -67,10 +67,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.gridy = 0;
         mapCon.gridwidth = 1;
         mapCon.gridheight = 2;
-        mapCon.weightx = 0.075; //0.05
-        mapCon.weighty = 1; //0.0975;
+        mapCon.weightx = 0.075;
+        mapCon.weighty = 1;
         mapCon.fill = GridBagConstraints.BOTH;
-        mapCon.insets = new Insets(70,30,85,70);
+        mapCon.insets = new Insets(70,50,85,70);
 
         add(this.game.getJMap(), mapCon);
     }
@@ -104,7 +104,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         c.gridx = 0;
         c.gridy = 0;
-        c.insets = new Insets(30,20,-70,0);
+        c.insets = new Insets(50,0,0,0);
 
         quitButton = new JButton(icon);
         quitButton.setPreferredSize(new Dimension(100,60));
@@ -128,7 +128,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0f;
         c.weighty = 0f;
-        c.insets = new Insets(10,20,0,0);
+        //c.insets = new Insets(10,20,0,0);
 
         powerButton = new JButton(icon);
         powerButton.setOpaque(false);
@@ -153,7 +153,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 0f;
         c.weighty = 0f;
-        c.insets = new Insets(0,20,0,0);
+        //c.insets = new Insets(0,20,0,0);
 
         endTurnButton = new JButton(icon);
         endTurnButton.setOpaque(false);
@@ -189,7 +189,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         cardCon.gridx = 0;
         cardCon.gridy = 1;
-        cardCon.insets = new Insets(100,20,0,0);
+        //cardCon.insets = new Insets(100,20,0,0);
         playerCon.insets = new Insets(125,0,0,0);
 
         cardButton = this.clientPlayer.getJCard();
