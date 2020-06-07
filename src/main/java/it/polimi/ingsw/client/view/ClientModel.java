@@ -6,15 +6,12 @@ import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
-import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ClientModel<S> extends SantoriniRunnable<S> {
 
@@ -87,6 +84,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                                 setChanged(true);
                                 lockAnswer.notifyAll();
                                 LOGGER.info("updated!");
+                                LOGGER.info(() -> "prev: " + prevState);
                                 LOGGER.info(() -> "curr: " + currentState);
                                 LOGGER.info(() -> "next: " + nextState);
                             }
@@ -130,6 +128,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CHANGE_TURN:
                 updateCurrentPlayer();
                 additionalPowerUsed = true;
+
+                if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
+                    nextState = DemandType.CHOOSE_WORKER;
                 break;
 
             case ERROR:
@@ -170,7 +171,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             default:
-                throw new NotAValidInputRunTimeException("Not a valid answerType" + answerTemp.getHeader());
+                throw new NotAValidInputRunTimeException("Not a valid answerType " + answerTemp.getHeader());
         }
 
         additionalPower();

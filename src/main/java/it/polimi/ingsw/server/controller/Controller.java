@@ -7,6 +7,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.observer.Observer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
+import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.view.ActionToPerformView;
 
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class Controller implements Observer<ActionToPerformView> {
         }
 
         if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER)) {
-            if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString())) {
+            if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString()) && !model.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
                 actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not permitted")));
                 LOGGER.info(() -> "Not permitted!");
                 return;

@@ -31,11 +31,24 @@ public class AskAdditionalPower implements GameState {
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent();
 
-        ReducedMessage response = (ReducedMessage) game.getRequest().getDemand().getPayload();
-        State prevState = game.getPrevState();
-
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ASK_ADDITIONAL_POWER);
+
+        if (game.getRequest().getDemand().getHeader().equals(DemandType.ASK_ADDITIONAL_POWER))
+            returnContent = ask();
+        else if (game.getRequest().getDemand().getHeader().equals(DemandType.ADDITIONAL_POWER))
+            returnContent = new AdditionalPower(game).gameEngine();
+        else if (game.getRequest().getDemand().getHeader().equals(DemandType.BUILD))
+            returnContent = new Build(game).gameEngine();
+
+        return returnContent;
+    }
+
+    private ReturnContent ask() {
+        ReturnContent returnContent = new ReturnContent();
+
+        ReducedMessage response = (ReducedMessage) game.getRequest().getDemand().getPayload();
+        State prevState = game.getPrevState();
 
         if (response.getMessage().equals("n")) { //if the current player does not want to use his additional power
             returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -47,8 +60,7 @@ public class AskAdditionalPower implements GameState {
                 returnContent.setChangeTurn(true);
                 returnContent.setPayload(new ArrayList<ReducedAnswerCell>());
             }
-        }
-        else if (response.getMessage().equals("y")) { //else, it has to be that he wants to use his additional power, so go to additional power!
+        } else if (response.getMessage().equals("y")) { //else, it has to be that he wants to use his additional power, so go to additional power!
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.ADDITIONAL_POWER);
 
@@ -60,8 +72,6 @@ public class AskAdditionalPower implements GameState {
             else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL)) //if it's an additional move power
                 returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
         }
-        else if (response.getMessage().equals("yes"))
-            returnContent.setState(State.ADDITIONAL_POWER);
 
         return returnContent;
     }

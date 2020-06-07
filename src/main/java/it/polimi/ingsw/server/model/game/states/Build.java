@@ -157,8 +157,10 @@ public class Build implements GameState {
             returnContent = new ReturnContent();
 
             Power p = game.getCurrentPlayer().getCard().getPower(0);
-            if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) //if the current player's god has an additional power
+            if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) { //if the current player's god has an additional power
                 returnContent = additionalPower(); //then evaluate if it can be used
+                toReturn = (List<ReducedAnswerCell>) returnContent.getPayload();
+            }
             else {
                 returnContent.setState(State.CHOOSE_WORKER); //else end his turn and start a new one
                 returnContent.setChangeTurn(true);
