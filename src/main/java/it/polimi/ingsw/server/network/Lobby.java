@@ -13,6 +13,9 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class which includes hte proper game object reported to specific players.
+ */
 public class Lobby {
 
     private final Game game;
@@ -29,6 +32,9 @@ public class Lobby {
 
     public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
 
+    /**
+     * Constructor which creates the game and set up persistence feature
+     */
     Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());
         reloaded = false;
@@ -39,6 +45,11 @@ public class Lobby {
             b = f.delete();
     }
 
+    /**
+     * Constructor which is used to reload a previous game given as parameter
+     *
+     * @param game loaded from xml file
+     */
     public Lobby(Game game) {
         this.game = game;
         controller = new Controller(game);
@@ -52,6 +63,9 @@ public class Lobby {
         reloaded = true;
     }
 
+    /**
+     * Method that gets the current number of player
+     */
     int getNumberOfPlayers() {
         int ret;
 
@@ -62,6 +76,9 @@ public class Lobby {
         return ret;
     }
 
+    /**
+     * Method that gets the current player list in a reduced format
+     */
     public List<ReducedPlayer> getReducedPlayerList() {
         List<ReducedPlayer> reducedPlayerList = new ArrayList<>();
         ReducedPlayer reducedPlayer;
@@ -80,18 +97,33 @@ public class Lobby {
         return reducedPlayerList;
     }
 
+    /**
+     * Method that establishes the proper connection server side with the set of players
+     *
+     * @param View used to match players' connection
+     */
     private ServerClientHandler getServerClientHandler(View v) {
         return playingConnection.keySet().stream()
                 .filter(c -> playingConnection.get(c).equals(v))
                 .reduce(null, (a, b) -> a != null ? a : b);
     }
 
+    /**
+     * Method that sets the current number of players
+     *
+     * @param numberOfPlayers new number of players
+     */
     void setNumberOfPlayers(int numberOfPlayers) {
         synchronized (lockLobby) {
             this.numberOfPlayers = numberOfPlayers;
         }
     }
 
+    /**
+     * Method that removes players connection from the server
+     *
+     * @param player the player connection that is going to be remove
+     */
     void deletePlayer(ServerClientHandler player) {
         synchronized (playingConnection) {
             View playerToRemove = playingConnection.get(player);
@@ -108,12 +140,22 @@ public class Lobby {
         }
     }
 
+    /**
+     * Method that sets the current player
+     *
+     * @param player new current player
+     */
     void setCurrentPlayer(String player) {
         synchronized (game) {
             game.setCurrentPlayer(game.getPlayer(player));
         }
     }
 
+    /**
+     * Method that says if the game (with its relative lobby) has been reloaded with success
+     *
+     * @return {@code true} if the lobby's game has been reloaded, {@code false} if the lobby's game has not been reloaded yet
+     */
     boolean isReloaded() {
         boolean ret;
 
@@ -124,10 +166,20 @@ public class Lobby {
         return ret;
     }
 
+    /**
+     * Method that says if the maximum number of players has been reached
+     *
+     * @return {@code true} no player to be added anymore, {@code false} there is still space for other player/s
+     */
     boolean isFull() {
         return numberOfPlayers == playerViewList.size();
     }
 
+    /**
+     * Method that sets if the lobby's game has been reloaded
+     *
+     * @param reloaded if reloaded
+     */
     void setReloaded(boolean reloaded) {
         synchronized (lockLobby) {
             this.reloaded = reloaded;
@@ -142,6 +194,12 @@ public class Lobby {
         return controller;
     }
 
+    /**
+     * Method that adds the player's nickname with its own connection
+     *
+     * @param player player's nickname
+     * @param serverClientHandler player's connection
+     */
     synchronized void addPlayer(String player, ServerClientHandler serverClientHandler) {
         if (playingConnection.size() == numberOfPlayers) return;
 
@@ -158,6 +216,12 @@ public class Lobby {
             game.addPlayer(player);
     }
 
+    /**
+     * Method that check if the current player is connected inside the game
+     *
+     * @param c current player's connection
+     * @return {@code true} if it is connected, {@code false} if it is not
+     */
     boolean isCurrentPlayerInGame(ServerClientHandler c) {
         boolean ret;
 
@@ -170,14 +234,32 @@ public class Lobby {
         return ret;
     }
 
+    /**
+     * Method that check if a player is present by its connection
+     *
+     * @param c players' connection
+     * @return {@code true} it is present, {@code false} it is not
+     */
     boolean isPresentInGame(ServerClientHandler c) {
         return playingConnection.get(c) != null;
     }
 
+    /**
+     * Method that check if a player is present by its nickname
+     *
+     * @param name players' nickname
+     * @return {@code true} it is present, {@code false} it is not
+     */
     boolean isPresentInGame(String name) {
         return game.getPlayer(name) != null;
     }
 
+    /**
+     * Method that gets player's color based on its connection
+     *
+     * @param c players' connection
+     * @return {@code String} color code
+     */
     String getColor(ServerClientHandler c) {
         String color;
 
@@ -190,18 +272,38 @@ public class Lobby {
         return color;
     }
 
+    /**
+     * Method that gets a player's nickname based on its connection
+     *
+     * @param c players' connection
+     * @return {@code String} player's nickname
+     */
     String getPlayer(ServerClientHandler c) {
         return playerColor.get(playingConnection.get(c)).getNickname();
     }
 
+    /**
+     * Method that gets current players' connections list
+     *
+     * @return {@code ServerClientHandler} list of connections of current players of the lobby
+     */
     List<ServerClientHandler> getServerClientHandlerList() {
         return new ArrayList<>(playingConnection.keySet());
     }
 
+    /**
+     * Method that sets a new game creator (in case the original one has been defeat during a 3 players match)
+     *
+     * @param c players' connection
+     * @return {@code ServerClientHandler} new creator's connection
+     */
     ServerClientHandler setNewCreator(ServerClientHandler c) {
         return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 
+    /**
+     * Method that lobby's parameter to an idle state
+     */
     void clean() {
         playerViewList.forEach(v -> v.removeObserver(controller));
         playerViewList.forEach(game::removeObserver);

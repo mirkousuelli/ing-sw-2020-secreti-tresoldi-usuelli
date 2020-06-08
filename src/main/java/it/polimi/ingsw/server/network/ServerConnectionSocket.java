@@ -27,6 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Class which manages the server side connection protocol through sockets
+ */
 public class ServerConnectionSocket {
     private final int port;
     private static final String BACKUP_PATH = Lobby.backupPath;
@@ -39,6 +42,11 @@ public class ServerConnectionSocket {
     private boolean isActive;
     private boolean alreadyNewGame;
 
+    /**
+     * Constructor which initialize the server socket through its port
+     *
+     * @param port server socket port
+     */
     public ServerConnectionSocket(int port) {
         this.port = port;
 
@@ -49,6 +57,9 @@ public class ServerConnectionSocket {
         alreadyNewGame = false;
     }
 
+    /**
+     * Method that starts server socket connection stream and manages its behaviours until closing part
+     */
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ServerClientHandlerSocket handler;
@@ -83,7 +94,9 @@ public class ServerConnectionSocket {
         serverSocket.close();
     }
 
-
+    /**
+     * Method that load a previous lobby in order to recover a past match saved
+     */
     private void loadLobby() {
         Game loadedGame = null;
 
@@ -104,6 +117,11 @@ public class ServerConnectionSocket {
         }
     }
 
+    /**
+     * Method that creates a new lobby by adding the first connection as the lobby creator
+     *
+     * @param c first player connection as creator
+     */
     private void createLobby(ServerClientHandler c) {
         try {
             lobby = new Lobby();
@@ -115,7 +133,9 @@ public class ServerConnectionSocket {
         }
     }
 
-
+    /**
+     * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
+     */
     void SuddenDisconnection() {
         if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
             List<String> names = waitingConnection.keySet().stream().filter(name -> lobby.isPresentInGame(name)).collect(Collectors.toList());
@@ -142,7 +162,13 @@ public class ServerConnectionSocket {
     }
 
 
-
+    /**
+     * Method that operates the proper connection
+     *
+     * @param c player's connection
+     * @param name player's nickname
+     * @return {@code true} connected successfully, {@code false} connection gone wrong
+     */
     synchronized boolean connect(ServerClientHandler c, String name) {
         if (lobby != null) {
             if (lobby.isReloaded()) {
@@ -182,6 +208,9 @@ public class ServerConnectionSocket {
         return false; //not toRepeat
     }
 
+    /**
+     * Method that makes the match starting
+     */
     private void startMatch() {
         AtomicInteger i = new AtomicInteger();
 
@@ -204,6 +233,11 @@ public class ServerConnectionSocket {
         }
     }
 
+    /**
+     * Method that approve the intention to start the game checking all the condition
+     *
+     * @return {@code true} the game can start, {@code false} the game cannot start
+     */
     boolean canStart() {
         int waitingConnectionSize;
         int numOfPl;
@@ -221,6 +255,13 @@ public class ServerConnectionSocket {
         return waitingConnectionSize == numOfPl;
     }
 
+    /**
+     * Method that sets the game players dimension by processing the demand
+     *
+     * @param c creator's connection
+     * @param demand demand message received containing number of players information
+     * @return {@code true} something went wrong, {@code false} match started
+     */
     synchronized boolean numOfPlayers(ServerClientHandler c, Demand demand) {
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
         int numOfPls = Integer.parseInt(value);
@@ -240,6 +281,12 @@ public class ServerConnectionSocket {
         return true;
     }
 
+    /**
+     * Method that adds the worker to the list of workers of the player
+     *
+     * @param c creator's connection
+     * @return {@code true} new game started, {@code false} creator logged out
+     */
     synchronized boolean newGame(ServerClientHandler c, Demand demand) {
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
@@ -268,8 +315,9 @@ public class ServerConnectionSocket {
         return true;
     }
 
-
-
+    /**
+     * Method that says if the lobby has been reloaded from a previous storage
+     */
     boolean isLobbyReloaded() {
         boolean isReloaded;
 
@@ -280,6 +328,11 @@ public class ServerConnectionSocket {
         return isReloaded;
     }
 
+    /**
+     * Method that gets the current lobby
+     *
+     * @return {@code Lobby} current lobby
+     */
     Lobby getLobby() {
         Lobby toReturn;
 
@@ -290,6 +343,12 @@ public class ServerConnectionSocket {
         return toReturn;
     }
 
+    /**
+     * Method that check if the connection is waiting the reloading
+     *
+     * @param c player's connection
+     * @return {@code true} waiting for reload, {@code false} not waiting for reload
+     */
     boolean isInWaitingConnectionFromReload(ServerClientHandler c) {
         boolean toReturn;
 

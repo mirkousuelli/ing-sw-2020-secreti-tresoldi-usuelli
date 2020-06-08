@@ -18,6 +18,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class which implements the client-server handling as defined in its interface
+ */
 public class ServerClientHandlerSocket extends Observable<Demand> implements ServerClientHandler, Runnable {
 
     private final Socket socket;
@@ -32,6 +35,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     private String name;
 
+    /**
+     * Constructor which establishes server side connection handling each client
+     *
+     * @param socket server socket for the client handling
+     * @param server server main socket
+     */
     public ServerClientHandlerSocket(Socket socket, ServerConnectionSocket server) throws IOException {
         this.socket = socket;
         this.server = server;
@@ -41,20 +50,40 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         loggingOut = false;
     }
 
+    /**
+     * Method that makes connection log out
+     *
+     * @param loggingOut for saying if logged out
+     */
     @Override
     public void setLoggingOut(boolean loggingOut) {
         this.loggingOut = loggingOut;
     }
 
+    /**
+     * Method that sets if the connection is activer or not
+     *
+     * @param isActive for saying connection status
+     */
     @Override
     public synchronized void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
+    /**
+     * Method that says if the connection is actived
+     *
+     * @return {@code true} connection active, {@code false} connection not active
+     */
     private synchronized boolean isActive() {
         return isActive;
     }
 
+    /**
+     * Method that check demand buffer
+     *
+     * @return {@code true} demand to be processed, {@code false} demand buffer empty
+     */
     private boolean hasDemand() {
         boolean ret;
 
@@ -65,6 +94,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return ret;
     }
 
+    /**
+     * Method that pops the first demand inside the buffer
+     *
+     * @return {@code Demand} first demand to be processed inside the buffer
+     */
     private Demand getDemand() {
         Demand demand;
 
@@ -75,6 +109,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return demand;
     }
 
+    /**
+     * Method that defines a synchronous sending type of answer
+     *
+     * @param message server answer
+     */
+    @Override
     public void send(Answer message) {
         synchronized (file.lockSend) {
             try {
@@ -85,6 +125,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method that close the connection
+     */
     @Override
     public void closeSocket() {
         try {
@@ -100,11 +143,21 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method that defines an asynchronous sending type of answer
+     *
+     * @param message server answer
+     */
     @Override
     public void asyncSend(Answer message) {
         new Thread( () -> send(message) ).start();
     }
 
+    /**
+     * Method that reads and notify the controller about new demand request received
+     *
+     * @return {@code Demand} last demand received
+     */
     private Demand read() {
         Demand demand;
 
@@ -125,6 +178,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return demand;
     }
 
+    /**
+     * Method which start running a thread for the reading task
+     *
+     * @return {@code Thread} reading thread
+     */
     private Thread asyncReadFromSocket() {
         Thread t = new Thread(
                 () -> {
@@ -187,7 +245,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                             } while (isActive);
                         } catch (Exception e) {
                             if (!(e instanceof InterruptedException))
-                                LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                                LOGGER.log(Level.INFO, e, () -> "Failed to receive!" + e.getMessage());
                         }
                 }
         );
@@ -196,6 +254,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return t;
     }
 
+    /**
+     * Method that start running a notifier thread for the controller side in order to support
+     * the reading thread
+     *
+     * @return {@code Thread} new notifier thread
+     */
     private Thread notifierThread() {
         Thread t = new Thread(
                 () -> {
@@ -225,7 +289,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         }
                     } catch (Exception e){
                         if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!" + e.getMessage());
                     }
                 }
         );
@@ -233,6 +297,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return t;
     }
 
+    /**
+     * Method that start running a thread which checks connection active state
+     *
+     * @return {@code Thread} new active checker thread
+     */
     private Thread watchDogThread() {
         Thread t = new Thread(
                 () -> {
@@ -250,6 +319,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return t;
     }
 
+    /**
+     * Method that start running the main class thread incorporating the minor ones
+     */
     @Override
     public void run() {
         setActive(true);
@@ -270,21 +342,39 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method that sets the player game creator
+     *
+     * @param creator saying if this connection is reported to the creator
+     */
     @Override
     public void setCreator(boolean creator) {
         this.creator = creator;
     }
 
+    /**
+     * Method that checks if the connection belong to the creator
+     *
+     * @return {@code true} if connection belongs to the creator, {@code false} it doesn't belong to the creator
+     */
     @Override
     public boolean isCreator() {
         return creator;
     }
 
+    /**
+     * Method that gets connection player's name
+     *
+     * @return {@code String} player's name
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Method that operates the log ing feature
+     */
     private void logIn() {
         Demand demand;
         boolean toRepeat;
@@ -301,6 +391,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         } while (toRepeat);
     }
 
+    /**
+     * Method that manage the number of players through the demand received
+     */
     private void numberOfPlayers() {
         Demand demand;
         boolean toRepeat;
@@ -314,6 +407,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         } while (toRepeat);
     }
 
+    /**
+     * Method that manage the waiting flow for the joining initial part of the application
+     */
     private void waitNumberOfPlayers() throws InterruptedException {
         Lobby lobby = server.getLobby();
 
@@ -329,12 +425,18 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method which stops the server in waiting status
+     */
     private void waitStart() throws InterruptedException {
         synchronized (server) {
             while (!server.canStart()) server.wait();
         }
     }
 
+    /**
+     * Method which defines the standard beginning of a match
+     */
     private void basicStart() {
         //wait
         Lobby lobby = server.getLobby();
@@ -353,6 +455,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method which defines the reloaded beginning from a previous match still in playing byt the same players
+     */
     private void reloadStart() throws InterruptedException {
         ReducedGame reducedGame;
         Game loadedGame;
@@ -392,6 +497,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method that makes a new game creation after the proper demand received
+     */
     private void newGame(Demand demand) {
         boolean toRepeat;
 
