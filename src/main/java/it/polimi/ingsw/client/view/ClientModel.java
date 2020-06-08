@@ -9,6 +9,7 @@ import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -200,13 +201,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isInitializing = true;
         isReloaded = false;
         currentPlayer = null;
-        reducedBoard = new ReducedAnswerCell[DIM][DIM];
 
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                reducedBoard[i][j] = new ReducedAnswerCell(i, j, null);
-            }
-        }
+        Arrays.stream(reducedBoard)
+                .flatMap(Arrays::stream)
+                .forEach(ReducedAnswerCell::clear);
 
         deck.clear();
         opponents.clear();

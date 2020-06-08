@@ -135,4 +135,9 @@ public class ManagerPanel extends JPanel {
         });
 
     }
+
+    void clear() {
+        clientPlayer = null;
+        game.clean();
+    }
 }

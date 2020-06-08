@@ -309,9 +309,12 @@ public class JMap extends JPanel implements ActionListener {
         powerCells.clear();
         currentWorker = null;
         currentPlayer = null;
-        positioning = 2;
+        positioning = -1;
+        power = JCellStatus.NONE;
+        turn = JCellStatus.NONE;
+        gamePanel = null;
 
-        repaint();
         validate();
+        repaint();
     }
 }

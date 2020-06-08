@@ -10,11 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndPanel extends SantoriniPanel implements ActionListener {
+
     private static final String extension =  ".png";
     public static final String VICTORY = "victory" + extension;
     public static final String DEFEAT = "defeat" + extension;
     public static final String LOST = "lost" + extension;
     public static final String SAVE = "saved" + extension;
+
     private String type;
     private JButton playAgainButton;
     private JButton quitButton;
@@ -94,20 +96,21 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
                 if (!type.equals(DEFEAT)) {
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("y"));
 
-                    mg.getGame().clean();
+                    mg.clear();
 
                     mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
                     mg.getCurrentPanel().updateFromModel();
                     this.panelIndex.next(this.panels);
                     gui.free();
                 }
+                else
+                    playAgainButton.setEnabled(false);
                 break;
 
             case "quit":
-                if (type.equals(VICTORY)) {
+                if (!type.equals(DEFEAT))
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("n"));
-                    System.exit(1);
-                }
+                System.exit(1);
                 break;
 
             default:

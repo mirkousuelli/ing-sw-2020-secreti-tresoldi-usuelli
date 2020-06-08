@@ -108,6 +108,13 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.prevLevel = prevLevel;
     }
 
+    public void clear() {
+        level = ReducedLevel.GROUND;
+        prevLevel = ReducedLevel.GROUND;
+        resetAction();
+        worker = null;
+    }
+
     /**
      * Method that prepares the cell passed as parameter, returning its reduced version after setting its coordinates
      * and its level. If the chosen cell is occupied by a worker it also initialises the worker (and his id) on the cell
@@ -167,5 +174,4 @@ public class ReducedAnswerCell extends ReducedDemandCell {
 
         return toReturn;
     }
-
 }
