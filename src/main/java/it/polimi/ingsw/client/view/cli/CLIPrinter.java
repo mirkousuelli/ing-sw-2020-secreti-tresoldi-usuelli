@@ -287,19 +287,18 @@ public class CLIPrinter<S> {
     boolean printChanges(DemandType demandType) {
         boolean ret;
         Consumer<String> initlaFunct = initialMap.get(demandType);
-        Runnable changesMapFunct = changesMap.get(UpdatedPartType.parseString(demandType.toString()));
+        Runnable changesMapFunct = changesMap.get(clientModel.getAnswer().getContext());
 
-           if (initlaFunct != null)
-               initlaFunct.accept(stringMap.get(demandType));
-           else if (changesMapFunct != null) {
-               changesMapFunct.run();
-           }
+        if (changesMapFunct != null)
+            changesMapFunct.run();
+        else if (initlaFunct != null)
+            initlaFunct.accept(stringMap.get(demandType));
 
-           synchronized (clientModel.lock) {
-               ret = clientModel.isYourTurn();
-           }
+       synchronized (clientModel.lock) {
+           ret = clientModel.isYourTurn();
+       }
 
-           return ret;
+       return ret;
     }
 }
 

@@ -24,6 +24,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private String currentPlayer;
     private String prevPlayer = null;
     private final ReducedPlayer player;
+    private int numberOfAdditional = 0;
 
     private boolean isInitializing = true;
     private boolean isReloaded;
@@ -129,6 +130,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CHANGE_TURN:
                 updateCurrentPlayer();
                 additionalPowerUsed = true;
+                numberOfAdditional = player.getCard() != null ? player.getCard().getNumberOfAdditional() : 0;
 
                 if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
                     nextState = DemandType.CHOOSE_WORKER;
@@ -228,7 +230,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private synchronized void updateNextState() {
-        nextState = DemandType.getNextState(currentState, player.isCreator(), player.getCard() != null ? player.getCard().getNumberOfAdditional() : 0);
+        nextState = DemandType.getNextState(currentState, player.isCreator(), numberOfAdditional);
     }
 
     private synchronized void reloadGame() {
@@ -454,6 +456,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     public synchronized String getPrevPlayer() {
         return prevPlayer;
     }
+
+    public int getNumberOfAdditional() {
+        return numberOfAdditional;
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -465,6 +471,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     public synchronized void setAdditionalPowerUsed(boolean additionalPowerUsed) {
         this.additionalPowerUsed = additionalPowerUsed;
+    }
+
+    public synchronized void setNumberOfAdditional(int numberOfAdditional) {
+        this.numberOfAdditional = numberOfAdditional;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 

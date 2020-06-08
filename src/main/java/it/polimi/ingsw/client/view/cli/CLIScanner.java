@@ -78,8 +78,9 @@ public class CLIScanner<S> {
         toRepeatMap.put(DemandType.MOVE, this::isToRepeat);
         toRepeatMap.put(DemandType.BUILD, this::isToRepeat);
         toRepeatMap.put(DemandType.USE_POWER, this::isToRepeat);
-        toRepeatMap.put(DemandType.NEW_GAME, value -> !value.equals("y") && !value.equals("n"));
         toRepeatMap.put(DemandType.ASK_ADDITIONAL_POWER, value -> !value.equals("y") && !value.equals("n"));
+        toRepeatMap.put(DemandType.ADDITIONAL_POWER, this::isToRepeat);
+        toRepeatMap.put(DemandType.NEW_GAME, value -> !value.equals("y") && !value.equals("n"));
 
         indexMap.put(DemandType.CHOOSE_DECK, index -> index < clientModel.getOpponents().size());
         indexMap.put(DemandType.PLACE_WORKERS, index -> index < 1);
@@ -87,6 +88,7 @@ public class CLIScanner<S> {
         toUsePowerMap.put(DemandType.MOVE, this::isToUsePower);
         toUsePowerMap.put(DemandType.BUILD, this::isToUsePower);
         toUsePowerMap.put(DemandType.USE_POWER, this::isToUsePower);
+        toUsePowerMap.put(DemandType.ADDITIONAL_POWER, this::isToUsePower);
 
         payloadMap.put(DemandType.CONNECT, this::parseString);
         payloadMap.put(DemandType.CREATE_GAME, this::parseString);
@@ -168,6 +170,7 @@ public class CLIScanner<S> {
         skipAdditionalPower(value);
         skipToBuild();
         changeNickname(value);
+        stayInCurrentState(currentState, toUsePower);
 
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
@@ -296,6 +299,8 @@ public class CLIScanner<S> {
     private boolean isToUsePower(String string) {
         String[] input = string.split(" ");
 
+        if (input.length != 2) return true;
+
         ReducedAnswerCell cell = getReducedCell(input[1]);
 
         if (cell == null) return true;
@@ -356,5 +361,19 @@ public class CLIScanner<S> {
         if (!clientModel.getCurrentState().equals(DemandType.CONNECT)) return;
 
         clientModel.getPlayer().setNickname(value);
+    }
+
+    private void stayInCurrentState(DemandType currentState, boolean toUsePower) {
+        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER)) return;
+        if (!toUsePower) return;
+
+        int numOfAdditional = clientModel.getNumberOfAdditional();
+
+        if (numOfAdditional > 0)
+            clientModel.setNumberOfAdditional(numOfAdditional - 1);
+        if (numOfAdditional != 1)
+            clientModel.setNextState(clientModel.getCurrentState());
+
+        clientModel.setAdditionalPowerUsed(numOfAdditional == 0);
     }
 }

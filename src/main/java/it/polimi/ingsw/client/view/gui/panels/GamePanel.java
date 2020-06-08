@@ -264,7 +264,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState = gui.getClientModel().getCurrentState();
-        int numOfAdditional = gui.getClientModel().getPlayer().getCard().getNumberOfAdditional();
+        int numOfAdditional = gui.getClientModel().getNumberOfAdditional();
 
         if (!gui.getClientModel().isYourTurn()) return;
 
@@ -277,7 +277,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 currentState = DemandType.USE_POWER;
 
             if (numOfAdditional > 0)
-                gui.getClientModel().getPlayer().getCard().setNumberOfAdditional(numOfAdditional - 1);
+                gui.getClientModel().setNumberOfAdditional(numOfAdditional - 1);
             if (numOfAdditional != 1)
                 gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
             else
