@@ -100,11 +100,11 @@ public class Lobby {
     /**
      * Method that establishes the proper connection server side with the set of players
      *
-     * @param View used to match players' connection
+     * @param view used to match players' connection
      */
-    private ServerClientHandler getServerClientHandler(View v) {
+    private ServerClientHandler getServerClientHandler(View view) {
         return playingConnection.keySet().stream()
-                .filter(c -> playingConnection.get(c).equals(v))
+                .filter(c -> playingConnection.get(c).equals(view))
                 .reduce(null, (a, b) -> a != null ? a : b);
     }
 
@@ -255,50 +255,12 @@ public class Lobby {
     }
 
     /**
-     * Method that gets player's color based on its connection
-     *
-     * @param c players' connection
-     * @return {@code String} color code
-     */
-    String getColor(ServerClientHandler c) {
-        String color;
-
-        synchronized (playerColor) {
-            synchronized (playingConnection) {
-                color = playerColor.get(playingConnection.get(c)).getColor();
-            }
-        }
-
-        return color;
-    }
-
-    /**
-     * Method that gets a player's nickname based on its connection
-     *
-     * @param c players' connection
-     * @return {@code String} player's nickname
-     */
-    String getPlayer(ServerClientHandler c) {
-        return playerColor.get(playingConnection.get(c)).getNickname();
-    }
-
-    /**
      * Method that gets current players' connections list
      *
      * @return {@code ServerClientHandler} list of connections of current players of the lobby
      */
     List<ServerClientHandler> getServerClientHandlerList() {
         return new ArrayList<>(playingConnection.keySet());
-    }
-
-    /**
-     * Method that sets a new game creator (in case the original one has been defeat during a 3 players match)
-     *
-     * @param c players' connection
-     * @return {@code ServerClientHandler} new creator's connection
-     */
-    ServerClientHandler setNewCreator(ServerClientHandler c) {
-        return playingConnection.keySet().stream().filter(serverClientHandler -> !serverClientHandler.equals(c)).collect(Collectors.toList()).get(0);
     }
 
     /**

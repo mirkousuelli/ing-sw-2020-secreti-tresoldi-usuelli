@@ -481,11 +481,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                 if (loadedGame.getState().getName().equals(State.MOVE.toString()))
                     payload = PreparePayload.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
-
-                if (loadedGame.getState().getName().equals(State.BUILD.toString()))
+                else if (loadedGame.getState().getName().equals(State.BUILD.toString()))
                     payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
-
-                if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
+                else if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
                     if (loadedGame.getPrevState().equals(State.MOVE))
                         payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
                     if (loadedGame.getPrevState().equals(State.BUILD))

@@ -210,7 +210,7 @@ public abstract class ActivePower<S> extends Power<S> {
      */
     public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
         if (maluses!= null) {
-            for (Malus malus : maluses) {
+            for (Malus malus : maluses.stream().filter(malus -> malus.isPermanent() || malus.getNumberOfTurnsUsed() < malus.getNumberOfTurns()).collect(Collectors.toList())) {
                 for (MalusLevel direction : malus.getDirection()) {
                     switch (direction) {
                         case UP:

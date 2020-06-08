@@ -46,7 +46,7 @@ public class ChangeTurnTest {
         assertTrue(game1.getState() instanceof ChangeTurn);
 
         // it changes the current player
-        //game1.setRequest(new ActionToPerform<(p3.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game1.setRequest(new ActionToPerform<>(p3.nickName, new Demand<>(DemandType.CHANGE_TURN)));
         ReturnContent returnContent = game1.gameEngine();
 
         assertEquals(AnswerType.CHANGE_TURN, returnContent.getAnswerType()); // the operation is made successfully
@@ -63,7 +63,7 @@ public class ChangeTurnTest {
         game2.setState(State.CHANGE_TURN);
 
         // it changes the current player
-        //game2.setRequest(new ActionToPerform<(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game2.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHANGE_TURN)));
         ReturnContent rc = game2.gameEngine();
 
         assertEquals(AnswerType.CHANGE_TURN, rc.getAnswerType()); // the operation is made successfully
@@ -94,7 +94,7 @@ public class ChangeTurnTest {
         assertEquals("changeTurn", game.getState().getName());
 
         // it enters change Turn state with only one player, so it goes to victory state
-        //game.setRequest(new ActionToPerform<(p1.nickName, new Demand(DemandType.CHANGE_TURN)));
+        //game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHANGE_TURN)));
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that it correctly goes to victory state
@@ -176,6 +176,34 @@ public class ChangeTurnTest {
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(Level.BOTTOM, cellToBuildOn1.getLevel());
+        assertTrue(returnContent.isChangeTurn());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
+        assertTrue(p1.getMalusList().isEmpty());
+        assertEquals(p2, game.getCurrentPlayer());
+
+
+        Block cellToBuildOn2 = (Block) board.getCell(1, 2);
+        Block cellToMoveTo2 = (Block) board.getCell(1, 1);
+        game.setCurrentPlayer(p1);
+
+        game.setState(State.MOVE);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo2.getX(), cellToMoveTo2.getY()))));
+        GameMemory.save(game, Lobby.backupPath);
+        returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToMoveTo2.getLevel());
+        assertEquals(cellToMoveTo2.getPawn(), p1.getCurrentWorker());
+        assertEquals(State.BUILD, returnContent.getState());
+        assertEquals(p1, game.getCurrentPlayer());
+
+        game.setState(State.BUILD);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn2.getX(), cellToBuildOn2.getY()))));
+        GameMemory.save(game, Lobby.backupPath);
+        returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(Level.BOTTOM, cellToBuildOn2.getLevel());
         assertTrue(returnContent.isChangeTurn());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
         assertTrue(p1.getMalusList().isEmpty());
