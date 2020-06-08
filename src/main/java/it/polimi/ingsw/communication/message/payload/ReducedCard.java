@@ -22,6 +22,7 @@ public class ReducedCard {
     private MovementType movePower;
     private  BlockType buildPower;
     private boolean additionalPower;
+    private int numberOfAdditional;
 
     /**
      * Constructor of the reduced card, initialising its attribute from the regular version of the card
@@ -33,6 +34,7 @@ public class ReducedCard {
         this.description = card.getDescription();
         effect = card.getPower(0).getEffect();
         additionalPower = card.getPower(0).getTiming().equals(Timing.ADDITIONAL);
+        numberOfAdditional = card.getPower(0).getConstraints().getNumberOfAdditional();
 
         movePower = effect.equals(Effect.MOVE) ? (MovementType) card.getPower(0).getAllowedAction() : null;
         buildPower = effect.equals(Effect.BUILD) ? (BlockType) card.getPower(0).getAllowedAction() : null;
@@ -98,5 +100,13 @@ public class ReducedCard {
 
     public void setBuildPower(BlockType buildPower) {
         this.buildPower = buildPower;
+    }
+
+    public int getNumberOfAdditional() {
+        return numberOfAdditional;
+    }
+
+    public void setNumberOfAdditional(int numberOfAdditional) {
+        this.numberOfAdditional = numberOfAdditional;
     }
 }

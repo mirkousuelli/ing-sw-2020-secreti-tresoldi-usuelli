@@ -100,9 +100,10 @@ public enum DemandType {
      *
      * @param currentState the current state of the game
      * @param isCreator parameter that tells if the player is the creator of the lobby
+     * @param numberOfAdditional the number of additional actions that can be done by the player (-1 means infinite)
      * @return the next state based on the current one
      */
-    public static DemandType getNextState(DemandType currentState, boolean isCreator) {
+    public static DemandType getNextState(DemandType currentState, boolean isCreator, int numberOfAdditional) {
         if (currentState.equals(CONNECT)) {
             if (isCreator)
                 return CREATE_GAME;
@@ -125,8 +126,15 @@ public enum DemandType {
                 return PLACE_WORKERS;
         }
 
-        if (currentState.equals(ADDITIONAL_POWER) || currentState.equals(BUILD))
+        if (currentState.equals(BUILD))
             return CHOOSE_WORKER;
+
+        if (currentState.equals(ADDITIONAL_POWER)) {
+            if (numberOfAdditional == 0)
+                return CHOOSE_WORKER;
+            else
+                return currentState;
+        }
 
         //repeat
         if (currentState.equals(NEW_GAME))

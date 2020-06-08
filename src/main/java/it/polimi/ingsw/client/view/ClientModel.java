@@ -228,7 +228,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private synchronized void updateNextState() {
-        nextState = DemandType.getNextState(currentState, player.isCreator());
+        nextState = DemandType.getNextState(currentState, player.isCreator(), player.getCard() != null ? player.getCard().getNumberOfAdditional() : 0);
     }
 
     private synchronized void reloadGame() {
@@ -461,6 +461,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     /*------------------------------------------------------SET-------------------------------------------------------*/
     public synchronized void setNextState(DemandType nextState) {
         this.nextState = nextState;
+    }
+
+    public synchronized void setAdditionalPowerUsed(boolean additionalPowerUsed) {
+        this.additionalPowerUsed = additionalPowerUsed;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 

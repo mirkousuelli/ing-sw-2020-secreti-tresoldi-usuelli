@@ -59,6 +59,8 @@ public class Controller implements Observer<ActionToPerformView> {
         }
         else
             model.setState(returnContent.getState());
+
+        LOGGER.info(() -> "state: " + model.getState().getName());
     }
 
     /**

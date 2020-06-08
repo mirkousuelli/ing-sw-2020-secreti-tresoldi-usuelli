@@ -264,6 +264,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState = gui.getClientModel().getCurrentState();
+        int numOfAdditional = gui.getClientModel().getPlayer().getCard().getNumberOfAdditional();
 
         if (!gui.getClientModel().isYourTurn()) return;
 
@@ -275,7 +276,14 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             if (!gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))
                 currentState = DemandType.USE_POWER;
 
-            hidePowerButton();
+            if (numOfAdditional > 0)
+                gui.getClientModel().getPlayer().getCard().setNumberOfAdditional(numOfAdditional - 1);
+            if (numOfAdditional != 1)
+                gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
+            else
+                hidePowerButton();
+
+            gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 0);
         }
 
         if (currentState.equals(DemandType.PLACE_WORKERS)) {
@@ -485,8 +493,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case MOVE:
             case BUILD:
             case ASK_ADDITIONAL_POWER:
-                //updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
                 updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
+                //updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
                 setJCellLAction(updatedCells, currentState);
                 break;
         }
