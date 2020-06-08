@@ -191,6 +191,10 @@ public class Game extends Observable<Answer> {
         return prevState;
     }
 
+    public void setPrevState(State prevState) {
+        this.prevState = prevState;
+    }
+
     public void setState(State state) {
         if (!this.state.getName().equals(State.ASK_ADDITIONAL_POWER.toString()))
             prevState = State.parseString(this.state.getName());

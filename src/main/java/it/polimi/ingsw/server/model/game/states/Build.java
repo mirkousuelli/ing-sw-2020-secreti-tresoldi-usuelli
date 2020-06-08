@@ -102,7 +102,7 @@ public class Build implements GameState {
     }
 
     private ReturnContent returnError() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.BUILD);
@@ -124,7 +124,7 @@ public class Build implements GameState {
             ReducedAnswerCell temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousBuild(), game.getPlayerList());
             toReturn.add(temp);
 
-            returnContent = new ReturnContent();
+            returnContent = new ReturnContent<>();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHOOSE_WORKER);
             returnContent.setChangeTurn(true);
@@ -154,7 +154,7 @@ public class Build implements GameState {
         if (isBuildPossible(cellToBuildUp)) {
             game.getBoard().build(currentPlayer, cellToBuildUp);
 
-            returnContent = new ReturnContent();
+            returnContent = new ReturnContent<>();
 
             Power p = game.getCurrentPlayer().getCard().getPower(0);
             if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) { //if the current player's god has an additional power
@@ -183,7 +183,7 @@ public class Build implements GameState {
     }
 
     private ReturnContent additionalPower() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
         List<ReducedAnswerCell> payload;
 
         payload = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);

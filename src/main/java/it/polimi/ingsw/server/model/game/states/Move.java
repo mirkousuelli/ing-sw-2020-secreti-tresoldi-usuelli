@@ -119,6 +119,7 @@ public class Move implements GameState {
             returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
         }
 
+
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) { //if the action was successful, then save!
             //save
             GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
@@ -126,7 +127,8 @@ public class Move implements GameState {
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
 
-        if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS)) { //if the current player has activated ihs god's personal malus
+        
+        if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS)) { //if the current player has activated its god's personal malus
             ChooseCard.applyMalus(game, Timing.END_TURN); //then add it to the player
 
             //save
@@ -140,7 +142,7 @@ public class Move implements GameState {
     }
 
     private ReturnContent returnError() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.MOVE);
@@ -160,7 +162,7 @@ public class Move implements GameState {
             game.getBoard().move(currentPlayer, cellToMoveTo);
             //if the worker is moved to a third level (from a second one), the player that moved wins
 
-            returnContent = new ReturnContent();
+            returnContent = new ReturnContent<>();
 
             if (reachedThirdLevel(game)) { //if the current worker reached the third level
                 returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
@@ -209,7 +211,7 @@ public class Move implements GameState {
     }
 
     private ReturnContent movePower() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
@@ -234,7 +236,7 @@ public class Move implements GameState {
     }
 
     private ReturnContent buildPower() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
@@ -255,7 +257,7 @@ public class Move implements GameState {
     }
 
     private ReturnContent additionalPower() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         List<ReducedAnswerCell> payload;
 

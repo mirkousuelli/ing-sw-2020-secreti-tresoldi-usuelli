@@ -55,7 +55,7 @@ public class AdditionalPower implements GameState {
     }
 
     private ReturnContent returnError() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ADDITIONAL_POWER);
@@ -75,7 +75,7 @@ public class AdditionalPower implements GameState {
 
 
         if (((MovePower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) { //if usePower goes well then go to build
-            returnContent = new ReturnContent();
+            returnContent = new ReturnContent<>();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.BUILD);
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
@@ -104,7 +104,7 @@ public class AdditionalPower implements GameState {
 
 
         if (((BuildPower) p).usePower(game.getCurrentPlayer(), c, game.getBoard().getAround(c))) { //if usePower goes well then go to choose worker, end the current turn and start a new one
-            returnContent = new ReturnContent();
+            returnContent = new ReturnContent<>();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHOOSE_WORKER);
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));

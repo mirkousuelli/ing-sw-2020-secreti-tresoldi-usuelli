@@ -137,6 +137,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case ERROR:
+
+            case CLOSE:
                 break;
 
             case SUCCESS:
@@ -168,9 +170,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 if (!playerToRemove.equals(player.getNickname()))
                     opponents.removeIf(o -> o.getNickname().equals(playerToRemove));
                 updateNextState();
-                break;
-
-            case CLOSE:
                 break;
 
             default:
@@ -346,6 +345,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
 
+                reducedAnswerCellList.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList() + " " + reducedAnswerCell.getLevel()));
+
                 //resets board
                 for (int i = 0; i < DIM; i++) {
                     for (int j = 0; j < DIM; j++) {
@@ -421,10 +422,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return currentState;
     }
 
-    public synchronized DemandType getNextState() {
-        return nextState;
-    }
-
     public synchronized List<ReducedCard> getDeck() {
         return new ArrayList<>(deck);
     }
@@ -439,10 +436,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     public synchronized ReducedPlayer getCurrentPlayer() {
         return getPlayer(currentPlayer);
-    }
-
-    public synchronized ReducedPlayer getPreviousPlayer() {
-        return getPlayer(prevPlayer);
     }
 
     public synchronized ReducedPlayer getPlayer(String name) {

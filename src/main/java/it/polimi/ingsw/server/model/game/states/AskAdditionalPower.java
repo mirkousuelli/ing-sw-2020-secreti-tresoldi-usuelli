@@ -29,7 +29,7 @@ public class AskAdditionalPower implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.ASK_ADDITIONAL_POWER);
@@ -45,7 +45,7 @@ public class AskAdditionalPower implements GameState {
     }
 
     private ReturnContent ask() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         ReducedMessage response = (ReducedMessage) game.getRequest().getDemand().getPayload();
         State prevState = game.getPrevState();

@@ -34,7 +34,7 @@ public class PlaceWorkers implements GameState{
     @Override
     public ReturnContent gameEngine() {
         //chooseDeck
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         Player currentPlayer = game.getCurrentPlayer();
         List<ReducedWorker> workersLocations = ((List<ReducedWorker>) game.getRequest().getDemand().getPayload());
