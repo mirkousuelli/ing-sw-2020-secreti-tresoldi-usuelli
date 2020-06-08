@@ -230,7 +230,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private synchronized void updateNextState() {
-        nextState = DemandType.getNextState(currentState, player.isCreator(), numberOfAdditional);
+        nextState = DemandType.getNextState(currentState, player.isCreator());
     }
 
     private synchronized void reloadGame() {
@@ -312,6 +312,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
                 if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
+
+                //reducedCardList.forEach(reducedCard -> System.out.println(reducedCard.getGod() + " " + reducedCard.getNumberOfAdditional()));
+
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;

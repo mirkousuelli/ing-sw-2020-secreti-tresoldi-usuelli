@@ -273,17 +273,26 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 .collect(Collectors.toList());
 
         if (status.equals(JCellStatus.USE_POWER)) {
-            if (!gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))
+            if (!gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER)) {
                 currentState = DemandType.USE_POWER;
 
-            if (numOfAdditional > 0)
-                gui.getClientModel().setNumberOfAdditional(numOfAdditional - 1);
-            if (numOfAdditional != 1)
-                gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
+                if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.MOVE))
+                    gui.getClientModel().setNextState(DemandType.MOVE);
+            }
+
+            if (numOfAdditional != 0) {
+                if (numOfAdditional > 0)
+                    gui.getClientModel().setNumberOfAdditional(numOfAdditional - 1);
+
+                if (numOfAdditional != 1)
+                    gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
+                else
+                    hidePowerButton();
+
+                gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 1);
+            }
             else
                 hidePowerButton();
-
-            gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 0);
         }
 
         if (currentState.equals(DemandType.PLACE_WORKERS)) {
@@ -381,9 +390,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                             endTurnButton.setEnabled(true);
                         }
                     }
-                    else if (currentState.equals(DemandType.MOVE))
+                    else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.MOVE))
                         setPossibleUsePowerMove(jCellList);
-                    else if (currentState.equals(DemandType.BUILD))
+                    else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD))
                         setPossibleUsePowerBuild(jCellList);
                     break;
 
@@ -538,6 +547,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             jCell = map.getCell(rac.getX(), rac.getY());
 
             /*System.out.print(jCell.getStatus() + " ");
+            System.out.print(((JBlockDecorator) jCell).getDecoration() + " ");
+            System.out.print(((JBlockDecorator) jCell).getBlock().getStatus() + " ");
             System.out.print(rac.getLevel() + " ");
             System.out.println(rac.getX() + "," + rac.getY());*/
 
@@ -545,6 +556,18 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 ((JBlockDecorator) jCell).buildUp();
             else if (rac.getLevel().toInt() > jCell.getStatus().ordinal() + 1)
                 ((JBlockDecorator) jCell).addDecoration(JCellStatus.DOME);
+
+            /*System.out.print(jCell.getStatus() + " ");
+            System.out.print(((JBlockDecorator) jCell).getDecoration() + " ");
+            System.out.print(((JBlockDecorator) jCell).getBlock().getStatus() + " ");
+            System.out.print(rac.getLevel() + " ");
+            System.out.println(rac.getX() + "," + rac.getY() + "\n");*/
+
+            map.validate();
+            map.repaint();
+
+            validate();
+            repaint();
         }
     }
 
