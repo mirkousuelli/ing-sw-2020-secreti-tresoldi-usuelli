@@ -136,7 +136,11 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         String name = nickText.getText();
 
         if (!e.getSource().equals(sendButton)) return;
-        if (name == null || name.equals("")) return;
+        if (name == null || name.equals("")) {
+            errorMessage.setText("Error!, incorrect nickname");
+            errorMessage.setVisible(true);
+            return;
+        }
 
         if (error) {
             gui.getClientModel().getPlayer().setNickname(name);
@@ -151,6 +155,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
                             ? Integer.parseInt((String) serverPort.getItemAt(0))
                             : Integer.parseInt((String) serverPort.getSelectedItem())
             );
+
+        sendButton.setEnabled(false);
     }
 
     @Override
@@ -164,7 +170,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         }
         else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
             error = true;
+            errorMessage.setText("Nickname already existing!");
             errorMessage.setVisible(true);
+            sendButton.setEnabled(true);
         }
         else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
