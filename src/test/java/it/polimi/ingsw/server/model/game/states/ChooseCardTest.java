@@ -44,7 +44,7 @@ public class ChooseCardTest {
         game.setCurrentPlayer(p2);
         game.setState(State.CHOOSE_CARD);
 
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.CHOOSE_CARD, God.ARTEMIS)));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.ARTEMIS)));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -53,7 +53,7 @@ public class ChooseCardTest {
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p3.nickName, new Demand(DemandType.CHOOSE_CARD, God.PERSEPHONE)));
+        game.setRequest(new ActionToPerform<>(p3.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.PERSEPHONE)));
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -62,7 +62,7 @@ public class ChooseCardTest {
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, God.MINOTAUR)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.MINOTAUR)));
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -91,7 +91,7 @@ public class ChooseCardTest {
 
         game.setCurrentPlayer(p2);
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.CHOOSE_CARD, God.ATLAS)));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.ATLAS)));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -100,7 +100,7 @@ public class ChooseCardTest {
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, God.ZEUS)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.ZEUS)));
         returnContent = game.gameEngine();
 
         //since the player picked a God that isn't in the deck, he has to choose again
@@ -110,7 +110,7 @@ public class ChooseCardTest {
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, God.ATLAS)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.ATLAS)));
         returnContent = game.gameEngine();
 
         //since the player picked a God that has already been chosen, he has to choose again
@@ -120,7 +120,7 @@ public class ChooseCardTest {
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
         game.setState(State.CHOOSE_CARD);
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, God.PAN)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, God.PAN)));
         returnContent = game.gameEngine();
 
         //after the player picks the last God, the state is set to Choose Starter

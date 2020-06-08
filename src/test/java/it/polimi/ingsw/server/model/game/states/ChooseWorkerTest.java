@@ -49,7 +49,7 @@ public class ChooseWorkerTest {
 
         assertEquals("chooseWorker",game.getState().getName());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -85,7 +85,7 @@ public class ChooseWorkerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_WORKER, new ReducedDemandCell(4, 0))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(4, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 

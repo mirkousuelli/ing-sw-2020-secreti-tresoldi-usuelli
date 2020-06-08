@@ -42,7 +42,7 @@ public class StartTest {
         game.getDeck().fetchCards(chosenGods);
 
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -69,7 +69,7 @@ public class StartTest {
         game.getDeck().fetchCards(chosenGods);
 
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_CARD, new ReducedDeck(chosenGods).getReducedGodList())));
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that the operation is made successfully and then changes to ChooseCard state

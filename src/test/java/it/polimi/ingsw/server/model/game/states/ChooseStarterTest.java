@@ -34,7 +34,7 @@ public class ChooseStarterTest {
 
         assertEquals("chooseStarter",game.getState().getName());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_STARTER, new ReducedMessage("Fabio"))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_STARTER, new ReducedMessage("Fabio"))));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -58,7 +58,7 @@ public class ChooseStarterTest {
 
         game.setState(State.CHOOSE_STARTER);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.CHOOSE_STARTER, new ReducedMessage("Pippo"))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_STARTER, new ReducedMessage("Pippo"))));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
