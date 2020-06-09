@@ -19,6 +19,7 @@ import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
+import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.*;
@@ -53,6 +54,8 @@ public class Move implements GameState {
          */
 
         List<Cell> possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
+
+        System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC " + game.getCurrentPlayer().getMalusList().size());
 
         for (Cell c: possibleMoves) {
             if (c.getX() == cellToMoveTo.getX() && c.getY() == cellToMoveTo.getY())
@@ -115,7 +118,6 @@ public class Move implements GameState {
         if(ChangeTurn.controlWinCondition(game)) { //if the current player has won, then notify its victory to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
-            //returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
             returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
         }
 
@@ -127,12 +129,15 @@ public class Move implements GameState {
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
 
-        
-        if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.MALUS)) { //if the current player has activated its god's personal malus
-            ChooseCard.applyMalus(game, Timing.END_TURN); //then add it to the player
 
-            //save
-            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+        Power p = currentPlayer.getCard().getPower(0);
+        if (p.getEffect().equals(Effect.MALUS) && returnContent.getAnswerType().equals(AnswerType.SUCCESS)) { //if the current player's god has a malus power
+            if (ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //then if the current player has activated its god's personal malus
+                ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
+
+                //save
+                GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+            }
         }
 
         //save
@@ -156,6 +161,8 @@ public class Move implements GameState {
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
+
+        System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC " + currentPlayer.getMalusList().size());
 
         // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
         if (isMoveCorrect(cellToMoveTo)) {

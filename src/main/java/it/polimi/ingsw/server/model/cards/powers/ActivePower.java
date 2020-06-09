@@ -144,6 +144,7 @@ public abstract class ActivePower<S> extends Power<S> {
             numberOfActionsRemaining--;
 
         addPersonalMalus(currentPlayer);
+        System.out.print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
 
         return true;
     }
@@ -189,12 +190,15 @@ public abstract class ActivePower<S> extends Power<S> {
      * The malus can depend on the direction (which can be different depending on the different Gods) that the malus
      * is applied to: for example Persephone forces opponents to move up whenever they can
      *
-     * @param currentPlayer the current player
-     * @param cellToUse the cell that gets checked
+     * @param malus the god's mlaus of the current player
+     * @param worker the current worker
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
-    private static boolean verifyMalus(Player currentPlayer, Cell cellToUse) {
-        return verifyMalus(currentPlayer.getMalusList(), currentPlayer.getCurrentWorker().getLocation(), cellToUse);
+    public static boolean verifyMalus(Malus malus, Worker worker) {
+        List<Malus> maluses = new ArrayList<>();
+        maluses.add(malus);
+
+        return !verifyMalus(maluses, worker.getPreviousLocation(), worker.getLocation());
     }
 
     /**

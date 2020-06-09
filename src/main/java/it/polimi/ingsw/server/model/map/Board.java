@@ -227,6 +227,9 @@ public class Board implements Cloneable {
             }
         }
 
+        toReturn.forEach(cell -> System.out.println(cell.getX() + "," + cell.getY() + " " + cell.getLevel()));
+        System.out.println(player.getMalusList().size());
+
         for (Malus malus : player.getMalusList()) {
             for (MalusLevel direction : malus.getDirection()) {
                 if (direction == MalusLevel.UP) {
@@ -262,6 +265,9 @@ public class Board implements Cloneable {
                 }
             }
         }
+
+        System.out.print("\n");
+        toReturn.forEach(cell -> System.out.println(cell.getX() + "," + cell.getY() + " " + cell.getLevel()));
 
         // in case no malus has been active : normal getAround()
         // in case both malus are active : normal getAround()

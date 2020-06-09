@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class PreparePayload {
 
-    //PreparePayload it is a static class, so its constructor must be private!
+    //PreparePayload is a static class, so its constructor must be private!
     private PreparePayload() {}
 
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
@@ -34,22 +34,22 @@ public class PreparePayload {
         List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> toReturn;
         boolean personalMalus = false;
-        boolean removed = false;
+        //boolean removed = false;
 
         List<Malus> maluses = game.getCurrentPlayer().getMalusList();
-        if (game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null) {
+        /*if (game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null) {
             Malus temp = game.getCurrentPlayer().removePermanentMalus();
             maluses.removeIf(m -> m.equals(temp));
             removed = true;
-        }
+        }*/
 
         if (state.equals(State.CHOOSE_WORKER) || state.equals(State.MOVE)) //if it is possible to move normally
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer())); //then add the possible moves
         else
             possibleMoves = new ArrayList<>();
 
-        if (removed)
-            game.getCurrentPlayer().addMalus(game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus());
+        //if (removed)
+        //    game.getCurrentPlayer().addMalus(game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus());
 
         specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing)); //add special moves
         toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
@@ -64,7 +64,17 @@ public class PreparePayload {
             personalMalus = true;
         }
 
+        System.out.print("\npossible: ");
+        possibleMoves.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
+        System.out.print("\nspecial: ");
+        specialMoves.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
+        System.out.print("\nToReturn1: ");
+        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
+
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //merge
+
+        System.out.print("\nToReturn2: ");
+        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
 
         if (maluses != null && !maluses.isEmpty() && !personalMalus) {
             for (ReducedAnswerCell c : toReturn) {
@@ -72,6 +82,9 @@ public class PreparePayload {
                     c.resetAction(); //then remove every possible action on that cell
             }
         }
+
+        System.out.print("\nToReturn3: ");
+        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
 
         return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
     }
@@ -153,28 +166,31 @@ public class PreparePayload {
     static List<ReducedAnswerCell> addChangedCells(Game game, State state) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
+        Player currentPlayer = game.getCurrentPlayer();
 
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getPlayerList());
+        temp = ReducedAnswerCell.prepareCell(currentPlayer.getCurrentWorker().getLocation(), game.getPlayerList());
         tempList.add(temp);
 
-        Power power = game.getCurrentPlayer().getCard().getPower(0);
+        Power power = currentPlayer.getCard().getPower(0);
         if (power.getEffect().equals(Effect.MOVE) && power.getAllowedAction().equals(MovementType.PUSH) &&
                 game.getState().getName().equals(State.MOVE.toString()) && game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
             Worker worker = game.getPlayerList().stream()
                     .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
                     .map(Player::getWorkers)
                     .flatMap(List::stream)
-                    .filter(w -> w.getPreviousLocation().equals(game.getCurrentPlayer().getCurrentWorker().getLocation()))
+                    .filter(w -> w.getPreviousLocation().equals(currentPlayer.getCurrentWorker().getLocation()))
                     .reduce(null, (a, b) -> a != null ? a : b);
 
             temp = ReducedAnswerCell.prepareCell(worker.getLocation(), game.getPlayerList());
             tempList.add(temp);
         }
 
-        temp = ReducedAnswerCell.prepareCell(game.getCurrentPlayer().getCurrentWorker().getPreviousLocation(), game.getPlayerList());
-        if (state.equals(State.MOVE) && temp.isFree())
-            temp.replaceDefaultAction(ReducedAction.BUILD);
-        tempList.add(temp);
+        if (!currentPlayer.getCurrentWorker().getPreviousLocation().equals(currentPlayer.getCurrentWorker().getLocation())) {
+            temp = ReducedAnswerCell.prepareCell(currentPlayer.getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+            if (state.equals(State.MOVE) && temp.isFree())
+                temp.replaceDefaultAction(ReducedAction.BUILD);
+            tempList.add(temp);
+        }
 
         return tempList;
     }

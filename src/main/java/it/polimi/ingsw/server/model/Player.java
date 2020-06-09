@@ -12,7 +12,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
-import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Worker;
 
@@ -31,7 +30,7 @@ public class Player {
     private Card card;
     private Worker currentWorker;
     private final List<Malus> malusList;
-    private final int NUM_WORKERS = 2;
+    private static final int NUM_WORKERS = 2;
 
     /**
      * Constructor of the player, initialising elements like his workers and card
@@ -50,14 +49,10 @@ public class Player {
         return nickName;
     }
 
-    public int getNumWorkers() {
-        return NUM_WORKERS;
-    }
-
     /**
      * Method that connects a worker with his owner and sets his initial position on the board
      *
-     * @param id a number between 0 and 1 that identifies each worker of every player
+     * @param id a number between 1 and 2 that identifies each worker of every player
      * @param position the block where the worker is placed at the beginning
      * @return {@code true} if the worker is initialised properly, {@code false} if the chosen id is not correct or
      * if the chosen position is occupied
@@ -155,7 +150,7 @@ public class Player {
     }
 
     public List<Malus> getMalusList() {
-        return new ArrayList<>(malusList);
+        return malusList;
     }
 
     /**

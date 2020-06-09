@@ -91,8 +91,10 @@ public class ChangeTurn implements GameState {
                     .forEach(malus -> malus.setNumberOfTurnsUsed(malus.getNumberOfTurnsUsed() + 1));
             currentPlayer.removeMalus();
 
+            System.out.println(currentPlayer.getMalusList().size());
+
             //save
-            GameMemory.save(currentPlayer, Lobby.backupPath);
+            //GameMemory.save(currentPlayer, Lobby.backupPath);
         }
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
@@ -110,6 +112,8 @@ public class ChangeTurn implements GameState {
         if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&
             !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&
             !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
+
+            //save
             GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
         }
 
