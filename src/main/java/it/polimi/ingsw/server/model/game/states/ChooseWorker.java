@@ -25,26 +25,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Class that represents the state where a player has to choose the worker he wants to use during his turn
+ */
 public class ChooseWorker implements GameState {
-     /* @abstractClass
-     * it represents the state where a player must choose the worker he wants to move
-     */
 
     private final Game game;
 
+    /**
+     * Constructor of the state ChooseWorker
+     *
+     * @param game the game which the state is connected to
+     */
     public ChooseWorker(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
+    /**
+     * Method that tells if the current player cannot move any of his workers
+     *
+     * @return {@code true} if the current player cannot move any of his workers, {@code false} if he can move at least
+     * one of them
+     */
     private boolean cannotMoveAny() {
-        /* @predicate
-         * it checks if the current player cannot move any of his workers
-         */
-
         List<Worker> workerList = game.getCurrentPlayer().getWorkers();
 
         return workerList.stream().noneMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
@@ -55,6 +58,18 @@ public class ChooseWorker implements GameState {
         return State.CHOOSE_WORKER.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the current player picks the cell of the worker he wants to use during the turn: if with the chosen
+     * worker has at least one cell where it can be moved, then the state is set to Move, otherwise the player must pick
+     * again
+     * <p>
+     * If the current player cannot move any of his workers he loses and the turn is changed: if after his elimination
+     * there's only one player left, then the remaining player is the winner and the turn is set to Victory state
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent<>();

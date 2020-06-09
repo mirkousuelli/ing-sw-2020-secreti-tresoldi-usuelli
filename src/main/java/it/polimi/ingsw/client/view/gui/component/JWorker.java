@@ -35,6 +35,11 @@ public class JWorker {
         ((JBlockDecorator) this.cell).addWorker(this);
     }
 
+    public void setCell(JCell cell) {
+        this.cell = cell;
+        ((JBlockDecorator) this.cell).addWorker(this);
+    }
+
     public int getId() {
         return id;
     }

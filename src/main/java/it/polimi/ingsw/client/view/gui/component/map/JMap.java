@@ -132,7 +132,7 @@ public class JMap extends JPanel implements ActionListener {
         switchWorkers(currentWorker, where);
     }
 
-    public void switchWorkers(JWorker worker, JCell where) {
+    /*public void switchWorkers(JWorker worker, JCell where) {
         if (((JBlockDecorator) where).isFree())
             moveWorker(worker, where);
         else {
@@ -142,6 +142,21 @@ public class JMap extends JPanel implements ActionListener {
             ((JBlockDecorator) where).removeWorker();
             moveWorker(worker, where);
             moveWorker(workerToSwitch, workerPrevLocation);
+        }
+    }*/
+
+    public void switchWorkers(JWorker currWorker, JCell nextCell) {
+        if (((JBlockDecorator) nextCell).isFree())
+            moveWorker(currWorker, nextCell);
+        else {
+            JWorker enemyWorker = ((JBlockDecorator) nextCell).getJWorker();
+            JCell prevCell = currWorker.getLocation();
+
+            ((JBlockDecorator) nextCell).removeWorker();
+            ((JBlockDecorator) prevCell).removeWorker();
+
+            currWorker.setCell(nextCell);
+            enemyWorker.setCell(prevCell);
         }
     }
 

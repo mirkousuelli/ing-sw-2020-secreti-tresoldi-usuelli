@@ -34,26 +34,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the state where a player must build a block with his worker
+ */
 public class Build implements GameState {
-    /* @Class
-     * it represents the state where a player must (or can, in case of some God powers) build a block with his worker
-     */
 
     private final Game game;
 
+    /**
+     * Constructor of the state Build
+     *
+     * @param game the game which the state is connected to
+     */
     public Build(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
+    /**
+     * Method that tells if a player picked a cell where he can actually build
+     *
+     * @param chosenCell the cell where the player wants to build
+     * @return {@code true} if the player can build on the chosen cell, {@code false} otherwise
+     */
     private boolean isBuildPossible(Cell chosenCell) {
-        /* @predicate
-         * it tells if a player picked a cell where he can actually build
-         */
-
         List<Cell> possibleBuilds = game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation());
 
         for (Cell c : possibleBuilds) {
@@ -69,6 +72,17 @@ public class Build implements GameState {
         return State.BUILD.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the player picks a cell where he wants to build and, if the cell is one where he can actually build,
+     * the board is updated and the state changes accordingly
+     * <p>
+     * After the build, it is controlled if any win condition is verified (for example if the fifth complete tower is
+     * built, then the state goes to Victory
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent;
@@ -101,6 +115,11 @@ public class Build implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that returns an error if the player picked a cell where he cannot build and has to pick another cell
+     *
+     * @return returnContent, containing an answer of error and the state that remains the same
+     */
     private ReturnContent returnError() {
         ReturnContent returnContent = new ReturnContent<>();
 
@@ -110,6 +129,12 @@ public class Build implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows a player to use the special power; if the action is made correctly then the current player
+     * changes and the state is set to ChooseWorker, otherwise he has to pick another cell where to build
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent usePower() {
         ReturnContent returnContent = null;
 
@@ -141,6 +166,11 @@ public class Build implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that actually make the build when the chosen cell is one where he can build
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent build() {
         ReturnContent returnContent = null;
 
@@ -182,6 +212,12 @@ public class Build implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows the player to choose if he wants to use an additional power (if there is at least one cell
+     * where the additional power can be used) or automatically swaps to ChooseWorker state otherwise
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent additionalPower() {
         ReturnContent returnContent = new ReturnContent<>();
         List<ReducedAnswerCell> payload;

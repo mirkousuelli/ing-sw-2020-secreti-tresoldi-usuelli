@@ -14,15 +14,19 @@ import it.polimi.ingsw.server.model.map.Block;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the state where each player has to place his workers on the board at the beginning of the game
+ */
 public class PlaceWorkers implements GameState{
 
     private final Game game;
 
+    /**
+     * Constructor of the state PlaceWorkers
+     *
+     * @param game the game which the state is connected to
+     */
     public PlaceWorkers(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
@@ -31,6 +35,16 @@ public class PlaceWorkers implements GameState{
         return State.PLACE_WORKERS.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here, starting from the starter, each player picks the cells where he wants to place his workers,
+     * initialising both workers to the chosen cells and adding the pawns on them
+     * <p>
+     * When all the players in the game have placed their workers, the state is set to ChooseWorker
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         //chooseDeck

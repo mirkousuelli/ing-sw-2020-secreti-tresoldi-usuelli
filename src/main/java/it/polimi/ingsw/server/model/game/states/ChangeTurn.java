@@ -26,40 +26,47 @@ import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
 
+/**
+ * Class that represents the state where the current player changes and the win conditions are checked
+ */
 public class ChangeTurn implements GameState {
-    /* @Class
-     * it represents the state where the current player changes and the win conditions are checked
-     */
 
     private final Game game;
 
+    /**
+     * Constructor of the state ChangeTurn
+     *
+     * @param game the game which the state is connected to
+     */
     public ChangeTurn(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
+    /**
+     * Method that actually changes the current player
+     */
     private void changeCurrentPlayer() {
-        /* @function
-         * it switches the player that must play
-         */
-
         int index = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
 
         game.setCurrentPlayer(game.getPlayerList().get(index));
     }
 
+    /**
+     * Method that controls if there's only one player remaining
+     *
+     * @return {@code true} if only one player is left in the game, {@code false} otherwise
+     */
     private boolean onePlayerRemaining(){
         return game.getNumPlayers() == 1;
     }
 
+    /**
+     * Method that controls if any win condition is verified (some God powers add a secondary win condition)
+     *
+     * @param game the game where to check
+     * @return {@code true} if any win condition is verified, {@code false} if not
+     */
     public static boolean controlWinCondition(Game game) {
-        /* @predicate
-         * it checks if any win condition is verified (some God powers add a secondary win condition)
-         */
-
         if (game.getPrevState() == null ||
             game.getCurrentPlayer().getCard() == null ||
             game.getCurrentPlayer().getCurrentWorker() == null ||
@@ -77,6 +84,14 @@ public class ChangeTurn implements GameState {
         return State.CHANGE_TURN.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here, after checking that no player won during this turn, the current player is changed and the turn is
+     * set to ChooseWorker
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent<>();

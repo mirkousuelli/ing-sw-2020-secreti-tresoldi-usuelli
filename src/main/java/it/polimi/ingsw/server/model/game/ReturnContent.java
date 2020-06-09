@@ -7,8 +7,8 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
  * <p>
  *      <ol> It contains:
  *          <li> answerType, which is the outcome of the action
- *          <li> payload, containing the element used to make each action (for example if the action is a build, the payload is the reducedDemandCell that correspond to the cell where the player decided to build)
- *          <li> state, the State that the game changed to, after the action are made
+ *          <li> payload, containing the element used to make each action (for example if the action is a build, the payload is the reducedDemandCell that corresponds to the cell where the player decided to build)
+ *          <li> state, the State that the game changed to after the action are made
  *          <li> changeTurn, that tells when the current player is changed
  *          <li> availableGods, that tells when the list of Gods is available
  *      </ol>
