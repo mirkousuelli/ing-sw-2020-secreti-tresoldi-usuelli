@@ -64,17 +64,19 @@ public class ChangeTurn implements GameState {
      * @param game the game where to check
      * @return {@code true} if any win condition is verified, {@code false} if not
      */
-    public static boolean controlWinCondition(Game game) {
+    public static Player controlWinCondition(Game game) {
         if (game.getPrevState() == null ||
             game.getCurrentPlayer().getCard() == null ||
             game.getCurrentPlayer().getCurrentWorker() == null ||
-            game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return false;
+            game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return null;
 
-        Power p = game.getCurrentPlayer().getCard().getPower(0);
-
-        if (p.getEffect().equals(Effect.BUILD) || p.getEffect().equals(Effect.MOVE)) ((ActivePower) p).setNumberOfActionsRemaining();
-
-        return p.getEffect().equals(Effect.WIN_COND) && ((WinConditionPower) p).usePower(game);
+        return game.getPlayerList().stream()
+                .filter(player -> player.getCard().getPower(0).getEffect().equals(Effect.WIN_COND))
+                .filter(player -> ((WinConditionPower) player.getCard().getPower(0)).usePower(game))
+                .reduce(null, (a, b) -> a != null
+                        ? a
+                        : b
+                );
     }
 
     @Override
@@ -98,45 +100,61 @@ public class ChangeTurn implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
 
-        System.out.println("prev state: " + game.getPrevState());
+        // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
+        Player victorious = ChangeTurn.controlWinCondition(game);
+        if(victorious != null || onePlayerRemaining()) {
+            returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setState(State.VICTORY);
+
+            if (victorious != null)
+                returnContent.setPayload(new ReducedPlayer(victorious.nickName));
+            else
+                returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
+        }
+        else {
+            // Otherwise the current player is changed and the game goes to ChooseWorker state
+            changeCurrentPlayer();
+            resetPower();
+            removeMalus();
+
+            returnContent.setAnswerType(AnswerType.CHANGE_TURN);
+            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+        }
+
+        save();
+
+        return returnContent;
+    }
+
+    private void resetPower() {
+        if (game.getCurrentPlayer().getCard() != null) {
+            Power p = game.getCurrentPlayer().getCard().getPower(0);
+            if (p.getEffect().equals(Effect.BUILD) || p.getEffect().equals(Effect.MOVE))
+                ((ActivePower) p).setNumberOfActionsRemaining();
+        }
+    }
+
+    private void removeMalus() {
+        Player currentPlayer = game.getCurrentPlayer();
 
         if (!currentPlayer.getMalusList().isEmpty() && (game.getPrevState().equals(State.BUILD) || game.getPrevState().equals(State.MOVE))) {
-            if (!currentPlayer.getMalusList().isEmpty())
-                System.out.println(currentPlayer.getMalusList().get(0).getNumberOfTurns() + " " + currentPlayer.getMalusList().get(0).getNumberOfTurnsUsed());
-
             currentPlayer.getMalusList().stream()
                     .filter(malus -> !malus.isPermanent())
                     .forEach(malus -> malus.setNumberOfTurnsUsed(malus.getNumberOfTurnsUsed() + 1));
             currentPlayer.removeMalus();
 
-            System.out.println("REMOVED MALUS " + currentPlayer.getMalusList().size());
-            if (!currentPlayer.getMalusList().isEmpty())
-                System.out.println(currentPlayer.getMalusList().get(0).getNumberOfTurns() + " " + currentPlayer.getMalusList().get(0).getNumberOfTurnsUsed());
-
             //save
             GameMemory.save(currentPlayer, Lobby.backupPath);
         }
+    }
 
-        // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        if(controlWinCondition(game) || onePlayerRemaining()) {
-            returnContent.setAnswerType(AnswerType.VICTORY);
-            returnContent.setState(State.VICTORY);
-        }
-        else {
-            // Otherwise the current player is changed and the game goes to ChooseWorker state
-            changeCurrentPlayer();
-            returnContent.setAnswerType(AnswerType.CHANGE_TURN);
-            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
-        }
-
+    private void save() {
         if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&
-            !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&
-            !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
+                !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&
+                !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
 
             //save
             GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
         }
-
-        return returnContent;
     }
 }

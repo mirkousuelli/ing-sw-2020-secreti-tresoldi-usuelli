@@ -145,10 +145,11 @@ public class Move implements GameState {
            returnContent = move(); //else it must be a move (verified in Controller), so move!
 
 
-        if(ChangeTurn.controlWinCondition(game)) { //if the current player has won, then notify its victory to everyone!
+        Player victorious = ChangeTurn.controlWinCondition(game);
+        if(victorious != null) { //if the current player has won, then notify its victory to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
-            returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
+            returnContent.setPayload(new ReducedPlayer(victorious.getNickName()));
         }
 
 

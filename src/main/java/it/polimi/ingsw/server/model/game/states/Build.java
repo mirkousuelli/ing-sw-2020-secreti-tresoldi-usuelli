@@ -15,6 +15,7 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAction;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
@@ -100,16 +101,21 @@ public class Build implements GameState {
         else
             returnContent = build(); //else it must be a build (verified in Controller), so build!
 
-        if (ChangeTurn.controlWinCondition(game)) {
+
+        Player victorious = ChangeTurn.controlWinCondition(game);
+        if (victorious != null) {
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setPayload(new ReducedPlayer(victorious.nickName));
         }
+
 
         if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
             List<ReducedAnswerCell> toReturn = PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
             returnContent.setPayload(toReturn);
         }
 
+        //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
         GameMemory.save(game.getCurrentPlayer(), State.BUILD, Lobby.backupPath);
 
