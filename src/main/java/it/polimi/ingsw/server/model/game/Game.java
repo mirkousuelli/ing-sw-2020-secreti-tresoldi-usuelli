@@ -247,10 +247,21 @@ public class Game extends Observable<Answer> {
         return state;
     }
 
+    /**
+     * Method that gets the list of opponents
+     *
+     * @return the list of opponents players
+     */
     public List<Player> getOpponents() {
         return players.stream().filter(p -> !getCurrentPlayer().equals(p)).collect(Collectors.toList());
     }
 
+    /**
+     * Method that counts the number of complete towers on the board: this is used in order to control when Chronus' win
+     * condition is verified
+     *
+     * @return the number of complete towers on the board
+     */
     public int getNumberOfCompleteTower() {
         Cell c;
         int numberOfCompleteTowers = 0;
@@ -266,6 +277,11 @@ public class Game extends Observable<Answer> {
         return numberOfCompleteTowers;
     }
 
+    /**
+     * Method that removes the select player from the list of players in the game
+     *
+     * @param player the nickname of the player to remove
+     */
     public void removePlayer(String player) {
         players.removeIf(p -> p.nickName.equals(player));
     }

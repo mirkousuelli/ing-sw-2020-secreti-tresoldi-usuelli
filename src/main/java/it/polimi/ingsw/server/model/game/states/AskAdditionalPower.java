@@ -14,10 +14,18 @@ import it.polimi.ingsw.server.model.game.State;
 
 import java.util.ArrayList;
 
+/**
+ * Class that represents the state where a player is asked if he wants to use an eventual additional power
+ */
 public class AskAdditionalPower implements GameState {
 
     private final Game game;
 
+    /**
+     * Constructor of the state AskAdditionalPower
+     *
+     * @param game the game which the state is connected to
+     */
     public AskAdditionalPower(Game game) {
         this.game = game;
     }
@@ -27,6 +35,14 @@ public class AskAdditionalPower implements GameState {
         return State.ASK_ADDITIONAL_POWER.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the player is asked if he wants to use an eventual additional power and the state is set depending on
+     * what the player chooses
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent<>();
@@ -44,6 +60,12 @@ public class AskAdditionalPower implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that asks the player if he wants to use the additional power. The state then changes depending on the
+     * message sent by the player
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent ask() {
         ReturnContent returnContent = new ReturnContent<>();
 

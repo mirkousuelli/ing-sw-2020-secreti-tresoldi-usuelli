@@ -19,10 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the state where each player has to choose the card he wants to use
+ */
 public class ChooseCard implements GameState {
 
     private final Game game;
 
+    /**
+     * Constructor of the state ChooseCard
+     *
+     * @param game the game which the state is connected to
+     */
     public ChooseCard(Game game) {
         this.game = game;
     }
@@ -32,6 +40,14 @@ public class ChooseCard implements GameState {
         return State.CHOOSE_CARD.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here every player has to pick the card he wants to use (from the deck containing the cards picked by the
+     * Challenger. The game is then set to ChooseStarter.
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent<>();
@@ -71,6 +87,17 @@ public class ChooseCard implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that applies a malus, with the correct timing
+     * <p>
+     * It is used at the beginning setting the timing to default and after some specific moves in the move state, where
+     * the timing can be end_turn
+     * <p>
+     * This method is static since can be used in other classes
+     *
+     * @param game the game that is being played, where to apply the malus
+     * @param timing timing of the malus
+     */
     public static void applyMalus(Game game, Timing timing) {
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
