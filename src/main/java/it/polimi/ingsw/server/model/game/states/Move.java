@@ -174,6 +174,7 @@ public class Move implements GameState {
 
         //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+        GameMemory.save(currentPlayer, State.MOVE, Lobby.backupPath);
 
         return returnContent;
     }

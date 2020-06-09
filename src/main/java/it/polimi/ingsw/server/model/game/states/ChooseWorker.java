@@ -72,84 +72,114 @@ public class ChooseWorker implements GameState {
      */
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent<>();
+        ReturnContent returnContent;
 
-        Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
-
-        returnContent.setAnswerType(AnswerType.ERROR);
-        returnContent.setState(State.CHOOSE_WORKER);
 
         File f = new File(Lobby.backupPath);
         if (!f.exists()) {
             try {
                 boolean b = f.createNewFile();
+                if (!b) throw new IOException("Got an exception while opening " + Lobby.backupPath);
             } catch (IOException e) {
-                returnContent.setAnswerType(AnswerType.ERROR);
-                returnContent.setState(State.CHOOSE_WORKER);
+                return returnError();
             }
-        }
 
-        //save
+        //first save
         GameMemory.save(game, Lobby.backupPath);
+        }
 
         //validate input
         if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains((Worker) ((Block) chosenWorker).getPawn()))
-            return returnContent;
+            return returnError();
 
+        if(cannotMoveAny()) //if currentPlayer cannot move any of his workers
+            returnContent = removeWorkersAndPlayer(); //then he loses and his workers have to be removed
+        else //else he can choose one of his workers
+            returnContent = chooseWorker(chosenWorker);
 
-        // if currentPlayer cannot move any of his workers, the game switches to Defeat state (he loses)
-        if(cannotMoveAny()) {
-            if (game.getNumPlayers() > 2) {
-                returnContent.setAnswerType(AnswerType.DEFEAT);
-                returnContent.setState(State.CHOOSE_WORKER);
-                returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
+        //save
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+        GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
 
-                int newCurrentPlayerIndex = (game.getIndex(currentPlayer) - 1) & game.getNumPlayers();
-                String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
-                game.removePlayer(currentPlayer.getNickName());
-                game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
-                game.setNumPlayers(game.getNumPlayers() - 1);
+        return returnContent;
+    }
 
-                returnContent.setChangeTurn(true);
-            }
-            else {
-                returnContent.setAnswerType(AnswerType.VICTORY);
-                returnContent.setState(State.VICTORY);
-                returnContent.setPayload(new ReducedPlayer(game.getPlayerList().stream()
-                        .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
-                        .reduce(null, (a, b) -> a != null ? a : b)
-                        .nickName
-                        )
-                );
-            }
+    /**
+     * Method that returns an error if the player picked a cell where he cannot move to and has to pick another cell
+     *
+     * @return returnContent, containing an answer of error and the state that remains the same
+     */
+    private ReturnContent returnError() {
+        ReturnContent returnContent = new ReturnContent<>();
+
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.CHOOSE_WORKER);
+
+        return returnContent;
+    }
+
+    private ReturnContent removeWorkersAndPlayer() {
+        ReturnContent returnContent = new ReturnContent<>();
+        Player currentPlayer = game.getCurrentPlayer();
+
+        if (game.getNumPlayers() > 2) {
+            returnContent.setAnswerType(AnswerType.DEFEAT);
+            returnContent.setState(State.CHOOSE_WORKER);
+            returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
+
+            int newCurrentPlayerIndex = (game.getIndex(currentPlayer) - 1) & game.getNumPlayers();
+            String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
+            game.removePlayer(currentPlayer.getNickName());
+            game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
+            game.setNumPlayers(game.getNumPlayers() - 1);
+
+            returnContent.setChangeTurn(true);
 
             //save
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
         else {
-            for (Worker w : currentPlayer.getWorkers()) {
-                if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
-                    if(Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
-                        // the player has to pick a worker and the game goes to Move state
-                        currentPlayer.setCurrentWorker(w);
-                        returnContent.setAnswerType(AnswerType.SUCCESS);
-                        returnContent.setState(State.MOVE);
-                        returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
+            returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setState(State.VICTORY);
+            returnContent.setPayload(new ReducedPlayer(game.getPlayerList().stream()
+                            .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
+                            .reduce(null, (a, b) -> a != null ? a : b)
+                            .nickName
+                    )
+            );
+        }
 
-                        //save
-                        GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-                        GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
-                        GameMemory.save(game, Lobby.backupPath);
-                    }
-                    break;
+        return returnContent;
+    }
+
+    private ReturnContent chooseWorker(Cell chosenWorker) {
+        ReturnContent returnContent = null;
+        Player currentPlayer = game.getCurrentPlayer();
+
+        for (Worker w : currentPlayer.getWorkers()) {
+            if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
+                if(Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
+                    // the player has to pick a worker and the game goes to Move state
+                    currentPlayer.setCurrentWorker(w);
+
+                    returnContent = new ReturnContent<>();
+                    returnContent.setAnswerType(AnswerType.SUCCESS);
+                    returnContent.setState(State.MOVE);
+                    returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
+
+                    //save
+                    GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+                    GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
+                    GameMemory.save(game, Lobby.backupPath);
                 }
+                break;
             }
         }
 
-        //save
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
+        if (returnContent == null)
+            return returnError();
 
         return returnContent;
     }
