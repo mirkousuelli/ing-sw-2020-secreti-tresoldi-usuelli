@@ -128,7 +128,7 @@ public class MovePower<S> extends ActivePower<S> {
      * @param adjacency the list of cells around the worker
      * @return the cell where the opponent's worker is forced to move
      */
-    private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {
+    /* private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {
 
         Cell currCell = currentPlayer.getCurrentWorker().getLocation();
 
@@ -156,7 +156,7 @@ public class MovePower<S> extends ActivePower<S> {
         }
 
         return null;
-    }
+    }*/
 
     /**
      * Method that identifies the new cell of the opponent's worker

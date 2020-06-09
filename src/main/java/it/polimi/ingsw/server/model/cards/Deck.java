@@ -118,7 +118,7 @@ public class Deck {
      * @param chosenGods list of cards that are picked
      * @return the list of cards
      */
-    public List<ReducedCard> popChosenGods(List<Card> chosenGods) {
+    /*public List<ReducedCard> popChosenGods(List<Card> chosenGods) {
         Set<God> cardSet = chosenGods.stream()
                 .map(Card::getGod)
                 .collect(Collectors.toSet());
@@ -127,5 +127,5 @@ public class Deck {
                 .filter(card -> !cardSet.contains(card.getGod()))
                 .map(ReducedCard::new)
                 .collect(Collectors.toList());
-    }
+    }*/
 }
