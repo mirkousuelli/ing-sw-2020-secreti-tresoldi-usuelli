@@ -32,25 +32,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the state where must move his worker
+ */
 public class Move implements GameState {
-    /* @Class
-     * it represents the state where a player has to move at least one of his worker
-     */
 
     private final Game game;
 
+    /**
+     * Constructor of the state Move
+     *
+     * @param game the game which the state is connected to
+     */
     public Move(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
+    /**
+     * Method that tells if the cell chosen by the player is a cell where he can actually move to
+     *
+     * @param cellToMoveTo the cell where the player wants to move to
+     * @return {@code true} if the player can move to the chosen cell, {@code false} otherwise
+     */
     private boolean isMoveCorrect(Cell cellToMoveTo) {
-        /* @predicate
-         * it tells if the cell chosen by the player is a cell where he can actually move to
-         */
 
         List<Cell> possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
 
@@ -62,14 +66,24 @@ public class Move implements GameState {
         return false;
     }
 
+    /**
+     * Method that controls if a worker reached the third level, which is the default win condition of every player
+     *
+     * @param game the game where the control is made
+     * @return {@code true} if a worker reached the third level, {@code false} otherwise
+     */
     private boolean reachedThirdLevel(Game game) {
-        /* @predicate
-         * it tells if a worker reached the third level
-         */
-
         return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
     }
 
+    /**
+     * Method that checks if there is at least one cell to move to from the chosen cell and given the cells around it
+     *
+     * @param game the current game
+     * @param cellToMoveTo the cell from which the control is made
+     * @param around list of cells around the chosen cell
+     * @return {@code false} if there are no cells to move to from the given cell, {@code true} otherwise
+     */
     public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo, List<Cell> around) {
         List<Cell> remainingCells = around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
@@ -84,6 +98,13 @@ public class Move implements GameState {
 
     }
 
+    /**
+     * Method that checks if there is at least one cell to move to from the chosen cell
+     *
+     * @param game the current game
+     * @param cellToMoveTo the cell from which the control is made
+     * @return {@code false} if there are no cells to move to from the given cell, {@code true} otherwise
+     */
     public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo) {
         return Move.isPresentAtLeastOneCellToMoveTo(game, cellToMoveTo, game.getBoard().getAround(cellToMoveTo));
     }
@@ -93,6 +114,17 @@ public class Move implements GameState {
         return State.MOVE.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the player picks a cell where he wants to move to and, if the cell is one where he can actually move to,
+     * the board is updated and the state changes accordingly
+     * <p>
+     * After the move, it is controlled if any win condition is verified (because both the default one and Pan's power
+     * could be verified)
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent;
@@ -141,6 +173,11 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that returns an error if the player picked a cell where he cannot move to and has to pick another cell
+     *
+     * @return returnContent, containing an answer of error and the state that remains the same
+     */
     private ReturnContent returnError() {
         ReturnContent returnContent = new ReturnContent<>();
 
@@ -150,6 +187,12 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that actually make the move when the chosen cell is one where he can move to, controlling then if the
+     * current worker reached the third level
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent move() {
         ReturnContent returnContent = null;
 
@@ -189,6 +232,13 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows a player to use the special power (it can be both a move or a build special power);
+     * if the action is made correctly then the current state changes depending on the action, otherwise he has to pick
+     * another cell where to move to
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent usePower() {
         ReturnContent returnContent;
 
@@ -210,6 +260,11 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows a player to use a special move power
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent movePower() {
         ReturnContent returnContent = new ReturnContent<>();
 
@@ -235,6 +290,11 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows a player to use a special build power
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent buildPower() {
         ReturnContent returnContent = new ReturnContent<>();
 
@@ -256,6 +316,12 @@ public class Move implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that allows the player to choose if he wants to use an additional power (if there is at least one cell
+     * where the additional power can be used) or automatically swaps to Build state otherwise
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent additionalPower() {
         ReturnContent returnContent = new ReturnContent<>();
 

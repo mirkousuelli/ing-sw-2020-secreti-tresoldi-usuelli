@@ -10,15 +10,19 @@ import it.polimi.ingsw.server.model.game.State;
 
 import java.util.ArrayList;
 
+/**
+ * Class that represents the state where the starter is chosen
+ */
 public class ChooseStarter implements GameState {
 
     private final Game game;
 
+    /**
+     * Constructor of the state ChooseStarter
+     *
+     * @param game the game which the state is connected to
+     */
     public ChooseStarter(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
@@ -27,6 +31,14 @@ public class ChooseStarter implements GameState {
         return State.CHOOSE_STARTER.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the starter is chosen and then the state is changed to ChooseStarter, where the starter has to place his
+     * workers first
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         ReturnContent returnContent = new ReturnContent<>();

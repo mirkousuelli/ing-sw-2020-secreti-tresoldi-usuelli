@@ -23,18 +23,19 @@ import it.polimi.ingsw.server.model.game.State;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the state where the Challenger has to pick the list of cards which the game will be played with
+ */
 public class Start implements GameState {
-    /* @Class
-     * it represents the state that includes all the actions to initialize the game
-     */
 
     private final Game game;
 
+    /**
+     * Constructor of the state Start
+     *
+     * @param game the game which the state is connected to
+     */
     public Start(Game game) {
-        /* @constructor
-         * it sets the game which the state is connected to
-         */
-
         this.game = game;
     }
 
@@ -43,6 +44,14 @@ public class Start implements GameState {
         return State.START.toString();
     }
 
+    /**
+     * Method that represents the engine of the game and works differently depending on the current state
+     * <p>
+     * In here the challenger sends the list of Gods that will be used in the game. If the operation is successful
+     * the state is set to ChooseCard, otherwise the state remains Start
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     @Override
     public ReturnContent gameEngine() {
         //chooseDeck
