@@ -17,10 +17,12 @@ public class Malus {
     private MalusType malusType;
     private boolean permanent;
     private int numberOfTurns;
+    private int numberOfTurnsUsed;
     private final List<MalusLevel> direction;
 
     public Malus() {
         direction = new ArrayList<>();
+        numberOfTurnsUsed = 0;
     }
 
     /**
@@ -29,7 +31,7 @@ public class Malus {
      * @param malus the actual malus
      */
     public Malus(Malus malus) {
-        direction = new ArrayList<>();
+        this();
 
         malusType = malus.getMalusType();
         permanent = malus.isPermanent();
@@ -59,6 +61,14 @@ public class Malus {
 
     public void setNumberOfTurns(int numberOfTurns) {
         this.numberOfTurns = numberOfTurns;
+    }
+
+    public int getNumberOfTurnsUsed() {
+        return numberOfTurnsUsed;
+    }
+
+    public void setNumberOfTurnsUsed(int numberOfTurnsUsed) {
+        this.numberOfTurnsUsed = numberOfTurnsUsed;
     }
 
     public List<MalusLevel> getDirection() {

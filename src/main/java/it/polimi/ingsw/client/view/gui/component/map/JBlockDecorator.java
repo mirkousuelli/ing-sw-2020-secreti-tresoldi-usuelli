@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.component.map;
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 
 public class JBlockDecorator extends JCell {
+
     private final JCell origin;
     private JDecorator decoration;
     private JWorker worker;
@@ -101,5 +102,21 @@ public class JBlockDecorator extends JCell {
                 removeDecoration();
             }
         }
+    }
+
+    @Override
+    void clear() {
+        super.clear();
+
+        origin.status = JCellStatus.NONE;
+        setStatus(JCellStatus.NONE);
+
+        if (!isFree())
+            removeWorker();
+
+        removeDecoration();
+
+        validate();
+        repaint();
     }
 }

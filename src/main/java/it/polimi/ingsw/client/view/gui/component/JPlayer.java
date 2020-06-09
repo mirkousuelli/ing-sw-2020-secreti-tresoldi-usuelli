@@ -124,6 +124,10 @@ public class JPlayer extends JButton implements ActionListener {
         return (currentWorker) ? maleWorker : femaleWorker;
     }
 
+    public void setCurrentWorker(boolean currentWorker) {
+        this.currentWorker = currentWorker;
+    }
+
     public void active() {
         this.active = true;
 

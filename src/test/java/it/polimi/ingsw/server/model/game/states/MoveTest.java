@@ -61,7 +61,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -108,7 +108,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -155,7 +155,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(0, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -202,7 +202,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(2, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(2, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -252,7 +252,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ZEUS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(3, 3))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -314,7 +314,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -366,7 +366,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -376,7 +376,7 @@ ________________________________________________________________________________
         assertNull(worker1Player1.getPawn());
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
@@ -426,7 +426,7 @@ ________________________________________________________________________________
 
         game.setState(State.MOVE);
 
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -480,7 +480,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.MINOTAUR);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -527,7 +527,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.PAN);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -574,7 +574,7 @@ ________________________________________________________________________________
 
         game.setState(State.MOVE);
 
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -627,7 +627,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.TRITON);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
@@ -638,7 +638,7 @@ ________________________________________________________________________________
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
         GameMemory.save(game, Lobby.backupPath);
         rc= game.gameEngine();
 
@@ -648,7 +648,7 @@ ________________________________________________________________________________
         assertNull(cell1.getPawn());
         assertEquals(cell2.getPawn(), p1.getCurrentWorker());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.backupPath);
         rc = game.gameEngine();
 
@@ -705,7 +705,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 1))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -716,7 +716,7 @@ ________________________________________________________________________________
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
         /*game.setState(State.ADDITIONAL_POWER);
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
+        game.setRequest(new ActionToPerform<(p1.nickName, new Demand<(DemandType.USE_POWER, new ReducedDemandCell(-1, -1))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent rc = game.gameEngine();
 
@@ -768,7 +768,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.MINOTAUR);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -817,7 +817,7 @@ ________________________________________________________________________________
 
         game.setState(State.MOVE);
 
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 
@@ -863,7 +863,7 @@ ________________________________________________________________________________
 
         game.setState(State.MOVE);
 
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.MOVE, new ReducedDemandCell(1, 0))));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.backupPath);
         ReturnContent returnContent = game.gameEngine();
 

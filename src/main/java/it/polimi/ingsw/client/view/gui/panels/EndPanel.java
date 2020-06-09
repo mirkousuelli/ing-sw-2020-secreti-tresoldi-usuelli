@@ -10,18 +10,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndPanel extends SantoriniPanel implements ActionListener {
-    public static final String VICTORY = "victory.png";
-    public static final String DEFEAT = "defeat.png";
-    public static final String LOST = "lost.png";
-    public static final String SAVE = "saved.png";
+
+    private static final String extension =  ".png";
+    public static final String VICTORY = "victory" + extension;
+    public static final String DEFEAT = "defeat" + extension;
+    public static final String LOST = "lost" + extension;
+    public static final String SAVE = "saved" + extension;
+
     private String type;
     private JButton playAgainButton;
     private JButton quitButton;
     private final static int BUTTON_SIZE = 150;
 
     public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
-        super(type, panelIndex, panels);
-        this.type = type + ".png";
+        super(type + extension, panelIndex, panels);
+        this.type = type + extension;
 
         createPlayAgainButton();
         createQuitButton();
@@ -90,18 +93,24 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
         switch(src.getName()) {
             case "playAgain":
-                if (type.equals(VICTORY)) {
+                if (!type.equals(DEFEAT)) {
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("y"));
+
+                    mg.clear();
+
                     mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
+                    mg.getCurrentPanel().updateFromModel();
                     this.panelIndex.next(this.panels);
+                    gui.free();
                 }
+                else
+                    playAgainButton.setEnabled(false);
                 break;
 
             case "quit":
-                if (type.equals(VICTORY)) {
+                if (!type.equals(DEFEAT))
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("n"));
-                    System.exit(1);
-                }
+                System.exit(1);
                 break;
 
             default:

@@ -37,7 +37,7 @@ public class VictoryTest {
         //it checks that the state is actually victory
         assertEquals("victory",game.getState().getName());
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.START)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.START)));
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that it correctly goes to the start

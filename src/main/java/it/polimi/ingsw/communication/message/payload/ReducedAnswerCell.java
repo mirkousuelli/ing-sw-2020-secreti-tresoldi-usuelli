@@ -108,6 +108,13 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.prevLevel = prevLevel;
     }
 
+    public void clear() {
+        level = ReducedLevel.GROUND;
+        prevLevel = ReducedLevel.GROUND;
+        resetAction();
+        worker = null;
+    }
+
     /**
      * Method that prepares the cell passed as parameter, returning its reduced version after setting its coordinates
      * and its level. If the chosen cell is occupied by a worker it also initialises the worker (and his id) on the cell
@@ -126,7 +133,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
             for (Player p : playerList) {
                 for (Worker worker : p.getWorkers()) {
                     if (w.equals(worker)) {
-                        temp.setWorker(new ReducedWorker(w, p.nickName));
+                        temp.setWorker(new ReducedWorker(w, p));
                         temp.getWorker().setId(w.getId());
                         break;
                     }
@@ -167,5 +174,4 @@ public class ReducedAnswerCell extends ReducedDemandCell {
 
         return toReturn;
     }
-
 }

@@ -162,7 +162,7 @@ public class Player {
      * Method that removes the malus from the player
      */
     public void removeMalus() {
-        malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == 0);
+        malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == m.getNumberOfTurnsUsed());
     }
 
     /**

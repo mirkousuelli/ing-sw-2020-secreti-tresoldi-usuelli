@@ -62,7 +62,7 @@ public class PlaceWorkersTest {
         game.setCurrentPlayer(game.getPlayer(game.getStarter()));
         game.setState(State.PLACE_WORKERS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.PLACE_WORKERS, workersPlayer1)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer1)));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -71,7 +71,7 @@ public class PlaceWorkersTest {
 
 
         game.setState(State.PLACE_WORKERS);
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.PLACE_WORKERS, workersPlayer2)));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer2)));
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -107,7 +107,7 @@ public class PlaceWorkersTest {
         game.setCurrentPlayer(game.getPlayer(game.getStarter()));
         game.setState(State.PLACE_WORKERS);
 
-        game.setRequest(new ActionToPerform(p1.nickName, new Demand(DemandType.PLACE_WORKERS, workersPlayer1)));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer1)));
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -115,7 +115,7 @@ public class PlaceWorkersTest {
         assertEquals(State.PLACE_WORKERS, returnContent.getState());
 
         game.setState(State.PLACE_WORKERS);
-        game.setRequest(new ActionToPerform(p2.nickName, new Demand(DemandType.PLACE_WORKERS, workersPlayer2)));
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer2)));
         returnContent = game.gameEngine();
 
         // since the player picked a busy cell, he has to place his workers again

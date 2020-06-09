@@ -1,5 +1,6 @@
 package it.polimi.ingsw.communication.message.payload;
 
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Worker;
 
 /**
@@ -15,6 +16,7 @@ public class ReducedWorker {
     private int x;
     private int y;
     private boolean gender;
+    private boolean isCurrent;
 
     /**
      * Constructor of the reduced worker, which is initialised starting from its the regular version
@@ -27,12 +29,18 @@ public class ReducedWorker {
         id = worker.getId();
     }
 
+    public ReducedWorker(Worker worker, Player player) {
+        this(worker, player.nickName);
+        isCurrent = worker.equals(player.getCurrentWorker());
+    }
+
     public ReducedWorker(String owner, int x, int y, boolean gender) {
         this.owner = owner;
         id = 0;
         this.x = x;
         this.y = y;
         this.gender = gender;
+        isCurrent = false;
     }
 
     public ReducedWorker() {}
@@ -75,5 +83,13 @@ public class ReducedWorker {
 
     public void setGender(boolean gender) {
         this.gender = gender;
+    }
+
+    public boolean isCurrent() {
+        return isCurrent;
+    }
+
+    public void setCurrent(boolean current) {
+        isCurrent = current;
     }
 }

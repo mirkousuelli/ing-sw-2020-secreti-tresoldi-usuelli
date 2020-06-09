@@ -79,15 +79,21 @@ public class ChangeTurn implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
         Player currentPlayer = game.getCurrentPlayer();
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
 
-        if (currentPlayer.equals(game.getPlayer(game.getNumPlayers() - 1)) && (game.getPrevState().equals(State.ADDITIONAL_POWER) ||
-                game.getPrevState().equals(State.BUILD) && !game.getCurrentPlayer().getCard().getPower(0).getTiming().equals(Timing.ADDITIONAL)))
-            game.getPlayerList().forEach(Player::removeMalus);
+        if (!currentPlayer.getMalusList().isEmpty() && (game.getPrevState().equals(State.ASK_ADDITIONAL_POWER) || game.getPrevState().equals(State.MOVE))) {
+            currentPlayer.getMalusList().stream()
+                    .filter(malus -> !malus.isPermanent())
+                    .forEach(malus -> malus.setNumberOfTurnsUsed(malus.getNumberOfTurnsUsed() + 1));
+            currentPlayer.removeMalus();
+
+            //save
+            GameMemory.save(currentPlayer, Lobby.backupPath);
+        }
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
         if(controlWinCondition(game) || onePlayerRemaining()) {

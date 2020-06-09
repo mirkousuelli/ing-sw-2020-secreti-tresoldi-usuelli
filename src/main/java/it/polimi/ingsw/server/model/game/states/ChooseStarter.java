@@ -29,7 +29,7 @@ public class ChooseStarter implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         String starter = ((ReducedMessage) game.getRequest().getDemand().getPayload()).getMessage();
 

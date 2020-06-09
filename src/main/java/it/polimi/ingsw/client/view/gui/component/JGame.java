@@ -30,10 +30,13 @@ public class JGame {
         return players.get(index);
     }
 
-    public  JPlayer getPlayer(String name) {
+    public JPlayer getPlayer(String name) {
         return players.stream()
                 .filter(jPlayer -> jPlayer.getNickname().equals(name))
-                .reduce(null, (a, b) -> a != null ? a : b);
+                .reduce(null, (a, b) -> a != null
+                        ? a
+                        : b
+                );
     }
 
     public void setCurrentPlayer(JPlayer chosen) {
@@ -47,13 +50,7 @@ public class JGame {
     }
 
     public void setCurrentPlayer(String name) {
-        JPlayer newCurrentPlayer = players.stream()
-                .filter(p -> p.getNickname().equals(name))
-                .reduce(null, (a, b) -> a!= null
-                        ? a
-                        : b
-                );
-
+        JPlayer newCurrentPlayer = getPlayer(name);
         setCurrentPlayer(newCurrentPlayer);
     }
 
@@ -62,7 +59,7 @@ public class JGame {
     }
 
     public List<JPlayer> getPlayerList() {
-        return this.players;
+        return new ArrayList<>(players);
     }
 
     public int getNumPlayer() {
@@ -79,5 +76,12 @@ public class JGame {
 
     public JMap getJMap() {
         return map;
+    }
+
+    public void clean() {
+        players.clear();
+        current = 0;
+        deck.clean();
+        map.clean();
     }
 }

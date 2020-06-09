@@ -40,4 +40,11 @@ public abstract class JCell extends JButton {
     public int getYCoordinate() {
         return this.y_coo;
     }
+
+    void clear() {
+        status = JCellStatus.NONE;
+
+        validate();
+        repaint();
+    }
 }

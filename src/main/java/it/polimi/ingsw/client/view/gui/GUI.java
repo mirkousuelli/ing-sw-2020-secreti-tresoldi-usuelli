@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.gui.frame.SantoriniFrame;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 
 import javax.swing.*;
@@ -39,7 +40,10 @@ public class GUI<S> extends ClientView<S> {
     @Override
     protected void update() {
         synchronized (clientModel.lock) {
-            ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel();
+            if (getAnswer().getHeader().equals(AnswerType.RELOAD))
+                ((SantoriniFrame) frame).getMain().reload();
+            else
+                ((SantoriniFrame) frame).getMain().getCurrentPanel().updateFromModel();
         }
     }
 

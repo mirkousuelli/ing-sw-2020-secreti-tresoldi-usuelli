@@ -34,7 +34,7 @@ public class ChooseCard implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         Player currentPlayer = game.getCurrentPlayer();
         God chosenGod = ((God) game.getRequest().getDemand().getPayload());
@@ -73,6 +73,7 @@ public class ChooseCard implements GameState {
 
     public static void applyMalus(Game game, Timing timing) {
         Power p = game.getCurrentPlayer().getCard().getPower(0);
+
         if (p.getEffect().equals(Effect.MALUS) && p.getTiming().equals(timing)) {
             ((MalusPower) p).usePower(game.getOpponents(), game.getCurrentPlayer());
         }

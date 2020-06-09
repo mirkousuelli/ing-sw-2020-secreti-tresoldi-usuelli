@@ -133,20 +133,16 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void switchWorkers(JWorker worker, JCell where) {
-        if (!((JBlockDecorator) where).isFree()) {
+        if (((JBlockDecorator) where).isFree())
+            moveWorker(worker, where);
+        else {
             JWorker workerToSwitch = ((JBlockDecorator) where).getJWorker();
             JCell workerPrevLocation = worker.getLocation();
 
-            ((JBlockDecorator) worker.getLocation()).removeWorker();
-            ((JBlockDecorator) workerToSwitch.getLocation()).removeWorker();
-
             ((JBlockDecorator) where).removeWorker();
-            ((JBlockDecorator) workerPrevLocation).removeWorker();
-
+            moveWorker(worker, where);
             moveWorker(workerToSwitch, workerPrevLocation);
         }
-
-        moveWorker(worker, where);
     }
 
     public void showPowerCells() {
@@ -301,5 +297,20 @@ public class JMap extends JPanel implements ActionListener {
             newX = to.getXCoordinate() - 1;
 
         return getCell(newX, (int) (m*newX + q));
+    }
+
+    public void clean() {
+        Arrays.stream(cellButton).flatMap(Arrays::stream).forEach(JCell::clear);
+        activeCells.clear();
+        powerCells.clear();
+        currentWorker = null;
+        currentPlayer = null;
+        positioning = -1;
+        power = JCellStatus.NONE;
+        turn = JCellStatus.NONE;
+        gamePanel = null;
+
+        validate();
+        repaint();
     }
 }

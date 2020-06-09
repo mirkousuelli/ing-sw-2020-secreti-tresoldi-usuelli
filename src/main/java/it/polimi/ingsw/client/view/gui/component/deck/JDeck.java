@@ -6,25 +6,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
-    private List<JGod> gods;
+
+    private final List<JGod> gods;
     private int current;
 
-    public JDeck(List<God> list) {
+    public JDeck(List<God> list) { //TODO
         this.gods = new ArrayList<>();
 
-        int i = 0;
-        for (God god : list) {
-            this.gods.add(new JGod(god));
-            this.gods.get(i).getMini().addActionListener(this);
-            i++;
-        }
+        setGodList(list);
 
         setLayout(new GridBagLayout());
         setOpaque(false);
@@ -144,15 +138,13 @@ public class JDeck extends JPanel implements ActionListener {
         }
     }
 
-    public void removeGod(God god) {
-        if (gods.get(current).getGod().equals(god))
-            current = (current + 1) % gods.size();
-
-        gods.removeIf(jg -> jg.getGod().equals(god));
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         setCurrent(getJGod(((JMini) e.getSource()).getGod()));
+    }
+
+    public void clean() {
+        gods.clear();
+        current = 0;
     }
 }

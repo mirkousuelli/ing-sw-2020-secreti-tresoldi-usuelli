@@ -44,7 +44,7 @@ public class Victory implements GameState {
 
     @Override
     public ReturnContent gameEngine() {
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.START);

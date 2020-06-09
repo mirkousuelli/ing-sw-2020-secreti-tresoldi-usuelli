@@ -46,11 +46,9 @@ public class Start implements GameState {
     @Override
     public ReturnContent gameEngine() {
         //chooseDeck
-        ReturnContent returnContent = new ReturnContent();
+        ReturnContent returnContent = new ReturnContent<>();
 
         //set challenger
-        //Player currentPlayer = game.getPlayer(0);
-        //game.setCurrentPlayer(currentPlayer);
         game.setCurrentPlayer(game.getPlayer(game.getRequest().getPlayer()));
         List<God> chosenGodList = ((List<God>) game.getRequest().getDemand().getPayload());
 

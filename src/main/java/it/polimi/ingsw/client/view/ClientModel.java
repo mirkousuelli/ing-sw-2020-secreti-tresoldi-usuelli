@@ -6,15 +6,13 @@ import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;
-import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ClientModel<S> extends SantoriniRunnable<S> {
 
@@ -26,6 +24,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private String currentPlayer;
     private String prevPlayer = null;
     private final ReducedPlayer player;
+    private int numberOfAdditional = 0;
 
     private boolean isInitializing = true;
     private boolean isReloaded;
@@ -87,6 +86,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                                 setChanged(true);
                                 lockAnswer.notifyAll();
                                 LOGGER.info("updated!");
+                                LOGGER.info(() -> "prev: " + prevState);
                                 LOGGER.info(() -> "curr: " + currentState);
                                 LOGGER.info(() -> "next: " + nextState);
                             }
@@ -130,9 +130,15 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CHANGE_TURN:
                 updateCurrentPlayer();
                 additionalPowerUsed = true;
+                numberOfAdditional = player.getCard() != null ? player.getCard().getNumberOfAdditional() : 0;
+
+                if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
+                    nextState = DemandType.CHOOSE_WORKER;
                 break;
 
             case ERROR:
+
+            case CLOSE:
                 break;
 
             case SUCCESS:
@@ -166,11 +172,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 updateNextState();
                 break;
 
-            case CLOSE:
-                break;
-
             default:
-                throw new NotAValidInputRunTimeException("Not a valid answerType" + answerTemp.getHeader());
+                throw new NotAValidInputRunTimeException("Not a valid answerType " + answerTemp.getHeader());
         }
 
         additionalPower();
@@ -199,13 +202,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isInitializing = true;
         isReloaded = false;
         currentPlayer = null;
-        reducedBoard = new ReducedAnswerCell[DIM][DIM];
 
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                reducedBoard[i][j] = new ReducedAnswerCell(i, j, null);
-            }
-        }
+        Arrays.stream(reducedBoard)
+                .flatMap(Arrays::stream)
+                .forEach(ReducedAnswerCell::clear);
 
         deck.clear();
         opponents.clear();
@@ -238,6 +238,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         reducedBoard = reducedGame.getReducedBoard();
         opponents = reducedGame.getReducedPlayerList();
         currentPlayer = reducedGame.getCurrentPlayerIndex();
+        prevPlayer = currentPlayer;
         workers = reducedGame.getReducedWorkerList();
         isInitializing = false;
 
@@ -310,6 +311,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
                 if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
+
+                //reducedCardList.forEach(reducedCard -> System.out.println(reducedCard.getGod() + " " + reducedCard.getNumberOfAdditional()));
+
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;
@@ -340,6 +344,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case WORKER:
             case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
+
+                reducedAnswerCellList.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList() + " " + reducedAnswerCell.getLevel()));
 
                 //resets board
                 for (int i = 0; i < DIM; i++) {
@@ -416,10 +422,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return currentState;
     }
 
-    public synchronized DemandType getNextState() {
-        return nextState;
-    }
-
     public synchronized List<ReducedCard> getDeck() {
         return new ArrayList<>(deck);
     }
@@ -436,10 +438,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return getPlayer(currentPlayer);
     }
 
-    public synchronized ReducedPlayer getPreviousPlayer() {
-        return getPlayer(prevPlayer);
-    }
-
     public synchronized ReducedPlayer getPlayer(String name) {
         if (player.getNickname().equals(name)) return player;
 
@@ -454,6 +452,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     public synchronized String getPrevPlayer() {
         return prevPlayer;
     }
+
+    public int getNumberOfAdditional() {
+        return numberOfAdditional;
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -461,6 +463,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     /*------------------------------------------------------SET-------------------------------------------------------*/
     public synchronized void setNextState(DemandType nextState) {
         this.nextState = nextState;
+    }
+
+    public synchronized void setAdditionalPowerUsed(boolean additionalPowerUsed) {
+        this.additionalPowerUsed = additionalPowerUsed;
+    }
+
+    public synchronized void setNumberOfAdditional(int numberOfAdditional) {
+        this.numberOfAdditional = numberOfAdditional;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 
