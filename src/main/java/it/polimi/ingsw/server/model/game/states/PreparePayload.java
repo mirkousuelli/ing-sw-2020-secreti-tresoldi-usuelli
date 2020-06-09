@@ -64,17 +64,7 @@ public class PreparePayload {
             personalMalus = true;
         }
 
-        System.out.print("\npossible: ");
-        possibleMoves.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
-        System.out.print("\nspecial: ");
-        specialMoves.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
-        System.out.print("\nToReturn1: ");
-        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
-
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //merge
-
-        System.out.print("\nToReturn2: ");
-        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
 
         if (maluses != null && !maluses.isEmpty() && !personalMalus) {
             for (ReducedAnswerCell c : toReturn) {
@@ -82,9 +72,6 @@ public class PreparePayload {
                     c.resetAction(); //then remove every possible action on that cell
             }
         }
-
-        System.out.print("\nToReturn3: ");
-        toReturn.forEach(cell -> System.out.print(cell.getX() + "," + cell.getY() + " " + cell.getLevel() + " "));
 
         return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
     }

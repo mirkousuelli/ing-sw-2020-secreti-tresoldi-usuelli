@@ -100,16 +100,23 @@ public class ChangeTurn implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
 
-        if (!currentPlayer.getMalusList().isEmpty() && (game.getPrevState().equals(State.ASK_ADDITIONAL_POWER) || game.getPrevState().equals(State.MOVE))) {
+        System.out.println("prev state: " + game.getPrevState());
+
+        if (!currentPlayer.getMalusList().isEmpty() && (game.getPrevState().equals(State.BUILD) || game.getPrevState().equals(State.MOVE))) {
+            if (!currentPlayer.getMalusList().isEmpty())
+                System.out.println(currentPlayer.getMalusList().get(0).getNumberOfTurns() + " " + currentPlayer.getMalusList().get(0).getNumberOfTurnsUsed());
+
             currentPlayer.getMalusList().stream()
                     .filter(malus -> !malus.isPermanent())
                     .forEach(malus -> malus.setNumberOfTurnsUsed(malus.getNumberOfTurnsUsed() + 1));
             currentPlayer.removeMalus();
 
-            System.out.println(currentPlayer.getMalusList().size());
+            System.out.println("REMOVED MALUS " + currentPlayer.getMalusList().size());
+            if (!currentPlayer.getMalusList().isEmpty())
+                System.out.println(currentPlayer.getMalusList().get(0).getNumberOfTurns() + " " + currentPlayer.getMalusList().get(0).getNumberOfTurnsUsed());
 
             //save
-            //GameMemory.save(currentPlayer, Lobby.backupPath);
+            GameMemory.save(currentPlayer, Lobby.backupPath);
         }
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state

@@ -59,8 +59,6 @@ public class Move implements GameState {
 
         List<Cell> possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
 
-        System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC " + game.getCurrentPlayer().getMalusList().size());
-
         for (Cell c: possibleMoves) {
             if (c.getX() == cellToMoveTo.getX() && c.getY() == cellToMoveTo.getY())
                 return true;
@@ -167,6 +165,8 @@ public class Move implements GameState {
             if (ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //then if the current player has activated its god's personal malus
                 ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
 
+                System.out.println("ADDED MALUS");
+
                 //save
                 GameMemory.save(game.getPlayerList(), Lobby.backupPath);
             }
@@ -204,8 +204,6 @@ public class Move implements GameState {
         Player currentPlayer = game.getCurrentPlayer();
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
-
-        System.out.println("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC " + currentPlayer.getMalusList().size());
 
         // it checks if the chosen cell is in the possible moves, otherwise the player has to move again
         if (isMoveCorrect(cellToMoveTo)) {

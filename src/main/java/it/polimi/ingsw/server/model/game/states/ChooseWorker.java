@@ -78,8 +78,6 @@ public class ChooseWorker implements GameState {
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
 
-        System.out.println("1) " + currentPlayer.getMalusList().size());
-
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHOOSE_WORKER);
 
@@ -131,18 +129,14 @@ public class ChooseWorker implements GameState {
             GameMemory.save(game.getPlayerList(), Lobby.backupPath);
         }
         else {
-            System.out.println("2) " + currentPlayer.getMalusList().size());
             for (Worker w : currentPlayer.getWorkers()) {
                 if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
                     if(Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
-                        System.out.println("4) " + currentPlayer.getMalusList().size());
                         // the player has to pick a worker and the game goes to Move state
                         currentPlayer.setCurrentWorker(w);
                         returnContent.setAnswerType(AnswerType.SUCCESS);
                         returnContent.setState(State.MOVE);
                         returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
-
-                        System.out.println("5) " + currentPlayer.getMalusList().size());
 
                         //save
                         GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
@@ -153,8 +147,6 @@ public class ChooseWorker implements GameState {
                 }
             }
         }
-
-        System.out.println("3) " + currentPlayer.getMalusList().size());
 
         //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);

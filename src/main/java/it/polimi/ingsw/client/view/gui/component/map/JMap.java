@@ -132,19 +132,6 @@ public class JMap extends JPanel implements ActionListener {
         switchWorkers(currentWorker, where);
     }
 
-    /*public void switchWorkers(JWorker worker, JCell where) {
-        if (((JBlockDecorator) where).isFree())
-            moveWorker(worker, where);
-        else {
-            JWorker workerToSwitch = ((JBlockDecorator) where).getJWorker();
-            JCell workerPrevLocation = worker.getLocation();
-
-            ((JBlockDecorator) where).removeWorker();
-            moveWorker(worker, where);
-            moveWorker(workerToSwitch, workerPrevLocation);
-        }
-    }*/
-
     public void switchWorkers(JWorker currWorker, JCell nextCell) {
         if (((JBlockDecorator) nextCell).isFree())
             moveWorker(currWorker, nextCell);

@@ -36,6 +36,7 @@ public class Malus {
         malusType = malus.getMalusType();
         permanent = malus.isPermanent();
         numberOfTurns = malus.numberOfTurns;
+        numberOfTurnsUsed = malus.getNumberOfTurnsUsed();
         direction.addAll(malus.direction);
     }
 
@@ -72,7 +73,6 @@ public class Malus {
     }
 
     public List<MalusLevel> getDirection() {
-
         return new ArrayList<>(direction);
     }
 

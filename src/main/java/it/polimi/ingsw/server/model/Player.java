@@ -157,7 +157,7 @@ public class Player {
      * Method that removes the malus from the player
      */
     public void removeMalus() {
-        malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() == m.getNumberOfTurnsUsed());
+        malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() <= m.getNumberOfTurnsUsed());
     }
 
     /**
@@ -180,8 +180,8 @@ public class Player {
      * Method that resets a player: it removes maluses, his card, and his workers (that are also removed from the board)
      */
     public void reset() {
-        removeMalus();
-        removePermanentMalus();
+        //removeMalus();
+        //removePermanentMalus();
         malusList.clear();
         card = null;
         workers.forEach(w -> w.getLocation().removePawn());
