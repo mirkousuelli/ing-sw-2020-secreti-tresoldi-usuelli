@@ -90,4 +90,21 @@ class BoardTest {
         }
     }
 
+    @Test
+    void cloneBoardTest() {
+        /* test if the board is cleaned correctly
+         */
+        Board tester = new Board();
+
+        Board clonedBoard = tester.clone();
+        for (int i = 0; i < clonedBoard.getLength(); i++) {
+            for (int j = 0; j < clonedBoard.getLength(); j++) {
+
+                assertEquals(i, clonedBoard.getCell(i, j).getX());
+                assertEquals(j, clonedBoard.getCell(i, j).getY());
+                assertEquals(Level.GROUND, clonedBoard.getCell(i, j).getLevel());
+            }
+        }
+    }
+
 }
