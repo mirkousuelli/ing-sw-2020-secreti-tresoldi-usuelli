@@ -135,6 +135,7 @@ public class ChangeTurnTest {
         p1.setCurrentWorker(p1.getWorkers().get(0));
         game.assignCard(God.PROMETHEUS);
 
+        //usePower that adds a personal malus
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn.getX(), cellToBuildOn.getY()))));
         GameMemory.save(game, Lobby.backupPath);
@@ -147,7 +148,7 @@ public class ChangeTurnTest {
         assertEquals(p1.getCard().getPower(0).getPersonalMalus(), p1.getMalusList().get(0));
         assertEquals(p1, game.getCurrentPlayer());
 
-
+        //move blocked by the newly added malus
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToBuildOn.getX(), cellToBuildOn.getY()))));
         GameMemory.save(game, Lobby.backupPath);
@@ -158,6 +159,7 @@ public class ChangeTurnTest {
         assertEquals(State.MOVE, returnContent.getState());
         assertEquals(p1, game.getCurrentPlayer());
 
+        //move correct
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo.getX(), cellToMoveTo.getY()))));
         GameMemory.save(game, Lobby.backupPath);
@@ -169,6 +171,7 @@ public class ChangeTurnTest {
         assertEquals(State.BUILD, returnContent.getState());
         assertEquals(p1, game.getCurrentPlayer());
 
+        //build correct
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn1.getX(), cellToBuildOn1.getY()))));
         GameMemory.save(game, Lobby.backupPath);
@@ -182,10 +185,12 @@ public class ChangeTurnTest {
         assertEquals(p2, game.getCurrentPlayer());
 
 
+        //new turn
         Block cellToBuildOn2 = (Block) board.getCell(1, 2);
         Block cellToMoveTo2 = (Block) board.getCell(1, 1);
         game.setCurrentPlayer(p1);
 
+        //move up correct (malus has expired)
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo2.getX(), cellToMoveTo2.getY()))));
         GameMemory.save(game, Lobby.backupPath);
@@ -197,6 +202,7 @@ public class ChangeTurnTest {
         assertEquals(State.BUILD, returnContent.getState());
         assertEquals(p1, game.getCurrentPlayer());
 
+        //build correct
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn2.getX(), cellToBuildOn2.getY()))));
         GameMemory.save(game, Lobby.backupPath);
