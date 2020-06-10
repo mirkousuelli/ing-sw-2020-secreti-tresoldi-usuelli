@@ -166,7 +166,7 @@ public class MovePower<S> extends ActivePower<S> {
      * @param y y-coordinate of the cell to be found
      * @return the cell where the opponent's worker is
      */
-    private Cell findCell(List<Cell> list, int x, int y) {
+    public Cell findCell(List<Cell> list, int x, int y) {
         for (Cell c: list){
             if (c.getX() == x && c.getY() == y && c.isFree())
                 return c;
@@ -176,6 +176,8 @@ public class MovePower<S> extends ActivePower<S> {
     }
 
     public static Cell lineEqTwoPoints(Cell from, Cell to) {
+        if (from == null) return null;
+        if (to == null) return null;
         if (to.getX() == from.getX() && to.getY() == from.getY()) return null; //from and to cannot be the same cell!
 
         if (to.getX() != from.getX()) { //y = mx + q (slope-intercept)
@@ -195,7 +197,6 @@ public class MovePower<S> extends ActivePower<S> {
                 return new Block(to.getX(), y);
             else
                 return null;
-
         }
     }
 
@@ -207,8 +208,14 @@ public class MovePower<S> extends ActivePower<S> {
         else
             newX = to.getX() - 1;
 
-        if (newX >= 0 && newX <= 4)
-            return new Block(newX, (int) (m*newX + q));
+        if (newX >= 0 && newX <= 4) {
+            int newY = (int) (m*newX + q);
+
+            if (newY >= 0 && newY <= 4)
+                return new Block(newX, newY);
+            else
+                return null;
+        }
         else
             return null;
     }

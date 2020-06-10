@@ -34,22 +34,13 @@ public class PreparePayload {
         List<ReducedAnswerCell> toReturnMalus;
         List<ReducedAnswerCell> toReturn;
         boolean personalMalus = false;
-        //boolean removed = false;
 
         List<Malus> maluses = game.getCurrentPlayer().getMalusList();
-        /*if (game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null) {
-            Malus temp = game.getCurrentPlayer().removePermanentMalus();
-            maluses.removeIf(m -> m.equals(temp));
-            removed = true;
-        }*/
 
         if (state.equals(State.CHOOSE_WORKER) || state.equals(State.MOVE)) //if it is possible to move normally
             possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer())); //then add the possible moves
         else
             possibleMoves = new ArrayList<>();
-
-        //if (removed)
-        //    game.getCurrentPlayer().addMalus(game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus());
 
         specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing)); //add special moves
         toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);

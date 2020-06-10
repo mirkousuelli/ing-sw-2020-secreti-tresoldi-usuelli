@@ -144,7 +144,6 @@ public abstract class ActivePower<S> extends Power<S> {
             numberOfActionsRemaining--;
 
         addPersonalMalus(currentPlayer);
-        System.out.print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
 
         return true;
     }
