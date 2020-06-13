@@ -39,7 +39,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         c.anchor = GridBagConstraints.SOUTHWEST;
         //c.insets = new Insets(400,0,0,0);
 
-        ImageIcon icon = new ImageIcon("img/buttons/play_again.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/play_again.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
 
@@ -68,7 +68,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         //c.insets = new Insets(400,0,0,0);
         c.anchor = GridBagConstraints.SOUTHEAST;
 
-        ImageIcon icon = new ImageIcon("img/buttons/quit_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/quit_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
 

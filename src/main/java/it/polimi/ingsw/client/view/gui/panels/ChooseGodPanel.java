@@ -100,7 +100,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
         layers.add(godsList, c);
 
-        ImageIcon icon = new ImageIcon("img/labels/gods_menu.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/gods_menu.png"));
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         godsBack = new JLabel(icon);
@@ -119,7 +119,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 0f;
         c.ipady = -120;
 
-        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 

@@ -30,7 +30,8 @@ public class ManagerPanel extends JPanel {
 
         game = new JGame();
 
-        addPanel(new StartPanel(cardLayout, this));
+        StartPanel startPanel = new StartPanel(cardLayout, this);
+        addPanel(startPanel);
         addPanel(new NicknamePanel(cardLayout, this));
         cardLayout.show(this, "Card 1");
     }

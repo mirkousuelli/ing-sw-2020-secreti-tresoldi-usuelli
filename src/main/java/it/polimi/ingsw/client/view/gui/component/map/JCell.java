@@ -27,10 +27,14 @@ public abstract class JCell extends JButton {
 
     public void setStatus(JCellStatus status) {
         this.status = status;
-        ImageIcon icon = new ImageIcon(status.getPath());
-        Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
-        setIcon(icon);
+        ImageIcon icon;
+
+        if (status.getPath() != null) {
+            icon = new ImageIcon(this.getClass().getResource(status.getPath()));
+            Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img);
+            setIcon(icon);
+        }
     }
 
     public int getXCoordinate() {

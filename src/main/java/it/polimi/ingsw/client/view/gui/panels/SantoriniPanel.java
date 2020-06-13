@@ -1,8 +1,5 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
-import it.polimi.ingsw.client.view.ClientModel;
-import it.polimi.ingsw.client.view.gui.GUI;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,7 +22,7 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         int maxWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         int maxHeight = maxWidth * firstSize.height / firstSize.width;
 
-        img = BackgroundPanel.getScaledImage(new ImageIcon(BackgroundPanel.BACKGROUND + this.imgPath),
+        img = BackgroundPanel.getScaledImage(new ImageIcon(this.getClass().getResource(BackgroundPanel.BACKGROUND + this.imgPath)),
                 maxWidth, maxHeight).getImage();
 
         setLayout(new GridBagLayout());
@@ -35,7 +32,6 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
         double scaleFactor = Math.min(1d, BackgroundPanel.getScaleFactorToFit(
@@ -60,5 +56,7 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         return new Dimension(this.scaleWidth, this.scaleHeight);
     }
 
-    public void updateFromModel() {}
+    public void updateFromModel() {
+        //to override when needed
+    }
 }

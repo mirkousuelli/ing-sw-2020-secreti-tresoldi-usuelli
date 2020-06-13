@@ -23,7 +23,7 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private void create2PlayerButton() {
         _2playersButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/2_player_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+                new ImageIcon(this.getClass().getResource("/img/buttons/2_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));
         _2playersButton.setOpaque(false);
         _2playersButton.setContentAreaFilled(false);
         _2playersButton.setBorderPainted(false);
@@ -33,7 +33,7 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private void create3PlayerButton() {
         _3playersButton = new JButton(BackgroundPanel.getScaledImage(
-                new ImageIcon("img/buttons/3_player_button.png"), BUTTON_SIZE, BUTTON_SIZE));
+                new ImageIcon(this.getClass().getResource("/img/buttons/3_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));
         _3playersButton.setOpaque(false);
         _3playersButton.setContentAreaFilled(false);
         _3playersButton.setBorderPainted(false);

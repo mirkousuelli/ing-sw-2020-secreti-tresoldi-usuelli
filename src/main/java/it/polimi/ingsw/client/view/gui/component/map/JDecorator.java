@@ -10,14 +10,19 @@ public class JDecorator {
 
     public JDecorator(JCellStatus decoration) {
         this.decoration = decoration;
-
-        ImageIcon icon = new ImageIcon(decoration.getPath());
-        Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
-
         this.component = new JLabel();
         this.component.setLayout(new GridBagLayout());
-        this.component.setIcon(icon);
+
+        if (decoration.getPath() != null) {
+            ImageIcon icon = new ImageIcon(this.getClass().getResource(decoration.getPath()));
+            Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img);
+
+            this.component.setIcon(icon);
+        }
+        else
+            this.component.setIcon(null);
+
         this.component.revalidate();
     }
 
@@ -40,11 +45,14 @@ public class JDecorator {
 
     public void setDecoration(JCellStatus decoration) {
         this.decoration = decoration;
-        ImageIcon icon = new ImageIcon(decoration.getPath());
-        Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
-        this.component.setIcon(icon);
-        this.component.revalidate();
+
+        if (decoration.getPath() != null) {
+            ImageIcon icon = new ImageIcon(this.getClass().getResource(decoration.getPath()));
+            Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img);
+            this.component.setIcon(icon);
+            this.component.revalidate();
+        }
     }
 
     public void addOver(JLabel component) {

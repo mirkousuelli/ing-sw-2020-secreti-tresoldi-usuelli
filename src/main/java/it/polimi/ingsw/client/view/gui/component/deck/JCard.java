@@ -9,7 +9,7 @@ public class JCard extends JLabel {
     private final static int SIZE_X = 170; //190;
     private final static int SIZE_Y = 280 ; //= 310;
 
-    private final static String root = "img/cards/";
+    private final static String root = "/img/cards/";
     private final static String card = "/card.png";
     private final static String power = "/power.png";
     private final static String malus = "/malus.png";
@@ -22,7 +22,7 @@ public class JCard extends JLabel {
         this.god = god;
         this.path = root + this.god.toString().toLowerCase() + card;
 
-        ImageIcon icon = new ImageIcon(path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);
@@ -36,7 +36,7 @@ public class JCard extends JLabel {
     public JCard() {
         this.path = root + retro;
 
-        ImageIcon icon = new ImageIcon(path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);
@@ -53,7 +53,7 @@ public class JCard extends JLabel {
     public void applyPower() {
         this.path = root + this.god + power;
 
-        ImageIcon icon = new ImageIcon(path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);
@@ -66,7 +66,7 @@ public class JCard extends JLabel {
     public void applyMalus() {
         this.path = root + this.god + malus;
 
-        ImageIcon icon = new ImageIcon(path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);
@@ -79,7 +79,7 @@ public class JCard extends JLabel {
     public void applyNormal() {
         this.path = root + this.god + card;
 
-        ImageIcon icon = new ImageIcon(path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         setIcon(icon);

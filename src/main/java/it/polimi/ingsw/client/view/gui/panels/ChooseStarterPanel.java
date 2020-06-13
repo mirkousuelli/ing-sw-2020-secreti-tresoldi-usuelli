@@ -31,7 +31,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
     }
 
     public void createWaitStand() {
-        ImageIcon icon = new ImageIcon("img/labels/lobby.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/lobby.png"));
         Image img = icon.getImage().getScaledInstance(420, 540, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         stand = new JLabel(icon);
@@ -59,7 +59,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         c.gridx = 0;
         c.gridy = this.game.getNumPlayer();
 
-        ImageIcon icon = new ImageIcon("img/buttons/choose_starter.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_starter.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 

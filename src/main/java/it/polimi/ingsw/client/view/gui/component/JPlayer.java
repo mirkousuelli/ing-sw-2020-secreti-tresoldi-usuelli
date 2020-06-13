@@ -22,7 +22,7 @@ public class JPlayer extends JButton implements ActionListener {
     private boolean currentWorker;
     private boolean chooseWorker;
     private final String tagPath;
-    private final static String activePath = "img/labels/chosen_player.png";
+    private final static String activePath = "/img/labels/chosen_player.png";
     private boolean active;
     private JLabel text;
 
@@ -49,8 +49,8 @@ public class JPlayer extends JButton implements ActionListener {
         fontSize = FONT_SIZE;
 
         setPreferredSize(new Dimension(xSize, ySize));
-        tagPath = "img/workers/worker_" + (id + 1) + "/tag.png";
-        ImageIcon icon = new ImageIcon(tagPath);
+        tagPath = "/img/workers/worker_" + (id + 1) + "/tag.png";
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(tagPath));
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
         setOpaque(false);
@@ -132,7 +132,7 @@ public class JPlayer extends JButton implements ActionListener {
         this.active = true;
 
         JLabel activeLabel = new JLabel();
-        ImageIcon icon = new ImageIcon(activePath);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(activePath));
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         activeLabel.setIcon(icon);
@@ -157,7 +157,6 @@ public class JPlayer extends JButton implements ActionListener {
     }
 
     public void setCardViewSize(boolean view) {
-
         if (view) {
             this.xSize = CARD_SIZE_X;
             this.ySize = CARD_SIZE_Y;
@@ -169,7 +168,7 @@ public class JPlayer extends JButton implements ActionListener {
         }
 
         setPreferredSize(new Dimension(xSize, ySize));
-        ImageIcon icon = new ImageIcon(tagPath);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(tagPath));
         Image img = icon.getImage().getScaledInstance(xSize, ySize, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(img));
         text.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize));

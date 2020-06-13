@@ -49,7 +49,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     }
 
     public void createWaitStand() {
-        ImageIcon icon = new ImageIcon("img/labels/stand.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/stand.png"));
         Image img = icon.getImage().getScaledInstance( 540, 540, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         stand = new JLabel(icon);
@@ -111,7 +111,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     public void createSendButton() {
         GridBagConstraints c = new GridBagConstraints();
 
-        ImageIcon icon = new ImageIcon("img/buttons/send_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/send_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 

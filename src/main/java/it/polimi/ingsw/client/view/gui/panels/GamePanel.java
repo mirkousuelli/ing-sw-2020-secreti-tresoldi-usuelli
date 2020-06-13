@@ -98,7 +98,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
 
-        ImageIcon icon = new ImageIcon("img/buttons/quit_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/quit_button.png"));
         Image img = icon.getImage().getScaledInstance( 100, 100, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
@@ -119,7 +119,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     void createPowerButton() {
         GridBagConstraints c = new GridBagConstraints();
 
-        ImageIcon icon = new ImageIcon("img/buttons/power_off.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/power_off.png"));
         Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
@@ -144,7 +144,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     void createEndTurnButton() {
         GridBagConstraints c = new GridBagConstraints();
 
-        ImageIcon icon = new ImageIcon("img/buttons/end_turn.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/end_turn.png"));
         Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
@@ -169,12 +169,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         powerButton.setEnabled(true);
 
         if (active) {
-            ImageIcon icon = new ImageIcon("img/buttons/power_on.png");
+            ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/power_on.png"));
             Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
             powerButton.setIcon(new ImageIcon(img));
             powerButton.setName("on");
         } else {
-            ImageIcon icon = new ImageIcon("img/buttons/power_off.png");
+            ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/power_off.png"));
             Image img = icon.getImage().getScaledInstance( 180, 45, Image.SCALE_SMOOTH);
             powerButton.setIcon(new ImageIcon(img));
             powerButton.setName("off");
@@ -226,7 +226,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         c.gridy = i;
         if (i > 0)
             c.insets = new Insets(10,0,0,0);
-        playerCon. insets = new Insets(125,0,0,0);
+        playerCon.insets = new Insets(125,0,0,0);
 
         JCard card = player.getJCard();
         player.setCardViewSize(true);

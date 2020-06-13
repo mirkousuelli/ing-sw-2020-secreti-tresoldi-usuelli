@@ -251,27 +251,27 @@
         </power>
     </god>
 
-    <!-- - - -  - - - - - - - - - - - - - - - - - POSEIDON - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- - - -  - - - - - - - - - - - - - - - - - POSEIDON - - - - - - - - - - - - - - - - - - - - - - -
     <god id="POSEIDON">
         <name>Poseidon</name>
         <description>If your unmoved Worker is on the ground level, it may build up to three times</description>
         <player>3</player>
         <power>
             <effect what="build"/>
-            <!-- who -->
+            <!- - who - ->
             <worker who="unmoved"/>
-            <!-- where -->
+            <!- - where - ->
             <workerpos where="ground"/>
-            <!-- when -->
+            <!- - when - ->
             <timing when="endturn"/>
-            <!-- why -->
+            <!- - why - ->
             <constraints>
                 <numadd>3</numadd>
             </constraints>
-            <!-- how -->
+             <!- -how - ->
             <build/>
         </power>
-    </god>
+    </god> -->
 
     <!-- - - -  - - - - - - - - - - - - - - - - - PROMETHEUS - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="PROMETHEUS">

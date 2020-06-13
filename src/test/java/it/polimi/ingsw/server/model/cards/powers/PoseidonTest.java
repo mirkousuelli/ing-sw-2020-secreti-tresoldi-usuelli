@@ -18,7 +18,7 @@ public class PoseidonTest {
      *   If your unmoved Worker is on the ground level, it may build up to three times
      */
 
-    @Test
+    /*@Test
     void testUnmovedGroundLevelWorkerThreeBuild() throws ParserConfigurationException, SAXException {
         Player player1 = new Player("Pl1");
         Board board = new Board();
@@ -167,5 +167,5 @@ public class PoseidonTest {
         assertEquals(Level.GROUND, notAdjacentCell.getPreviousLevel());
         assertEquals(Level.GROUND, notAdjacentCell.getLevel());
         assertNull(player1.getWorkers().get(1).getPreviousBuild());
-    }
+    }*/
 }

@@ -19,7 +19,7 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
     private void createPlayButton() {
         GridBagConstraints c = new GridBagConstraints();
 
-        ImageIcon icon = new ImageIcon("img/buttons/play_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/play_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 

@@ -9,9 +9,9 @@ public class JMini extends JButton {
     private final static int SIZE_X = 65;
     private final static int SIZE_Y = 90;
 
-    private final static String root = "img/cards/";
+    private final static String root = "/img/cards/";
     private final static String leaf = "/mini.png";
-    private final static String activePath = "img/labels/active.png";
+    private final static String activePath = "/img/labels/active.png";
 
     private boolean active;
     private boolean enable;
@@ -33,7 +33,7 @@ public class JMini extends JButton {
         setBorderPainted(false);
         setName("mini");
 
-        ImageIcon icon = new ImageIcon(this.path);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance( SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         setIcon(icon);
@@ -46,7 +46,7 @@ public class JMini extends JButton {
     public void active() {
         this.active = true;
 
-        ImageIcon icon = new ImageIcon(activePath);
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(activePath));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         add(new JLabel(icon), new GridBagConstraints());

@@ -87,7 +87,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
         layers.add(chosenList, c);
 
-        ImageIcon icon = new ImageIcon("img/labels/clouds.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/clouds.png"));
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         cloudBack = new JLabel(icon);
@@ -188,7 +188,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
         layers.add(godsList, c, 0);
 
-        ImageIcon icon = new ImageIcon("img/labels/gods_menu.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/gods_menu.png"));
         Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 155, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
         godsBack = new JLabel(icon);
@@ -223,7 +223,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 1;
 
-        ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
@@ -246,7 +246,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 1;
 
-        ImageIcon icon = new ImageIcon("img/buttons/remove_button.png");
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/remove_button.png"));
         Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
 
@@ -291,7 +291,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 setChoice(deck, deck.getCurrent());
                 deck.showMiniList();
                 if (numPlayer == chosenDeck.getNum()) {
-                    ImageIcon icon = new ImageIcon("img/buttons/send_button.png");
+                    ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/send_button.png"));
                     Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
                     icon = new ImageIcon(img);
                     activeButton.setIcon(icon);
@@ -306,7 +306,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 deck.showMiniList();
                 chosenDeck.showMiniList();
                 if (activeButton.getName().equalsIgnoreCase("send")) {
-                    ImageIcon icon = new ImageIcon("img/buttons/choose_button.png");
+                    ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
                     Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
                     icon = new ImageIcon(img);
                     activeButton.setIcon(icon);
