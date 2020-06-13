@@ -1,50 +1,27 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.client.view.cli.CLI;
-import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
-import it.polimi.ingsw.client.view.cli.SantoriniPrintStream;
 import it.polimi.ingsw.client.view.gui.GUI;
 
-import java.io.PrintStream;
-import java.util.Scanner;
+import javax.swing.*;
 
 public class Client {
 
-    private static final Scanner in = new Scanner(System.in);
-    private static final PrintStream out = new SantoriniPrintStream(System.out);
-
     public static void main(String[] args) {
-        ClientView clientView;
+        final SantoriniRunnable[] clientView = new ClientView[1];
 
-        int viewType = Client.askUI();
-
-        switch (viewType) {
-            case 1:
-                clientView = new CLI();
-                break;
-
-            case 2:
-                clientView = new GUI();
-                break;
-
-            default:
-                throw new NotAValidInputRunTimeException("Not a valid view");
-        }
+        if (System.console() != null)
+            clientView[0] = new CLI<>();
+        else
+            SwingUtilities.invokeLater(() -> {
+                clientView[0] = new GUI<>();
+                ((GUI) clientView[0]).createAndStartGUI();
+            });
 
         new Thread(
-                clientView
+                clientView[0]
         ).start();
-    }
-
-    private static int askUI() {
-        out.println("Insert which UI you want: 1-CLI, 2-GUI");
-        String value;
-
-        do {
-            value = in.nextLine();
-        } while (!value.equals("1") && !value.equals("2"));
-
-        return Integer.parseInt(value);
     }
 }
