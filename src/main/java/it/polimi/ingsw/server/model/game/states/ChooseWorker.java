@@ -157,6 +157,7 @@ public class ChooseWorker implements GameState {
     private ReturnContent chooseWorker(Cell chosenWorker) {
         ReturnContent returnContent = null;
         Player currentPlayer = game.getCurrentPlayer();
+        List<ReducedAnswerCell> payload = null;
 
         for (Worker w : currentPlayer.getWorkers()) {
             if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
@@ -167,7 +168,7 @@ public class ChooseWorker implements GameState {
                     returnContent = new ReturnContent<>();
                     returnContent.setAnswerType(AnswerType.SUCCESS);
                     returnContent.setState(State.MOVE);
-                    returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER));
+                    payload = PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER);
 
                     //save
                     GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
@@ -178,8 +179,10 @@ public class ChooseWorker implements GameState {
             }
         }
 
-        if (returnContent == null)
+        if (returnContent == null || payload.stream().allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT)))
             return returnError();
+
+        returnContent.setPayload(payload);
 
         return returnContent;
     }

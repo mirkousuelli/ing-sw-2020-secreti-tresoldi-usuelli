@@ -15,6 +15,8 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.Lobby;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,44 +30,100 @@ public class PreparePayload {
     private PreparePayload() {}
 
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
-        List<Cell> possibleMoves;
-        List<Cell> possibleBuilds;
-        List<Cell> specialMoves;
-        List<ReducedAnswerCell> toReturnMalus;
-        List<ReducedAnswerCell> toReturn;
-        boolean personalMalus = false;
+        if (game == null || timing == null || state == null) return new ArrayList<>();
 
-        List<Malus> maluses = game.getCurrentPlayer().getMalusList();
+        return PreparePayload.preparePayloadMove(game, timing, state, true);
+    }
+
+    private static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state, boolean currentWorker) {
+        List<ReducedAnswerCell> toReturn;
+
+        Player currentPlayer = game.getCurrentPlayer();
+        Worker worker = currentPlayer.getCurrentWorker();
+        Cell workerLocation = worker.getLocation();
+
+        List<Malus> maluses = currentPlayer.getMalusList();
+        boolean personalMalus;
+
+
+        toReturn = PreparePayload.preparePayloadMoveBasic(game, timing, state); //possible and special moves
+        personalMalus = PreparePayload.preparePayloadMovePersonalMalus(game, state, toReturn); //remove cell blocked by a personal malus
+        toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //add changed cell by a move action
+
+        if (maluses != null && !maluses.isEmpty() && !personalMalus) {
+            for (ReducedAnswerCell c : toReturn) {
+                if (!ActivePower.verifyMalus(maluses, workerLocation, game.getBoard().getCell(c.getX(), c.getY()))) //if a malus (personal or not) is active on a cell
+                    c.resetAction(); //then remove every possible action on that cell
+            }
+        }
+
+        if (currentWorker)
+            toReturn = PreparePayload.preparePayloadMovePermanentMalus(game, timing, state, toReturn); //verify if a permanent "If possible" malus is active
+
+        return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
+    }
+
+    private static List<ReducedAnswerCell> preparePayloadMoveBasic(Game game, Timing timing, State state) {
+        List<Cell> possibleMoves = new ArrayList<>();
+        List<Cell> specialMoves;
+
+        Player currentPlayer = game.getCurrentPlayer();
 
         if (state.equals(State.CHOOSE_WORKER) || state.equals(State.MOVE)) //if it is possible to move normally
-            possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(game.getCurrentPlayer())); //then add the possible moves
-        else
-            possibleMoves = new ArrayList<>();
+            possibleMoves = new ArrayList<>(game.getBoard().getPossibleMoves(currentPlayer)); //then add the possible moves
 
-        specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing)); //add special moves
-        toReturn = ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
+        specialMoves = new ArrayList<>(game.getBoard().getSpecialMoves(currentPlayer.getCurrentWorker().getLocation(), currentPlayer, timing)); //add special moves
+
+        return ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
+    }
+
+    private static boolean preparePayloadMovePersonalMalus(Game game, State state, List<ReducedAnswerCell> toReturn) {
+        List<Cell> possibleBuilds;
+        List<ReducedAnswerCell> toReturnMalus;
+        boolean personalMalus = false;
+
+        Player currentPlayer = game.getCurrentPlayer();
 
         //personal malus
-        Power power = game.getCurrentPlayer().getCard().getPower(0);
+        Power power = currentPlayer.getCard().getPower(0);
         Malus malus = power.getPersonalMalus();
         if (state.equals(State.CHOOSE_WORKER) && malus != null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) { //if the current player has a personal move malus active
-            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation())); //then find the cells blocked by the said malus
+            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(currentPlayer.getCurrentWorker().getLocation())); //then find the cells blocked by the said malus
             toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.USEPOWER, game.getPlayerList(), possibleBuilds, new ArrayList<>());
             toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, toReturnMalus);
             personalMalus = true;
         }
 
-        toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //merge
+        return personalMalus;
+    }
 
-        if (maluses != null && !maluses.isEmpty() && !personalMalus) {
-            for (ReducedAnswerCell c : toReturn) {
-                if (!ActivePower.verifyMalus(maluses, game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getBoard().getCell(c.getX(), c.getY()))) //if a malus (personal or not) is active on a cell
-                    c.resetAction(); //then remove every possible action on that cell
+    private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {
+        Player currentPlayer = game.getCurrentPlayer();
+        boolean isToReturnOnlyDefault = toReturn.stream().allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT));
+        List<Malus> permanentMoveMaluses = currentPlayer.getMalusList().stream().filter(m -> m.getMalusType().equals(MalusType.MOVE)).filter(Malus::isPermanent).collect(Collectors.toList());
+
+        //Permanent "If possible" maluses
+        if (isToReturnOnlyDefault && !permanentMoveMaluses.isEmpty()) {
+            if (state.equals(State.CHOOSE_WORKER)) {
+                currentPlayer.setCurrentWorker(currentPlayer.getWorker((currentPlayer.getCurrentWorker().getId() % 2) + 1));
+                List<ReducedAnswerCell> reducedAnswerCellList = PreparePayload.preparePayloadMove(game, timing, State.MOVE, false); //evaluate if the other worker can move without them
+                currentPlayer.setCurrentWorker(currentPlayer.getWorker((currentPlayer.getCurrentWorker().getId() % 2) + 1));
+                boolean changeWorker = reducedAnswerCellList.stream().anyMatch(rac -> !rac.getAction(0).equals(ReducedAction.DEFAULT));
+                if (changeWorker) //if so
+                    return new ArrayList<>(); //the current player has to choose the other worker
             }
+
+            permanentMoveMaluses.forEach(m -> currentPlayer.removePermanentMalus()); //remove "If possible maluses"
+            toReturn = PreparePayload.preparePayloadMove(game, timing, state, true); //evaluate if the current worker can move without them
+            permanentMoveMaluses.forEach(currentPlayer::addMalus); //re-insert permanent "If possible" maluses
+
+            if (!toReturn.isEmpty()) //if so
+                return toReturn; //then don't apply them because it isn't possible to
         }
 
-        return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
+        return toReturn;
     }
+
 
     static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
@@ -73,7 +131,7 @@ public class PreparePayload {
 
         for (ReducedAnswerCell tc : tempList) {
             found = false;
-            for (ReducedAnswerCell rc : toReturn) {
+            for (ReducedAnswerCell rc : ret) {
                 if (rc.getX() == tc.getX() && rc.getY() == tc.getY()) {
                     found = true;
                     rc.setActionList(PreparePayload.unionActions(rc.getActionList(), tc.getActionList()));
@@ -92,7 +150,7 @@ public class PreparePayload {
         List<ReducedAnswerCell> tempList = new ArrayList<>();
         tempList.add(temp);
 
-        return mergeReducedAnswerCellList(toReturn, tempList);
+        return PreparePayload.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
     private static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
@@ -116,9 +174,8 @@ public class PreparePayload {
         set.addAll(list1);
         set.addAll(list2);
 
-        if (set.stream().distinct().count() > 1 && set.contains(ReducedAction.DEFAULT)) {
+        if (set.stream().distinct().count() > 1 && set.contains(ReducedAction.DEFAULT))
             set.removeIf(ra -> ra.equals(ReducedAction.DEFAULT));
-        }
 
         return new ArrayList<>(set);
     }

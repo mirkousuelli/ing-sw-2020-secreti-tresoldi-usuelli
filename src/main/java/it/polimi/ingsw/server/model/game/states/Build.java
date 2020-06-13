@@ -110,10 +110,8 @@ public class Build implements GameState {
         }
 
 
-        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS)) {
-            List<ReducedAnswerCell> toReturn = PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
-            returnContent.setPayload(toReturn);
-        }
+        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS))
+            PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
 
         //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
@@ -230,7 +228,7 @@ public class Build implements GameState {
         List<ReducedAnswerCell> payload;
 
         payload = PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD);
-        PreparePayload.mergeReducedAnswerCellList(payload, PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.BUILD));
+        payload = PreparePayload.mergeReducedAnswerCellList(payload, PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.BUILD));
 
 
         returnContent.setAnswerType(AnswerType.SUCCESS);

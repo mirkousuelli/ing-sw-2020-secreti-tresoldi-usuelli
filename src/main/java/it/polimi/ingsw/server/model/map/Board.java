@@ -215,14 +215,14 @@ public class Board implements Cloneable {
      * @return list of cells where the player can move
      */
     public List<Cell> getPossibleMoves(Player player) {
-
-        List<Cell> toReturn = getAround(player.getCurrentWorker().getLocation());
+        Cell workerLocation = player.getCurrentWorker().getLocation();
+        List<Cell> toReturn = getAround(workerLocation);
         List<Cell> copy;
 
         // checking for around cell higher than allowed
-        for (Cell around : getAround(player.getCurrentWorker().getLocation())) {
+        for (Cell around : getAround(workerLocation)) {
             // if it is busy or complete or higher than allowed
-            if ((!around.isWalkable()) || (player.getCurrentWorker().getLocation().getLevel().toInt() + 1 < around.getLevel().toInt())) {
+            if ((!around.isWalkable()) || (workerLocation.getLevel().toInt() + 1 < around.getLevel().toInt())) {
                 // then remove it from the list
                 toReturn.remove(around);
             }
@@ -231,17 +231,17 @@ public class Board implements Cloneable {
         for (Malus malus : player.getMalusList()) {
             for (MalusLevel direction : malus.getDirection()) {
                 if (direction == MalusLevel.UP) {
-                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                    for (Cell around : this.getAround(workerLocation)) {
                         // checking level difference
-                        if (player.getCurrentWorker().getLocation().getLevel().toInt() < around.getLevel().toInt()) {
+                        if (workerLocation.getLevel().toInt() < around.getLevel().toInt()) {
                             //removing from the list to return
                             toReturn.remove(around);
                         }
                     }
                 } else if (direction == MalusLevel.DOWN) {
-                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                    for (Cell around : this.getAround(workerLocation)) {
                         // checking level difference
-                        if (player.getCurrentWorker().getLocation().getLevel().toInt() > around.getLevel().toInt()) {
+                        if (workerLocation.getLevel().toInt() > around.getLevel().toInt()) {
                             //removing from the list to return
                             toReturn.remove(around);
                         }
@@ -249,9 +249,9 @@ public class Board implements Cloneable {
                 } else if (direction == MalusLevel.SAME) {
                     copy = new ArrayList<>(toReturn);
 
-                    for (Cell around : this.getAround(player.getCurrentWorker().getLocation())) {
+                    for (Cell around : this.getAround(workerLocation)) {
                         // checking level difference
-                        if (player.getCurrentWorker().getLocation().getLevel().toInt() == around.getLevel().toInt()) {
+                        if (workerLocation.getLevel().toInt() == around.getLevel().toInt()) {
                             //removing from the list to return
                             toReturn.remove(around);
                         }

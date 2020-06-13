@@ -137,7 +137,7 @@ public class ChangeTurn implements GameState {
     private void removeMalus() {
         Player currentPlayer = game.getCurrentPlayer();
 
-        if (!currentPlayer.getMalusList().isEmpty() && (game.getPrevState().equals(State.BUILD) || game.getPrevState().equals(State.MOVE))) {
+        if (currentPlayer.getMalusList().stream().anyMatch(m -> !m.isPermanent()) && (game.getPrevState().equals(State.BUILD) || game.getPrevState().equals(State.MOVE))) {
             currentPlayer.getMalusList().stream()
                     .filter(malus -> !malus.isPermanent())
                     .forEach(malus -> malus.setNumberOfTurnsUsed(malus.getNumberOfTurnsUsed() + 1));

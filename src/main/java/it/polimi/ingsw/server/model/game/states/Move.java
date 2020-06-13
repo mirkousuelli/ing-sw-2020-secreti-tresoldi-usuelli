@@ -336,7 +336,7 @@ public class Move implements GameState {
 
         returnContent.setAnswerType(AnswerType.SUCCESS);
         payload = PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER);
-        PreparePayload.mergeReducedAnswerCellList(payload, PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+        payload = PreparePayload.mergeReducedAnswerCellList(payload, PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
 
         if (payload.stream()
                 .map(ReducedAnswerCell::getActionList)
