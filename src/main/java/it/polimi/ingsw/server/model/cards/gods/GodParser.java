@@ -12,23 +12,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class GodParser {
-    private final String XMLFILE = "src/main/java/it/polimi/ingsw/server/model/cards/gods/xml/gods.xml";
+    private final String XMLFILE = "/xml/gods.xml";
 
     private SAXParserFactory factory;
     private SAXParser parser;
     private GodHandler handler;
 
     public GodParser(Deck deck) throws ParserConfigurationException, SAXException {
-        this.factory = SAXParserFactory.newInstance();
-        this.parser = factory.newSAXParser();
-        this.handler = new GodHandler(deck);
+        factory = SAXParserFactory.newInstance();
+        parser = factory.newSAXParser();
+        handler = new GodHandler(deck);
     }
 
     public void parseCards(List<God> gods) {
         try{
             Collections.sort(gods);
-            this.handler.setGods(gods);
-            this.parser.parse(this.XMLFILE, handler);
+            handler.setGods(gods);
+            parser.parse(this.getClass().getResource(XMLFILE).toURI().toString(), handler);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class LoadGameTest {
-    private final String pathFile = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
+    private final String pathFile = "src/test/resources/xml/backup_test.xml";
 
     @Test
     public void LoadMatchTest() throws ParserConfigurationException, SAXException {

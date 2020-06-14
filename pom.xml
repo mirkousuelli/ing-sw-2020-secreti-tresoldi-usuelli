@@ -9,8 +9,6 @@
   <version>1.0-SNAPSHOT</version>
 
   <name>GC15</name>
-  <!-- FIXED!! -->
-  <url>https://github.com/mirkousuelli/ing-sw-2020-secreti-tresoldi-usuelli.git</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -20,10 +20,13 @@ import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
+import it.polimi.ingsw.server.network.ServerConnectionSocket;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that represents the state where a player has to choose the worker he wants to use during his turn
@@ -31,6 +34,7 @@ import java.util.List;
 public class ChooseWorker implements GameState {
 
     private final Game game;
+    private static final Logger LOGGER = Logger.getLogger(ChooseWorker.class.getName());
 
     /**
      * Constructor of the state ChooseWorker
@@ -81,8 +85,8 @@ public class ChooseWorker implements GameState {
         if (!f.exists()) {
             try {
                 boolean b = f.createNewFile();
-                if (!b) throw new IOException("Got an exception while opening " + Lobby.backupPath);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Got an exception while opening " + Lobby.backupPath, e);
                 return returnError();
             }
 

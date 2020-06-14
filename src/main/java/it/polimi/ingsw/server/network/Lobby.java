@@ -11,7 +11,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class which includes hte proper game object reported to specific players.
@@ -30,7 +29,7 @@ public class Lobby {
 
     final Object lockLobby;
 
-    public static final String backupPath = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_lobby.xml";
+    public static final String backupPath = "backup_lobby.xml";
 
     /**
      * Constructor which creates the game and set up persistence feature

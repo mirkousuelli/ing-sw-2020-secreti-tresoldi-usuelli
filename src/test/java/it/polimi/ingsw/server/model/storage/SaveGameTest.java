@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SaveGameTest {
-    private final String pathFile = "src/main/java/it/polimi/ingsw/server/model/storage/xml/backup_test.xml";
+    private final String pathFile = "src/test/resources/xml/backup_test.xml";
 
     @Test
     public void SaveStateTest() throws ParserConfigurationException, SAXException {

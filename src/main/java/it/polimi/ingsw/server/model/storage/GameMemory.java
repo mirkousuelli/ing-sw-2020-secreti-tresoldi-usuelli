@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,12 +48,16 @@ public class GameMemory {
     private static final int LEVEL = 2;
     private static final int PREV = 3;
 
-    private static void write(Document doc, String path) throws TransformerException, FileNotFoundException {
+    private static void write(Document doc, String path) throws TransformerException, FileNotFoundException, URISyntaxException {
         Transformer tr = TransformerFactory.newInstance().newTransformer();
         tr.setOutputProperty(OutputKeys.INDENT, "yes");
         tr.setOutputProperty(OutputKeys.METHOD, "xml");
         tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "game_grammar.dtd");
+
+        if (path.contains("src"))
+            tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "../../../main/resources/xml/game_grammar.dtd");
+        else
+            tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, GameMemory.class.getResource("/xml/game_grammar.dtd").toURI().toString());
 
         // send DOM to file
         tr.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(path)));
@@ -167,7 +172,7 @@ public class GameMemory {
             gameNode.appendChild(boardNode);
             doc.appendChild(gameNode);
             GameMemory.write(doc, path);
-        } catch (ParserConfigurationException | TransformerException | FileNotFoundException e) {
+        } catch (ParserConfigurationException | TransformerException | FileNotFoundException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -194,7 +199,7 @@ public class GameMemory {
             cellNode.item(k).getChildNodes().item(PREV).setTextContent(block.getPreviousLevel().getName());
             factory.setIgnoringElementContentWhitespace(false);
             GameMemory.write(doc, path);
-        } catch (ParserConfigurationException | TransformerException | IOException | SAXException e) {
+        } catch (ParserConfigurationException | TransformerException | IOException | SAXException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -223,7 +228,7 @@ public class GameMemory {
             workerNode.item(Y).setTextContent(String.valueOf(worker.getY()));
 
             GameMemory.write(doc, path);
-        } catch (ParserConfigurationException | IOException | SAXException | TransformerException parserConfigurationException) {
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException | URISyntaxException parserConfigurationException) {
             parserConfigurationException.printStackTrace();
         }
     }
@@ -247,7 +252,7 @@ public class GameMemory {
                 i++;
             }
             GameMemory.write(doc, path);
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -277,7 +282,7 @@ public class GameMemory {
             }
             ((Element)playerNode.item(i)).setAttribute("state", state.toString());
             GameMemory.write(doc, path);
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -358,7 +363,7 @@ public class GameMemory {
             gameNode.appendChild(lobbyNode);
             gameNode.appendChild(boardNode);
             GameMemory.write(doc, path);
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -415,7 +420,7 @@ public class GameMemory {
             }
 
             GameMemory.write(doc, path);
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
             e.printStackTrace();
         }
     }

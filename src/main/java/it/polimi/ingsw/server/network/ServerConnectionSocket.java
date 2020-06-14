@@ -107,7 +107,7 @@ public class ServerConnectionSocket {
                 if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
                     loadedGame = null;
             }
-        } catch (ParserConfigurationException | SAXException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot load backup", e);
         }
 
@@ -154,7 +154,7 @@ public class ServerConnectionSocket {
         }
 
         waitingConnection.clear();
-        File f = new File(Lobby.backupPath);
+        File f = new File(BACKUP_PATH);
         if (f.exists())
             lobby.setReloaded(true);
         else
