@@ -47,8 +47,8 @@ class DeckTest {
         Deck deck = new Deck();
         List<ReducedCard> cards = deck.popAllGods(3);
 
-        //check that the actual number of cards is 14
-        assertEquals(14,cards.size());
+        //check that the actual number of cards is 13
+        assertEquals(13, cards.size());
 
 
         //now control that if I insert a wrong number of player, the cards aren't popped
@@ -58,6 +58,13 @@ class DeckTest {
 
         //check that the actual number of cards is 0
         assertEquals(0,cards2.size());
+
+
+        Deck deck3 = new Deck();
+        List<ReducedCard> cards3 = deck3.popAllGods(2);
+
+        //check that the actual number of cards is 14
+        assertEquals(14, cards3.size());
 
     }
 }
