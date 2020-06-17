@@ -12,7 +12,6 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
-
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.storage.GameMemory;

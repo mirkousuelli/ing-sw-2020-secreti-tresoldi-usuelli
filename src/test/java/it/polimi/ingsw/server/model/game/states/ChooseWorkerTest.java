@@ -1,4 +1,5 @@
 package it.polimi.ingsw.server.model.game.states;
+
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 

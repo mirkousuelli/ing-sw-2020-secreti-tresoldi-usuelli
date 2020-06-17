@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChangeTurnTest {

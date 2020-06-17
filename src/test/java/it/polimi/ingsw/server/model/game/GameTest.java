@@ -1,7 +1,9 @@
 package it.polimi.ingsw.server.model.game;
+
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
-import it.polimi.ingsw.server.model.game.states.*;
+import it.polimi.ingsw.server.model.game.states.Start;
+import it.polimi.ingsw.server.model.game.states.Victory;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.network.Lobby;
 import org.junit.jupiter.api.Test;
