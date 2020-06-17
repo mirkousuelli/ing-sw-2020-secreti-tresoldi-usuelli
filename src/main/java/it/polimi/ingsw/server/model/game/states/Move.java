@@ -29,9 +29,7 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
-import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
-import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.model.map.*;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
@@ -54,6 +52,21 @@ public class Move implements GameState {
         this.game = game;
     }
 
+    private void move(Worker currentWorker, Cell cellToMoveTo) {
+        currentWorker.getLocation().removePawn();
+        currentWorker.setPreviousLocation((currentWorker.getLocation()));
+        currentWorker.setLocation((Block) cellToMoveTo);
+    }
+
+    private boolean checkIfContained(List<Cell> possibleMoves, Cell cell) {
+        for (Cell c: possibleMoves) {
+            if (c.getX() == cell.getX() && c.getY() == cell.getY())
+                return true;
+        }
+
+        return false;
+    }
+
     /**
      * Method that tells if the cell chosen by the player is a cell where he can actually move to
      *
@@ -61,15 +74,33 @@ public class Move implements GameState {
      * @return {@code true} if the player can move to the chosen cell, {@code false} otherwise
      */
     private boolean isMoveCorrect(Cell cellToMoveTo) {
+        Player currentPlayer = game.getCurrentPlayer();
+        Worker currentWorker = currentPlayer.getCurrentWorker();
+        Board board = game.getBoard();
 
-        List<Cell> possibleMoves = game.getBoard().getPossibleMoves(game.getCurrentPlayer());
+        if (!cellToMoveTo.isWalkable()) return false;
+        if (cellToMoveTo.getLevel().toInt() > currentWorker.getLocation().getLevel().toInt() + 1) return false;
 
-        for (Cell c: possibleMoves) {
-            if (c.getX() == cellToMoveTo.getX() && c.getY() == cellToMoveTo.getY())
-                return true;
+        List<Cell> possibleMoves = game.getBoard().getPossibleMoves(currentPlayer);
+
+        if (checkIfContained(possibleMoves, cellToMoveTo)) return true;
+
+        if (currentPlayer.getMalusList().stream().anyMatch(Malus::isPermanent)) {
+            List<ReducedAnswerCell> payload = PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE).stream()
+                    .filter(reducedAnswerCell -> reducedAnswerCell.getActionList().contains(ReducedAction.MOVE))
+                    .filter(ReducedAnswerCell::isFree)
+                    .collect(Collectors.toList());
+
+            if (payload.isEmpty())
+                return false;
+            else {
+                payload.forEach(reducedAnswerCell -> possibleMoves.add(board.getCell(reducedAnswerCell.getX(), reducedAnswerCell.getY())));
+                if (checkIfContained(possibleMoves, cellToMoveTo))
+                    move(currentWorker, cellToMoveTo);
+            }
         }
 
-        return false;
+        return checkIfContained(possibleMoves, cellToMoveTo);
     }
 
     /**
@@ -159,13 +190,12 @@ public class Move implements GameState {
 
 
         Power p = currentPlayer.getCard().getPower(0);
-        if (p.getEffect().equals(Effect.MALUS) && returnContent.getAnswerType().equals(AnswerType.SUCCESS)) { //if the current player's god has a malus power
-            if (ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //then if the current player has activated its god's personal malus
-                ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
+        if (p.getEffect().equals(Effect.MALUS) && returnContent.getAnswerType().equals(AnswerType.SUCCESS) && //if the current player's god has a malus power
+          ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //and if the current player has activated its god's personal malus
+            ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
 
-                //save
-                GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
-            }
+            //save
+            GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
         }
 
         //save
