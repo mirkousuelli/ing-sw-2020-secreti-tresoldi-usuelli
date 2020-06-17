@@ -10,6 +10,9 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +44,7 @@ public class Lobby {
         this(new Game());
         reloaded = false;
 
-        File f = new File(backupPath);
-        boolean b;
-        if (f.exists())
-            b = f.delete();
+        removeBackUp();
     }
 
     /**
@@ -278,6 +278,15 @@ public class Lobby {
         playingConnection.clear();
         reloaded = false;
         numberOfPlayers = -1;
+        removeBackUp();
         game.clean();
+    }
+
+    private void removeBackUp() {
+        try {
+            Files.deleteIfExists(Paths.get(backupPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -6,21 +6,21 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JCard extends JLabel {
-    private final static int SIZE_X = 170; //190;
-    private final static int SIZE_Y = 280 ; //= 310;
+    private static final int SIZE_X = 170; //190;
+    private static final int SIZE_Y = 280 ; //= 310;
 
-    private final static String root = "/img/cards/";
-    private final static String card = "/card.png";
-    private final static String power = "/power.png";
-    private final static String malus = "/malus.png";
-    private final static String retro = "retro.png";
+    private static final String root = "/img/cards/";
+    private static final String card = "/card.png";
+    private static final String power = "/power.png";
+    private static final String malus = "/malus.png";
+    private static final String retro = "retro.png";
 
     private God god;
     private String path;
 
     public JCard(God god) {
         this.god = god;
-        this.path = root + this.god.toString().toLowerCase() + card;
+        path = root + this.god.toString().toLowerCase() + card;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -34,7 +34,7 @@ public class JCard extends JLabel {
     }
 
     public JCard() {
-        this.path = root + retro;
+        path = root + retro;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -51,7 +51,7 @@ public class JCard extends JLabel {
     }
 
     public void applyPower() {
-        this.path = root + this.god + power;
+        path = root + god + power;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -64,7 +64,7 @@ public class JCard extends JLabel {
     }
 
     public void applyMalus() {
-        this.path = root + this.god + malus;
+        path = root + god + malus;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -77,7 +77,7 @@ public class JCard extends JLabel {
     }
 
     public void applyNormal() {
-        this.path = root + this.god + card;
+        path = root + god + card;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -90,14 +90,14 @@ public class JCard extends JLabel {
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 
     public String getGodName() {
-        return this.god.toString();
+        return god.toString();
     }
 
     public God getGod() {
-        return this.god;
+        return god;
     }
 }

@@ -113,10 +113,8 @@ public enum DemandType {
         if (currentState.equals(CREATE_GAME))
             return START;
 
-        if (currentState.equals(START)) {
-            if (!isCreator)
+        if (currentState.equals(START) && !isCreator)
                 return CHOOSE_CARD;
-        }
 
         if (currentState.equals(CHOOSE_CARD)) {
             if (isCreator)

@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 
 public class JMap extends JPanel implements ActionListener {
 
-    public final static int DIM = 5;
-    private JCell[][] cellButton;
-    private List<JCell> activeCells;
-    private List<JCell> powerCells;
+    public static final int DIM = 5;
+    private final JCell[][] cellButton;
+    private final List<JCell> activeCells;
+    private final List<JCell> powerCells;
     private JWorker currentWorker;
     private JPlayer currentPlayer;
     private JCellStatus turn;

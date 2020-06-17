@@ -14,6 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -134,7 +137,7 @@ public class ServerConnectionSocket {
     /**
      * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
      */
-    void SuddenDisconnection() {
+    void suddenDisconnection() {
         if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
             List<String> names = waitingConnection.keySet().stream()
                     .filter(name -> lobby.isPresentInGame(name))
@@ -301,8 +304,6 @@ public class ServerConnectionSocket {
                 waitingConnectionFromReload.clear();
                 lobby.clean();
                 lobby = null;
-                File file = new File(BACKUP_PATH);
-                boolean b = file.delete();
                 alreadyNewGame = true;
             }
 

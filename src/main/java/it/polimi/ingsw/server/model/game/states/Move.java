@@ -171,8 +171,6 @@ public class Move implements GameState {
             if (ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //then if the current player has activated its god's personal malus
                 ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
 
-                System.out.println("ADDED MALUS");
-
                 //save
                 GameMemory.save(game.getPlayerList(), Lobby.backupPath);
             }

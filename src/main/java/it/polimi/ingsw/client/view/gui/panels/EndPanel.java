@@ -20,7 +20,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
     private String type;
     private JButton playAgainButton;
     private JButton quitButton;
-    private final static int BUTTON_SIZE = 150;
+    private static final int BUTTON_SIZE = 150;
 
     public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
         super(type + extension, panelIndex, panels);

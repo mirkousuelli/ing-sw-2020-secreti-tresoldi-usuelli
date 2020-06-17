@@ -202,48 +202,48 @@ public class Game extends Observable<Answer> {
     }
 
     public GameState parseState(State st) {
-        GameState state;
+        GameState s;
 
         switch (st) {
             case START:
-                state = new Start(this);
+                s = new Start(this);
                 break;
             case CHOOSE_CARD:
-                state = new ChooseCard(this);
+                s = new ChooseCard(this);
                 break;
             case CHOOSE_STARTER:
-                state = new ChooseStarter(this);
+                s = new ChooseStarter(this);
                 break;
             case PLACE_WORKERS:
-                state = new PlaceWorkers(this);
+                s = new PlaceWorkers(this);
                 break;
             case CHOOSE_WORKER:
-                state = new ChooseWorker(this);
+                s = new ChooseWorker(this);
                 break;
             case MOVE:
-                state = new Move(this);
+                s = new Move(this);
                 break;
             case BUILD:
-                state = new Build(this);
+                s = new Build(this);
                 break;
             case ASK_ADDITIONAL_POWER:
-                state = new AskAdditionalPower(this);
+                s = new AskAdditionalPower(this);
                 break;
             case ADDITIONAL_POWER:
-                state = new AdditionalPower(this);
+                s = new AdditionalPower(this);
                 break;
             case CHANGE_TURN:
-                state = new ChangeTurn(this);
+                s = new ChangeTurn(this);
                 break;
             case VICTORY:
-                state = new Victory(this);
+                s = new Victory(this);
                 break;
             default:
-                state = null;
+                s = null;
                 break;
         }
 
-        return state;
+        return s;
     }
 
     /**

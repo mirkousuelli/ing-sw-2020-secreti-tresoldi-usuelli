@@ -13,7 +13,7 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private JButton _2playersButton;
     private JButton _3playersButton;
-    private final static int BUTTON_SIZE = 250;
+    private static final int BUTTON_SIZE = 250;
 
     public NumPlayerPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);

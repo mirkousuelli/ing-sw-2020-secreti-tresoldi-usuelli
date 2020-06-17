@@ -8,13 +8,13 @@ import java.awt.*;
 
 public class SantoriniFrame extends JFrame {
 
-    private final String TITLE = "Santorini";
-    private JPanel main;
+    private static final String TITLE = "Santorini";
+    private final JPanel main;
 
     public SantoriniFrame(GUI gui) {
         super();
 
-        setTitle(TITLE);
+        setTitle(SantoriniFrame.TITLE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 

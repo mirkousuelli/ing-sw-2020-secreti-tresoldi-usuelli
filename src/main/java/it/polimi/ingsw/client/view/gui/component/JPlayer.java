@@ -22,7 +22,7 @@ public class JPlayer extends JButton implements ActionListener {
     private boolean currentWorker;
     private boolean chooseWorker;
     private final String tagPath;
-    private final static String activePath = "/img/labels/chosen_player.png";
+    private static final String activePath = "/img/labels/chosen_player.png";
     private boolean active;
     private JLabel text;
 

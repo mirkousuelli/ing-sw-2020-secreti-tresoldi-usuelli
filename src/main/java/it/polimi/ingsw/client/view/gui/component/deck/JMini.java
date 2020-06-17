@@ -6,12 +6,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JMini extends JButton {
-    private final static int SIZE_X = 65;
-    private final static int SIZE_Y = 90;
+    private static final int SIZE_X = 65;
+    private static final int SIZE_Y = 90;
 
-    private final static String root = "/img/cards/";
-    private final static String leaf = "/mini.png";
-    private final static String activePath = "/img/labels/active.png";
+    private static final String root = "/img/cards/";
+    private static final String leaf = "/mini.png";
+    private static final String activePath = "/img/labels/active.png";
 
     private boolean active;
     private boolean enable;
@@ -21,10 +21,10 @@ public class JMini extends JButton {
     public JMini(God god) {
         super();
 
-        this.active = false;
-        this.enable = false;
+        active = false;
+        enable = false;
         this.god = god;
-        this.path = root + god.toString().toLowerCase() + leaf;
+        path = root + god.toString().toLowerCase() + leaf;
 
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(SIZE_X, SIZE_Y));
@@ -44,7 +44,7 @@ public class JMini extends JButton {
     }
 
     public void active() {
-        this.active = true;
+        active = true;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(activePath));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
@@ -55,7 +55,7 @@ public class JMini extends JButton {
     }
 
     public void disactive() {
-        this.active = false;
+        active = false;
 
         removeAll();
         validate();
@@ -63,23 +63,23 @@ public class JMini extends JButton {
     }
 
     public boolean isActive() {
-        return this.active;
+        return active;
     }
 
 
     public void setEnable() {
-        this.enable = true;
+        enable = true;
     }
 
     public void setDisable() {
-        this.enable = false;
+        enable = false;
     }
 
     public boolean isEnable() {
-        return this.enable;
+        return enable;
     }
 
     public God getGod() {
-        return this.god;
+        return god;
     }
 }

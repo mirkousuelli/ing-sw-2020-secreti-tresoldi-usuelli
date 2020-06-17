@@ -351,7 +351,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         } finally {
             setActive(false);
             if (!loggingOut) {
-                server.SuddenDisconnection();
+                server.suddenDisconnection();
                 LOGGER.info(() -> "sudden disconnection!");
             }
         }
