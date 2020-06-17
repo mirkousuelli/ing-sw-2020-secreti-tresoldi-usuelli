@@ -13,6 +13,7 @@ package it.polimi.ingsw.server.model;
 import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.map.Block;
+import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;
@@ -98,6 +99,11 @@ public class Player {
      */
     public void removeWorker(Worker worker) {
         workers.remove(worker);
+    }
+
+    public void removeWorkers() {
+        workers.stream().map(Worker::getLocation).forEach(Block::removePawn);
+        workers.clear();
     }
 
     public List<Worker> getWorkers() {

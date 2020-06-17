@@ -62,6 +62,16 @@ public class JGame {
         return new ArrayList<>(players);
     }
 
+    public void removePlayer(String playerName) {
+        JPlayer playerToRemove = getPlayer(playerName);
+
+        playerToRemove.removeWorkers();
+        players.remove(playerToRemove);
+
+        if (current > players.size() - 1)
+            current--;
+    }
+
     public int getNumPlayer() {
         return this.players.size();
     }

@@ -135,7 +135,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case ERROR:
-
             case CLOSE:
                 break;
 
@@ -163,11 +162,18 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case DEFEAT:
-                updateCurrentState();
                 String playerToRemove = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
-                if (!playerToRemove.equals(player.getNickname()))
+                if (playerToRemove.equals(player.getNickname())) //if it is your defeat
+                    isYourEnding = true; //then it is your ending
+                else { //else remove the defeated player and continue the game
                     opponents.removeIf(o -> o.getNickname().equals(playerToRemove));
-                updateNextState();
+                    workers.removeIf(reducedWorker -> reducedWorker.getOwner().equals(playerToRemove));
+                }
+
+                if (isYourTurn()) {
+                    currentState = DemandType.CHOOSE_WORKER;
+                    updateNextState();
+                }
                 break;
 
             default:

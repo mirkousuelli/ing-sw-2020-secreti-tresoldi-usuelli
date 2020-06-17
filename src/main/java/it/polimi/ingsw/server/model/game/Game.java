@@ -283,6 +283,9 @@ public class Game extends Observable<Answer> {
      */
     public void removePlayer(String player) {
         players.removeIf(p -> p.nickName.equals(player));
+
+        if (currentPlayer > players.size() - 1)
+            currentPlayer--;
     }
 
     /**

@@ -85,6 +85,10 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
+    public void disablePLayAgainButton() {
+        playAgainButton.setEnabled(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ManagerPanel mg = (ManagerPanel) panels;
@@ -110,6 +114,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
             case "quit":
                 if (!type.equals(DEFEAT))
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("n"));
+
                 System.exit(1);
                 break;
 

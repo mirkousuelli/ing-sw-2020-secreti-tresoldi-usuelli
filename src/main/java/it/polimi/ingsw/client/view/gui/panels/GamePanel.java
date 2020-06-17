@@ -454,7 +454,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         DemandType currentState = gui.getClientModel().getCurrentState();
         List<ReducedAnswerCell> updatedCells;
 
-        AnswerType answerType = (AnswerType) gui.getClientModel().getAnswer().getHeader();
+        AnswerType answerType = (AnswerType) gui.getAnswer().getHeader();
         switch (answerType) {
             case CHANGE_TURN:
                 mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
@@ -462,6 +462,21 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 return;
 
             case DEFEAT:
+                if (gui.getClientModel().isEnded()) {
+                    mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
+                    ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
+                    this.panelIndex.next(this.panels);
+                    return;
+                }
+                else
+                    game.removePlayer(((ReducedPlayer) gui.getAnswer().getPayload()).getNickname());
+
+                if (!gui.getClientModel().isYourTurn()) {
+                    gui.free();
+                    return;
+                }
+                break;
+
             case CLOSE:
                 mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
                 this.panelIndex.next(this.panels);
@@ -521,6 +536,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         JPlayer prevPlayer = game.getPlayer(gui.getClientModel().getPrevPlayer());
 
+        if (prevPlayer == null) return;
         if (!prevPlayer.getWorkers().isEmpty()) return;
         if (prevPlayer.getNickname().equals(gui.getClientModel().getPlayer().getNickname())) return;
         if (!gui.getAnswer().getContext().equals(UpdatedPartType.WORKER)) return;

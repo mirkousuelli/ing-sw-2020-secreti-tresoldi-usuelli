@@ -138,14 +138,14 @@ public class ChooseWorker implements GameState {
             returnContent.setAnswerType(AnswerType.DEFEAT);
             returnContent.setState(State.CHOOSE_WORKER);
             returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
-
-            int newCurrentPlayerIndex = (game.getIndex(currentPlayer) - 1) & game.getNumPlayers();
-            String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
-            game.removePlayer(currentPlayer.getNickName());
-            game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
-            game.setNumPlayers(game.getNumPlayers() - 1);
-
             returnContent.setChangeTurn(true);
+
+            int newCurrentPlayerIndex = (game.getIndex(currentPlayer) + 1) % game.getNumPlayers();
+            String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
+            game.getCurrentPlayer().removeWorkers();
+            game.removePlayer(currentPlayer.getNickName());
+            game.setNumPlayers(game.getNumPlayers() - 1);
+            game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
 
             //save
             GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);

@@ -89,6 +89,14 @@ public class JPlayer extends JButton implements ActionListener {
         maleWorker.getLocation().addActionListener(this);
     }
 
+    public void removeWorkers() {
+        ((JBlockDecorator) maleWorker.getLocation()).removeWorker();
+        maleWorker = null;
+
+        ((JBlockDecorator) femaleWorker.getLocation()).removeWorker();
+        femaleWorker = null;
+    }
+
     public void setUpWorker(JCell position) {
         if (femaleWorker == null)
             setUpFemaleWorker(position);
