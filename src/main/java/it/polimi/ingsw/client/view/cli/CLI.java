@@ -31,7 +31,8 @@ public class CLI<S> extends ClientView<S> {
         switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
-                isYourTurn = true;//out.printChanges(clientModel.getCurrentState());
+                out.printChanges(clientModel.getCurrentState());
+                isYourTurn = true;
                 break;
 
             case DEFEAT:
@@ -63,7 +64,6 @@ public class CLI<S> extends ClientView<S> {
             case RELOAD:
                 out.printReload();
                 out.printChanges(clientModel.getCurrentState());
-                isYourTurn = false;
                 break;
 
             default:

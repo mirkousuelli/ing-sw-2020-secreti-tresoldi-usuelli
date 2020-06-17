@@ -144,7 +144,7 @@ public class ChangeTurn implements GameState {
             currentPlayer.removeMalus();
 
             //save
-            GameMemory.save(currentPlayer, Lobby.backupPath);
+            GameMemory.save(currentPlayer, Lobby.BACKUP_PATH);
         }
     }
 
@@ -154,7 +154,7 @@ public class ChangeTurn implements GameState {
                 !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
 
             //save
-            GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
+            GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.BACKUP_PATH);
         }
     }
 }

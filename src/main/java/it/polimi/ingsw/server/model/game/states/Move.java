@@ -160,9 +160,9 @@ public class Move implements GameState {
 
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) { //if the action was successful, then save!
             //save
-            GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
-            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+            GameMemory.save((Block) cellToMoveTo, Lobby.BACKUP_PATH);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.BACKUP_PATH);
+            GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
         }
 
 
@@ -172,13 +172,13 @@ public class Move implements GameState {
                 ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
 
                 //save
-                GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+                GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
             }
         }
 
         //save
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
-        GameMemory.save(currentPlayer, State.MOVE, Lobby.backupPath);
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
+        GameMemory.save(currentPlayer, State.MOVE, Lobby.BACKUP_PATH);
 
         return returnContent;
     }
@@ -220,7 +220,6 @@ public class Move implements GameState {
             if (reachedThirdLevel(game)) { //if the current worker reached the third level
                 returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
                 returnContent.setState(State.VICTORY);
-                //returnContent.setPayload(PreparePayload.addChangedCells(game, State.MOVE));
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
             }
             else { //else, which means that no one won in this turn, the game switches to the next state
@@ -295,7 +294,7 @@ public class Move implements GameState {
         }
 
         //save
-        GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
+        GameMemory.save((Block) cellToMoveTo, Lobby.BACKUP_PATH);
 
         return returnContent;
     }
@@ -320,8 +319,8 @@ public class Move implements GameState {
         returnContent.setPayload(payload);
 
         //save
-        GameMemory.save((Block) cellToMoveTo, Lobby.backupPath);
-        GameMemory.save(game.parseState(State.MOVE), Lobby.backupPath);
+        GameMemory.save((Block) cellToMoveTo, Lobby.BACKUP_PATH);
+        GameMemory.save(game.parseState(State.MOVE), Lobby.BACKUP_PATH);
 
         return returnContent;
     }

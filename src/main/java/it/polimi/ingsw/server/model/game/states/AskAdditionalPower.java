@@ -98,7 +98,7 @@ public class AskAdditionalPower implements GameState {
         }
 
         //save
-        GameMemory.save(game.getCurrentPlayer(), State.ASK_ADDITIONAL_POWER, Lobby.backupPath);
+        GameMemory.save(game.getCurrentPlayer(), State.ASK_ADDITIONAL_POWER, Lobby.BACKUP_PATH);
 
         return returnContent;
     }

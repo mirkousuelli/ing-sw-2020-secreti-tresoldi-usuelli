@@ -138,7 +138,7 @@ public class ChangeTurnTest {
         //usePower that adds a personal malus
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn.getX(), cellToBuildOn.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -151,7 +151,7 @@ public class ChangeTurnTest {
         //move blocked by the newly added malus
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToBuildOn.getX(), cellToBuildOn.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
@@ -162,7 +162,7 @@ public class ChangeTurnTest {
         //move correct
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo.getX(), cellToMoveTo.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -174,7 +174,7 @@ public class ChangeTurnTest {
         //build correct
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn1.getX(), cellToBuildOn1.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -193,7 +193,7 @@ public class ChangeTurnTest {
         //move up correct (malus has expired)
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo2.getX(), cellToMoveTo2.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -205,7 +205,7 @@ public class ChangeTurnTest {
         //build correct
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn2.getX(), cellToBuildOn2.getY()))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());

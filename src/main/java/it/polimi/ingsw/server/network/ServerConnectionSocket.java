@@ -14,9 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +30,6 @@ import java.util.stream.Collectors;
  */
 public class ServerConnectionSocket {
     private final int port;
-    private static final String BACKUP_PATH = Lobby.backupPath;
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
@@ -86,7 +82,7 @@ public class ServerConnectionSocket {
             }
             catch(Exception e) {
                 LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
-                break; //In case the serverSocket gets closed
+                isActive = false; //In case the serverSocket gets closed
             }
         }
 
@@ -102,9 +98,9 @@ public class ServerConnectionSocket {
         Game loadedGame = null;
 
         try {
-            File f = new File(BACKUP_PATH);
+            File f = new File(Lobby.BACKUP_PATH);
             if (f.exists()) {
-                loadedGame = GameMemory.load(BACKUP_PATH);
+                loadedGame = GameMemory.load(Lobby.BACKUP_PATH);
                 if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
                     loadedGame = null;
             }
@@ -158,7 +154,7 @@ public class ServerConnectionSocket {
             ch.closeSocket();
 
         waitingConnection.clear();
-        File f = new File(BACKUP_PATH);
+        File f = new File(Lobby.BACKUP_PATH);
         if (f.exists())
             lobby.setReloaded(true);
         else
@@ -269,14 +265,12 @@ public class ServerConnectionSocket {
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
         int numOfPls = Integer.parseInt(value);
 
-        if (demand.getHeader() == DemandType.CREATE_GAME) {
-            if (numOfPls == 2 || numOfPls == 3) {
-                if (!lobby.isReloaded() || numOfPls == lobby.getGame().getNumPlayers()) {
-                    lobby.setNumberOfPlayers(numOfPls);
-                    if (canStart()) //add everyone to the game if the number of players is reached
-                        startMatch();
-                    return false;
-                }
+        if (demand.getHeader() == DemandType.CREATE_GAME && (numOfPls == 2 || numOfPls == 3)) {
+            if (!lobby.isReloaded() || numOfPls == lobby.getGame().getNumPlayers()) {
+                lobby.setNumberOfPlayers(numOfPls);
+                if (canStart()) //add everyone to the game if the number of players is reached
+                    startMatch();
+                return false;
             }
         }
 

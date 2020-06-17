@@ -16,7 +16,6 @@ public enum God {
     MINOTAUR,
     PAN,
     PERSEPHONE,
-    //POSEIDON,
     PROMETHEUS,
     TRITON,
     ZEUS;
@@ -51,8 +50,6 @@ public enum God {
                 return "PAN";
             case PERSEPHONE:
                 return "PERSEPHONE";
-           /* case POSEIDON:
-                return "POSEIDON";*/
             case PROMETHEUS:
                 return "PROMETHEUS";
             case TRITON:
@@ -93,8 +90,6 @@ public enum God {
             return PAN;
         else if (str.equalsIgnoreCase("PERSEPHONE"))
             return PERSEPHONE;
-        /*else if (str.equalsIgnoreCase("POSEIDON"))
-            return POSEIDON;*/
         else if (str.equalsIgnoreCase("PROMETHEUS"))
             return PROMETHEUS;
         else if (str.equalsIgnoreCase("TRITON"))

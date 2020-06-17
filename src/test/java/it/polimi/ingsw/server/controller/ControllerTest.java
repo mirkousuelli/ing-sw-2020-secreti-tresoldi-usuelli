@@ -55,7 +55,7 @@ class ControllerTest {
         game.assignCard(God.DEMETER);
         game.setState(State.BUILD);
 
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
 
         player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(1,1)));
 
@@ -172,7 +172,7 @@ class ControllerTest {
         game.assignCard(God.DEMETER);
         game.setState(State.MOVE);
 
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
 
         player1View.processMessage(new Demand<>(DemandType.MOVE, new ReducedDemandCell(2,2)));
 

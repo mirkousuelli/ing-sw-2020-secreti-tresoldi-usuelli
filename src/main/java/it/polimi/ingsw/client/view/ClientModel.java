@@ -118,8 +118,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             answerTemp = getAnswer();
         }
 
-        System.out.println(answerTemp.getHeader() + " " + answerTemp.getContext() + " " + answerTemp.getPayload().toString());
-
         if (!player.isCreator() && isInitializing)
             currentState = nextState;
 
@@ -312,8 +310,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
                 if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
 
-                //reducedCardList.forEach(reducedCard -> System.out.println(reducedCard.getGod() + " " + reducedCard.getNumberOfAdditional()));
-
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;
@@ -345,14 +341,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case BOARD:
                 List<ReducedAnswerCell> reducedAnswerCellList = (List<ReducedAnswerCell>) answer.getPayload();
 
-                reducedAnswerCellList.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList() + " " + reducedAnswerCell.getLevel()));
-
                 //resets board
-                for (int i = 0; i < DIM; i++) {
-                    for (int j = 0; j < DIM; j++) {
-                        reducedBoard[i][j].resetAction();
-                    }
-                }
+                Arrays.stream(reducedBoard)
+                        .flatMap(Arrays::stream)
+                        .forEach(ReducedAnswerCell::resetAction);
 
                 if (reducedAnswerCellList.isEmpty()) return; //safety check, cannot happen normally!
 
@@ -360,13 +352,12 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
                 //resets and sets workers
                 workers = new ArrayList<>();
-                for (int i = 0; i < DIM; i++) {
-                    for (int j = 0; j < DIM; j++) {
-                        if(!reducedBoard[i][j].isFree()) {
-                            workers.add(reducedBoard[i][j].getWorker());
-                        }
-                    }
-                }
+
+                Arrays.stream(reducedBoard)
+                        .flatMap(Arrays::stream)
+                        .filter(reducedAnswerCell -> !reducedAnswerCell.isFree())
+                        .map(ReducedAnswerCell::getWorker)
+                        .forEach(workers::add);
                 break;
 
             default:
@@ -453,7 +444,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return prevPlayer;
     }
 
-    public int getNumberOfAdditional() {
+    public synchronized int getNumberOfAdditional() {
         return numberOfAdditional;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
@@ -487,7 +478,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return player.isCreator();
     }
 
-    public synchronized boolean IsEnded() {
+    public synchronized boolean isEnded() {
         return isYourEnding;
     }
 

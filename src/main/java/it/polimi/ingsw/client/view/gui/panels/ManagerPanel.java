@@ -7,7 +7,7 @@ import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
-import it.polimi.ingsw.communication.message.payload.ReducedLevel;
+import it.polimi.ingsw.server.model.map.Level;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,7 +74,7 @@ public class ManagerPanel extends JPanel {
         //board
         updateBuild(Arrays.stream(gui.getClientModel().getReducedBoard())
                 .flatMap(Arrays::stream)
-                .filter(rac -> !rac.getLevel().equals(ReducedLevel.GROUND))
+                .filter(rac -> !rac.getLevel().equals(Level.GROUND))
                 .collect(Collectors.toList())
         );
 
@@ -101,7 +101,7 @@ public class ManagerPanel extends JPanel {
             JCell cell = game.getJMap().getCell(reducedAnswerCell.getX(), reducedAnswerCell.getY());
             cell.setStatus(JCellStatus.NONE);
 
-            if (reducedAnswerCell.getLevel().equals(ReducedLevel.DOME)) {
+            if (reducedAnswerCell.getLevel().equals(Level.DOME)) {
                 while (cell.getStatus().ordinal() < reducedAnswerCell.getPrevLevel().toInt() && !cell.getStatus().equals(JCellStatus.TOP))
                     ((JBlockDecorator) cell).buildUp();
 

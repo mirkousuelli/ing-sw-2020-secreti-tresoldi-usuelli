@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,9 +35,9 @@ public class CLIScanner<S> {
     private static final String NEW_GAME = "Do you want to play again? [y/n]\n";
 
     private final Map<DemandType, String> messageMap;
-    private final Map<DemandType, Function<String, Boolean>> toRepeatMap;
-    private final Map<DemandType, Function<Integer, Boolean>> indexMap;
-    private final Map<DemandType, Function<String, Boolean>> toUsePowerMap;
+    private final Map<DemandType, Predicate<String>> toRepeatMap;
+    private final Map<DemandType, Predicate<Integer>> indexMap;
+    private final Map<DemandType, Predicate<String>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
@@ -124,10 +125,10 @@ public class CLIScanner<S> {
         S payload;
         String value;
 
-        Function <String, Boolean> toRepeatFunction;
-        Function <Integer, Boolean> indexFunction;
-        Function <String, Boolean> powerFunction;
-        Function <String, S> payloadFunction;
+        Predicate<String> toRepeatFunction;
+        Predicate<Integer> indexFunction;
+        Predicate<String> powerFunction;
+        Function<String, S> payloadFunction;
 
         do {
             toRepeat = false;
@@ -142,14 +143,14 @@ public class CLIScanner<S> {
 
             toRepeatFunction = toRepeatMap.get(currentState);
             if (toRepeatFunction != null)
-                toRepeat = toRepeatFunction.apply(value);
+                toRepeat = toRepeatFunction.test(value);
 
             if (toRepeat)
                 out.printError();
             else {
                 powerFunction = toUsePowerMap.get(currentState);
                 if (powerFunction != null)
-                    toUsePower = powerFunction.apply(value);
+                    toUsePower = powerFunction.test(value);
 
                 payloadFunction = payloadMap.get(currentState);
                 if (payloadFunction != null) {
@@ -162,7 +163,7 @@ public class CLIScanner<S> {
                 else {
                     indexFunction = indexMap.get(currentState);
                     if (indexFunction != null)
-                        incrementIndex = indexMap.get(currentState).apply(i);
+                        incrementIndex = indexMap.get(currentState).test(i);
 
                     if (incrementIndex)
                         i++;
@@ -314,7 +315,7 @@ public class CLIScanner<S> {
     private ReducedAnswerCell getReducedCell(String cellString) {
         List<Integer> coordinate = stringToInt(cellString);
 
-        if (coordinate == null) return null;
+        if (coordinate.isEmpty()) return null;
 
         int x = coordinate.get(0);
         int y = coordinate.get(1);
@@ -323,19 +324,19 @@ public class CLIScanner<S> {
     }
 
     private List<Integer> stringToInt(String string) {
-        if (string.length() != 3) return null;
+        if (string.length() != 3) return new ArrayList<>();
 
         List<Integer> ret = new ArrayList<>();
 
         String[] input = string.split(",");
 
-        if (input.length != 2) return null;
-        if (Arrays.stream(input).anyMatch(i -> i.length() != 1)) return null;
+        if (input.length != 2) return new ArrayList<>();
+        if (Arrays.stream(input).anyMatch(i -> i.length() != 1)) return new ArrayList<>();
 
         ret.add(string.charAt(0) - 48);
         ret.add(string.charAt(2) - 48);
 
-        if(clientModel.checkCell(ret.get(0), ret.get(1))) return null;
+        if(clientModel.checkCell(ret.get(0), ret.get(1))) return new ArrayList<>();
 
         return ret;
     }

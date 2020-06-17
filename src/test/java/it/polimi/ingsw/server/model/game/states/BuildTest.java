@@ -62,7 +62,7 @@ public class BuildTest {
 
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -110,7 +110,7 @@ public class BuildTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the impossible build is actually not allowed
@@ -156,7 +156,7 @@ public class BuildTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player cannot build under itself (only zeus can)
@@ -201,7 +201,7 @@ public class BuildTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that it's not possible to build on a dome
@@ -260,7 +260,7 @@ ________________________________________________________________________________
 
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(2, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -309,7 +309,7 @@ ________________________________________________________________________________
 
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // the win condition power is verified
@@ -358,7 +358,7 @@ ________________________________________________________________________________
         game.assignCard(God.DEMETER);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -416,7 +416,7 @@ ________________________________________________________________________________
         game.assignCard(God.HEPHAESTUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -425,7 +425,7 @@ ________________________________________________________________________________
         assertEquals(State.ASK_ADDITIONAL_POWER, returnContent.getState());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
@@ -471,7 +471,7 @@ ________________________________________________________________________________
         game.assignCard(God.HESTIA);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -480,7 +480,7 @@ ________________________________________________________________________________
         assertEquals(State.ASK_ADDITIONAL_POWER, returnContent.getState());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
 
         // it checks that if the player picked a different cell, the block is built and the turn is changed
@@ -525,7 +525,7 @@ ________________________________________________________________________________
         game.assignCard(God.PROMETHEUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -534,7 +534,7 @@ ________________________________________________________________________________
         assertEquals(State.MOVE, returnContent.getState());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 0))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         //it checks that the player
@@ -546,7 +546,7 @@ ________________________________________________________________________________
 
         game.setState(State.BUILD);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(0, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
@@ -593,7 +593,7 @@ ________________________________________________________________________________
         game.assignCard(God.ZEUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player build under itself since he has zeus
@@ -653,7 +653,7 @@ ________________________________________________________________________________
         game.assignCard(God.HESTIA);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the build is made successfully
@@ -710,7 +710,7 @@ ________________________________________________________________________________
         game.assignCard(God.HEPHAESTUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -722,7 +722,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.setState(State.ADDITIONAL_POWER);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, rc.getAnswerType());
@@ -765,7 +765,7 @@ ________________________________________________________________________________
         game.assignCard(God.PROMETHEUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player
@@ -774,7 +774,7 @@ ________________________________________________________________________________
         assertEquals(State.MOVE, returnContent.getState());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
         //it checks that since the player used the ability, he cannot move up

@@ -112,8 +112,8 @@ public class Build implements GameState {
             PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
 
         //save
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
-        GameMemory.save(game.getCurrentPlayer(), State.BUILD, Lobby.backupPath);
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), State.BUILD, Lobby.BACKUP_PATH);
 
         return returnContent;
     }
@@ -159,8 +159,8 @@ public class Build implements GameState {
             returnContent.setPayload(toReturn);
 
             //save
-            GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
-            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+            GameMemory.save((Block) cellToBuildUp, Lobby.BACKUP_PATH);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.BACKUP_PATH);
         }
 
         if (returnContent == null)
@@ -203,8 +203,8 @@ public class Build implements GameState {
             toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, ReducedAnswerCell.prepareCell(cellToBuildUp, game.getPlayerList()));
 
             //save
-            GameMemory.save((Block) cellToBuildUp, Lobby.backupPath);
-            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
+            GameMemory.save((Block) cellToBuildUp, Lobby.BACKUP_PATH);
+            GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.BACKUP_PATH);
 
             returnContent.setPayload(toReturn);
         }

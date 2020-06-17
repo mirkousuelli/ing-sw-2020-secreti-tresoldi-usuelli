@@ -103,7 +103,6 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected void runThreads(String name, String ip, int port) {
         ClientConnectionSocket<S> clientConnectionSocket = null;
-        ClientModel<S> clientModel;
 
         try {
             clientConnectionSocket = new ClientConnectionSocket<>(ip, port);
@@ -113,9 +112,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
             System.exit(1);
         }
 
-        clientModel = new ClientModel<>(name, clientConnectionSocket);
-        setClientModel(clientModel);
-
+        setClientModel(new ClientModel<>(name, clientConnectionSocket));
         setInitialRequest();
 
         executor.execute(clientConnectionSocket);

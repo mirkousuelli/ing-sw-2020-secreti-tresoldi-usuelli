@@ -65,8 +65,8 @@ public class AdditionalPower implements GameState {
             returnContent = returnError();
 
         //save
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
-        GameMemory.save(game.getCurrentPlayer(), State.ADDITIONAL_POWER, Lobby.backupPath);
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), State.ADDITIONAL_POWER, Lobby.BACKUP_PATH);
 
         return returnContent;
     }
@@ -110,8 +110,8 @@ public class AdditionalPower implements GameState {
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
 
             //save
-            GameMemory.save((Block) c, Lobby.backupPath);
-            GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.backupPath);
+            GameMemory.save((Block) c, Lobby.BACKUP_PATH);
+            GameMemory.save(game.getCurrentPlayer().getCurrentWorker(), game.getCurrentPlayer(), Lobby.BACKUP_PATH);
         }
 
 
@@ -146,7 +146,7 @@ public class AdditionalPower implements GameState {
             returnContent.setChangeTurn(true);
 
             //save
-            GameMemory.save((Block) c, Lobby.backupPath);
+            GameMemory.save((Block) c, Lobby.BACKUP_PATH);
         }
 
 

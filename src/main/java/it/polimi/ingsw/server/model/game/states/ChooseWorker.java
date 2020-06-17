@@ -28,6 +28,8 @@ import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,17 +87,17 @@ public class ChooseWorker implements GameState {
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
 
-        File f = new File(Lobby.backupPath);
+        File f = new File(Lobby.BACKUP_PATH);
         if (!f.exists()) {
             try {
-                boolean b = f.createNewFile();
+                Files.createFile(Paths.get(Lobby.BACKUP_PATH));
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Got an exception while opening " + Lobby.backupPath, e);
+                LOGGER.log(Level.SEVERE, "Got an exception while opening " + Lobby.BACKUP_PATH, e);
                 return returnError();
             }
 
         //first save
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         }
 
         //validate input
@@ -108,8 +110,8 @@ public class ChooseWorker implements GameState {
             returnContent = chooseWorker(chosenWorker);
 
         //save
-        GameMemory.save(game.parseState(returnContent.getState()), Lobby.backupPath);
-        GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.backupPath);
+        GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.BACKUP_PATH);
 
         return returnContent;
     }
@@ -146,7 +148,7 @@ public class ChooseWorker implements GameState {
             returnContent.setChangeTurn(true);
 
             //save
-            GameMemory.save(game.getPlayerList(), Lobby.backupPath);
+            GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
         }
         else {
             returnContent.setAnswerType(AnswerType.VICTORY);
@@ -179,9 +181,9 @@ public class ChooseWorker implements GameState {
                     payload = PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER);
 
                     //save
-                    GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.backupPath);
-                    GameMemory.save(currentPlayer, returnContent.getState(), Lobby.backupPath);
-                    GameMemory.save(game, Lobby.backupPath);
+                    GameMemory.save(currentPlayer.getCurrentWorker(), currentPlayer, Lobby.BACKUP_PATH);
+                    GameMemory.save(currentPlayer, returnContent.getState(), Lobby.BACKUP_PATH);
+                    GameMemory.save(game, Lobby.BACKUP_PATH);
                 }
                 break;
             }

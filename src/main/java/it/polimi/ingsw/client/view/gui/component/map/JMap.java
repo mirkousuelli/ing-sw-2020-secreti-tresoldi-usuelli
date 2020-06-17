@@ -174,9 +174,10 @@ public class JMap extends JPanel implements ActionListener {
     public void removeDecoration(JCellStatus jCellStatus) {
         Arrays.stream(cellButton)
                 .flatMap(Arrays::stream)
-                .filter(c -> ((JBlockDecorator) c).getDecoration() != null)
-                .filter(c -> ((JBlockDecorator) c).getDecoration().equals(jCellStatus))
-                .forEach(c -> ((JBlockDecorator) c).removeDecoration());
+                .map(jCell -> ((JBlockDecorator) jCell))
+                .filter(c -> c.getDecoration() != null)
+                .filter(c -> c.getDecoration().equals(jCellStatus))
+                .forEach(JBlockDecorator::removeDecoration);
     }
 
     public JCell getCell(int x, int y) {

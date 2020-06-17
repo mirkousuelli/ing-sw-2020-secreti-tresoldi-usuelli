@@ -73,18 +73,16 @@ public class JDeck extends JPanel implements ActionListener {
     public void showMiniList() {
         int i = 0;
         for (JGod god : gods) {
-            //if (!god.getGod().toString().equalsIgnoreCase("poseidon")) {
-                GridBagConstraints c = new GridBagConstraints();
+            GridBagConstraints c = new GridBagConstraints();
 
-                c.gridx = i;
-                c.gridy = 0;
-                c.weightx = 1;
-                c.weighty = 0f;
-                c.fill = GridBagConstraints.BOTH;
+            c.gridx = i;
+            c.gridy = 0;
+            c.weightx = 1;
+            c.weighty = 0f;
+            c.fill = GridBagConstraints.BOTH;
 
-                add(god.getMini(), c);
-                i++;
-            //}
+            add(god.getMini(), c);
+            i++;
         }
         validate();
         repaint();

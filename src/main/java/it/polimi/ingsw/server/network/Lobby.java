@@ -9,7 +9,6 @@ import it.polimi.ingsw.server.view.View;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class which includes hte proper game object reported to specific players.
@@ -35,7 +36,8 @@ public class Lobby {
 
     final Object lockLobby;
 
-    public static final String backupPath = "backup_lobby.xml";
+    public static final String BACKUP_PATH = "backup_lobby.xml";
+    private static final Logger LOGGER = Logger.getLogger(Lobby.class.getName());
 
     /**
      * Constructor which creates the game and set up persistence feature
@@ -284,9 +286,9 @@ public class Lobby {
 
     private void removeBackUp() {
         try {
-            Files.deleteIfExists(Paths.get(backupPath));
+            Files.deleteIfExists(Paths.get(BACKUP_PATH));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Got an IOException", e);
         }
     }
 }

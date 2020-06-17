@@ -62,7 +62,7 @@ public class MoveTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the move is made correctly and the state is set to build
@@ -109,7 +109,7 @@ public class MoveTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the player moved to a third level and the state is set to victory
@@ -156,7 +156,7 @@ public class MoveTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(Level.GROUND, game.getCurrentPlayer().getCurrentWorker().getLevel());
@@ -203,7 +203,7 @@ public class MoveTest {
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(2, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the worker isn't moved and the player has to pick a different cell
@@ -253,7 +253,7 @@ public class MoveTest {
         game.assignCard(God.ZEUS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(3, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the worker isn't moved and the player has to pick a different cell
@@ -315,7 +315,7 @@ ________________________________________________________________________________
         game.assignCard(God.APOLLO);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -367,7 +367,7 @@ ________________________________________________________________________________
         game.assignCard(God.ARTEMIS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the state is still move since Artemis power allows the player to move a second time
@@ -377,7 +377,7 @@ ________________________________________________________________________________
         assertEquals(cell1.getPawn(), p1.getCurrentWorker());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(2, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
 
         // check that the move is made correctly and the state is set to build
@@ -427,7 +427,7 @@ ________________________________________________________________________________
         game.setState(State.MOVE);
 
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -481,7 +481,7 @@ ________________________________________________________________________________
         game.assignCard(God.MINOTAUR);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that the move is possible and that the workers are correctly moved
@@ -528,7 +528,7 @@ ________________________________________________________________________________
         game.assignCard(God.PAN);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the player moved to down 2 levels, so he wins
@@ -575,7 +575,7 @@ ________________________________________________________________________________
         game.setState(State.MOVE);
 
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
@@ -628,7 +628,7 @@ ________________________________________________________________________________
         game.assignCard(God.TRITON);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
 
         // it checks that if the player moves to a perimeter cell, he can move his worker again
@@ -639,7 +639,7 @@ ________________________________________________________________________________
 
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         rc= game.gameEngine();
 
         // it checks that if the player moves to a perimeter cell, he can move his worker again
@@ -649,7 +649,7 @@ ________________________________________________________________________________
         assertEquals(cell2.getPawn(), p1.getCurrentWorker());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 2))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         rc = game.gameEngine();
 
         // it checks that if the player does not move to a perimeter cell, the state is changed to build
@@ -706,7 +706,7 @@ ________________________________________________________________________________
         game.assignCard(God.ARTEMIS);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // check that the state is still move since Artemis power allows the player to move a second time
@@ -769,7 +769,7 @@ ________________________________________________________________________________
         game.assignCard(God.MINOTAUR);
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         // it checks that the move is possible and that the workers are correctly moved
@@ -818,7 +818,7 @@ ________________________________________________________________________________
         game.setState(State.MOVE);
 
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
@@ -864,7 +864,7 @@ ________________________________________________________________________________
         game.setState(State.MOVE);
 
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
-        GameMemory.save(game, Lobby.backupPath);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());

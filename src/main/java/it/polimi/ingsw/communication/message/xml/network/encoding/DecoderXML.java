@@ -11,8 +11,12 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.ObjectInputStream;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DecoderXML {
+    private static final Logger LOGGER = Logger.getLogger(DecoderXML.class.getName());
+
     public static Message decode(ObjectInputStream in) {
         String xmlString;
 
@@ -20,7 +24,7 @@ public class DecoderXML {
             xmlString = (String) in.readObject();
         } catch (Exception e) {
             if (!(e instanceof EOFException) && !(e instanceof SocketException) && !e.getMessage().equals("Connection reset"))
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Got an Exception", e);
             return null;
         }
 

@@ -180,8 +180,6 @@ public class Player {
      * Method that resets a player: it removes maluses, his card, and his workers (that are also removed from the board)
      */
     public void reset() {
-        //removeMalus();
-        //removePermanentMalus();
         malusList.clear();
         card = null;
         workers.forEach(w -> w.getLocation().removePawn());

@@ -62,7 +62,7 @@ public class Victory implements GameState {
         returnContent.setAnswerType(AnswerType.SUCCESS);
         returnContent.setState(State.START);
 
-        GameMemory.save(this, Lobby.backupPath);
+        GameMemory.save(this, Lobby.BACKUP_PATH);
         endGame(game);
 
         return returnContent;
