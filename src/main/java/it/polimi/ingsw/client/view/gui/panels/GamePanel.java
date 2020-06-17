@@ -62,7 +62,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         game.getJMap().setManagerPanel((ManagerPanel) panels);
     }
 
-    void createMap() {
+    private void createMap() {
         GridBagConstraints mapCon = new GridBagConstraints();
 
         mapCon.anchor = GridBagConstraints.CENTER;
@@ -78,7 +78,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(this.game.getJMap(), mapCon);
     }
 
-    void createRightSection() {
+    private void createRightSection() {
         GridBagConstraints rightCon = new GridBagConstraints();
 
         rightCon.anchor = GridBagConstraints.WEST;
@@ -98,7 +98,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(right, rightCon);
     }
 
-    void createQuitButton() {
+    private void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/quit_button.png"));
@@ -119,7 +119,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         quitButton.addActionListener(this);
     }
 
-    void createPowerButton() {
+    private void createPowerButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/power_off.png"));
@@ -144,7 +144,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(powerButton, c);
     }
 
-    void createEndTurnButton() {
+    private void createEndTurnButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/end_turn.png"));
@@ -168,7 +168,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(endTurnButton, c);
     }
 
-    void activePowerButton(boolean active) {
+    private void activePowerButton(boolean active) {
         powerButton.setEnabled(true);
 
         if (active) {
@@ -201,7 +201,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(cardButton, cardCon);
     }
 
-    void createLeftSection() {
+    private void createLeftSection() {
         GridBagConstraints leftCon = new GridBagConstraints();
 
         leftCon.anchor = GridBagConstraints.EAST;
@@ -237,27 +237,27 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         left.add(player.getJCard(), c);
     }
 
-    public void setPossibleMove(List<JCell> where) {
+    private void setPossibleMove(List<JCell> where) {
         this.game.getJMap().setPossibleMove(where);
         cardButton.applyNormal();
     }
 
-    public void setPossibleBuild(List<JCell> where) {
+    private void setPossibleBuild(List<JCell> where) {
         this.game.getJMap().setPossibleBuild(where);
         cardButton.applyNormal();
     }
 
-    public void setPossibleUsePowerMove(List<JCell> where) {
+    private void setPossibleUsePowerMove(List<JCell> where) {
         this.game.getJMap().setPossibleUsePowerMove(where);
         activePowerButton(true);
     }
 
-    public void setPossibleUsePowerBuild(List<JCell> where) {
+    private void setPossibleUsePowerBuild(List<JCell> where) {
         this.game.getJMap().setPossibleUsePowerBuild(where);
         activePowerButton(true);
     }
 
-    public void setPossibleMalus(List<JCell> where) {
+    private void setPossibleMalus(List<JCell> where) {
         this.game.getJMap().setPossibleMalus(where);
         cardButton.applyNormal();
     }

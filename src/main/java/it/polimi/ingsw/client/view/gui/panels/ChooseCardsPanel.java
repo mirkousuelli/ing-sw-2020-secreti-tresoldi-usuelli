@@ -65,7 +65,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         createRemoveButton();
     }
 
-    void createChosenList() {
+    private void createChosenList() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.NORTH;
@@ -95,7 +95,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         chosenList.add(cloudBack);
     }
 
-    void loadChosen(JGod god) {
+    private void loadChosen(JGod god) {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.NORTH;
@@ -113,7 +113,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         chosenDeck.showMiniList();
     }
 
-    void createChoice() {
+    private void createChoice() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.CENTER;
@@ -137,7 +137,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         retro.add(text, new GridBagConstraints());
     }
 
-    void setChoice(JDeck deck, JGod god) {
+    private void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -165,7 +165,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
-    void createGodsList() {
+    private void createGodsList() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.SOUTH;
@@ -196,7 +196,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         godsList.add(godsBack);
     }
 
-    void loadGods() {
+    private void loadGods() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.SOUTH;

@@ -20,6 +20,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
     private String type;
     private JButton playAgainButton;
     private JButton quitButton;
+
     private static final int BUTTON_SIZE = 150;
 
     public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
@@ -30,7 +31,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         createQuitButton();
     }
 
-    void createPlayAgainButton() {
+    private void createPlayAgainButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -59,7 +60,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
-    void createQuitButton() {
+    private void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -85,7 +86,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
-    public void disablePLayAgainButton() {
+    void disablePLayAgainButton() {
         playAgainButton.setEnabled(false);
     }
 

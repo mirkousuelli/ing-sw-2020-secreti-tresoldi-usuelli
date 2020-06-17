@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 public class StartPanel extends SantoriniPanel implements ActionListener {
     private final static String imgPath = "intro.png";
     private final static int BUTTON_SIZE = 150;
+
     private JButton playButton;
 
     public StartPanel(CardLayout panelIndex, JPanel panels) {
@@ -40,6 +41,7 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
         add(playButton, c);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!e.getSource().equals(playButton)) return;
 

@@ -21,6 +21,7 @@ import java.util.List;
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
+
     private JPanel layers;
     private JLayeredPane godsList;
     private JLabel godsBack;
@@ -63,7 +64,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         setChoice(deck, deck.getGod(0));
     }
 
-    void loadGods() {
+    private void loadGods() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.SOUTH;
@@ -79,7 +80,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         deck.showMiniList();
     }
 
-    void createGodsList() {
+    private void createGodsList() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.SOUTH;
@@ -133,7 +134,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.add(chooseButton, c);
     }
 
-    void createChoice() {
+    private void createChoice() {
         GridBagConstraints c = new GridBagConstraints();
 
         c.anchor = GridBagConstraints.CENTER;
@@ -156,7 +157,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.add(choice, c);
     }
 
-    void setChoice(JDeck deck, JGod god) {
+    private void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -192,7 +193,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         chooseButton.setEnabled(enable);
     }
 
-    void updateDeck(God godToRemove) {
+    private void updateDeck(God godToRemove) {
         deck.pop(deck.getJGod(godToRemove));
         if (!deck.getList().isEmpty()) {
             deck.setCurrent(deck.getGod(0));
@@ -201,7 +202,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         }
     }
 
-    void updateDeck() {
+    private void updateDeck() {
         updateDeck(chosenGod);
     }
 

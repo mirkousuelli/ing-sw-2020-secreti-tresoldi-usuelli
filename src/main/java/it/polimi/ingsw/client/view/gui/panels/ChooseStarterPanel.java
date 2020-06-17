@@ -15,6 +15,7 @@ import java.util.List;
 public class ChooseStarterPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 200;
+
     private JLabel stand;
     private List<JButton> tags;
     private final JGame game;
@@ -30,7 +31,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         createChooseButton();
     }
 
-    public void createWaitStand() {
+    private  void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/lobby.png"));
         Image img = icon.getImage().getScaledInstance(420, 540, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
@@ -54,7 +55,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         }
     }
 
-    public void createChooseButton() {
+    private  void createChooseButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = this.game.getNumPlayer();

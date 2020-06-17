@@ -40,15 +40,15 @@ public class ManagerPanel extends JPanel {
         return gui;
     }
 
-    public JGame getGame() {
+    JGame getGame() {
         return game;
     }
 
-    public JPlayer getClientPlayer() {
+    JPlayer getClientPlayer() {
         return clientPlayer;
     }
 
-    public void setClientPlayer(JPlayer clientPlayer) {
+    void setClientPlayer(JPlayer clientPlayer) {
         this.clientPlayer = clientPlayer;
     }
 

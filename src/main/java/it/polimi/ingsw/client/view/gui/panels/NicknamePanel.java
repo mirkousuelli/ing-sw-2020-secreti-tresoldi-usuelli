@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 public class NicknamePanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
+
     private JButton sendButton;
     private JLabel stand;
     private JTextField nickText;
@@ -48,7 +49,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         errorMessage.setVisible(false);
     }
 
-    public void createWaitStand() {
+    private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/stand.png"));
         Image img = icon.getImage().getScaledInstance( 540, 540, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );
@@ -59,7 +60,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         add(stand, new GridBagConstraints());
     }
 
-    void createFormat() {
+    private void createFormat() {
         GridBagConstraints a = new GridBagConstraints();
         a.gridx = 0;
         a.gridy = 0;
@@ -108,7 +109,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         stand.add(serverPort, d);
     }
 
-    public void createSendButton() {
+    private void createSendButton() {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/send_button.png"));

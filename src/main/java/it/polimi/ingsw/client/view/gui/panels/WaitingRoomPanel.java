@@ -24,7 +24,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         createWaitStand();
     }
 
-    public void createWaitStand() {
+    private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/waiting.png"));
         Image img = icon.getImage().getScaledInstance( 800, 400, Image.SCALE_SMOOTH);
         icon = new ImageIcon( img );

@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public interface BackgroundPanel {
+interface BackgroundPanel {
     String BACKGROUND = "/img/background/";
     int WIDTH = 1067;
     int HEIGHT = 600;
