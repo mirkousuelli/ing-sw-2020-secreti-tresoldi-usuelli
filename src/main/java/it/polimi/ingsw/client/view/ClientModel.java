@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.network.ClientConnectionSocket;
-import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
+import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.*;

@@ -10,9 +10,6 @@
 
 package it.polimi.ingsw.server.model.cards.powers;
 
-import it.polimi.ingsw.client.view.gui.component.JWorker;
-import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
-import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.map.Block;

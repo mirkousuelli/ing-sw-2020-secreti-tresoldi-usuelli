@@ -1,7 +1,8 @@
 package it.polimi.ingsw.client.view.gui.frame;
 
 import it.polimi.ingsw.client.view.gui.GUI;
-import it.polimi.ingsw.client.view.gui.panels.*;
+import it.polimi.ingsw.client.view.gui.panels.ManagerPanel;
+
 import javax.swing.*;
 import java.awt.*;
 

@@ -1,10 +1,15 @@
 package it.polimi.ingsw.communication.message.xml.network.encoding;
 
-import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+
 import java.beans.XMLDecoder;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
+import java.io.ObjectInputStream;
 import java.net.SocketException;
 
 public class DecoderXML {

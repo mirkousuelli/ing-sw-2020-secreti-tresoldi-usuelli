@@ -22,7 +22,9 @@ import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

@@ -1,8 +1,12 @@
 package it.polimi.ingsw.communication.message.xml.network.encoding;
 
-import it.polimi.ingsw.communication.message.*;
+import it.polimi.ingsw.communication.message.Message;
+
 import java.beans.XMLEncoder;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 public class EncoderXML {
     public static void encode(Message msg, ObjectOutputStream out) throws IOException {

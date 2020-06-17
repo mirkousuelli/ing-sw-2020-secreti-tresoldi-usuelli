@@ -2,13 +2,13 @@ package it.polimi.ingsw.client.view.gui.panels;
 
 import it.polimi.ingsw.client.view.gui.GUI;
 import it.polimi.ingsw.client.view.gui.component.deck.JCard;
+import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
+import it.polimi.ingsw.client.view.gui.component.deck.JGod;
+import it.polimi.ingsw.client.view.gui.component.deck.JMini;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedCard;
-import it.polimi.ingsw.client.view.gui.component.deck.JDeck;
-import it.polimi.ingsw.client.view.gui.component.deck.JGod;
-import it.polimi.ingsw.client.view.gui.component.deck.JMini;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";

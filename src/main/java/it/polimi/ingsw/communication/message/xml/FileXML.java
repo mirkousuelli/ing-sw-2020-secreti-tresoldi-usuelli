@@ -3,7 +3,10 @@ package it.polimi.ingsw.communication.message.xml;
 import it.polimi.ingsw.communication.message.Message;
 import it.polimi.ingsw.communication.message.xml.network.encoding.DecoderXML;
 import it.polimi.ingsw.communication.message.xml.network.encoding.EncoderXML;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class FileXML {

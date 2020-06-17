@@ -11,7 +11,6 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.cards.powers.tags.*;
-import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
 
 /**
  * Class that represents the generic power of a God.
