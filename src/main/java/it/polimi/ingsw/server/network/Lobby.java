@@ -125,6 +125,8 @@ public class Lobby {
      */
     void deletePlayer(ServerClientHandler player) {
         synchronized (playingConnection) {
+            if(!playingConnection.containsKey(player)) return;
+
             View playerToRemove = playingConnection.get(player);
 
             playerToRemove.removeObserver(controller);

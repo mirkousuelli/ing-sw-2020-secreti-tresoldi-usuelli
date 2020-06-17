@@ -138,20 +138,23 @@ public class ServerConnectionSocket {
      */
     void SuddenDisconnection() {
         if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
-            List<String> names = waitingConnection.keySet().stream().filter(name -> lobby.isPresentInGame(name)).collect(Collectors.toList());
+            List<String> names = waitingConnection.keySet().stream()
+                    .filter(name -> lobby.isPresentInGame(name))
+                    .collect(Collectors.toList());
+
             waitingConnection.keySet().forEach(name -> {
                 if(!names.contains(name)) {
                     lobby.deletePlayer(waitingConnection.get(name));
                     lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
                 }
             });
+
             waitingConnection.keySet().removeIf(name -> !names.contains(name));
             return;
         }
 
-        for (ServerClientHandler ch : lobby.getServerClientHandlerList()) {
+        for (ServerClientHandler ch : lobby.getServerClientHandlerList())
             ch.closeSocket();
-        }
 
         waitingConnection.clear();
         File f = new File(BACKUP_PATH);
@@ -160,7 +163,6 @@ public class ServerConnectionSocket {
         else
             lobby = null;
     }
-
 
     /**
      * Method that operates the proper connection
@@ -357,5 +359,18 @@ public class ServerConnectionSocket {
         }
 
         return toReturn;
+    }
+
+    void deletePlayer(ServerClientHandler c) {
+        synchronized (waitingConnection) {
+            waitingConnection.remove(c.getName());
+        }
+
+        synchronized (waitingConnectionFromReload) {
+            waitingConnectionFromReload.remove(c.getName());
+        }
+
+        lobby = null;
+        loadLobby();
     }
 }

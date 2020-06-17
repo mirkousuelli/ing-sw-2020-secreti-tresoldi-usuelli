@@ -75,8 +75,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code true} connection active, {@code false} connection not active
      */
-    private synchronized boolean isActive() {
+    @Override
+    public synchronized boolean isActive() {
         return isActive;
+    }
+
+    @Override
+    public Socket getSocket() {
+        return socket;
     }
 
     /**
@@ -194,10 +200,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 //connect
                                 logIn();
 
-                                if (!isActive) {
-                                    Thread.currentThread().interrupt();
-                                    return;
-                                }
+                                if (isToInterrupt())
+                                    break;
 
                                 synchronized (server) {
                                     reload = server.isLobbyReloaded();
@@ -209,10 +213,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                     else //joinGame
                                         waitNumberOfPlayers();
 
-                                    if (!isActive) {
-                                        Thread.currentThread().interrupt();
-                                        return;
-                                    }
+                                    if (isToInterrupt())
+                                        break;
 
                                     waitStart(); //wait other players
 
@@ -220,10 +222,16 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                                 } else
                                     reloadStart(); //reload
 
+                                if (isToInterrupt())
+                                    break;
+
                                 Demand demand;
                                 Lobby lobby = server.getLobby();
                                 while (isActive) {
                                     demand = read();
+
+                                    if (isToInterrupt())
+                                        break;
 
                                     synchronized (lobby.lockLobby) {
                                         newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
@@ -337,8 +345,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
         } finally {
             setActive(false);
-            if (!loggingOut)
+            if (!loggingOut) {
                 server.SuddenDisconnection();
+                LOGGER.info(() -> "sudden disconnection!");
+            }
         }
     }
 
@@ -382,6 +392,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         do {
             if (!server.isInWaitingConnectionFromReload(this)) {
                 demand = read();
+
+                if (isToInterrupt())
+                    return;
+
                 name = ((ReducedMessage) demand.getPayload()).getMessage();
             }
 
@@ -401,6 +415,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         do {
             demand = read();
 
+            if (isToInterrupt())
+                return;
+
             synchronized (server) {
                 toRepeat = server.numOfPlayers(this, demand);
             }
@@ -413,9 +430,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private void waitNumberOfPlayers() throws InterruptedException {
         Lobby lobby = server.getLobby();
 
-        synchronized (server) {
-            while (!server.canStart()) server.wait();
-        }
+        boolean interrupt = waitStart();
+
+        if (interrupt)
+            return;
 
         synchronized (lobby.lockLobby) {
             if (lobby.isFull() && !lobby.isPresentInGame(this)) {
@@ -428,10 +446,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /**
      * Method which stops the server in waiting status
      */
-    private void waitStart() throws InterruptedException {
+    private boolean waitStart() throws InterruptedException {
         synchronized (server) {
             while (!server.canStart()) server.wait();
         }
+
+        return isToInterrupt();
     }
 
     /**
@@ -446,6 +466,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             lobby.lockLobby.notifyAll();
             players = lobby.getReducedPlayerList();
         }
+
+        if (isToInterrupt())
+            return;
 
         //start
         send(new Answer<>(AnswerType.SUCCESS, players));
@@ -463,7 +486,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         Game loadedGame;
         Lobby lobby = server.getLobby();
 
-        waitStart(); //wait other players
+        boolean interrupt = waitStart(); //wait other players
+
+        if (interrupt)
+            return;
 
         synchronized (lobby.lockLobby) {
             lobby.lockLobby.notifyAll();
@@ -506,8 +532,20 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 toRepeat = server.newGame(this, demand);
             }
 
-            if (toRepeat)
+            if (toRepeat) {
                 demand = read();
+                if (isToInterrupt())
+                    return;
+            }
         } while (toRepeat);
+    }
+
+    private boolean isToInterrupt() {
+        if ((!isActive && !Thread.currentThread().isInterrupted())) {
+            server.deletePlayer(this);
+            Thread.currentThread().interrupt();
+        }
+
+        return !isActive;
     }
 }

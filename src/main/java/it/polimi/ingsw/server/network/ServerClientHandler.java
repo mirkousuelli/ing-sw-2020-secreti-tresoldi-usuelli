@@ -4,6 +4,8 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.observer.Observer;
 
+import java.net.Socket;
+
 /**
  * Interface which defines a common standard for a correct client-server handling approach
  */
@@ -62,6 +64,10 @@ public interface ServerClientHandler {
      * @param isActive for saying connection status
      */
     void setActive(boolean isActive);
+
+    boolean isActive();
+
+    Socket getSocket();
 
     /**
      * Method that makes connection log out
