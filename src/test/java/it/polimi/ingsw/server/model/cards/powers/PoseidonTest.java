@@ -1,18 +1,5 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.Deck;
-import it.polimi.ingsw.server.model.cards.gods.God;
-import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Board;
-import it.polimi.ingsw.server.model.map.Level;
-import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class PoseidonTest {
     /* Power:
      *   If your unmoved Worker is on the ground level, it may build up to three times
