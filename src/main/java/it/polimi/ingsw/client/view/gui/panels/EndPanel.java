@@ -100,7 +100,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
                 if (!type.equals(DEFEAT)) {
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("y"));
 
-                    mg.clear();
+                    mg.clean();
 
                     mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
                     mg.getCurrentPanel().updateFromModel();

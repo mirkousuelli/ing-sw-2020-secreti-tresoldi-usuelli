@@ -85,11 +85,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return isActive;
     }
 
-    @Override
-    public Socket getSocket() {
-        return socket;
-    }
-
     /**
      * Method that check demand buffer
      *

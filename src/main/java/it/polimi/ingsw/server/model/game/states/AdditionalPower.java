@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.game.states;
 
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
@@ -117,6 +118,12 @@ public class AdditionalPower implements GameState {
 
         if (returnContent == null) //if usePower went wrong
             return returnError(); //then report error
+
+        if(Move.reachedThirdLevel(game)) { //if the current player has won, then notify it to everyone!
+            returnContent.setState(State.VICTORY);
+            returnContent.setAnswerType(AnswerType.VICTORY);
+            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().getNickName()));
+        }
 
         return returnContent;
     }

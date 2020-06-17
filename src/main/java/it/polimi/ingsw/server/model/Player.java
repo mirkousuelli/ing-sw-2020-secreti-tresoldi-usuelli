@@ -13,7 +13,6 @@ package it.polimi.ingsw.server.model;
 import it.polimi.ingsw.server.model.cards.Card;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.map.Block;
-import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;

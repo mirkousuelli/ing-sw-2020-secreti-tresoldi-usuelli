@@ -123,27 +123,34 @@ public class Lobby {
         }
     }
 
+    void deletePlayer(String player) {
+        ServerClientHandler playerHandler = playingConnection.keySet().stream()
+                .filter(serverClientHandler -> serverClientHandler.getName().equals(player))
+                .reduce(null, (a,b) -> a != null
+                        ? a
+                        : b);
+
+        deletePlayer(playerHandler);
+    }
+
     /**
      * Method that removes players connection from the server
      *
      * @param player the player connection that is going to be remove
      */
     void deletePlayer(ServerClientHandler player) {
-        synchronized (playingConnection) {
-            if(!playingConnection.containsKey(player)) return;
+        if(!playingConnection.containsKey(player)) return;
 
-            View playerToRemove = playingConnection.get(player);
+        View playerToRemove = playingConnection.get(player);
 
-            playerToRemove.removeObserver(controller);
-            game.removeObserver(playerToRemove);
+        playerToRemove.removeObserver(controller);
+        game.removeObserver(playerToRemove);
 
-            game.removePlayer(playerToRemove.getPlayer());
-            synchronized (playerViewList) {
-                playerViewList.remove(playerToRemove);
-            }
-            playingConnection.remove(player);
-            playerColor.remove(playerToRemove);
-        }
+        game.removePlayer(playerToRemove.getPlayer());
+        playerViewList.remove(playerToRemove);
+
+        playingConnection.remove(player);
+        playerColor.remove(playerToRemove);
     }
 
     /**
@@ -178,7 +185,18 @@ public class Lobby {
      * @return {@code true} no player to be added anymore, {@code false} there is still space for other player/s
      */
     boolean isFull() {
-        return numberOfPlayers == playerViewList.size();
+        int playerViewListSize;
+        int numberOfPlayersNum;
+
+        synchronized (playerViewList) {
+            playerViewListSize = playerViewList.size();
+        }
+
+        synchronized (lockLobby) {
+            numberOfPlayersNum = numberOfPlayers;
+        }
+
+        return numberOfPlayersNum == playerViewListSize;
     }
 
     /**
@@ -192,7 +210,7 @@ public class Lobby {
         }
     }
 
-    public Game getGame() {
+    public synchronized Game getGame() {
         return game;
     }
 

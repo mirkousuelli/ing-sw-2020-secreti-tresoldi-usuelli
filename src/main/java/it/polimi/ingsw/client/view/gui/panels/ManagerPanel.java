@@ -137,7 +137,7 @@ public class ManagerPanel extends JPanel {
 
     }
 
-    void clear() {
+    void clean() {
         clientPlayer = null;
         game.clean();
     }

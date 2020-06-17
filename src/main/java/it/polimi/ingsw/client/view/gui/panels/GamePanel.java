@@ -521,6 +521,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case BUILD:
             case ASK_ADDITIONAL_POWER:
                 updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
+                updatedCells.forEach(c -> System.out.println(c.getX() + "," + c.getY() + " " + c.getActionList()));
                 setJCellLAction(updatedCells, currentState);
                 break;
 

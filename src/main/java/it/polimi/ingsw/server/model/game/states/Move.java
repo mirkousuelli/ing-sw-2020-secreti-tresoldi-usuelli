@@ -78,30 +78,8 @@ public class Move implements GameState {
      * @param game the game where the control is made
      * @return {@code true} if a worker reached the third level, {@code false} otherwise
      */
-    private boolean reachedThirdLevel(Game game) {
-        return game.getCurrentPlayer().getCurrentWorker().getLevel() == Level.TOP;
-    }
-
-    /**
-     * Method that checks if there is at least one cell to move to from the chosen cell and given the cells around it
-     *
-     * @param game the current game
-     * @param cellToMoveTo the cell from which the control is made
-     * @param around list of cells around the chosen cell
-     * @return {@code false} if there are no cells to move to from the given cell, {@code true} otherwise
-     */
-    public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo, List<Cell> around) {
-        List<Cell> remainingCells = around.stream()
-                .filter(c -> !c.getLevel().equals(Level.DOME))
-                .filter(c -> c.isFree() /*|| ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker())*/)
-                .filter(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1))
-                .collect(Collectors.toList());
-
-        if (remainingCells.isEmpty()) return false;
-        if (game.getCurrentPlayer().getMalusList().isEmpty()) return true;
-
-        return remainingCells.stream().anyMatch(c -> ActivePower.verifyMalus(game.getCurrentPlayer().getMalusList(), cellToMoveTo, c)) || game.getCurrentPlayer().getMalusList().get(0).isPermanent();
-
+    static boolean reachedThirdLevel(Game game) {
+        return game.getCurrentPlayer().getCurrentWorker().getLevel().equals(Level.TOP);
     }
 
     /**
@@ -112,7 +90,21 @@ public class Move implements GameState {
      * @return {@code false} if there are no cells to move to from the given cell, {@code true} otherwise
      */
     public static boolean isPresentAtLeastOneCellToMoveTo(Game game, Cell cellToMoveTo) {
-        return Move.isPresentAtLeastOneCellToMoveTo(game, cellToMoveTo, game.getBoard().getAround(cellToMoveTo));
+        Player currentPlayer = game.getCurrentPlayer();
+        List<Malus> currentPlayerMalusList = currentPlayer.getMalusList();
+        List<Cell> around = game.getBoard().getAround(cellToMoveTo);
+
+        List<Cell> remainingCells = around.stream()
+                .filter(c -> !c.getLevel().equals(Level.DOME))
+                .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
+                .filter(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1))
+                .collect(Collectors.toList());
+
+        if (remainingCells.isEmpty()) return false;
+        if (remainingCells.size() == 1 && !remainingCells.get(0).isFree() && (!((Block) remainingCells.get(0)).getPawn().equals(game.getCurrentPlayer().getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString()))) return false;
+        if (currentPlayerMalusList.isEmpty()) return true;
+
+        return remainingCells.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
     }
 
     @Override
@@ -217,7 +209,7 @@ public class Move implements GameState {
 
             returnContent = new ReturnContent<>();
 
-            if (reachedThirdLevel(game)) { //if the current worker reached the third level
+            if (Move.reachedThirdLevel(game)) { //if the current worker reached the third level
                 returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
                 returnContent.setState(State.VICTORY);
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));

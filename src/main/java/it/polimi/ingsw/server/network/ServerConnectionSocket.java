@@ -134,14 +134,14 @@ public class ServerConnectionSocket {
      * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
      */
     void suddenDisconnection() {
-        if (waitingConnection.size() != lobby.getGame().getNumPlayers()) {
+        if (waitingConnection.size() != lobby.getNumberOfPlayers()) {
             List<String> names = waitingConnection.keySet().stream()
                     .filter(name -> lobby.isPresentInGame(name))
                     .collect(Collectors.toList());
 
-            waitingConnection.keySet().forEach(name -> {
+            lobby.getReducedPlayerList().stream().map(ReducedPlayer::getNickname).forEach(name -> {
                 if(!names.contains(name)) {
-                    lobby.deletePlayer(waitingConnection.get(name));
+                    lobby.deletePlayer(name);
                     lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
                 }
             });
@@ -156,7 +156,7 @@ public class ServerConnectionSocket {
         waitingConnection.clear();
         File f = new File(Lobby.BACKUP_PATH);
         if (f.exists())
-            lobby.setReloaded(true);
+            loadLobby();
         else
             lobby = null;
     }
@@ -363,7 +363,7 @@ public class ServerConnectionSocket {
             waitingConnectionFromReload.remove(c.getName());
         }
 
-        lobby = null;
-        loadLobby();
+        //lobby = null;
+        //loadLobby();
     }
 }
