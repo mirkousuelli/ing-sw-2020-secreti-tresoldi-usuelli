@@ -42,12 +42,11 @@ public class Controller implements Observer<ActionToPerformView> {
             return;
         }
 
-        if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER)) {
-            if (!model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString()) && !model.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
-                actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not permitted")));
-                LOGGER.info(() -> "Not permitted!");
-                return;
-            }
+        if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER) &&
+          !model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString()) && !model.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
+            actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not permitted")));
+            LOGGER.info(() -> "Not permitted!");
+            return;
         }
 
         model.setRequest(actionToPerformView);

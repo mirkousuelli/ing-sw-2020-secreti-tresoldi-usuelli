@@ -100,7 +100,7 @@ public class PreparePayload {
         boolean isToReturnOnlyDefault = toReturn.stream().allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT));
         List<Malus> permanentMoveMaluses = currentPlayer.getMalusList().stream().filter(m -> m.getMalusType().equals(MalusType.MOVE)).filter(Malus::isPermanent).collect(Collectors.toList());
 
-        //Permanent "If possible" maluses
+        //permanent "If possible" maluses
         if (isToReturnOnlyDefault && !permanentMoveMaluses.isEmpty()) {
             if (state.equals(State.CHOOSE_WORKER)) {
                 currentPlayer.setCurrentWorker(currentPlayer.getWorker((currentPlayer.getCurrentWorker().getId() % 2) + 1));

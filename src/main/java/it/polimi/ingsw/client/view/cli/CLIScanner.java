@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,7 @@ public class CLIScanner<S> {
 
     private final Map<DemandType, String> messageMap;
     private final Map<DemandType, Predicate<String>> toRepeatMap;
-    private final Map<DemandType, Predicate<Integer>> indexMap;
+    private final Map<DemandType, IntPredicate> indexMap;
     private final Map<DemandType, Predicate<String>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
@@ -126,7 +127,7 @@ public class CLIScanner<S> {
         String value;
 
         Predicate<String> toRepeatFunction;
-        Predicate<Integer> indexFunction;
+        IntPredicate indexFunction;
         Predicate<String> powerFunction;
         Function<String, S> payloadFunction;
 
