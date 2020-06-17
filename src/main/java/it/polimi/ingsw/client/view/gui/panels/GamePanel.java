@@ -506,8 +506,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case BUILD:
             case ASK_ADDITIONAL_POWER:
                 updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
-                //updatedCells.forEach(rac -> System.out.println(rac.getX() + ", " + rac.getY() + " " + rac.getActionList()));
                 setJCellLAction(updatedCells, currentState);
+                break;
+
+            default:
                 break;
         }
     }
@@ -529,15 +531,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             if (updatedCell.getWorker().isGender()) {
                 prevPlayer.setUpMaleWorker(jCellWorker);
                 prevPlayer.getMaleWorker().setId(updatedCell.getWorker().getId());
-
-                //System.out.println("male " + prevPlayer.getMaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getMaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getMaleWorker().getId());
             }
             else {
                 prevPlayer.setUpFemaleWorker(jCellWorker);
                 prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
-
-
-                //System.out.println("female " + prevPlayer.getFemaleWorker().getLocation().getXCoordinate() + "," + prevPlayer.getFemaleWorker().getLocation().getYCoordinate() + " " + prevPlayer.getFemaleWorker().getId());
             }
         });
     }
@@ -549,22 +546,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         for (ReducedAnswerCell rac : updatedCells) {
             jCell = map.getCell(rac.getX(), rac.getY());
 
-            /*System.out.print(jCell.getStatus() + " ");
-            System.out.print(((JBlockDecorator) jCell).getDecoration() + " ");
-            System.out.print(((JBlockDecorator) jCell).getBlock().getStatus() + " ");
-            System.out.print(rac.getLevel() + " ");
-            System.out.println(rac.getX() + "," + rac.getY());*/
-
             if (rac.getLevel().toInt() == jCell.getStatus().ordinal() + 1)
                 ((JBlockDecorator) jCell).buildUp();
             else if (rac.getLevel().toInt() > jCell.getStatus().ordinal() + 1)
                 ((JBlockDecorator) jCell).addDecoration(JCellStatus.DOME);
-
-            /*System.out.print(jCell.getStatus() + " ");
-            System.out.print(((JBlockDecorator) jCell).getDecoration() + " ");
-            System.out.print(((JBlockDecorator) jCell).getBlock().getStatus() + " ");
-            System.out.print(rac.getLevel() + " ");
-            System.out.println(rac.getX() + "," + rac.getY() + "\n");*/
 
             map.validate();
             map.repaint();

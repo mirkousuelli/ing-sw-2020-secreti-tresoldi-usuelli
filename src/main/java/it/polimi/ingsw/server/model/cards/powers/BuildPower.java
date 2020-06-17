@@ -10,6 +10,7 @@
 
 package it.polimi.ingsw.server.model.cards.powers;
 
+import it.polimi.ingsw.communication.message.payload.ILevel;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.BlockType;
 import it.polimi.ingsw.server.model.map.Block;
@@ -67,7 +68,7 @@ public class BuildPower<S> extends ActivePower<S> {
         ((Block) cellToBuild).removePawn();
         ((Block) cellToBuild).setPreviousLevel(cellToBuild.getLevel());
         workerToUse.setPreviousBuild(cellToBuild);
-        cellToBuild.setLevel(Level.parseInt(level));
+        cellToBuild.setLevel((Level) ILevel.parseInt(level));
         ((Block) cellToBuild).addPawn(temp);
 
         return true;

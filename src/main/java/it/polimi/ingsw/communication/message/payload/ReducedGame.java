@@ -51,8 +51,8 @@ public class ReducedGame {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 reducedBoard[i][j] = new ReducedAnswerCell(i, j);
-                reducedBoard[i][j].setLevel(ReducedLevel.parseInt(board.map[i][j].getLevel().toInt()));
-                reducedBoard[i][j].setPrevLevel(ReducedLevel.parseInt(((Block) board.map[i][j]).getPreviousLevel().toInt()));
+                reducedBoard[i][j].setLevel(ILevel.parseInt(board.map[i][j].getLevel().toInt()));
+                reducedBoard[i][j].setPrevLevel(ILevel.parseInt(((Block) board.map[i][j]).getPreviousLevel().toInt()));
                 reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
             }
         }
@@ -62,19 +62,17 @@ public class ReducedGame {
             Cell loc = loadedGame.getCurrentPlayer().getWorker(currentWorkerIndex);
             List<Cell> around = board.getAround(loc);
             List<Cell> action = null;
+
             if (state.equals("move"))
                 action = board.getPossibleMoves(loadedGame.getPlayer(currentPlayerIndex));
-            if (state.equals("build"))
+            else if (state.equals("build"))
                 action = board.getPossibleBuilds(loadedGame.getPlayer(currentPlayerIndex).getCurrentWorker());
 
-            if (action != null) {
-                for (Cell c : around) {
-                    for (Cell cell : action) {
-                        if (c.equals(cell))
-                            reducedBoard[c.getX()][c.getY()].setAction(ReducedAction.parseString(state));
-                    }
-                }
-            }
+            if (action != null)
+                action.stream()
+                        .filter(around::contains)
+                        .map(cell -> reducedBoard[cell.getX()][cell.getY()])
+                        .forEach(reducedCell -> reducedCell.setAction(ReducedAction.parseString(state)));
         }
 
         for (Player p : playerList) {
@@ -85,10 +83,9 @@ public class ReducedGame {
                 reducedBoard[w.getX()][w.getY()].setWorker(work);
             }
 
-            for (ReducedPlayer rp : reducedPlayerList) {
-                if (rp.getNickname().equals(p.nickName))
-                    rp.setCard(new ReducedCard(p.getCard()));
-            }
+            reducedPlayerList.stream()
+                    .filter(player -> player.getNickname().equals(p.nickName))
+                    .forEach(player -> player.setCard(new ReducedCard(p.getCard())));
         }
     }
 

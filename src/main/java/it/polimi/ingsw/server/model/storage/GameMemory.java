@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.storage;
 
+import it.polimi.ingsw.communication.message.payload.ILevel;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
@@ -515,8 +516,8 @@ public class GameMemory {
                 int y = Integer.parseInt(cellNode.getChildNodes().item(Y).getTextContent());
                 Block cell = (Block) game.getBoard().getCell(x ,y);
 
-                cell.setLevel(Level.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
-                cell.setPreviousLevel(Level.parseString(cellNode.getChildNodes().item(PREV).getTextContent()));
+                cell.setLevel((Level) ILevel.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
+                cell.setPreviousLevel((Level) ILevel.parseString(cellNode.getChildNodes().item(PREV).getTextContent()));
             }
         }
         catch (SAXException | IOException | ParserConfigurationException e) {

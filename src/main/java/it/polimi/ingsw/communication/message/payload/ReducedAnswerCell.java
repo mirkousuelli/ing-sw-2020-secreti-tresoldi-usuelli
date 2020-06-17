@@ -3,6 +3,7 @@ package it.polimi.ingsw.communication.message.payload;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
+import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class ReducedAnswerCell extends ReducedDemandCell {
 
-    private ReducedLevel level;
-    private ReducedLevel prevLevel;
+    private ILevel level;
+    private ILevel prevLevel;
     private List<ReducedAction> actionList;
     private ReducedWorker worker;
 
@@ -40,8 +41,8 @@ public class ReducedAnswerCell extends ReducedDemandCell {
      */
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
         super(x, y);
-        level = ReducedLevel.GROUND;
-        prevLevel = ReducedLevel.GROUND;
+        level = Level.GROUND;
+        prevLevel = Level.GROUND;
         actionList = new ArrayList<>();
         actionList.add(ReducedAction.DEFAULT);
         this.worker = worker;
@@ -72,7 +73,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         replaceDefaultAction(ReducedAction.DEFAULT);
     }
 
-    public ReducedLevel getLevel() {
+    public ILevel getLevel() {
         return level;
     }
 
@@ -88,7 +89,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         return worker == null;
     }
 
-    public void setLevel(ReducedLevel level) {
+    public void setLevel(ILevel level) {
         this.level = level;
     }
 
@@ -100,17 +101,17 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.worker = worker;
     }
 
-    public ReducedLevel getPrevLevel() {
+    public ILevel getPrevLevel() {
         return prevLevel;
     }
 
-    public void setPrevLevel(ReducedLevel prevLevel) {
+    public void setPrevLevel(ILevel prevLevel) {
         this.prevLevel = prevLevel;
     }
 
     public void clear() {
-        level = ReducedLevel.GROUND;
-        prevLevel = ReducedLevel.GROUND;
+        level = Level.GROUND;
+        prevLevel = Level.GROUND;
         resetAction();
         worker = null;
     }
@@ -125,8 +126,8 @@ public class ReducedAnswerCell extends ReducedDemandCell {
      */
     public static ReducedAnswerCell prepareCell(Cell c, List<Player> playerList) {
         ReducedAnswerCell temp = new ReducedAnswerCell(c.getX(), c.getY());
-        temp.setLevel(ReducedLevel.parseInt(c.getLevel().toInt()));
-        temp.setPrevLevel(ReducedLevel.parseInt(((Block) c).getPreviousLevel().toInt()));
+        temp.setLevel(ILevel.parseInt(c.getLevel().toInt()));
+        temp.setPrevLevel(ILevel.parseInt(((Block) c).getPreviousLevel().toInt()));
 
         if (!c.isFree()) {
             Worker w = ((Worker) ((Block) c).getPawn());

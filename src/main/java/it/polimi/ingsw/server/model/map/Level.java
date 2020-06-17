@@ -10,10 +10,12 @@
 
 package it.polimi.ingsw.server.model.map;
 
+import it.polimi.ingsw.communication.message.payload.ILevel;
+
 /**
  * Enumeration that represents the level of the cell
  */
-public enum Level {
+public enum Level implements ILevel {
 
     GROUND {
         /**
@@ -113,53 +115,6 @@ public enum Level {
         }
     }
 
-    /**
-     * Method that returns the correspondent level enum from an integer input
-     *
-     * @param level the number of the level to parse
-     * @return the corresponding level or null if the number isn't correct
-     */
-    public static Level parseInt(int level) {
-
-        switch (level) {
-            case 0:
-                return GROUND;
-            case 1:
-                return BOTTOM;
-            case 2:
-                return MIDDLE;
-            case 3:
-                return TOP;
-            case 4:
-                return DOME;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Method that returns the level enum that corresponds to the string
-     *
-     * @param level string of the level
-     * @return the corresponding level
-     */
-    public static Level parseString(String level) {
-
-        switch (level) {
-            case "GROUND":
-                return GROUND;
-            case "BOTTOM":
-                return BOTTOM;
-            case "MIDDLE":
-                return MIDDLE;
-            case "TOP":
-                return TOP;
-            case "DOME":
-                return DOME;
-            default:
-                return null;
-        }
-    }
 
     public String getName() {
 
