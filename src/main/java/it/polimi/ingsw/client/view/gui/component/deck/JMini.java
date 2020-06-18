@@ -32,7 +32,7 @@ public class JMini extends JButton {
         setOpaque(false);
         setContentAreaFilled(false);
         setBorderPainted(false);
-        setName(god.name());
+        setName("mini");
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         Image img = icon.getImage().getScaledInstance( SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);

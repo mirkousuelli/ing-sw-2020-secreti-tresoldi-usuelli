@@ -198,7 +198,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         int i = 0;
 
         while (!found) {
-            if (deck.getComponent(i).getName().equals(godToRemove.name()))
+            if (deck.getMini(i).getGod().equals(godToRemove))
                 found = true;
             else
                 i++;
