@@ -11,10 +11,7 @@
 package it.polimi.ingsw.server.model.cards.powers;
 
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
-import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
-import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
-import it.polimi.ingsw.server.model.cards.powers.tags.WorkerType;
+import it.polimi.ingsw.server.model.cards.powers.tags.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
@@ -77,6 +74,8 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
+        if(!verifyWorkerLevel(workerToUse.getLocation())) return false;
+
         List<Malus> correctMalus = new ArrayList<>();
         if (effect.equals(Effect.MALUS))
             correctMalus= currentPlayer.getMalusList().stream()
@@ -100,6 +99,12 @@ public abstract class ActivePower<S> extends Power<S> {
             malusPlayer = new Malus(personalMalus);
             currentPlayer.addMalus(malusPlayer);
         }
+    }
+
+    private boolean verifyWorkerLevel(Cell workerLocation) {
+        if (workerInitPos.equals(WorkerPosition.DEFAULT)) return true;
+
+        return workerLocation.getLevel().toInt() == workerInitPos.ordinal();
     }
 
     /**

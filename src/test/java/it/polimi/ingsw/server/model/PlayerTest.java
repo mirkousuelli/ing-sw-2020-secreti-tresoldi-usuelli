@@ -1,9 +1,12 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
+import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Worker;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -113,15 +116,10 @@ class PlayerTest {
         player1.addWorker(w1);
         player1.addWorker(w2);
 
-       /* game.setCurrentPlayer(player1);
-        game.assignCard(God.APOLLO);*/
-
         // check that the workers are added properly
         assertEquals(w1, worker1.getPawn());
         assertEquals(w2, worker2.getPawn());
         assertEquals(2, player1.getWorkers().size());
-
-        // assertEquals(God.APOLLO, player1.getCard().getGod());
 
         player1.removeWorker(w2);
 
@@ -134,5 +132,91 @@ class PlayerTest {
 
         // test that the number of workers for the player is decreased and now there's only one
         assertEquals(1, player1.getWorkers().size());
+    }
+
+    @Test
+    void wrongAddWorker() throws ParserConfigurationException, SAXException {
+        Player player1 = new Player("Pl1");
+        Game game = new Game();
+
+        Block worker1 = (Block) game.getBoard().getCell(1, 1);
+        Block worker2 = (Block) game.getBoard().getCell(1, 3);
+        Block worker3 = (Block) game.getBoard().getCell(1, 4);
+
+        player1.initializeWorkerPosition(1, worker1);
+        player1.initializeWorkerPosition(2, worker2);
+
+        assertFalse(player1.addWorker(new Worker(worker3)));
+    }
+
+    @Test
+    void removeWorkers() throws ParserConfigurationException, SAXException {
+        Player player1 = new Player("Pl1");
+        Game game = new Game();
+
+        Block worker1 = (Block) game.getBoard().getCell(1, 1);
+        Block worker2 = (Block) game.getBoard().getCell(1, 3);
+
+        player1.initializeWorkerPosition(1, worker1);
+        player1.initializeWorkerPosition(2, worker2);
+
+        //remove workers
+        player1.removeWorkers();
+
+        assertTrue(player1.getWorkers().isEmpty());
+    }
+
+    @Test
+    void getWrongWorkerTest() throws ParserConfigurationException, SAXException {
+        Player player1 = new Player("Pl1");
+        Game game = new Game();
+
+        Block worker1 = (Block) game.getBoard().getCell(1, 1);
+        Block worker2 = (Block) game.getBoard().getCell(1, 3);
+
+        player1.initializeWorkerPosition(1, worker1);
+        player1.initializeWorkerPosition(2, worker2);
+
+        assertNull(player1.getWorker(4));
+    }
+
+    @Test
+    void removePermanentMalus() {
+        Player player1 = new Player("Pl1");
+        Malus permanentMalus = new Malus();
+        Malus nonPermanentMalus = new Malus();
+
+        permanentMalus.setPermanent(true);
+        permanentMalus.setMalusType(MalusType.MOVE);
+        permanentMalus.addDirectionElement(MalusLevel.DOWN);
+
+        //add permanent malus
+        player1.addMalus(permanentMalus);
+        assertEquals(1, player1.getMalusList().size());
+        assertEquals(permanentMalus, player1.getMalusList().get(0));
+
+
+        nonPermanentMalus.setPermanent(false);
+        nonPermanentMalus.setMalusType(MalusType.BUILD);
+        nonPermanentMalus.addDirectionElement(MalusLevel.UP);
+
+        //add non permanent malus
+        player1.addMalus(nonPermanentMalus);
+        assertEquals(2, player1.getMalusList().size());
+        assertTrue(player1.getMalusList().contains(nonPermanentMalus));
+        assertTrue(player1.getMalusList().contains(permanentMalus));
+
+        //remove permanent malus
+        assertEquals(permanentMalus, player1.removePermanentMalus());
+        assertEquals(1, player1.getMalusList().size());
+        assertEquals(nonPermanentMalus, player1.getMalusList().get(0));
+
+        //remove permanent malus
+        assertNull(player1.removePermanentMalus());
+        assertEquals(1, player1.getMalusList().size());
+        assertEquals(nonPermanentMalus, player1.getMalusList().get(0));
+
+        assertNotEquals(permanentMalus, nonPermanentMalus);
+        assertNotEquals(permanentMalus.hashCode(), nonPermanentMalus.hashCode());
     }
 }

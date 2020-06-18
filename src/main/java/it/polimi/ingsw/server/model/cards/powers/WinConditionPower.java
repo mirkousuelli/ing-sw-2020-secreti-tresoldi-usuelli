@@ -49,6 +49,7 @@ public class WinConditionPower<S> extends Power<S> {
             case DOWN_FROM_TWO:
                 return game.getCurrentPlayer().getCurrentWorker().getPreviousLocation().getLevel().toInt() -
                        game.getCurrentPlayer().getCurrentWorker().getLocation().getLevel().toInt() >= 2;
+
             default:
                 return false;
         }
