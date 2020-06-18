@@ -78,7 +78,7 @@ public abstract class ActivePower<S> extends Power<S> {
 
         List<Malus> correctMalus = new ArrayList<>();
         if (effect.equals(Effect.MALUS))
-            correctMalus= currentPlayer.getMalusList().stream()
+            correctMalus = currentPlayer.getMalusList().stream()
                     .filter(m -> m.getMalusType().equals(((Malus) allowedAction).getMalusType()))
                     .collect(Collectors.toList());
 
@@ -115,8 +115,8 @@ public abstract class ActivePower<S> extends Power<S> {
      * if we consider Zeus), {@code false} otherwise
      */
     private boolean verifyConstraints(Cell cellToUse) {
-        if (constraints.isPerimCell() && !isPerim(cellToUse))  return false;
-        if (constraints.isNotPerimCell() && isPerim(cellToUse))  return false;
+        if (constraints.isPerimCell() && !Cell.isPerim(cellToUse))  return false;
+        if (constraints.isNotPerimCell() && Cell.isPerim(cellToUse))  return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
 
@@ -165,16 +165,6 @@ public abstract class ActivePower<S> extends Power<S> {
      * @return {@code true} if the power is used correctly, {@code false} otherwise
      */
     protected abstract boolean useActivePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency);
-
-    /**
-     * Method that tells if the chosen cell is in the perimeter of the board
-     *
-     * @param cellToUse the cell that gets checked
-     * @return {@code true} if the cell is in the perimeter, {@code false} otherwise
-     */
-    protected boolean isPerim(Cell cellToUse) {
-        return (cellToUse.getX() == 0 || cellToUse.getY() == 0 || cellToUse.getX() == 4 || cellToUse.getY() == 4);
-    }
 
     /**
      * Method that tells if the given cell is adjacent to the worker position

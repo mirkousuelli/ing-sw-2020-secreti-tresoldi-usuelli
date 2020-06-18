@@ -77,7 +77,7 @@ public class MovePower<S> extends ActivePower<S> {
             workerToUse.getLocation().removePawn();
             workerToUse.setLocation((Block) cellToMove);
 
-            if (constraints.isPerimCell() && !isPerim(cellToMove) && numberOfActionsRemaining == -1) numberOfActionsRemaining = 0;
+            if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1) numberOfActionsRemaining = 0;
 
             return true;
         }

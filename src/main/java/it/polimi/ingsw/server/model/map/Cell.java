@@ -27,5 +27,15 @@ public interface Cell {
     boolean isComplete();
     boolean isFree();
 
+    /**
+     * Method that tells if the chosen cell is in the perimeter of the board
+     *
+     * @param cellToUse the cell that gets checked
+     * @return {@code true} if the cell is in the perimeter, {@code false} otherwise
+     */
+    static boolean isPerim(Cell cellToUse) {
+        return (cellToUse.getX() == 0 || cellToUse.getY() == 0 || cellToUse.getX() == 4 || cellToUse.getY() == 4);
+    }
+
     void clean();
 }
