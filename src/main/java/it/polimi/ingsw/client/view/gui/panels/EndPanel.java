@@ -10,14 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndPanel extends SantoriniPanel implements ActionListener {
-
     private static final String EXTENSION =  ".png";
     public static final String VICTORY = "victory" + EXTENSION;
     public static final String DEFEAT = "defeat" + EXTENSION;
     public static final String LOST = "lost" + EXTENSION;
     public static final String SAVE = "saved" + EXTENSION;
 
-    private String type;
+    private final String type;
+
     private JButton playAgainButton;
     private JButton quitButton;
 

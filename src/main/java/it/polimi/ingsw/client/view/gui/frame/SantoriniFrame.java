@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SantoriniFrame extends JFrame {
-
     private static final String TITLE = "Santorini";
     private final JPanel main;
 

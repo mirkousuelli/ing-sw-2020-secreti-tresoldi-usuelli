@@ -6,6 +6,7 @@ import java.awt.*;
 public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
     private final String imgPath;
     private final Image img;
+
     private int scaleWidth;
     private int scaleHeight;
     protected CardLayout panelIndex;

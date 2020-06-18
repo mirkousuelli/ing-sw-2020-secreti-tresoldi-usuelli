@@ -11,17 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
-
     private final List<JGod> gods;
     private int current;
 
-    public JDeck(List<God> list) { //TODO
-        this.gods = new ArrayList<>();
-
+    public JDeck(List<God> list) {
+        this();
         setGodList(list);
-
-        setLayout(new GridBagLayout());
-        setOpaque(false);
     }
 
     public JDeck() {
@@ -40,9 +35,7 @@ public class JDeck extends JPanel implements ActionListener {
     }
 
     public void addGod(God god) {
-        JGod jGod = new JGod(god);
-        this.gods.add(jGod);
-        this.setCurrent(jGod);
+        addGod(new JGod(god));
     }
 
     public void setCurrent(JGod chosen) {

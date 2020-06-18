@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
+
     int numPlayer = 3;
     private JButton activeButton;
     private JButton removeButton;

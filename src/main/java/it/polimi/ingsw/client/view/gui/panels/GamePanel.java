@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GamePanel extends SantoriniPanel implements ActionListener {
-
     private static final String imgPath = "map.png";
-    private JGame game;
-    private JPlayer clientPlayer;
+    private final JGame game;
+    private final JPlayer clientPlayer;
+
     private JPanel right;
     private JCard cardButton;
     private JPanel left;

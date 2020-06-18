@@ -17,7 +17,7 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
     private static final int BUTTON_SIZE = 200;
 
     private JLabel stand;
-    private List<JButton> tags;
+    private final List<JButton> tags;
     private final JGame game;
     private JButton chooseButton;
 

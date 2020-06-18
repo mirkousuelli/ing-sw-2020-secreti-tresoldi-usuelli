@@ -22,12 +22,12 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
 
-    private JPanel layers;
+    private final JPanel layers;
     private JLayeredPane godsList;
     private JLabel godsBack;
     private JPanel choice;
     private JButton chooseButton;
-    private JDeck deck;
+    private final JDeck deck;
     private JCard retro;
     private God chosenGod;
 
@@ -194,6 +194,18 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     }
 
     private void updateDeck(God godToRemove) {
+        boolean found = false;
+        int i = 0;
+
+        while (!found) {
+            if (deck.getComponent(i).getName().equals(godToRemove.name()))
+                found = true;
+            else
+                i++;
+        }
+        deck.getComponent(i).setVisible(false);
+
+
         deck.pop(deck.getJGod(godToRemove));
         if (!deck.getList().isEmpty()) {
             deck.setCurrent(deck.getGod(0));

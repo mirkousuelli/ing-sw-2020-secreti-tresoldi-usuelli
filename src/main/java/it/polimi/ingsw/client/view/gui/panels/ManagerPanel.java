@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ManagerPanel extends JPanel {
-
     private final CardLayout cardLayout;
-    private SantoriniPanel currentPanel;
     private final GUI gui;
+
+    private SantoriniPanel currentPanel;
     private JGame game;
     private JPlayer clientPlayer;
 

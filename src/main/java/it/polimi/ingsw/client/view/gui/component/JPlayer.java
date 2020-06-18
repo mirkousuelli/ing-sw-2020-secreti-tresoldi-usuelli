@@ -13,18 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JPlayer extends JButton implements ActionListener {
-
     private final String nickname;
     private final int id;
+
     private JCard card;
     private JWorker femaleWorker;
     private JWorker maleWorker;
     private boolean currentWorker;
     private boolean chooseWorker;
+
     private final String tagPath;
     private static final String activePath = "/img/labels/chosen_player.png";
     private boolean active;
-    private JLabel text;
+
+    private final JLabel text;
 
     public static final int SIZE_X = 400;
     public static final int SIZE_Y = 100;
