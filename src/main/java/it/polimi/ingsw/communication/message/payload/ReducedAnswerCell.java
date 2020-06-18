@@ -23,7 +23,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
     private ReducedWorker worker;
 
     public ReducedAnswerCell(int x, int y) {
-        this(x, y , null);
+        this(x, y, null);
     }
 
     /**
@@ -37,11 +37,26 @@ public class ReducedAnswerCell extends ReducedDemandCell {
      * @param worker the worker that can be on this cell
      */
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
-        super(x, y);
-        level = Level.GROUND;
-        prevLevel = Level.GROUND;
+        this(x, y, Level.GROUND, Level.GROUND, null, worker);
         actionList = new ArrayList<>();
         actionList.add(ReducedAction.DEFAULT);
+    }
+
+    public ReducedAnswerCell(ReducedAnswerCell reducedAnswerCell) {
+        this(reducedAnswerCell.getX(),
+                reducedAnswerCell.getY(),
+                reducedAnswerCell.getLevel(),
+                reducedAnswerCell.getPrevLevel(),
+                reducedAnswerCell.getActionList(),
+                reducedAnswerCell.getWorker()
+        );
+    }
+
+    public ReducedAnswerCell(int x, int y, ILevel level, ILevel prevLevel, List<ReducedAction> actionList, ReducedWorker worker) {
+        super(x, y);
+        this.level = level;
+        this.prevLevel = prevLevel;
+        this.actionList = actionList;
         this.worker = worker;
     }
 

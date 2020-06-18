@@ -14,8 +14,10 @@ import java.util.logging.Logger;
 public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected ClientModel<S> clientModel;
+
     private boolean isFree = false;
     public final Object lockFree;
+
     private static final Logger LOGGER = Logger.getLogger(ClientView.class.getName());
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 

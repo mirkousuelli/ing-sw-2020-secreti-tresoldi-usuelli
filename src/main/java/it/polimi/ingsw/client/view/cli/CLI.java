@@ -14,8 +14,8 @@ public class CLI<S> extends ClientView<S> {
 
     public CLI(ClientModel<S> clientModel) {
         super(clientModel);
-        out = new CLIPrinter<>(System.out, clientModel);
-        in = new CLIScanner<>(System.in, out, clientModel);
+        out = new CLIPrinter<>(clientModel);
+        in = new CLIScanner<>(out, clientModel);
 
     }
 

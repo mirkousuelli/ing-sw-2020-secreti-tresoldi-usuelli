@@ -382,7 +382,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     /*------------------------------------------------------GET-------------------------------------------------------*/
     public synchronized ReducedAnswerCell[][] getReducedBoard() {
-        return reducedBoard;
+        ReducedAnswerCell[][] reducedAnswerCellsCopy = new ReducedAnswerCell[DIM][DIM];
+
+        Arrays.stream(reducedBoard).forEach(reducedBoardRow -> System.arraycopy(reducedBoardRow, 0, reducedAnswerCellsCopy[reducedBoardRow[0].getY()], 0, DIM));
+        return reducedAnswerCellsCopy;
     }
 
     public synchronized ReducedAnswerCell getCell(int x, int y) {

@@ -37,8 +37,8 @@ public class CLIPrinter<S> {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    CLIPrinter(PrintStream out, ClientModel<S> clientModel) {
-        this.out = out;
+    CLIPrinter(ClientModel<S> clientModel) {
+        this.out = new PrintStream(System.out, true);
         this.clientModel = clientModel;
 
         stringMap = new EnumMap<>(DemandType.class);

@@ -14,10 +14,12 @@ import java.util.logging.Logger;
 
 public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
+    private ClientView<S> clientView;
+
     private final Socket socket;
     private final FileXML file;
-    private ClientView<S> clientView;
     private final LinkedList<Answer<S>> buffer;
+
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
     public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {

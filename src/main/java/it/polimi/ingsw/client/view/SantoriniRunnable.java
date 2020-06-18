@@ -20,8 +20,21 @@ public abstract class SantoriniRunnable<S> implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
 
-    public SantoriniRunnable() {}
+    public SantoriniRunnable() {
 
+    }
+
+    /**
+     * When an object implementing interface {@code Runnable} is used
+     * to create a thread, starting the thread causes the object's
+     * {@code run} method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method {@code run} is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
     @Override
     public void run() {
         setActive(true);
@@ -98,5 +111,10 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
+    /**
+     * Customizes what the object's {@code run} method does
+     *
+     * @throws InterruptedException the exception thrown when the thread is interrupted
+     * */
     protected abstract void startThreads() throws InterruptedException;
 }

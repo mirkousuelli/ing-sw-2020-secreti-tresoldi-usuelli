@@ -43,8 +43,8 @@ public class CLIScanner<S> {
 
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
-    CLIScanner(InputStream inputStream, CLIPrinter<S> out, ClientModel<S> clientModel) {
-        in = new BufferedReader(new InputStreamReader(inputStream));
+    CLIScanner(CLIPrinter<S> out, ClientModel<S> clientModel) {
+        in = new BufferedReader(new InputStreamReader(System.in));
         this.out = out;
         this.clientModel = clientModel;
 
