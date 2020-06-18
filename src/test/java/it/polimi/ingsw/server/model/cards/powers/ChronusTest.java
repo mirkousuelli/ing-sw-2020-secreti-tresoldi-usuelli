@@ -32,7 +32,7 @@ public class ChronusTest {
         game.setCurrentPlayer(player1);
 
         deck.fetchCard(God.CHRONUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.CHRONUS));
         power1 = (WinConditionPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1,1);
@@ -62,7 +62,7 @@ public class ChronusTest {
         game.setCurrentPlayer(player1);
 
         deck.fetchCard(God.CHRONUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.CHRONUS));
         power1 = (WinConditionPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1,1);

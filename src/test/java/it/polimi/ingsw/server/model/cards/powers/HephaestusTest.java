@@ -26,7 +26,7 @@ public class HephaestusTest {
         BuildPower power1;
 
         deck.fetchCard(God.HEPHAESTUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HEPHAESTUS));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -56,7 +56,7 @@ public class HephaestusTest {
         BuildPower power1;
 
         deck.fetchCard(God.HEPHAESTUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HEPHAESTUS));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -90,7 +90,7 @@ public class HephaestusTest {
         BuildPower power1;
 
         deck.fetchCard(God.HEPHAESTUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HEPHAESTUS));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -126,7 +126,7 @@ public class HephaestusTest {
         BuildPower power1;
 
         deck.fetchCard(God.HEPHAESTUS);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HEPHAESTUS));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);

@@ -32,7 +32,7 @@ class ApolloTest {
         MovePower power1;
 
         deck.fetchCard(God.APOLLO);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.APOLLO));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -72,7 +72,7 @@ class ApolloTest {
         MovePower power1;
 
         deck.fetchCard(God.APOLLO);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.APOLLO));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -112,7 +112,7 @@ class ApolloTest {
         MovePower power1;
 
         deck.fetchCard(God.APOLLO);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.APOLLO));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -148,7 +148,7 @@ class ApolloTest {
         MovePower power1;
 
         deck.fetchCard(God.APOLLO);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.APOLLO));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);

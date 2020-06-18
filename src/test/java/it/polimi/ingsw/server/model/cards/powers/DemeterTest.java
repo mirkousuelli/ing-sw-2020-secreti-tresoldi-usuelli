@@ -26,7 +26,7 @@ public class DemeterTest {
         BuildPower power1;
 
         deck.fetchCard(God.DEMETER);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.DEMETER));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -59,7 +59,7 @@ public class DemeterTest {
         BuildPower power1;
 
         deck.fetchCard(God.DEMETER);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.DEMETER));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -89,7 +89,7 @@ public class DemeterTest {
         BuildPower power1;
 
         deck.fetchCard(God.DEMETER);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.DEMETER));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -125,7 +125,7 @@ public class DemeterTest {
         BuildPower power1;
 
         deck.fetchCard(God.DEMETER);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.DEMETER));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -159,7 +159,7 @@ public class DemeterTest {
         BuildPower power1;
 
         deck.fetchCard(God.DEMETER);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.DEMETER));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);

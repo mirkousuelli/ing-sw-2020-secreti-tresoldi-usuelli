@@ -31,7 +31,7 @@ public class PersephoneTest {
         MalusPower power1;
 
         deck.fetchCard(God.PERSEPHONE);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.PERSEPHONE));
         power1 = (MalusPower) player1.getCard().getPower(0);
 
         Block worker1Player2 = (Block) board.getCell(0, 0);
@@ -70,7 +70,7 @@ public class PersephoneTest {
         MalusPower power1;
 
         deck.fetchCard(God.PERSEPHONE);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.PERSEPHONE));
         power1 = (MalusPower) player1.getCard().getPower(0);
 
         Block worker1Player2 = (Block) board.getCell(0, 0);

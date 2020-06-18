@@ -31,7 +31,7 @@ public class PanTest {
         game.setCurrentPlayer(player1);
 
         deck.fetchCard(God.PAN);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.PAN));
         power1 = (WinConditionPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);

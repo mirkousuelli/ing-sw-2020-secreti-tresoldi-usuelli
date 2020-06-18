@@ -44,17 +44,9 @@ public class Power<S> {
         constraints = new Constraints();
     }
 
-    /*public WorkerType getWorkerType() {
-        return workerType;
-    }*/
-
     public void setWorkerType(WorkerType workerType) {
         this.workerType = workerType;
     }
-
-    /*public WorkerPosition getWorkerInitPos() {
-        return workerInitPos;
-    }*/
 
     public void setWorkerInitPos(WorkerPosition workerInitPos) {
         this.workerInitPos = workerInitPos;

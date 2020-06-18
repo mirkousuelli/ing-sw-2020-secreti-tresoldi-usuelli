@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class Deck {
     private final List<Card> cards;
     private final GodParser parser;
-    private static final Random randomIndex = new Random();
 
     /**
      * Constructor of the player, that creates the list of the cards
@@ -36,22 +35,6 @@ public class Deck {
     public Deck() throws ParserConfigurationException, SAXException {
         parser = new GodParser(this);
         cards = new ArrayList<>();
-    }
-
-    /**
-     * Method that picks a random card from the deck
-     *
-     * @return the randomly picked card
-     */
-    public Card popRandomCard() {
-        Card pickedCard = null;
-
-        if (!cards.isEmpty()) {
-            pickedCard= cards.get(randomIndex.nextInt(cards.size()));
-            cards.remove(pickedCard);
-        }
-
-        return pickedCard;
     }
 
     /**
@@ -111,21 +94,4 @@ public class Deck {
 
         return cards.stream().filter(c -> c.getNumPlayer() >= numberOfPlayers).map(ReducedCard::new).collect(Collectors.toList());
     }
-
-    /**
-     * Method that picks the chosen Gods from the deck
-     *
-     * @param chosenGods list of cards that are picked
-     * @return the list of cards
-     */
-    /*public List<ReducedCard> popChosenGods(List<Card> chosenGods) {
-        Set<God> cardSet = chosenGods.stream()
-                .map(Card::getGod)
-                .collect(Collectors.toSet());
-
-        return cards.stream()
-                .filter(card -> !cardSet.contains(card.getGod()))
-                .map(ReducedCard::new)
-                .collect(Collectors.toList());
-    }*/
 }

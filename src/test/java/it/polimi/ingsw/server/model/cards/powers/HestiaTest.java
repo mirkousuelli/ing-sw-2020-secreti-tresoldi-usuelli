@@ -26,7 +26,7 @@ public class HestiaTest {
         BuildPower power1;
 
         deck.fetchCard(God.HESTIA);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HESTIA));
         power1 = (BuildPower) player1.getCard().getPower(0);
         Block worker1Player1 = (Block) board.getCell(1, 1);
         Block emptyBuild = (Block) board.getCell(2, 2);
@@ -58,7 +58,7 @@ public class HestiaTest {
         BuildPower power1;
 
         deck.fetchCard(God.HESTIA);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HESTIA));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
@@ -92,7 +92,7 @@ public class HestiaTest {
         BuildPower power1;
 
         deck.fetchCard(God.HESTIA);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HESTIA));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
@@ -128,7 +128,7 @@ public class HestiaTest {
         BuildPower power1;
 
         deck.fetchCard(God.HESTIA);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.HESTIA));
         power1 = (BuildPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);

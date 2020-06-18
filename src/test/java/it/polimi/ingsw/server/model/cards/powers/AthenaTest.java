@@ -31,7 +31,7 @@ public class AthenaTest {
         MalusPower power1;
 
         deck.fetchCard(God.ATHENA);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.ATHENA));
         power1 = (MalusPower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);

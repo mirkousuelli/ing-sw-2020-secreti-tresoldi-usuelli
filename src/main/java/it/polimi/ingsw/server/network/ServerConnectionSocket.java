@@ -171,26 +171,13 @@ public class ServerConnectionSocket {
     synchronized boolean connect(ServerClientHandler c, String name) {
         if (lobby != null) {
             if (lobby.isReloaded()) {
-                if (!lobby.isPresentInGame(name)) {
-                    if (waitingConnection.keySet().size() > 0) { //not present in reloaded lobby and someone is already waiting --> changeName or exit client-side
-                        c.send(new Answer<>(AnswerType.ERROR));
-                        return true; //toRepeat
-                    }
-                    else //not present in reloaded lobby but no waiting players, so create a new lobby
-                        createLobby(c);
-                }
+                if (connectReload(c, name))
+                    return true; //toRepeat
             }
             else {
-                if (waitingConnection.get(name) != null) { //userName already exists --> changeName or exit client-side
-                    c.send(new Answer<>(AnswerType.ERROR));
-                    return true; //toRepeat
-                }
-
-                if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side
-                    c.closeSocket();
-                    c.setLoggingOut(false);
-                    return false; //not toRepeat because it has to stop
-                }
+                Boolean toRepeat = connectBasic(c, name); //if toRepeat is null there is still something to do
+                if (toRepeat != null)
+                    return toRepeat;
             }
         }
         else //creator
@@ -205,6 +192,35 @@ public class ServerConnectionSocket {
             c.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, c.isCreator())));
 
         return false; //not toRepeat
+    }
+
+    private synchronized Boolean connectBasic(ServerClientHandler c, String name) {
+        Boolean toRepeat = null;
+
+        if (waitingConnection.get(name) != null) { //userName already exists --> changeName or exit client-side
+            c.send(new Answer<>(AnswerType.ERROR));
+            toRepeat = true; //toRepeat
+        }
+        else if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side
+            c.closeSocket();
+            c.setLoggingOut(false);
+            toRepeat = false; //not toRepeat because it has to stop
+        }
+
+        return toRepeat;
+    }
+
+    private synchronized boolean connectReload(ServerClientHandler c, String name) {
+        if (!lobby.isPresentInGame(name)) {
+            if (!waitingConnection.keySet().isEmpty()) { //not present in reloaded lobby and someone is already waiting --> changeName or exit client-side
+                c.send(new Answer<>(AnswerType.ERROR));
+                return true; //toRepeat
+            }
+            else //not present in reloaded lobby but no waiting players, so create a new lobby
+                createLobby(c);
+        }
+
+        return false;
     }
 
     /**
@@ -362,8 +378,5 @@ public class ServerConnectionSocket {
         synchronized (waitingConnectionFromReload) {
             waitingConnectionFromReload.remove(c.getName());
         }
-
-        //lobby = null;
-        //loadLobby();
     }
 }

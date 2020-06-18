@@ -37,7 +37,7 @@ public class MinotaurTest {
         MovePower power1;
 
         deck.fetchCard(God.MINOTAUR);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0,0);
@@ -134,7 +134,7 @@ public class MinotaurTest {
         MovePower power1;
 
         deck.fetchCard(God.MINOTAUR);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -181,7 +181,7 @@ public class MinotaurTest {
         MovePower power1;
 
         deck.fetchCard(God.MINOTAUR);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -228,7 +228,7 @@ public class MinotaurTest {
         MovePower power1;
 
         deck.fetchCard(God.MINOTAUR);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
@@ -268,7 +268,7 @@ public class MinotaurTest {
         MovePower power1;
 
         deck.fetchCard(God.MINOTAUR);
-        player1.setCard(deck.popRandomCard());
+        player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(0, 0);
