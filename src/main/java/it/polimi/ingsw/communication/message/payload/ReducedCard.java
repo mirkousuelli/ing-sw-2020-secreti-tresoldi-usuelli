@@ -14,7 +14,6 @@ import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
  * additional power or not and if the power allows the player to build a dome (like for Atlas)
  */
 public class ReducedCard {
-
     private God god;
     private String description;
 

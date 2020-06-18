@@ -7,7 +7,11 @@ package it.polimi.ingsw.communication.message.payload;
  */
 public enum ReducedAction {
 
-    DEFAULT("default"), MOVE("move"), BUILD("build"), USEPOWER("usePower"), MALUS("malus");
+    DEFAULT("default"),
+    MOVE("move"),
+    BUILD("build"),
+    USEPOWER("usePower"),
+    MALUS("malus");
 
     private String name;
 
@@ -20,7 +24,9 @@ public enum ReducedAction {
         this.name = name;
     }
 
-    ReducedAction() {}
+    ReducedAction() {
+
+    }
 
     @Override
     public String toString() {

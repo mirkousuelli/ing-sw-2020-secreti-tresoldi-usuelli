@@ -10,7 +10,6 @@ import it.polimi.ingsw.server.model.map.Worker;
  * (this attribute is {@code true} if the worker is male, {@code false} otherwise
  */
 public class ReducedWorker {
-
     private String owner;
     private int id;
     private int x;
@@ -43,7 +42,9 @@ public class ReducedWorker {
         isCurrent = false;
     }
 
-    public ReducedWorker() {}
+    public ReducedWorker() {
+
+    }
 
     public String getOwner() {
         return owner;

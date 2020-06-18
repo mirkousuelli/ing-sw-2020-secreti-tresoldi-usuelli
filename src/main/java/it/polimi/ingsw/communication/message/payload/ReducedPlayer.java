@@ -9,13 +9,10 @@ import it.polimi.ingsw.server.model.cards.Card;
  * creator of the lobby or not
  */
 public class ReducedPlayer {
-
     private String nickname;
     private String color;
     private ReducedCard card;
     private boolean isCreator;
-
-    public ReducedPlayer() {}
 
     /**
      * Constructor of the reduced player, initialising it with the information passed with the parameters
@@ -54,6 +51,10 @@ public class ReducedPlayer {
 
     public ReducedPlayer(String player,boolean isCreator) {
         this(player, null, null, isCreator);
+    }
+
+    public ReducedPlayer() {
+
     }
 
 

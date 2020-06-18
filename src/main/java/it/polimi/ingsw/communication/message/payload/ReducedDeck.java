@@ -9,7 +9,6 @@ import java.util.List;
  * Class that represents the reduced version of the deck, which contains a list of Gods
  */
 public class ReducedDeck {
-
     private List<God> reducedGodList;
 
     /**
@@ -21,11 +20,9 @@ public class ReducedDeck {
         this.reducedGodList = new ArrayList<>(reducedGodList);
     }
 
-    public ReducedDeck(){}
+    public ReducedDeck() {
 
-    /*public void setList(List<God> list) {
-        this.reducedGodList = list;
-    }*/
+    }
 
     public God getReducedGod(int index) {
         if (index < 0 || index >= reducedGodList.size()) return null;

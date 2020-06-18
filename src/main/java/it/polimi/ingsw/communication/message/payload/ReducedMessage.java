@@ -5,10 +5,7 @@ package it.polimi.ingsw.communication.message.payload;
  * message
  */
 public class ReducedMessage {
-
     private String message;
-
-    public ReducedMessage() {}
 
     /**
      * Constructor of the reduced message, that is created starting from the string of the message
@@ -18,6 +15,8 @@ public class ReducedMessage {
     public ReducedMessage(String message) {
         this.message = message;
     }
+
+    public ReducedMessage() {}
 
     public String getMessage() {
         return message;

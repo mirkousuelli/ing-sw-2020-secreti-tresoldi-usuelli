@@ -9,11 +9,8 @@ package it.polimi.ingsw.communication.message.payload;
  * It contains the coordinates of this cell
  */
 public class ReducedDemandCell {
-
     private int x;
     private int y;
-
-    public ReducedDemandCell(){}
 
     /**
      * Constructor of the reduced demand cell, setting this cell's coordinates to the one passed as parameter
@@ -24,6 +21,10 @@ public class ReducedDemandCell {
     public ReducedDemandCell(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public ReducedDemandCell() {
+
     }
 
     /**

@@ -19,15 +19,12 @@ import java.util.List;
  * list of workers (in their reduced version), current player's index, current worker's index and the current state
  */
 public class ReducedGame {
-
     private ReducedAnswerCell[][] reducedBoard;
     private List<ReducedPlayer> reducedPlayerList;
     private List<ReducedWorker> reducedWorkerList;
     private String currentPlayerIndex;
     private int currentWorkerIndex;
     private DemandType currentState;
-
-    public ReducedGame() {}
 
     /**
      * Constructor of the reduced game, which is initialised starting from the lobby
@@ -87,6 +84,10 @@ public class ReducedGame {
                     .filter(player -> player.getNickname().equals(p.nickName))
                     .forEach(player -> player.setCard(new ReducedCard(p.getCard())));
         }
+    }
+
+    public ReducedGame() {
+
     }
 
     public ReducedAnswerCell[][] getReducedBoard() {

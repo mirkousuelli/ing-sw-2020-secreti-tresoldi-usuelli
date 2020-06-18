@@ -17,13 +17,10 @@ import java.util.List;
  * worker), adding information like its level, the list of possible actions and the worker that can be on this cell
  */
 public class ReducedAnswerCell extends ReducedDemandCell {
-
     private ILevel level;
     private ILevel prevLevel;
     private List<ReducedAction> actionList;
     private ReducedWorker worker;
-
-    public ReducedAnswerCell() {}
 
     public ReducedAnswerCell(int x, int y) {
         this(x, y , null);
@@ -46,6 +43,10 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         actionList = new ArrayList<>();
         actionList.add(ReducedAction.DEFAULT);
         this.worker = worker;
+    }
+
+    public ReducedAnswerCell() {
+
     }
 
     public List<ReducedAction> getActionList() {
