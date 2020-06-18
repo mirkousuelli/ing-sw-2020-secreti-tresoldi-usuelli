@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,9 @@ public abstract class ActivePower<S> extends Power<S> {
 
     protected int numberOfActionsRemaining;
     protected Worker workerToUse;
-    private final Map<Effect, Function<Worker, Cell>> constraintsMap;
+
+    private final Map<Effect, Function<Worker, Cell>> constraintsMap = new EnumMap<>(Effect.class);
+    private static final Map<MalusLevel, BiPredicate<Cell, Cell>> malusLevelMap = new EnumMap<>(MalusLevel.class);
 
     /**
      * Constructor of the active power that recalls its super class
@@ -41,10 +44,14 @@ public abstract class ActivePower<S> extends Power<S> {
      */
     public ActivePower() {
         super();
-        constraintsMap = new EnumMap<>(Effect.class);
 
         constraintsMap.put(Effect.MOVE, Worker::getPreviousLocation);
         constraintsMap.put(Effect.BUILD, Worker::getPreviousBuild);
+
+        malusLevelMap.put(MalusLevel.UP, (workerLocation, cellToUse) -> workerLocation.getLevel().toInt() < cellToUse.getLevel().toInt());
+        malusLevelMap.put(MalusLevel.DOWN, (workerLocation, cellToUse) -> workerLocation.getLevel().toInt() > cellToUse.getLevel().toInt());
+        malusLevelMap.put(MalusLevel.SAME, (workerLocation, cellToUse) -> workerLocation.getLevel().toInt().equals(cellToUse.getLevel().toInt()));
+        malusLevelMap.put(MalusLevel.DEFAULT, (workerLocation, cellToUse) -> false);
     }
 
     public int getNumberOfActionsRemaining() {
@@ -207,27 +214,19 @@ public abstract class ActivePower<S> extends Power<S> {
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
     public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
+        List<Malus> malusesFiltered;
+        BiPredicate<Cell, Cell> biFunct;
+
         if (maluses!= null) {
-            for (Malus malus : maluses.stream().filter(malus -> malus.isPermanent() || malus.getNumberOfTurnsUsed() < malus.getNumberOfTurns()).collect(Collectors.toList())) {
+            malusesFiltered = maluses.stream()
+                    .filter(malus -> malus.isPermanent() || malus.getNumberOfTurnsUsed() < malus.getNumberOfTurns())
+                    .collect(Collectors.toList());
+
+            for (Malus malus : malusesFiltered) {
                 for (MalusLevel direction : malus.getDirection()) {
-                    switch (direction) {
-                        case UP:
-                            if (workerLocation.getLevel().toInt() < cellToUse.getLevel().toInt())
-                                return false;
-                            break;
-                        case DOWN:
-                            if (workerLocation.getLevel().toInt() > cellToUse.getLevel().toInt())
-                                return false;
-                            break;
-                        case SAME:
-                            if (workerLocation.getLevel().toInt().equals(cellToUse.getLevel().toInt()))
-                                return false;
-                            break;
-                        case DEFAULT:
-                            return true;
-                        default:
-                            return false;
-                    }
+                    biFunct = malusLevelMap.get(direction);
+                    if (biFunct != null && biFunct.test(workerLocation, cellToUse))
+                        return false;
                 }
             }
         }

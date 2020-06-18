@@ -42,9 +42,11 @@ public class BuildPower<S> extends ActivePower<S> {
      * @param adjacency list of cells around the worker
      * @return {@code true} if the power is used correctly, {@code false} otherwise
      */
+    @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
+        if (!adjacency.contains(workerToUse.getLocation()) && !cellToBuild.equals(workerToUse.getLocation())) return false;
 
         if (getAllowedAction().equals(BlockType.DOME))
             return build(cellToBuild, 4);

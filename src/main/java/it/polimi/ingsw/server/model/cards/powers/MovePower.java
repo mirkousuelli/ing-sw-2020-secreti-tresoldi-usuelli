@@ -14,7 +14,6 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.MovementType;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Cell;
-import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.List;
@@ -44,43 +43,36 @@ public class MovePower<S> extends ActivePower<S> {
      */
     @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
-        if (cellToMove.getLevel().toInt() - currentPlayer.getCurrentWorker().getLocation().getLevel().toInt() > 1) return false;
-
-        Block newPos;
-        Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
+        if (cellToMove.getLevel().toInt() - workerToUse.getLocation().getLevel().toInt() > 1) return false;
 
         if (getAllowedAction().equals(MovementType.SWAP)) {
-            newPos = workerToUse.getLocation();
+            if (cellToMove.isFree()) return false;
 
-            return move(currentPlayer, cellToMove, opponentWorker, newPos);
+            Block opponentCellToMove = workerToUse.getLocation();
+            Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
+
+            return move(currentPlayer, cellToMove, opponentWorker, opponentCellToMove);
         }
-        else if (getAllowedAction().equals(MovementType.PUSH)) {
-            if (currentPlayer.getCurrentWorker().getLocation().equals(cellToMove)) return false;
+        else if (getAllowedAction().equals(MovementType.PUSH))
+            return push(currentPlayer, cellToMove, adjacency);
+        else
+            return move(currentPlayer, cellToMove, null, null);
+    }
 
-            Cell c = MovePower.lineEqTwoPoints(currentPlayer.getCurrentWorker().getLocation(), cellToMove);
+    private boolean push(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
+        if (cellToMove.isFree()) return false;
+        if (workerToUse.getLocation().equals(cellToMove)) return false; //you cannot push yourself!
 
-            if (c == null) return false;
+        Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a shallow copy, it's noy the original from the board
+        if (workerToPushNewPos == null) return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
 
-            newPos = (Block) findCell(adjacency, c.getX(), c.getY());
+        Block opponentCellToMove = (Block) findCell(adjacency, workerToPushNewPos.getX(), workerToPushNewPos.getY()); //gets the new position of the worker to push in the board
+        Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
-            if (newPos == null) return false;
-            if (!newPos.isFree()) return false;
-            if (newPos.getLevel().equals(Level.DOME)) return false;
+        if (opponentCellToMove == null) return false; //verifies that the worker to push is push only of a unit
+        if (!opponentCellToMove.isWalkable()) return false; //cannot push the worker to push onto a non walkable cell (occupied or dome-level cell)
 
-            return move(currentPlayer, cellToMove, opponentWorker, newPos);
-        }
-        else {
-            if (!cellToMove.isFree()) return false;
-            if (cellToMove.getLevel().toInt() - workerToUse.getLocation().getLevel().toInt() >= 2) return false;
-
-            workerToUse.setPreviousLocation(workerToUse.getLocation());
-            workerToUse.getLocation().removePawn();
-            workerToUse.setLocation((Block) cellToMove);
-
-            if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1) numberOfActionsRemaining = 0;
-
-            return true;
-        }
+        return move(currentPlayer, cellToMove, opponentWorker, opponentCellToMove);
     }
 
     /**
@@ -93,67 +85,26 @@ public class MovePower<S> extends ActivePower<S> {
      * @param currentPlayer the current player
      * @param cellToMove the chosen cell where to move
      * @param opponentWorker the worker that is pushed or swapped
-     * @param newPos the new block where the opponent's worker is moved
+     * @param opponentCellToMove the new block where the opponent's worker is moved
      * @return {@code true} after the move is complete, {@code false} if the chosen cell has no opponent's worker
      */
-    private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block newPos) {
-        if (cellToMove.isFree()) return false;
-        if (opponentWorker == null) return false;
-
-        for (Worker w : currentPlayer.getWorkers()) {
-            if (w.equals(opponentWorker))
-                return false;
-        }
+    private boolean move(Player currentPlayer, Cell cellToMove, Worker opponentWorker, Block opponentCellToMove) {
+        if (currentPlayer.getWorkers().contains(opponentWorker)) return false;
+        if (opponentWorker == null && !cellToMove.isFree()) return false;
 
         workerToUse.setPreviousLocation(workerToUse.getLocation());
-        opponentWorker.setPreviousLocation(cellToMove);
-
-        workerToUse.getLocation().removePawn();
-        opponentWorker.setLocation(newPos);
         workerToUse.setLocation((Block) cellToMove);
-        opponentWorker.getLocation().addPawn(opponentWorker);
+
+        if (opponentWorker != null) {
+            opponentWorker.setPreviousLocation(opponentWorker.getPreviousLocation());
+            opponentWorker.setLocation(opponentCellToMove);
+            ((Block) cellToMove).addPawn(workerToUse);
+        }
+        else if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1)
+            numberOfActionsRemaining = 0;
 
         return true;
     }
-
-
-    /**
-     * Method that identifies the direction where the opponent's worker will be forced to move
-     *
-     * @param currentPlayer the current player
-     * @param cell the cell where to move
-     * @param adjacency the list of cells around the worker
-     * @return the cell where the opponent's worker is forced to move
-     */
-    /* private Cell find(Player currentPlayer, Cell cell, List<Cell> adjacency) {
-
-        Cell currCell = currentPlayer.getCurrentWorker().getLocation();
-
-        if (currCell.getX() < cell.getX()) {
-            if (currCell.getY() < cell.getY())
-                return findCell(adjacency, cell.getX() + 1, cell.getY() + 1);
-            else if (currCell.getY() > cell.getY())
-                return findCell(adjacency, cell.getX() + 1, cell.getY() - 1);
-            else
-                return findCell(adjacency, cell.getX() + 1, cell.getY());
-        }
-        else if (currCell.getX() > cell.getX()) {
-            if (currCell.getY() < cell.getY())
-                return findCell(adjacency, cell.getX() - 1, cell.getY() + 1);
-            else if (currCell.getY() > cell.getY())
-                return findCell(adjacency, cell.getX() - 1, cell.getY() - 1);
-            else
-                return findCell(adjacency, cell.getX() - 1, cell.getY());
-        }
-        else {
-            if (currCell.getY() < cell.getY())
-                return findCell(adjacency, cell.getX() , cell.getY() + 1);
-            else if (currCell.getY() > cell.getY())
-                return findCell(adjacency, cell.getX() , cell.getY() - 1);
-        }
-
-        return null;
-    }*/
 
     /**
      * Method that identifies the new cell of the opponent's worker
@@ -175,7 +126,7 @@ public class MovePower<S> extends ActivePower<S> {
     public static Cell lineEqTwoPoints(Cell from, Cell to) {
         if (from == null) return null;
         if (to == null) return null;
-        if (to.getX() == from.getX() && to.getY() == from.getY()) return null; //from and to cannot be the same cell!
+        if (to.getX() == from.getX() && to.getY() == from.getY()) return null; //'from' and 'to' cannot be the same cell!
 
         if (to.getX() != from.getX()) { //y = mx + q (slope-intercept)
             float m = ((float) (to.getY() - from.getY())) / ((float) (to.getX() - from.getX())); //slope
