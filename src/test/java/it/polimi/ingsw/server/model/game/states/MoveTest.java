@@ -388,7 +388,6 @@ ________________________________________________________________________________
     }
 
 
-    // it prints stuff (?)
     // ATHENA: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.
     @Test
     void movingWithAthenaMalusActiveTest() throws ParserConfigurationException, SAXException {

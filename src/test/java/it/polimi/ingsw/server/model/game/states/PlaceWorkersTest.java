@@ -45,18 +45,6 @@ public class PlaceWorkersTest {
         workersPlayer2.add(w1p2);
         workersPlayer2.add(w2p2);
 
-  /*      Board board = game.getBoard();
-        Block worker1Player1 = (Block) board.getCell(0, 0);
-        Block worker2Player1 = (Block) board.getCell(2, 4);
-        p1.initializeWorkerPosition(1, worker1Player1);
-        p1.initializeWorkerPosition(2, worker2Player1);
-
-        Block worker1Player2 = (Block) board.getCell(1, 3);
-        Block worker2Player2 = (Block) board.getCell(2, 2);
-        p1.initializeWorkerPosition(1, worker1Player2);
-        p1.initializeWorkerPosition(2, worker2Player2);
-*/
-
         game.setStarter(0);
         game.setCurrentPlayer(game.getPlayer(game.getStarter()));
         game.setState(State.PLACE_WORKERS);
@@ -76,7 +64,18 @@ public class PlaceWorkersTest {
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(p1, game.getCurrentPlayer());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
-        // TODO check that the cells actually have workers
+
+        // check that the picked cells actually have workers, which means that they are not free
+        assertFalse(game.getBoard().getCell(0,0).isFree());
+        assertFalse(game.getBoard().getCell(2,2).isFree());
+        assertFalse(game.getBoard().getCell(1,3).isFree());
+        assertFalse(game.getBoard().getCell(2,4).isFree());
+
+        // check that any different cell has no workers, which means that it is free
+        assertTrue(game.getBoard().getCell(1,1).isFree());
+        assertTrue(game.getBoard().getCell(4,0).isFree());
+        assertTrue(game.getBoard().getCell(2,3).isFree());
+
     }
 
 
@@ -105,6 +104,8 @@ public class PlaceWorkersTest {
         game.setStarter(0);
         game.setCurrentPlayer(game.getPlayer(game.getStarter()));
         game.setState(State.PLACE_WORKERS);
+
+        assertEquals("placeWorkers",game.getState().getName());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer1)));
         ReturnContent returnContent = game.gameEngine();
