@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class which includes hte proper game object reported to specific players.
+ * Class which includes the proper game object reported to specific players.
  */
 public class Lobby {
 
@@ -288,7 +288,7 @@ public class Lobby {
     }
 
     /**
-     * Method that lobby's parameter to an idle state
+     * Method that sets lobby's parameter to an idle state
      */
     void clean() {
         playerViewList.forEach(v -> v.removeObserver(controller));

@@ -227,40 +227,4 @@ public class PreparePayload {
 
         return tempList;
     }
-
-
-    static List<ReducedAnswerCell> removeBlockedWorkers(Game game) {
-        List<Player> playerList = game.getPlayerList();
-        List<Worker> workerList = playerList.stream()
-                .map(Player::getWorkers)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        List<ReducedAnswerCell> toReturn = new ArrayList<>();
-        List<Cell> around;
-        boolean toRemove = true;
-        for (Worker w : workerList) {
-            around = game.getBoard().getAround(w.getLocation());
-            for (Cell c : around) {
-                if (c.isWalkable())
-                    toRemove = false;
-            }
-
-            if (toRemove) {
-                toReturn.add(ReducedAnswerCell.prepareCell(w.getLocation(), playerList));
-                PreparePayload.removeWorkerFromGame(game, w);
-            }
-        }
-
-        return toReturn;
-    }
-
-    private static void removeWorkerFromGame(Game game, Worker w) {
-        for (Player p : game.getPlayerList()) {
-            if (p.getWorkers().contains(w)) {
-                p.removeWorker(w);
-                return;
-            }
-        }
-    }
 }
