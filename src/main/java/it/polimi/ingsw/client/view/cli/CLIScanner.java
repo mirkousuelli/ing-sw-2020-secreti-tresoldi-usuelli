@@ -58,7 +58,7 @@ public class CLIScanner<S> {
             initializeMaps();
     }
 
-    void initializeMaps() {
+    private void initializeMaps() {
         messageMap.put(DemandType.CONNECT, CONNECT);
         messageMap.put(DemandType.CREATE_GAME, CREATE_GAME);
         messageMap.put(DemandType.CHOOSE_DECK, CHOOSE_DECK);
@@ -115,61 +115,46 @@ public class CLIScanner<S> {
     }
 
 
-
+    /*---------------------------------------------------READER-------------------------------------------------------*/
     Demand<S> requestInput(DemandType currentState) {
         boolean toRepeat;
         boolean toUsePower;
-        boolean incrementIndex;
         int i = 0;
+
         List<S> payloadList = new ArrayList<>();
         S payload;
+
         String value;
 
-        Predicate<String> toRepeatFunction;
-        IntPredicate indexFunction;
-        Predicate<String> powerFunction;
-        Function<String, S> payloadFunction;
-
         do {
-            toRepeat = false;
+            toRepeat = true;
             toUsePower = false;
-            incrementIndex = false;
             payload = null;
 
             out.printString(messageMap.get(currentState));
 
             value = readLine();
-            if (value == null) return null;
-
-            toRepeatFunction = toRepeatMap.get(currentState);
-            if (toRepeatFunction != null)
-                toRepeat = toRepeatFunction.test(value);
+            if (value != null)
+                toRepeat = repeat(currentState, value);
 
             if (toRepeat)
-                out.printError();
+                out.printError(); //toRepeat because input values are wrong
             else {
-                powerFunction = toUsePowerMap.get(currentState);
-                if (powerFunction != null)
-                    toUsePower = powerFunction.test(value);
+                toUsePower = power(currentState, value);
+                payload = payload(currentState, value);
 
-                payloadFunction = payloadMap.get(currentState);
-                if (payloadFunction != null) {
-                    payload = payloadMap.get(currentState).apply(value);
-                    payloadList.add(payload);
+                if (payload == null) {
+                    out.printError();
+                    toRepeat = true; //toRepeat because input values are wrong
                 }
-
-                if (payload == null)
-                    toRepeat = true;
                 else {
-                    indexFunction = indexMap.get(currentState);
-                    if (indexFunction != null)
-                        incrementIndex = indexMap.get(currentState).test(i);
-
-                    if (incrementIndex)
+                    payloadList.add(payload);
+                    toRepeat = index(currentState, i); //toRepeat because there are more values to read!
+                    if (toRepeat)
                         i++;
                 }
             }
-        } while (toRepeat || incrementIndex);
+        } while (toRepeat);
 
         skipAdditionalPower(value);
         skipToBuild();
@@ -178,11 +163,10 @@ public class CLIScanner<S> {
 
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
-
-        if (i > 0)
+        else if (i > 0)
             return new Demand<>(currentState, (S) payloadList);
-
-        return new Demand<>(currentState, payload);
+        else
+            return new Demand<>(currentState, payload);
     }
 
     String readLine() {
@@ -195,8 +179,54 @@ public class CLIScanner<S> {
         return null;
     }
 
+    private boolean repeat(DemandType currentState, String value) {
+        boolean toRepeat = false;
+        Predicate<String> toRepeatFunction;
+
+        toRepeatFunction = toRepeatMap.get(currentState);
+        if (toRepeatFunction != null)
+            toRepeat = toRepeatFunction.test(value);
+
+        return toRepeat;
+    }
+
+    private boolean power(DemandType currentState, String value) {
+        boolean toUsePower = false;
+        Predicate<String> powerFunction;
+
+        powerFunction = toUsePowerMap.get(currentState);
+        if (powerFunction != null)
+            toUsePower = powerFunction.test(value);
+
+        return toUsePower;
+    }
+
+    private S payload(DemandType currentState, String value) {
+        S payload = null;
+        Function<String, S> payloadFunction;
+
+        payloadFunction = payloadMap.get(currentState);
+        if (payloadFunction != null)
+            payload = payloadMap.get(currentState).apply(value);
+
+        return payload;
+    }
+
+    private boolean index(DemandType currentState, int i) {
+        boolean toIncrementIndex = false;
+        IntPredicate indexFunction;
+
+        indexFunction = indexMap.get(currentState);
+        if (indexFunction != null)
+            toIncrementIndex = indexMap.get(currentState).test(i);
+
+        return toIncrementIndex;
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
 
 
+
+    /*---------------------------------------------------PARSER-------------------------------------------------------*/
     private S parseString(String string) {
         return (S) (new ReducedMessage(string));
     }
@@ -228,9 +258,11 @@ public class CLIScanner<S> {
     private S parseStringGod(String string) {
         return (S) (God.parseString(string));
     }
+    /*----------------------------------------------------------------------------------------------------------------*/
 
 
 
+    /*---------------------------------------------------CHECKER------------------------------------------------------*/
     private boolean checkGod(String godString) {
         List<ReducedCard> deck;
         God god = God.parseString(godString);
@@ -285,14 +317,11 @@ public class CLIScanner<S> {
                     case MOVE:
                         return !cell.isFree();
 
-                    case DEFAULT:
-                        return true;
-
                     case USEPOWER:
                         return false;
 
                     default:
-                        throw new NotAValidInputRunTimeException("Not a valid turn");
+                        return true;
                 }
             }
         }
@@ -340,6 +369,7 @@ public class CLIScanner<S> {
 
         return ret;
     }
+    /*----------------------------------------------------------------------------------------------------------------*/
 
 
 

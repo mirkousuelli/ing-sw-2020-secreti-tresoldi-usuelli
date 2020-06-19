@@ -67,7 +67,8 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             default:
-                throw new NotAValidInputRunTimeException("Not a valid answer");
+                LOGGER.info("Not a valid answerType " + answerTemp.getHeader());
+                break;
         }
 
         if (isYourTurn)

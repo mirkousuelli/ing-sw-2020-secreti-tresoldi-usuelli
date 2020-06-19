@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.network.ClientConnectionSocket;
-import it.polimi.ingsw.client.view.cli.NotAValidInputRunTimeException;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
@@ -177,7 +176,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             default:
-                throw new NotAValidInputRunTimeException("Not a valid answerType " + answerTemp.getHeader());
+                LOGGER.info("Not a valid answerType " + answerTemp.getHeader());
+                break;
         }
 
         additionalPower();
@@ -303,7 +303,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             default:
-                throw new NotAValidInputRunTimeException("Not a valid turn: " + currentState);
+                LOGGER.info("Not a valid answerType " + answerTemp.getHeader());
+                break;
         }
     }
 
@@ -367,7 +368,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             default:
-                throw new NotAValidInputRunTimeException("Not a valid turn");
+                LOGGER.info("Not a valid answerType " + answer.getContext());
+                break;
         }
     }
 

@@ -93,9 +93,8 @@ public class CLIPrinter<S> {
             out.print("\n");
         }
         out.print("  ");
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++)
             out.print(" " + i + " ");
-        }
         out.print("\n\n");
 
         printOpponents();
@@ -109,8 +108,7 @@ public class CLIPrinter<S> {
                     .map(Color::parseString)
                     .reduce(Color.RESET, (a, b) -> !a.equals(Color.RESET)
                             ? a
-                            : b
-                    )
+                            : b)
             );
         }
         out.print("[" + cell.getLevel().toInt() + "]" + Color.RESET);
@@ -137,8 +135,7 @@ public class CLIPrinter<S> {
                 .map(opponent -> Color.parseString(opponent.getColor()) + opponent.getNickname() + Color.RESET)
                 .reduce(null, (a, b) -> a != null
                         ? a + ", " + b
-                        : b
-                )
+                        : b)
         );
 
         out.println("You: "+ Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "\n");
@@ -157,14 +154,13 @@ public class CLIPrinter<S> {
                 .collect(Collectors.toMap(i -> i, i -> deck.get(i).getGod().toString().toLowerCase() + ": " + deck.get(i).getDescription()));
 
         out.print("Available Gods: \n");
-
         out.println(numberedDeck.entrySet().stream()
                 .map(g -> g.getKey() + ") " + g.getValue())
                 .reduce(null, (a, b) -> a != null
-                ? a + ".\n" + b
-                : b
-                )
-         + "\n");
+                        ? a + ".\n" + b
+                        : b)
+                + "\n"
+        );
     }
 
     private void printGods() {
@@ -215,21 +211,17 @@ public class CLIPrinter<S> {
                                                  .filter(x -> !x.getActionList().contains(ReducedAction.DEFAULT))
                                                  .collect(Collectors.toList());
 
-        List<ReducedAction> reducedActions = new ArrayList<>();
-        for (ReducedAnswerCell c : cellList) {
-            for (ReducedAction ra : c.getActionList()) {
-                if (!reducedActions.contains(ra))
-                    reducedActions.add(ra);
-            }
-        }
+        List<ReducedAction> reducedActions = cellList.stream()
+                .map(ReducedAnswerCell::getActionList)
+                .flatMap(List::stream)
+                .distinct()
+                .collect(Collectors.toList());
 
         out.print("Action");
         if (reducedActions.size() >= 2) out.print("s");
         out.println(": ");
         for (ReducedAction action : reducedActions) {
             out.print(action.toString() + ": ");
-
-
             out.println(
                     cellList.stream()
                             .filter(c -> c.getActionList().contains(action))
