@@ -279,15 +279,6 @@ public class Lobby {
     }
 
     /**
-     * Method that gets current players' connections list
-     *
-     * @return {@code ServerClientHandler} list of connections of current players of the lobby
-     */
-    List<ServerClientHandler> getServerClientHandlerList() {
-        return new ArrayList<>(playingConnection.keySet());
-    }
-
-    /**
      * Method that sets lobby's parameter to an idle state
      */
     void clean() {

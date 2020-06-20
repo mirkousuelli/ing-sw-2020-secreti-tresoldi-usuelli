@@ -10,11 +10,6 @@ import it.polimi.ingsw.communication.observer.Observer;
 public interface ServerClientHandler {
 
     /**
-     * Method that close the connection
-     */
-    void closeSocket();
-
-    /**
      * Method that adds a new observer oriented to a Demand object
      *
      * @param observer new demand observer
@@ -36,13 +31,6 @@ public interface ServerClientHandler {
     void send(Answer message);
 
     /**
-     * Method that sets the player game creator
-     *
-     * @param creator saying if this connection is reported to the creator
-     */
-    void setCreator(boolean creator);
-
-    /**
      * Method that checks if the connection belong to the creator
      *
      * @return {@code true} if connection belongs to the creator, {@code false} it doesn't belong to the creator
@@ -55,20 +43,4 @@ public interface ServerClientHandler {
      * @return {@code String} player's name
      */
     String getName();
-
-    /**
-     * Method that sets if the connection is activer or not
-     *
-     * @param isActive for saying connection status
-     */
-    void setActive(boolean isActive);
-
-    boolean isActive();
-
-    /**
-     * Method that makes connection log out
-     *
-     * @param loggingOut for saying if logged out
-     */
-    void setLoggingOut(boolean loggingOut);
 }

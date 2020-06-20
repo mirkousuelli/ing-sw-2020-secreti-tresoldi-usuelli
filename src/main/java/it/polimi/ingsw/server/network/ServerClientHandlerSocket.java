@@ -58,12 +58,15 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     public ServerClientHandlerSocket(Socket socket, ServerConnectionSocket server) throws IOException {
         this.socket = socket;
         this.server = server;
+
         file = new FileXML(socket);
         buffer = new LinkedList<>();
+
         creator = false;
         loggingOut = false;
         isOkToRestart = false;
         isToRestart = false;
+
         name = null;
     }
 
@@ -105,8 +108,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @param isActive for saying connection status
      */
-    @Override
-    public synchronized void setActive(boolean isActive) {
+    synchronized void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -119,8 +121,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @param creator saying if this connection is reported to the creator
      */
-    @Override
-    public void setCreator(boolean creator) {
+    void setCreator(boolean creator) {
         this.creator = creator;
     }
 
@@ -129,8 +130,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @param loggingOut for saying if logged out
      */
-    @Override
-    public void setLoggingOut(boolean loggingOut) {
+    void setLoggingOut(boolean loggingOut) {
         this.loggingOut = loggingOut;
     }
 
@@ -172,8 +172,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code true} connection active, {@code false} connection not active
      */
-    @Override
-    public synchronized boolean isActive() {
+    synchronized boolean isActive() {
         return isActive;
     }
 
@@ -263,8 +262,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /**
      * Method that close the connection
      */
-    @Override
-    public void closeSocket() {
+    void closeSocket() {
         try {
             LOGGER.info("Closing the socket...");
             socket.close();

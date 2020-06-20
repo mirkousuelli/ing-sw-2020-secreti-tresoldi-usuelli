@@ -7,14 +7,9 @@ import it.polimi.ingsw.server.network.ServerClientHandler;
 
 public class ServerStub implements ServerClientHandler {
 
-    public Answer answer;
+    Answer answer;
 
-    public ServerStub() {
-        //stub
-    }
-
-    @Override
-    public void closeSocket() {
+    ServerStub() {
         //stub
     }
 
@@ -26,17 +21,13 @@ public class ServerStub implements ServerClientHandler {
     @Override
     public void asyncSend(Answer message) {
         //stub
+        answer = message;
     }
 
     @Override
     public void send(Answer message) {
         //stub
         answer = message;
-    }
-
-    @Override
-    public void setCreator(boolean creator) {
-        //stub
     }
 
     @Override
@@ -49,21 +40,5 @@ public class ServerStub implements ServerClientHandler {
     public String getName() {
         //stub
         return null;
-    }
-
-    @Override
-    public void setActive(boolean isActive) {
-        //stub
-    }
-
-    @Override
-    public boolean isActive() {
-        //stub
-        return false;
-    }
-
-    @Override
-    public void setLoggingOut(boolean loggingOut) {
-        //stub
     }
 }

@@ -226,7 +226,7 @@ public class ServerConnectionSocket {
         AtomicInteger i = new AtomicInteger();
 
         waitingConnection.values().stream()
-                .sorted(Comparator.comparing(ServerClientHandler::isCreator, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(ServerClientHandlerSocket::isCreator, Comparator.reverseOrder()))
                 .collect(Collectors.toList())
                 .forEach(c -> {
                     if (i.get() <= lobby.getNumberOfPlayers()) {
