@@ -76,10 +76,11 @@ public class ServerConnectionSocket {
             }
 
             executor.shutdown();
-            if (socket != null) socket.close();
+            if (socket != null)
+                socket.close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, port not available", e); //port not available
-            isActive = false; //In case the serverSocket gets closed
+            isActive = false;
         }
     }
 

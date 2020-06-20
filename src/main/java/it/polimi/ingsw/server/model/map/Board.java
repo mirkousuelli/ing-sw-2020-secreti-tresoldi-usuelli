@@ -308,14 +308,7 @@ public class Board implements Cloneable {
 
         // if it is not a dome, free and it is contained within possible choices
         if (newCell.isWalkable() && this.getPossibleMoves(player).contains(newCell)) {
-            // removing pawn from the current cell
-            worker.getLocation().removePawn();
-
-            // updating previous cell with the old current cell
-            worker.setPreviousLocation((worker.getLocation()));
-
-            // updating current cell with the new cell just moved on
-            worker.setLocation((Block) newCell);
+            basicMove(worker, newCell);
 
             // returning everything correct
             return true;
@@ -323,6 +316,17 @@ public class Board implements Cloneable {
 
         // try again
         return false;
+    }
+
+    public void basicMove(Worker worker, Cell newCell) {
+        // removing pawn from the current cell
+        worker.getLocation().removePawn();
+
+        // updating previous cell with the old current cell
+        worker.setPreviousLocation((worker.getLocation()));
+
+        // updating current cell with the new cell just moved on
+        worker.setLocation((Block) newCell);
     }
 
     /**

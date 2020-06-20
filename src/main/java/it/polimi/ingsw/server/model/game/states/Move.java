@@ -52,12 +52,6 @@ public class Move implements GameState {
         this.game = game;
     }
 
-    private void move(Worker currentWorker, Cell cellToMoveTo) {
-        currentWorker.getLocation().removePawn();
-        currentWorker.setPreviousLocation((currentWorker.getLocation()));
-        currentWorker.setLocation((Block) cellToMoveTo);
-    }
-
     private boolean checkIfContained(List<Cell> possibleMoves, Cell cell) {
         for (Cell c : possibleMoves) {
             if (c.getX() == cell.getX() && c.getY() == cell.getY())
@@ -96,7 +90,7 @@ public class Move implements GameState {
             else {
                 payload.forEach(reducedAnswerCell -> possibleMoves.add(board.getCell(reducedAnswerCell.getX(), reducedAnswerCell.getY())));
                 if (checkIfContained(possibleMoves, cellToMoveTo))
-                    move(currentWorker, cellToMoveTo);
+                    board.basicMove(currentWorker, cellToMoveTo);
             }
         }
 

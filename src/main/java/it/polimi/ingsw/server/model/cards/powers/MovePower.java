@@ -66,7 +66,7 @@ public class MovePower<S> extends ActivePower<S> {
         if (workerToPushNewPos == null)
             return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
 
-        Block opponentCellToMove = (Block) findCell(adjacency, workerToPushNewPos.getX(), workerToPushNewPos.getY()); //gets the new position of the worker to push in the board
+        Block opponentCellToMove = (Block) MovePower.findCell(adjacency, workerToPushNewPos.getX(), workerToPushNewPos.getY()); //gets the new position of the worker to push in the board
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
         if (opponentCellToMove == null) return false; //verifies that the worker to push is push only of a unit
@@ -100,8 +100,7 @@ public class MovePower<S> extends ActivePower<S> {
             opponentWorker.setPreviousLocation(opponentWorker.getPreviousLocation());
             opponentWorker.setLocation(opponentCellToMove);
             ((Block) cellToMove).addPawn(workerToUse);
-        } else if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1)
-            numberOfActionsRemaining = 0;
+        }
 
         return true;
     }
@@ -114,7 +113,7 @@ public class MovePower<S> extends ActivePower<S> {
      * @param y    y-coordinate of the cell to be found
      * @return the cell where the opponent's worker is
      */
-    public Cell findCell(List<Cell> list, int x, int y) {
+    public static Cell findCell(List<Cell> list, int x, int y) {
         for (Cell c : list) {
             if (c.getX() == x && c.getY() == y && c.isFree())
                 return c;
@@ -148,7 +147,7 @@ public class MovePower<S> extends ActivePower<S> {
         }
     }
 
-    public static Cell fetchNextCell(Cell from, Cell to, float m, float q) {
+    private static Cell fetchNextCell(Cell from, Cell to, float m, float q) {
         int newX;
 
         if (from.getX() < to.getX())
