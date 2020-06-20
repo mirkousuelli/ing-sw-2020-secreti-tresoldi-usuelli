@@ -48,8 +48,8 @@ public class ReducedGame {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 reducedBoard[i][j] = new ReducedAnswerCell(i, j);
-                reducedBoard[i][j].setLevel(ILevel.parseInt(board.map[i][j].getLevel().toInt()));
-                reducedBoard[i][j].setPrevLevel(ILevel.parseInt(((Block) board.map[i][j]).getPreviousLevel().toInt()));
+                reducedBoard[i][j].setLevel(ILevel.parseInt(board.getCell(i, j).getLevel().toInt()));
+                reducedBoard[i][j].setPrevLevel(ILevel.parseInt(((Block) board.getCell(i, j)).getPreviousLevel().toInt()));
                 reducedBoard[i][j].setAction(ReducedAction.DEFAULT);
             }
         }

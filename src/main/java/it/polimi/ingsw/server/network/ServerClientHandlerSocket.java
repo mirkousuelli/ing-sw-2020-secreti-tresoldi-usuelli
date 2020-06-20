@@ -311,11 +311,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 Thread.currentThread().interrupt();
                 setActive(false);
 
-                synchronized (numOfThreadDone) {
-                    numOfThreadDone.getAndIncrement();
-                    if (numOfThreadDone.get() == 2)
-                        numOfThreadDone.notifyAll();
-                }
+                incrementNumOfInterruptedThread();
             }
         };
     }
@@ -335,11 +331,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 while (isActive()) {
                     demand = waitDemand();
 
-                    if (!isActive())
-                        break;
-
                     lobby = server.getLobby();
                     if (lobby == null) {
+                        System.out.println("PROVA");
                         setActive(false);
                         break;
                     }
@@ -352,11 +346,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 Thread.currentThread().interrupt();
                 setActive(false);
 
-                synchronized (numOfThreadDone) {
-                    numOfThreadDone.getAndIncrement();
-                    if (numOfThreadDone.get() == 2)
-                        numOfThreadDone.notifyAll();
-                }
+                incrementNumOfInterruptedThread();
             }
         };
     }
@@ -443,6 +433,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     private void notifyDemand(Lobby lobby, Demand demand) {
+        if (!isActive()) return;
+
         LOGGER.info("Notifying...");
         synchronized (lobby.getController()) {
             notify(demand);
@@ -490,6 +482,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             basicInitialization(); //create or join
         else
             reloadStart(); //reload
+    }
+
+    private void incrementNumOfInterruptedThread() {
+        synchronized (numOfThreadDone) {
+            numOfThreadDone.getAndIncrement();
+            if (numOfThreadDone.get() == 2)
+                numOfThreadDone.notifyAll();
+        }
     }
 
 

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class Board implements Cloneable {
 
     public final int DIM = 5;
-    public Cell[][] map;
+    private final Cell[][] map;
 
     /**
      * Constructor of the board, that builds up cell-by-cell the whole map
@@ -138,52 +138,58 @@ public class Board implements Cloneable {
     /**
      * Method that gets all the special moves that can be activated by some Gods
      *
-     * @param cell the cell from which the cells for special moves are calculated
+     * @param cell   the cell from which the cells for special moves are calculated
      * @param player the player who can make the eventual special move
      * @param timing the timing of the power, depending from the God
      * @return list of cells where a special move is possible
      */
     public List<Cell> getSpecialMoves(Cell cell, Player player, Timing timing) {
-
         List<Cell> around = getAround(cell);
         List<Cell> toReturn = new ArrayList<>();
-        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.MOVE)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
+        List<Power> activePowerList = player.getCard().getPowerList().stream()
+                .filter(power -> power.getEffect().equals(Effect.MOVE))
+                .filter(power -> power.getTiming().equals(timing))
+                .collect(Collectors.toList());
 
-        for (Cell c : around) {
-            for (Power mp : activePowerList) {
-                if (((MovePower) mp).preamble(player, c)) {
-                    if (c.isFree()) {
-                        if (mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing))
-                            toReturn.add(c);
-                    }
-                    else if (!player.getWorkers().contains((Worker) (((Block) c).getPawn()))) {
-                        if (!mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing)) {
-                            if (mp.getAllowedAction().equals(MovementType.PUSH)) {
-                                Cell nc = MovePower.lineEqTwoPoints(player.getCurrentWorker().getLocation(), c);
-                                if (nc != null) {
-                                    nc = getCell(nc.getX(), nc.getY());
-                                    if (nc.isFree() && !nc.getLevel().equals(Level.DOME) && c.getLevel().toInt() - player.getCurrentWorker().getLocation().getLevel().toInt() <= 1)
-                                        toReturn.add(c);
-                                }
+        around.forEach(c ->
+                activePowerList.stream()
+                        .filter(mp -> ((MovePower) mp).preamble(player, c))
+                        .forEach(mp -> {
+                            if (c.isFree()) {
+                                if (mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing))
+                                    toReturn.add(c);
+                            } else if (isNotDefaultMovePower(mp, player, c, timing)) {
+                                if (mp.getAllowedAction().equals(MovementType.PUSH))
+                                    addNewCell(player, c, toReturn);
+                                else
+                                    toReturn.add(c);
                             }
-                            else
-                                toReturn.add(c);
-                        }
-                    }
-                }
-            }
-        }
+                        })
+        );
 
         toReturn.removeIf(c -> c.getLevel().toInt() > player.getCurrentWorker().getLocation().getLevel().toInt() + 1);
-
         return toReturn;
+    }
+
+    private boolean isNotDefaultMovePower(Power mp, Player player, Cell c, Timing timing) {
+        return !player.getWorkers().contains((Worker) ((Block) c).getPawn()) &&
+                !mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing);
+    }
+
+    private void addNewCell(Player player, Cell c, List<Cell> toReturn) {
+        Cell shallowNewCell = MovePower.lineEqTwoPoints(player.getCurrentWorker().getLocation(), c);
+        if (shallowNewCell != null) {
+            Cell newCell = getCell(shallowNewCell.getX(), shallowNewCell.getY());
+            if (newCell.isFree() && !newCell.getLevel().equals(Level.DOME) && c.getLevel().toInt() - player.getCurrentWorker().getLocation().getLevel().toInt() <= 1)
+                toReturn.add(c);
+        }
     }
 
     /**
      * Method that gets all the special builds that can be activated by some God powers, where around cell are busy
      * from other players' workers
      *
-     * @param cell the cell from which the cells for special build are calculated
+     * @param cell   the cell from which the cells for special build are calculated
      * @param player the player who can make the eventual special build
      * @param timing the timing of the power, that depends from the God
      * @return list of cells where a special build is possible
@@ -298,7 +304,7 @@ public class Board implements Cloneable {
     /**
      * Method that makes the worker move to the chosen cell, through an operation of undecorate-decorate
      *
-     * @param player Player that is requiring the move
+     * @param player  Player that is requiring the move
      * @param newCell Cell where the worker wants to be moved
      * @return {@code true} if the worker is moved properly, {@code false} if the action wasn't possible
      */
@@ -332,7 +338,7 @@ public class Board implements Cloneable {
     /**
      * Method that makes the worker build on the chosen cell
      *
-     * @param player Player that is requiring the build
+     * @param player        Player that is requiring the build
      * @param cellToBuildUp Cell where the worker wants to build
      * @return {@code true} if the build is made properly, {@code false} if the action wasn't possible
      */
