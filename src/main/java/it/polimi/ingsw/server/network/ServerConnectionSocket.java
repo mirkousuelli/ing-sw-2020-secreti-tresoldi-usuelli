@@ -70,20 +70,16 @@ public class ServerConnectionSocket {
 
             isActive = true;
             while (isActive) {
-                try {
-                    socket = serverSocket.accept();
-                    handler = new ServerClientHandlerSocket(socket, this);
-                    executor.submit(handler);
-                } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
-                    isActive = false; //In case the serverSocket gets closed
-                }
+                socket = serverSocket.accept();
+                handler = new ServerClientHandlerSocket(socket, this);
+                executor.submit(handler);
             }
 
             executor.shutdown();
             if (socket != null) socket.close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, port not available", e); //port not available
+            isActive = false; //In case the serverSocket gets closed
         }
     }
 
@@ -389,6 +385,8 @@ public class ServerConnectionSocket {
                     newCreator.lockRestart.wait();
                 } catch (InterruptedException e) {
                     LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                    Thread.currentThread().interrupt();
+                    isActive = false;
                 }
             }
         }

@@ -103,25 +103,14 @@ public enum DemandType {
      * @return the next state based on the current one
      */
     public static DemandType getNextState(DemandType currentState, boolean isCreator) {
-        if (currentState.equals(CONNECT)) {
-            if (isCreator)
-                return CREATE_GAME;
-            else
-                return START;
-        }
-
-        if (currentState.equals(CREATE_GAME))
+        if (currentState.equals(CONNECT) && (!isCreator))
             return START;
 
         if (currentState.equals(START) && !isCreator)
-                return CHOOSE_CARD;
+            return CHOOSE_CARD;
 
-        if (currentState.equals(CHOOSE_CARD)) {
-            if (isCreator)
-                return CHOOSE_STARTER;
-            else
+        if (currentState.equals(CHOOSE_CARD) && !isCreator)
                 return PLACE_WORKERS;
-        }
 
         if (currentState.equals(ADDITIONAL_POWER) || currentState.equals(BUILD))
             return CHOOSE_WORKER;

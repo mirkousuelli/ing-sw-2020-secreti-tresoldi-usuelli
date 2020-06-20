@@ -160,12 +160,7 @@ public class CLIScanner<S> {
         changeNickname(value);
         stayInCurrentState(currentState, toUsePower);
 
-        if (toUsePower)
-            return new Demand<>(DemandType.USE_POWER, payload);
-        else if (i > 0)
-            return new Demand<>(currentState, (S) payloadList);
-        else
-            return new Demand<>(currentState, payload);
+        return generateDemand(toUsePower, i, payload, payloadList, currentState);
     }
 
     String readLine() {
@@ -220,6 +215,15 @@ public class CLIScanner<S> {
             toIncrementIndex = indexMap.get(currentState).test(i);
 
         return toIncrementIndex;
+    }
+
+    private Demand<S> generateDemand(boolean toUsePower, int i, S payload, List<S> payloadList, DemandType currentState) {
+        if (toUsePower)
+            return new Demand<>(DemandType.USE_POWER, payload);
+        else if (i > 0)
+            return new Demand<>(currentState, (S) payloadList);
+        else
+            return new Demand<>(currentState, payload);
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 

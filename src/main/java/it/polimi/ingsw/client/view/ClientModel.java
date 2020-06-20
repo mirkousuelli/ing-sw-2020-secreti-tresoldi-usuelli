@@ -128,14 +128,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
         switch (answerTemp.getHeader()) {
             case CHANGE_TURN:
-                updateCurrentPlayer();
-                additionalPowerUsed = true;
-                numberOfAdditional = player.getCard() != null
-                        ? player.getCard().getNumberOfAdditional()
-                        : 0;
-
-                if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
-                    nextState = DemandType.CHOOSE_WORKER;
+                changeTurn();
                 break;
 
             case ERROR:
@@ -148,10 +141,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case SUCCESS:
                 checkIsCreator(answerTemp);
                 updateCurrentState();
-                if (isInitializing)
-                    updateReducedObjectsInitialize(answerTemp);
-                else
-                    updateReduceObjects(answerTemp);
+                updateReduceObjects(answerTemp);
                 updateNextState();
                 break;
 
@@ -170,18 +160,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case DEFEAT:
-                String playerToRemove = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
-                if (playerToRemove.equals(player.getNickname())) //if it is your defeat
-                    isYourEnding = true; //then it is your ending
-                else { //else remove the defeated player and continue the game
-                    opponents.removeIf(o -> o.getNickname().equals(playerToRemove));
-                    workers.removeIf(reducedWorker -> reducedWorker.getOwner().equals(playerToRemove));
-                }
-
-                if (isYourTurn()) {
-                    currentState = DemandType.CHOOSE_WORKER;
-                    updateNextState();
-                }
+                defeat();
                 break;
 
             default:
@@ -275,11 +254,44 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isReloaded = true;
     }
 
+    private synchronized void defeat() {
+        String playerToRemove = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
+        if (playerToRemove.equals(player.getNickname())) //if it is your defeat
+            isYourEnding = true; //then it is your ending
+        else { //else remove the defeated player and continue the game
+            opponents.removeIf(o -> o.getNickname().equals(playerToRemove));
+            workers.removeIf(reducedWorker -> reducedWorker.getOwner().equals(playerToRemove));
+        }
+
+        if (isYourTurn()) {
+            currentState = DemandType.CHOOSE_WORKER;
+            updateNextState();
+        }
+    }
+
+    private synchronized void changeTurn() {
+        updateCurrentPlayer();
+        additionalPowerUsed = true;
+        numberOfAdditional = player.getCard() != null
+                ? player.getCard().getNumberOfAdditional()
+                : 0;
+
+        if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
+            nextState = DemandType.CHOOSE_WORKER;
+    }
+
     private synchronized void updateCurrentPlayer() {
         if (!currentPlayer.equals(((ReducedPlayer) getAnswer().getPayload()).getNickname())) {
             prevPlayer = currentPlayer;
             currentPlayer = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
         }
+    }
+
+    private synchronized void updateReduceObjects(Answer<S> answerTemp) {
+        if (isInitializing)
+            updateReducedObjectsInitialize(answerTemp);
+        else
+            updateReduceObjectsInGame(answerTemp);
     }
 
     private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
@@ -318,7 +330,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
-    private synchronized void updateReduceObjects(Answer<S> answer) {
+    private synchronized void updateReduceObjectsInGame(Answer<S> answer) {
         switch (answer.getContext()) {
             case GOD:
             case PLAYER:
@@ -387,7 +399,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
-    private synchronized void checkIsCreator(Answer answer) {
+    private synchronized void checkIsCreator(Answer<S> answer) {
         if (isInitializing && answer.getContext() != null && answer.getContext().equals(UpdatedPartType.PLAYER) && currentState.equals(DemandType.START)) {
             player.setCreator(true);
             nextState = DemandType.CREATE_GAME;

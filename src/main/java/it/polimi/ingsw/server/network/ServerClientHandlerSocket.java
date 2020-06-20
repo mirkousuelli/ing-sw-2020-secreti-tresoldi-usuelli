@@ -334,10 +334,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
             try {
                 while (isActive()) {
-                    synchronized (buffer) {
-                        while (!hasDemand()) buffer.wait();
-                        demand = getDemand();
-                    }
+                    demand = waitDemand();
 
                     if (!isActive())
                         break;
@@ -348,11 +345,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         break;
                     }
 
-                    LOGGER.info("Notifying...");
-                    synchronized (lobby.getController()) {
-                        notify(demand);
-                    }
-                    LOGGER.info("Notified");
+                    notifyDemand(lobby, demand);
                 }
             } catch (InterruptedException e) {
                 if (isActive())
@@ -438,6 +431,25 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------THREAD HELPER----------------------------------------------------*/
+    private Demand waitDemand() throws InterruptedException {
+        Demand demand;
+
+        synchronized (buffer) {
+            while (!hasDemand()) buffer.wait();
+            demand = getDemand();
+        }
+
+        return demand;
+    }
+
+    private void notifyDemand(Lobby lobby, Demand demand) {
+        LOGGER.info("Notifying...");
+        synchronized (lobby.getController()) {
+            notify(demand);
+        }
+        LOGGER.info("Notified");
+    }
+
     private void matchRoutine() {
         Demand demand;
         boolean newGame;
