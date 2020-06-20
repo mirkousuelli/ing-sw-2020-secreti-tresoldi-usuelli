@@ -1,24 +1,26 @@
 package it.polimi.ingsw.server;
 
-
 import it.polimi.ingsw.server.network.ServerConnectionSocket;
 
-import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
-    public static void main (String[] args) {
-        ServerConnectionSocket server = new ServerConnectionSocket(1337);
+    public static void main(String[] args) {
+        int port = 1337;
 
-        try {
-            server.startServer();
+        if (args != null && args.length == 2 && args[0].equals("-p")) {
+            try {
+                port = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                LOGGER.info("Port malformed! NumberFormatException for input '" + args[1] + "', using default port 1337...");
+                port = 1337;
+            }
         }
-        catch(IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException", e);
-        }
+
+        ServerConnectionSocket server = new ServerConnectionSocket(port);
+        server.startServer();
     }
 }

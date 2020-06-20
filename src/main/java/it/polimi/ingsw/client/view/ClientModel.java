@@ -120,8 +120,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             answerTemp = getAnswer();
         }
 
-        System.out.println(answerTemp.toString() + " " + answerTemp.getHeader() + " " + answerTemp.getContext());
-
         if (!player.isCreator() && isInitializing)
             currentState = nextState;
 

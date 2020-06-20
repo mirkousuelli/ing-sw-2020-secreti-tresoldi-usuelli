@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  */
 public class ServerConnectionSocket {
     private final int port;
-    private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     private final Map<String, ServerClientHandlerSocket> waitingConnection = new HashMap<>();
     private final Map<String, ServerClientHandlerSocket> waitingConnectionFromReload = new HashMap<>();
@@ -39,6 +38,8 @@ public class ServerConnectionSocket {
     private Lobby lobby;
     private boolean isActive;
     private boolean alreadyNewGame;
+
+    private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     /**
      * Constructor which initialize the server socket through its port
@@ -58,37 +59,32 @@ public class ServerConnectionSocket {
     /**
      * Method that starts server socket connection stream and manages its behaviours until closing part
      */
-    public void startServer() throws IOException {
+    public void startServer() {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ServerClientHandlerSocket handler;
         ExecutorService executor = Executors.newCachedThreadPool();
-        ServerSocket serverSocket;
         Socket socket = null;
 
-        try {
-            serverSocket = new ServerSocket(port);
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            LOGGER.info("Server ready");
+
+            isActive = true;
+            while (isActive) {
+                try {
+                    socket = serverSocket.accept();
+                    handler = new ServerClientHandlerSocket(socket, this);
+                    executor.submit(handler);
+                } catch (Exception e) {
+                    LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
+                    isActive = false; //In case the serverSocket gets closed
+                }
+            }
+
+            executor.shutdown();
+            if (socket != null) socket.close();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, port not available", e); //port not available
-            return;
         }
-
-        LOGGER.info("Server ready");
-
-        isActive = true;
-        while (isActive) {
-            try {
-                socket = serverSocket.accept();
-                handler = new ServerClientHandlerSocket(socket, this);
-                executor.submit(handler);
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
-                isActive = false; //In case the serverSocket gets closed
-            }
-        }
-
-        executor.shutdown();
-        if (socket != null) socket.close();
-        serverSocket.close();
     }
 
     /**
@@ -392,7 +388,7 @@ public class ServerConnectionSocket {
                 try {
                     newCreator.lockRestart.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
                 }
             }
         }
