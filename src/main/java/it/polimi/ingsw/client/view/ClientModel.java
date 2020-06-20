@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 
@@ -44,6 +45,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         reducedBoard = new ReducedAnswerCell[DIM][DIM];
         deck = new ArrayList<>();
         workers = new ArrayList<>();
+        opponents = new ArrayList<>();
 
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
@@ -90,9 +92,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                                 LOGGER.info(() -> "next: " + nextState);
                             }
                         }
-                    } catch (Exception e){
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.SEVERE, "Got an exception", e);
+                    } catch (InterruptedException e) {
+                        if (isActive())
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                        Thread.currentThread().interrupt();
+                        setActive(false);
                     }
                 }
         );
@@ -117,6 +121,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             answerTemp = getAnswer();
         }
 
+        System.out.println(answerTemp.toString() + " " + answerTemp.getHeader() + " " + answerTemp.getContext());
+
         if (!player.isCreator() && isInitializing)
             currentState = nextState;
 
@@ -127,17 +133,23 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CHANGE_TURN:
                 updateCurrentPlayer();
                 additionalPowerUsed = true;
-                numberOfAdditional = player.getCard() != null ? player.getCard().getNumberOfAdditional() : 0;
+                numberOfAdditional = player.getCard() != null
+                        ? player.getCard().getNumberOfAdditional()
+                        : 0;
 
                 if (isYourTurn() && !isInitializing && currentState.ordinal() > DemandType.MOVE.ordinal())
                     nextState = DemandType.CHOOSE_WORKER;
                 break;
 
             case ERROR:
+                break;
+
             case CLOSE:
+                clearAll();
                 break;
 
             case SUCCESS:
+                checkIsCreator(answerTemp);
                 updateCurrentState();
                 if (isInitializing)
                     updateReducedObjectsInitialize(answerTemp);
@@ -201,7 +213,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     private void clearAll() {
+        prevState = DemandType.CONNECT;
         currentState = DemandType.CONNECT;
+        nextState = DemandType.CONNECT;
         isNewGame = false;
         isInitializing = true;
         isReloaded = false;
@@ -316,7 +330,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
                 if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
-
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;
@@ -329,7 +342,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     prevPlayer = currentPlayer;
 
                 chosen = reducedCardList.get(0); //picks the card chosen by the prev player
-
                 ReducedPlayer current = opponents.stream() //finds prev player within the opponents
                         .filter(p -> p.getNickname().equals(prevPlayer))
                         .reduce(null, (a, b) -> a != null
@@ -359,7 +371,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
                 //resets and sets workers
                 workers = new ArrayList<>();
-
                 Arrays.stream(reducedBoard)
                         .flatMap(Arrays::stream)
                         .filter(reducedAnswerCell -> !reducedAnswerCell.isFree())
@@ -376,6 +387,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private synchronized void updateReducedBoard(List<ReducedAnswerCell> cells) {
         for (ReducedAnswerCell c : cells) {
             reducedBoard[c.getX()][c.getY()] = c;
+        }
+    }
+
+    private synchronized void checkIsCreator(Answer answer) {
+        if (isInitializing && answer.getContext() != null && answer.getContext().equals(UpdatedPartType.PLAYER) && currentState.equals(DemandType.START)) {
+            player.setCreator(true);
+            nextState = DemandType.CREATE_GAME;
+            currentPlayer = player.getNickname();
         }
     }
     /*----------------------------------------------------------------------------------------------------------------*/

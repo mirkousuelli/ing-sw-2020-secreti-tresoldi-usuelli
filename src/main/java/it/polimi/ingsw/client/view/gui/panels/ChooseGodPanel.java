@@ -278,6 +278,11 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
+        if (mg.evalDisconnection()) {
+            gui.free();
+            return;
+        }
+
         if (gui.getAnswer().getHeader().equals(AnswerType.CHANGE_TURN)) {
             mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
             gui.free();

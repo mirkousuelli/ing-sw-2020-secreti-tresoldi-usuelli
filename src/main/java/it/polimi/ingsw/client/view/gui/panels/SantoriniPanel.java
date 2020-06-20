@@ -1,5 +1,7 @@
 package it.polimi.ingsw.client.view.gui.panels;
 
+import it.polimi.ingsw.client.view.gui.GUI;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -59,5 +61,10 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
     public void updateFromModel() {
         //to override when needed
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+
+        if (mg.evalDisconnection())
+            gui.free();
     }
 }

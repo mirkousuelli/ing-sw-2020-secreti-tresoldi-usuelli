@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,14 +32,22 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private final Socket socket;
     private final FileXML file;
     private final ServerConnectionSocket server;
-    private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
+
     private final LinkedList<Demand> buffer;
 
     private boolean isActive;
+    private boolean isConnected;
     private boolean creator;
     private boolean loggingOut;
+    private boolean isOkToRestart;
+    private boolean isToRestart;
 
     private String name;
+
+    final Object lockRestart = new Object();
+    private final AtomicInteger numOfThreadDone = new AtomicInteger();
+
+    private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
     /**
      * Constructor which establishes server side connection handling each client
@@ -53,53 +62,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         buffer = new LinkedList<>();
         creator = false;
         loggingOut = false;
+        isOkToRestart = false;
+        isToRestart = false;
+        name = null;
     }
 
-    /**
-     * Method that makes connection log out
-     *
-     * @param loggingOut for saying if logged out
-     */
-    @Override
-    public void setLoggingOut(boolean loggingOut) {
-        this.loggingOut = loggingOut;
-    }
 
-    /**
-     * Method that sets if the connection is activer or not
-     *
-     * @param isActive for saying connection status
-     */
-    @Override
-    public synchronized void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
-     * Method that says if the connection is actived
-     *
-     * @return {@code true} connection active, {@code false} connection not active
-     */
-    @Override
-    public synchronized boolean isActive() {
-        return isActive;
-    }
-
-    /**
-     * Method that check demand buffer
-     *
-     * @return {@code true} demand to be processed, {@code false} demand buffer empty
-     */
-    private boolean hasDemand() {
-        boolean ret;
-
-        synchronized (buffer) {
-            ret = !buffer.isEmpty();
-        }
-
-        return ret;
-    }
-
+    /*-----------------------------------------------GETTER-----------------------------------------------------------*/
     /**
      * Method that pops the first demand inside the buffer
      *
@@ -116,6 +85,134 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
+     * Method that gets connection player's name
+     *
+     * @return {@code String} player's name
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------SETTER-----------------------------------------------------------*/
+    /**
+     * Method that sets if the connection is activer or not
+     *
+     * @param isActive for saying connection status
+     */
+    @Override
+    public synchronized void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    private synchronized void setConnected(boolean connected) {
+        isConnected = connected;
+    }
+
+    /**
+     * Method that sets the player game creator
+     *
+     * @param creator saying if this connection is reported to the creator
+     */
+    @Override
+    public void setCreator(boolean creator) {
+        this.creator = creator;
+    }
+
+    /**
+     * Method that makes connection log out
+     *
+     * @param loggingOut for saying if logged out
+     */
+    @Override
+    public void setLoggingOut(boolean loggingOut) {
+        this.loggingOut = loggingOut;
+    }
+
+    void setOkToRestart(boolean okToRestart) {
+        synchronized (lockRestart) {
+        isOkToRestart = okToRestart;
+        }
+    }
+
+    void setIsToRestart(boolean toRestart) {
+        synchronized (this) {
+            this.isToRestart = toRestart;
+        }
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+
+    /*-----------------------------------------------PREDICATE--------------------------------------------------------*/
+    /**
+     * Method that check demand buffer
+     *
+     * @return {@code true} demand to be processed, {@code false} demand buffer empty
+     */
+    private boolean hasDemand() {
+        boolean ret;
+
+        synchronized (buffer) {
+            ret = !buffer.isEmpty();
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method that says if the connection is actived
+     *
+     * @return {@code true} connection active, {@code false} connection not active
+     */
+    @Override
+    public synchronized boolean isActive() {
+        return isActive;
+    }
+
+    private synchronized boolean isConnected() {
+        return isConnected;
+    }
+
+    /**
+     * Method that checks if the connection belong to the creator
+     *
+     * @return {@code true} if connection belongs to the creator, {@code false} it doesn't belong to the creator
+     */
+    @Override
+    public boolean isCreator() {
+        return creator;
+    }
+
+    boolean isOkToRestart() {
+        boolean isOkToRestartCopy;
+
+        synchronized (lockRestart) {
+            isOkToRestartCopy = isOkToRestart;
+        }
+
+        return isOkToRestartCopy;
+    }
+
+    boolean isToRestart() {
+        boolean isToRestartCopy;
+
+        synchronized (this) {
+            isToRestartCopy = isToRestart;
+        }
+
+        return isToRestartCopy;
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------SOCKET-----------------------------------------------------------*/
+    /**
      * Method that defines a synchronous sending type of answer
      *
      * @param message server answer
@@ -129,34 +226,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 LOGGER.log(Level.SEVERE, "Got an IOException", e);
             }
         }
-    }
 
-    /**
-     * Method that close the connection
-     */
-    @Override
-    public void closeSocket() {
-        try {
-           if (!socket.isClosed())
-                socket.close();
-           synchronized (this) {
-               setActive(false);
-               this.notifyAll();
-           }
+        if (isToRestart() && isConnected()) {
+            synchronized (lockRestart) {
+                setOkToRestart(true);
+                setIsToRestart(false);
+                lockRestart.notifyAll();
+            }
         }
-        catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
-        }
-    }
-
-    /**
-     * Method that defines an asynchronous sending type of answer
-     *
-     * @param message server answer
-     */
-    @Override
-    public void asyncSend(Answer message) {
-        new Thread( () -> send(message) ).start();
     }
 
     /**
@@ -173,15 +250,45 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
         LOGGER.info("Received!");
 
-        if (demand == null) {
-            synchronized (this) {
-                notifyAll();
-                setActive(false);
-                LOGGER.info("Closing...");
-            }
-        }
+        if (demand == null)
+            callWatchDog(false);
 
         return demand;
+    }
+
+    /**
+     * Method that close the connection
+     */
+    @Override
+    public void closeSocket() {
+        try {
+            LOGGER.info("Closing the socket...");
+            socket.close();
+            synchronized (this) {
+                setActive(false);
+                setConnected(false);
+                this.notifyAll();
+            }
+        }
+        catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
+        }
+
+        LOGGER.info("Socket closed");
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------THREAD-----------------------------------------------------------*/
+    /**
+     * Method that defines an asynchronous sending type of answer
+     *
+     * @param message server answer
+     */
+    @Override
+    public void asyncSend(Answer message) {
+        new Thread(() -> send(message)).start();
     }
 
     /**
@@ -189,77 +296,25 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code Thread} reading thread
      */
-    private Thread asyncReadFromSocket() {
-        Thread t = new Thread(
-                () -> {
-                        boolean reload;
-                        boolean newGame;
+    private Runnable asyncReadFromSocket() {
+        return () -> {
+            try {
+                do {
+                    initialization(); //connect -> create/join/reload
+                    matchRoutine(); // normal game flow -> new game -> normal game flow -> ...
+                } while (isActive());
+            } catch (InterruptedException e) {
+                if (isActive())
+                    LOGGER.log(Level.INFO, e, () -> "asyncReadFromSocketThread: Failed to receive!");
+                Thread.currentThread().interrupt();
+                setActive(false);
 
-                        try {
-                            do {
-                                //connect
-                                logIn();
-
-                                if (isToInterrupt())
-                                    break;
-
-                                synchronized (server) {
-                                    reload = server.isLobbyReloaded();
-                                }
-
-                                if (!reload) {
-                                    if (creator) //createGame
-                                        numberOfPlayers();
-                                    else //joinGame
-                                        waitNumberOfPlayers();
-
-                                    if (isToInterrupt())
-                                        break;
-
-                                    waitStart(); //wait other players
-
-                                    basicStart(); //start
-                                } else
-                                    reloadStart(); //reload
-
-                                if (isToInterrupt())
-                                    break;
-
-                                Demand demand;
-                                Lobby lobby = server.getLobby();
-                                while (isActive) {
-                                    demand = read();
-
-                                    if (isToInterrupt())
-                                        break;
-
-                                    synchronized (lobby.lockLobby) {
-                                        newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
-                                        lobby.setReloaded(false);
-                                    }
-
-                                    if (newGame) { //newGame
-                                        newGame(demand);
-                                        break;
-                                    } else { //normal gameFlow
-                                        LOGGER.info("Consuming...");
-                                        synchronized (buffer) {
-                                            buffer.addLast(demand);
-                                            buffer.notifyAll();
-                                        }
-                                        LOGGER.info("Consumed!");
-                                    }
-                                }
-                            } while (isActive);
-                        } catch (Exception e) {
-                            if (!(e instanceof InterruptedException))
-                                LOGGER.log(Level.INFO, e, () -> "Failed to receive!" + e.getMessage());
-                        }
+                synchronized (numOfThreadDone) {
+                    numOfThreadDone.getAndIncrement();
+                    numOfThreadDone.notifyAll();
                 }
-        );
-
-        t.start();
-        return t;
+            }
+        };
     }
 
     /**
@@ -268,41 +323,45 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code Thread} new notifier thread
      */
-    private Thread notifierThread() {
-        Thread t = new Thread(
-                () -> {
-                    try {
-                        Demand demand;
-                        Lobby lobby;
+    private Runnable notifierThread() {
+        return () -> {
+                Demand demand;
+                Lobby lobby;
 
-                        while (isActive()) {
-                            synchronized (buffer) {
-                                while (!hasDemand()) buffer.wait();
-                                demand = getDemand();
-                            }
-
-                            if (!isActive()) break;
-
-                            lobby = server.getLobby();
-                            if (lobby == null) {
-                                setActive(false);
-                                break;
-                            }
-
-                            LOGGER.info("Notifying...");
-                            synchronized (lobby.getController()) {
-                                notify(demand);
-                            }
-                            LOGGER.info("Notified");
+                try {
+                    while (isActive()) {
+                        synchronized (buffer) {
+                            while (!hasDemand()) buffer.wait();
+                            demand = getDemand();
                         }
-                    } catch (Exception e){
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!" + e.getMessage());
+
+                        if (!isActive())
+                            break;
+
+                        lobby = server.getLobby();
+                        if (lobby == null) {
+                            setActive(false);
+                            break;
+                        }
+
+                        LOGGER.info("Notifying...");
+                        synchronized (lobby.getController()) {
+                            notify(demand);
+                        }
+                        LOGGER.info("Notified");
+                    }
+                } catch (InterruptedException e) {
+                    if (isActive())
+                        LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
+                    Thread.currentThread().interrupt();
+                    setActive(false);
+
+                    synchronized (numOfThreadDone) {
+                        numOfThreadDone.getAndIncrement();
+                        numOfThreadDone.notifyAll();
                     }
                 }
-        );
-        t.start();
-        return t;
+            };
     }
 
     /**
@@ -310,21 +369,19 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code Thread} new active checker thread
      */
-    private Thread watchDogThread() {
-        Thread t = new Thread(
-                () -> {
-                    try {
-                        synchronized (this) {
-                            while (isActive()) this.wait();
-                        }
-                    } catch (Exception e){
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.INFO, e, () -> "Failed to receive!!" + e.getMessage());
+    private Runnable watchDogThread() {
+        return () -> {
+                try {
+                    synchronized (this) {
+                        while (isActive()) this.wait();
                     }
+                } catch (InterruptedException e) {
+                    if (isActive())
+                        LOGGER.log(Level.INFO, e, () -> "watchDogThread: Failed to receive!");
+                    Thread.currentThread().interrupt();
+                    setActive(false);
                 }
-        );
-        t.start();
-        return t;
+            };
     }
 
     /**
@@ -333,95 +390,105 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     @Override
     public void run() {
         setActive(true);
+        setConnected(true);
 
         try {
-            Thread reader = asyncReadFromSocket();
-            Thread notifier = notifierThread();
-            Thread watchDog = watchDogThread();
-            watchDog.join();
-            reader.interrupt();
-            notifier.interrupt();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
+            Thread readerThread;
+            Thread notifierThread;
+            Thread watchDogThread;
+
+            do {
+                setActive(isConnected());
+
+                readerThread = new Thread(asyncReadFromSocket());
+                notifierThread = new Thread(notifierThread());
+                watchDogThread = new Thread(watchDogThread());
+
+                readerThread.start();
+                notifierThread.start();
+                watchDogThread.start();
+
+                watchDogThread.join();
+                readerThread.interrupt();
+                notifierThread.interrupt();
+
+                synchronized (numOfThreadDone) {
+                    while (numOfThreadDone.get() < 2) numOfThreadDone.wait();
+                }
+                numOfThreadDone.set(0);
+            } while (isConnected());
+        } catch (InterruptedException e) {
+            if (isActive())
+                LOGGER.log(Level.SEVERE, "Connection closed from the client side", e);
+            Thread.currentThread().interrupt();
         } finally {
             setActive(false);
+            setConnected(false);
             if (!loggingOut) {
-                server.suddenDisconnection();
-                LOGGER.info(() -> "sudden disconnection!");
+                server.suddenDisconnection(this);
+                LOGGER.info(() -> name + " sudden disconnection!");
+            }
+        }
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------THREAD HELPER----------------------------------------------------*/
+    private void matchRoutine() {
+        Demand demand;
+        boolean newGame;
+        Lobby lobby = server.getLobby();
+
+        while (isActive()) {
+            demand = read();
+
+            synchronized (lobby.lockLobby) {
+                newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
+                lobby.setReloaded(false);
+            }
+
+            if (newGame) { //newGame
+                newGame(demand);
+                break;
+            }
+            else { //normal gameFlow
+                LOGGER.info("Consuming...");
+                synchronized (buffer) {
+                    buffer.addLast(demand);
+                    buffer.notifyAll();
+                }
+                LOGGER.info("Consumed!");
             }
         }
     }
 
-    /**
-     * Method that sets the player game creator
-     *
-     * @param creator saying if this connection is reported to the creator
-     */
-    @Override
-    public void setCreator(boolean creator) {
-        this.creator = creator;
+    private void initialization() throws InterruptedException {
+        boolean reload;
+
+        logIn(); //connect
+
+        synchronized (server) {
+            reload = server.isLobbyReloaded();
+        }
+
+        if (!reload)
+            basicInitialization(); //create or join
+        else
+            reloadStart(); //reload
     }
 
-    /**
-     * Method that checks if the connection belong to the creator
-     *
-     * @return {@code true} if connection belongs to the creator, {@code false} it doesn't belong to the creator
-     */
-    @Override
-    public boolean isCreator() {
-        return creator;
-    }
 
-    /**
-     * Method that gets connection player's name
-     *
-     * @return {@code String} player's name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
 
-    /**
-     * Method that operates the log ing feature
-     */
-    private void logIn() {
-        Demand demand;
-        boolean toRepeat;
+    private void basicInitialization() throws InterruptedException {
+        if (creator) //createGame
+            numberOfPlayers();
+        else //joinGame
+            waitNumberOfPlayers();
 
-        do {
-            if (!server.isInWaitingConnectionFromReload(this)) {
-                demand = read();
+        waitStart(); //wait other players
 
-                if (isToInterrupt())
-                    return;
-
-                name = ((ReducedMessage) demand.getPayload()).getMessage();
-            }
-
-            synchronized (server) {
-                toRepeat = server.connect(this, name);
-            }
-        } while (toRepeat);
-    }
-
-    /**
-     * Method that manage the number of players through the demand received
-     */
-    private void numberOfPlayers() {
-        Demand demand;
-        boolean toRepeat;
-
-        do {
-            demand = read();
-
-            if (isToInterrupt())
-                return;
-
-            synchronized (server) {
-                toRepeat = server.numOfPlayers(this, demand);
-            }
-        } while (toRepeat);
+        basicStart(); //start
     }
 
     /**
@@ -430,51 +497,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private void waitNumberOfPlayers() throws InterruptedException {
         Lobby lobby = server.getLobby();
 
-        boolean interrupt = waitStart();
-
-        if (interrupt)
-            return;
+        waitStart();
 
         synchronized (lobby.lockLobby) {
             if (lobby.isFull() && !lobby.isPresentInGame(this)) {
                 setLoggingOut(true);
                 closeSocket();
             }
-        }
-    }
-
-    /**
-     * Method which stops the server in waiting status
-     */
-    private boolean waitStart() throws InterruptedException {
-        synchronized (server) {
-            while (!server.canStart()) server.wait();
-        }
-
-        return isToInterrupt();
-    }
-
-    /**
-     * Method which defines the standard beginning of a match
-     */
-    private void basicStart() {
-        //wait
-        Lobby lobby = server.getLobby();
-        List<ReducedPlayer> players;
-
-        synchronized (lobby.lockLobby) {
-            lobby.lockLobby.notifyAll();
-            players = lobby.getReducedPlayerList();
-        }
-
-        if (isToInterrupt())
-            return;
-
-        //start
-        send(new Answer<>(AnswerType.SUCCESS, players));
-        synchronized (lobby.lockLobby) {
-            if (isCreator())
-                send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
         }
     }
 
@@ -486,10 +515,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         Game loadedGame;
         Lobby lobby = server.getLobby();
 
-        boolean interrupt = waitStart(); //wait other players
-
-        if (interrupt)
-            return;
+        waitStart(); //wait other players
 
         synchronized (lobby.lockLobby) {
             lobby.lockLobby.notifyAll();
@@ -521,31 +547,104 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+
+
     /**
-     * Method that makes a new game creation after the proper demand received
+     * Method that operates the log ing feature
      */
-    private void newGame(Demand demand) {
+    private void logIn() {
+        Demand demand;
         boolean toRepeat;
 
+        if (name != null) return;
+
         do {
-            synchronized (server) {
-                toRepeat = server.newGame(this, demand);
+            if (!server.isInWaitingConnectionFromReload(this)) {
+                demand = read();
+
+                if (demand == null)
+                    break;
+                else
+                    name = ((ReducedMessage) demand.getPayload()).getMessage();
             }
 
-            if (toRepeat) {
-                demand = read();
-                if (isToInterrupt())
-                    return;
+            synchronized (server) {
+                toRepeat = server.connect(this, name);
             }
         } while (toRepeat);
     }
 
-    private boolean isToInterrupt() {
-        if ((!isActive && !Thread.currentThread().isInterrupted())) {
-            server.deletePlayer(this);
-            Thread.currentThread().interrupt();
+    /**
+     * Method that manage the number of players through the demand received
+     */
+    private void numberOfPlayers() {
+        Demand demand;
+        boolean toRepeat;
+
+        do {
+            demand = read();
+
+            synchronized (server) {
+                toRepeat = server.numOfPlayers(this, demand);
+            }
+        } while (toRepeat);
+    }
+
+    /**
+     * Method which stops the server in waiting status
+     */
+    private void waitStart() throws InterruptedException {
+        synchronized (server) {
+            while (!server.canStart()) server.wait();
+        }
+    }
+
+    /**
+     * Method which defines the standard beginning of a match
+     */
+    private void basicStart() {
+        //wait
+        Lobby lobby = server.getLobby();
+        List<ReducedPlayer> players;
+
+        synchronized (lobby.lockLobby) {
+            lobby.lockLobby.notifyAll();
+            players = lobby.getReducedPlayerList();
         }
 
-        return !isActive;
+        send(new Answer<>(AnswerType.SUCCESS, players));
+        synchronized (lobby.lockLobby) {
+            if (isCreator())
+                send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.GOD, lobby.getGame().getDeck().popAllGods(lobby.getNumberOfPlayers())));
+        }
     }
+
+    /**
+     * Method that makes a new game creation after the proper demand received
+     */
+    private void newGame(Demand demand) {
+        boolean toRepeat = false;
+
+        do {
+            if (toRepeat)
+                demand = read();
+
+            synchronized (server) {
+                toRepeat = server.newGame(this, demand);
+            }
+
+        } while (toRepeat);
+    }
+
+
+
+    void callWatchDog(boolean connected) {
+        synchronized (this) {
+            setActive(false);
+            setConnected(connected);
+            this.notifyAll();
+            LOGGER.info(() -> name + " watch dog called...");
+        }
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
 }

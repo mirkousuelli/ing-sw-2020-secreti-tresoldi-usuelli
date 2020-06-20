@@ -92,9 +92,11 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
                                 update();
                             }
                         }
-                    } catch (Exception e){
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.SEVERE, "Got an exception", e);
+                    } catch (InterruptedException e){
+                        if (isActive())
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                        Thread.currentThread().interrupt();
+                        setActive(false);
                     }
                 }
         );

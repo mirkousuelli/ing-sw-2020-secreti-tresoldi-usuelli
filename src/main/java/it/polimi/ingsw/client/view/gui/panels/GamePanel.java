@@ -478,7 +478,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case CLOSE:
-                mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
+                mg.addPanel(new EndPanel("saved", panelIndex, panels));
                 this.panelIndex.next(this.panels);
                 return;
 

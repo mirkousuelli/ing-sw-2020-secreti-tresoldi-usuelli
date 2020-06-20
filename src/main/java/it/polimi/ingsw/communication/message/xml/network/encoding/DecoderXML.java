@@ -24,7 +24,7 @@ public class DecoderXML {
             xmlString = (String) in.readObject();
         } catch (Exception e) {
             if (!(e instanceof EOFException) && !(e instanceof SocketException) && !e.getMessage().equals("Connection reset"))
-                LOGGER.log(Level.SEVERE, "Got an Exception", e);
+                LOGGER.log(Level.SEVERE, "Got an unexpected exception", e);
             return null;
         }
 

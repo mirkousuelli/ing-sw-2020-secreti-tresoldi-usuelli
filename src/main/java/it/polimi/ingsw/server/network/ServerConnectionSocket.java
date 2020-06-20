@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.game.Game;
@@ -14,10 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,8 +30,8 @@ public class ServerConnectionSocket {
     private final int port;
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
-    private final Map<String, ServerClientHandler> waitingConnection = new HashMap<>();
-    private final Map<String, ServerClientHandler> waitingConnectionFromReload = new HashMap<>();
+    private final Map<String, ServerClientHandlerSocket> waitingConnection = new HashMap<>();
+    private final Map<String, ServerClientHandlerSocket> waitingConnectionFromReload = new HashMap<>();
 
     private Lobby lobby;
     private boolean isActive;
@@ -119,7 +117,7 @@ public class ServerConnectionSocket {
      *
      * @param c first player connection as creator
      */
-    private void createLobby(ServerClientHandler c) {
+    private void createLobby(ServerClientHandlerSocket c) {
         try {
             lobby = new Lobby();
             c.setCreator(true);
@@ -133,32 +131,41 @@ public class ServerConnectionSocket {
     /**
      * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
      */
-    void suddenDisconnection() {
-        if (waitingConnection.size() != lobby.getNumberOfPlayers()) {
-            List<String> names = waitingConnection.keySet().stream()
-                    .filter(name -> lobby.isPresentInGame(name))
-                    .collect(Collectors.toList());
+    void suddenDisconnection(ServerClientHandlerSocket c) {
+        deletePlayer(c);
 
-            lobby.getReducedPlayerList().stream().map(ReducedPlayer::getNickname).forEach(name -> {
-                if(!names.contains(name)) {
-                    lobby.deletePlayer(name);
-                    lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
-                }
-            });
+        if (waitingConnection.isEmpty()) return;
 
-            waitingConnection.keySet().removeIf(name -> !names.contains(name));
-            return;
+        if (waitingConnection.size() + 1 > lobby.getNumberOfPlayers() && lobby.getNumberOfPlayers() > 0) { //a player (c) has been defeated but the are other players remaining (more than one)
+            lobby.deletePlayer(c.getName());
+            lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
         }
+        else if (lobby.getNumberOfPlayers() == -1) { //creator disconnects before selecting the number of players
+            if (c.isCreator()) {
+                ServerClientHandlerSocket newCreator = new ArrayList<>(waitingConnection.values()).get(0);
 
-        for (ServerClientHandler ch : lobby.getServerClientHandlerList())
-            ch.closeSocket();
+                newCreator.setCreator(true);
+                newCreator.setIsToRestart(true);
+                newCreator.send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.PLAYER));
+                waitRestart(newCreator);
+                newCreator.setOkToRestart(false);
+                newCreator.callWatchDog(true);
+            }
+        }
+        else {
+            for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
+                serverClientHandler.send(new Answer<>(AnswerType.CLOSE));
+                waitRestart(serverClientHandler);
+                serverClientHandler.callWatchDog(true); //restart the game for the remaining ones
+            }
 
-        waitingConnection.clear();
-        File f = new File(Lobby.BACKUP_PATH);
-        if (f.exists())
-            loadLobby();
-        else
-            lobby = null;
+            //load lobby if there is one to load
+            File f = new File(Lobby.BACKUP_PATH);
+            if (f.exists())
+                loadLobby();
+            else
+                lobby = null;
+        }
     }
 
     /**
@@ -168,7 +175,7 @@ public class ServerConnectionSocket {
      * @param name player's nickname
      * @return {@code true} connected successfully, {@code false} connection gone wrong
      */
-    synchronized boolean connect(ServerClientHandler c, String name) {
+    synchronized boolean connect(ServerClientHandlerSocket c, String name) {
         if (lobby != null) {
             if (lobby.isReloaded()) {
                 if (connectReload(c, name))
@@ -194,7 +201,7 @@ public class ServerConnectionSocket {
         return false; //not toRepeat
     }
 
-    private synchronized Boolean connectBasic(ServerClientHandler c, String name) {
+    private synchronized Boolean connectBasic(ServerClientHandlerSocket c, String name) {
         Boolean toRepeat = null;
 
         if (waitingConnection.get(name) != null) { //userName already exists --> changeName or exit client-side
@@ -210,7 +217,7 @@ public class ServerConnectionSocket {
         return toRepeat;
     }
 
-    private synchronized boolean connectReload(ServerClientHandler c, String name) {
+    private synchronized boolean connectReload(ServerClientHandlerSocket c, String name) {
         if (!lobby.isPresentInGame(name)) {
             if (!waitingConnection.keySet().isEmpty()) { //not present in reloaded lobby and someone is already waiting --> changeName or exit client-side
                 c.send(new Answer<>(AnswerType.ERROR));
@@ -277,7 +284,9 @@ public class ServerConnectionSocket {
      * @param demand demand message received containing number of players information
      * @return {@code true} something went wrong, {@code false} match started
      */
-    synchronized boolean numOfPlayers(ServerClientHandler c, Demand demand) {
+    synchronized boolean numOfPlayers(ServerClientHandlerSocket c, Demand demand) {
+        if (demand == null) return false;
+
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
         int numOfPls = Integer.parseInt(value);
 
@@ -300,7 +309,9 @@ public class ServerConnectionSocket {
      * @param c creator's connection
      * @return {@code true} new game started, {@code false} creator logged out
      */
-    synchronized boolean newGame(ServerClientHandler c, Demand demand) {
+    synchronized boolean newGame(ServerClientHandlerSocket c, Demand demand) {
+        if (demand == null) return false;
+
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
         if (response.equals("n")) {
@@ -360,7 +371,7 @@ public class ServerConnectionSocket {
      * @param c player's connection
      * @return {@code true} waiting for reload, {@code false} not waiting for reload
      */
-    boolean isInWaitingConnectionFromReload(ServerClientHandler c) {
+    boolean isInWaitingConnectionFromReload(ServerClientHandlerSocket c) {
         boolean toReturn;
 
         synchronized (waitingConnectionFromReload) {
@@ -370,13 +381,25 @@ public class ServerConnectionSocket {
         return toReturn;
     }
 
-    void deletePlayer(ServerClientHandler c) {
+    void deletePlayer(ServerClientHandlerSocket c) {
         synchronized (waitingConnection) {
             waitingConnection.remove(c.getName());
         }
 
         synchronized (waitingConnectionFromReload) {
             waitingConnectionFromReload.remove(c.getName());
+        }
+    }
+
+    private void waitRestart(ServerClientHandlerSocket newCreator) {
+        synchronized (newCreator.lockRestart) {
+            while (!newCreator.isOkToRestart()) {
+                try {
+                    newCreator.lockRestart.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

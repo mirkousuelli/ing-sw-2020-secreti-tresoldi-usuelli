@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 
 import java.io.IOException;
@@ -58,22 +59,30 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
+    private void send(Demand demand) throws IOException {
+        if (isActive()) {
+            synchronized (file.lockSend) {
+                file.send(demand);
+            }
+        }
+    }
+
     private Thread asyncReadFromSocket() {
         Thread t = new Thread (
                 () -> {
-                        try {
-                            Answer<S> temp;
-                            while (isActive()) {
-                                if (socket.isConnected() && !socket.isClosed()) {
-                                    synchronized (file.lockReceive) {
-                                        temp = (Answer<S>) file.receive();
+                        Answer<S> temp;
+                        while (isActive()) {
+                            if (socket.isConnected() && !socket.isClosed()) {
+                                synchronized (file.lockReceive) {
+                                    temp = (Answer<S>) file.receive();
 
-                                    }
+                                }
 
-                                    if (temp == null) {
-                                        System.exit(1);
-                                    }
-
+                                if (temp == null) { //server ko
+                                    LOGGER.info("KO");
+                                    System.exit(1);
+                                }
+                                else {
                                     LOGGER.info("Queueing...");
                                     synchronized (buffer) {
                                         buffer.add(temp);
@@ -83,8 +92,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                     }
                                 }
                             }
-                        } catch (Exception e){
-                            LOGGER.log(Level.SEVERE, "Got an IOException", e);
                         }
                     }
         );
@@ -113,21 +120,14 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 }
 
                                 LOGGER.info("Sending...");
-                                if (isActive()) {
-                                    synchronized (file.lockSend) {
-                                        try {
-                                            file.send(demand);
-                                        } catch (IOException e) {
-                                            LOGGER.log(Level.SEVERE, "Got an IOException", e);
-                                            break;
-                                        }
-                                    }
-                                }
+                                send(demand);
                                 LOGGER.info("Sent!");
                             }
                         } catch (Exception e) {
-                            if (!(e instanceof InterruptedException))
-                                LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
+                            if (isActive())
+                                LOGGER.log(Level.SEVERE, "Got an unexpected exception, asyncWrite not working", e);
+                            setActive(false);
+                            Thread.currentThread().interrupt();
                         }
                     }
             );
@@ -157,9 +157,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 LOGGER.info("Consumed!");
                             }
                         }
-                    } catch(Exception e) {
-                        if (!(e instanceof InterruptedException))
-                            LOGGER.log(Level.SEVERE, "Got an exception, asyncWrite not working", e);
+                    } catch (InterruptedException e){
+                        if (isActive())
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                        Thread.currentThread().interrupt();
+                        setActive(false);
                     }
                 }
         );
@@ -176,9 +178,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         read.join();
         write.join();
         consumer.join();
+
+        closeConnection();
     }
 
-    public synchronized void closeConnection() {
+    private synchronized void closeConnection() {
         try {
             socket.close();
         }

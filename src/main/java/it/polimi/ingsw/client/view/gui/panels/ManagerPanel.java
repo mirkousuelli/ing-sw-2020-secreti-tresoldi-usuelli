@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.gui.component.JPlayer;
 import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.server.model.map.Level;
 
@@ -135,6 +136,17 @@ public class ManagerPanel extends JPanel {
             }
         });
 
+    }
+
+    boolean evalDisconnection() {
+        boolean isClosed = gui.getAnswer().getHeader().equals(AnswerType.CLOSE);
+
+        if (isClosed) {
+            add(new EndPanel("saved", cardLayout, this));
+            cardLayout.next(this);
+        }
+
+        return isClosed;
     }
 
     void clean() {

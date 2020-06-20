@@ -165,6 +165,11 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
 
+        if (mg.evalDisconnection()) {
+            gui.free();
+            return;
+        }
+
         if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);

@@ -108,8 +108,6 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
                     this.panelIndex.next(this.panels);
                     gui.free();
                 }
-                else
-                    playAgainButton.setEnabled(false);
                 break;
 
             case "quit":
