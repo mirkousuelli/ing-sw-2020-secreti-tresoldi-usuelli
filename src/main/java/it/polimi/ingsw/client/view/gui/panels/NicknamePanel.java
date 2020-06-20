@@ -17,9 +17,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     private JButton sendButton;
     private JLabel stand;
     private JTextField nickText;
-    private JComboBox connectType;
-    private JComboBox serverAdd;
-    private JComboBox serverPort;
+    private JTextField serverAdd;
+    private JTextField serverPort;
     private JLabel errorMessage;
 
     private boolean error = false;
@@ -67,22 +66,10 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         a.anchor = GridBagConstraints.WEST;
         a.weightx = 1;
         a.weighty = 0f;
-        a.insets = new Insets(250,30,0,0);
+        a.insets = new Insets(250,40,0,0);
         nickText = new JTextField(14);
         nickText.setVisible(true);
         stand.add(nickText, a);
-
-        GridBagConstraints b = new GridBagConstraints();
-        b.gridx = 1;
-        b.gridy = 0;
-        b.anchor = GridBagConstraints.EAST;
-        b.weightx = 1;
-        b.weighty = 0.1;
-        b.insets = new Insets(90,0,0,130);
-        connectType = new JComboBox();
-        connectType.addItem("Socket");
-        connectType.setVisible(true);
-        stand.add(connectType, b);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
@@ -90,9 +77,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         c.anchor = GridBagConstraints.EAST;
         c.weightx = 1;
         c.weighty = 0.1;
-        c.insets = new Insets(-30,0,0,110);
-        serverAdd = new JComboBox();
-        serverAdd.addItem("127.0.0.1");
+        c.insets = new Insets(-135,0,0,70);
+        serverAdd = new JTextField(10);
         serverAdd.setVisible(true);
         stand.add(serverAdd, c);
 
@@ -102,9 +88,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         d.anchor = GridBagConstraints.EAST;
         d.weightx = 1;
         d.weighty = 0.1;
-        d.insets = new Insets(45,0,0,137);
-        serverPort = new JComboBox();
-        serverPort.addItem("1337");
+        d.insets = new Insets(0,0,0,70);
+        serverPort = new JTextField(10);
         serverPort.setVisible(true);
         stand.add(serverPort, d);
     }
@@ -138,7 +123,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
         if (!e.getSource().equals(sendButton)) return;
         if (name == null || name.equals("")) {
-            errorMessage.setText("Error!, incorrect nickname");
+            errorMessage.setText("Error! Incorrect nickname...");
             errorMessage.setVisible(true);
             return;
         }
@@ -151,10 +136,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         else
             gui.initialRequest(
                     name,
-                    (String) serverAdd.getSelectedItem(),
-                    serverPort.getSelectedItem() == null
-                            ? Integer.parseInt((String) serverPort.getItemAt(0))
-                            : Integer.parseInt((String) serverPort.getSelectedItem())
+                    serverAdd.getText(),
+                    Integer.parseInt(serverPort.getText())
             );
 
         sendButton.setEnabled(false);
