@@ -266,7 +266,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
-        DemandType currentState = gui.getClientModel().getCurrentState();
+        DemandType currentState;
         int numOfAdditional = gui.getClientModel().getNumberOfAdditional();
 
         if (!gui.getClientModel().isYourTurn()) return;
@@ -275,51 +275,35 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 .map(jCell -> new ReducedDemandCell(jCell.getXCoordinate(), jCell.getYCoordinate()))
                 .collect(Collectors.toList());
 
-        if (status.equals(JCellStatus.USE_POWER)) {
-            if (!gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER)) {
-                currentState = DemandType.USE_POWER;
+        currentState = usePowerStatus(numOfAdditional, status);
 
-                if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.MOVE))
-                    gui.getClientModel().setNextState(DemandType.MOVE);
-            }
+        switch (currentState) {
+            case PLACE_WORKERS:
+                List<ReducedWorker> reducedWorkerList = payload.stream()
+                        .map(rdc -> new ReducedWorker(mg.getClientPlayer().getNickname(), rdc.getX(), rdc.getY(), ((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0))
+                        .collect(Collectors.toList());
 
-            if (numOfAdditional != 0) {
-                if (numOfAdditional > 0)
-                    gui.getClientModel().setNumberOfAdditional(numOfAdditional - 1);
+                gui.generateDemand(DemandType.PLACE_WORKERS, reducedWorkerList);
+                removeDecorations();
+                return;
 
-                if (numOfAdditional != 1)
-                    gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
-                else
+            case ASK_ADDITIONAL_POWER:
+                if (status.equals(JCellStatus.USE_POWER)) {
+                    currentState = DemandType.ADDITIONAL_POWER;
+                    gui.getClientModel().setNextState(gui.getClientModel().getPrevState().equals(DemandType.MOVE) ? DemandType.BUILD : DemandType.CHOOSE_WORKER);
+                } else if (status.equals(JCellStatus.BUILD)) {
+                    currentState = DemandType.BUILD;
+                    gui.getClientModel().setNextState(DemandType.CHOOSE_WORKER);
                     hidePowerButton();
+                } else if (status.equals(JCellStatus.MOVE)) {
+                    currentState = DemandType.MOVE;
+                    gui.getClientModel().setNextState(DemandType.BUILD);
+                    hidePowerButton();
+                }
+                break;
 
-                gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 1);
-            } else
-                hidePowerButton();
-        }
-
-        if (currentState.equals(DemandType.PLACE_WORKERS)) {
-            List<ReducedWorker> reducedWorkerList = payload.stream()
-                    .map(rdc -> new ReducedWorker(mg.getClientPlayer().getNickname(), rdc.getX(), rdc.getY(), ((JBlockDecorator) map.getCell(rdc.getX(), rdc.getY())).getWorker().ordinal() % 2 != 0))
-                    .collect(Collectors.toList());
-
-            gui.generateDemand(DemandType.PLACE_WORKERS, reducedWorkerList);
-            removeDecorations();
-            return;
-        }
-
-        if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER)) {
-            if (status.equals(JCellStatus.USE_POWER)) {
-                currentState = DemandType.ADDITIONAL_POWER;
-                gui.getClientModel().setNextState(gui.getClientModel().getPrevState().equals(DemandType.MOVE) ? DemandType.BUILD : DemandType.CHOOSE_WORKER);
-            } else if (status.equals(JCellStatus.BUILD)) {
-                currentState = DemandType.BUILD;
-                gui.getClientModel().setNextState(DemandType.CHOOSE_WORKER);
-                hidePowerButton();
-            } else if (status.equals(JCellStatus.MOVE)) {
-                currentState = DemandType.MOVE;
-                gui.getClientModel().setNextState(DemandType.BUILD);
-                hidePowerButton();
-            }
+            default:
+                break;
         }
 
         removeDecorations();
@@ -328,6 +312,38 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 ? payload
                 : payload.get(0)
         );
+    }
+
+    private DemandType usePowerStatus(int numOfAdditional, JCellStatus status) {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        DemandType currentState = gui.getClientModel().getCurrentState();
+
+        if (!status.equals(JCellStatus.USE_POWER))
+            return currentState;
+
+
+        if (!gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER)) {
+            currentState = DemandType.USE_POWER;
+
+            if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD) && gui.getClientModel().getCurrentState().equals(DemandType.MOVE))
+                gui.getClientModel().setNextState(DemandType.MOVE);
+        }
+
+        if (numOfAdditional != 0) {
+            if (numOfAdditional > 0)
+                gui.getClientModel().setNumberOfAdditional(numOfAdditional - 1);
+
+            if (numOfAdditional != 1)
+                gui.getClientModel().setNextState(gui.getClientModel().getCurrentState());
+            else
+                hidePowerButton();
+
+            gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 1);
+        } else
+            hidePowerButton();
+
+        return currentState;
     }
 
     private void removeDecorations() {
@@ -575,7 +591,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         if (gui.getClientModel().getWorkers().isEmpty()) return;
         if (!gui.getAnswer().getContext().equals(UpdatedPartType.BOARD)) return;
 
-        List<ReducedPlayer> playerList = (List<ReducedPlayer>) gui.getClientModel().getOpponents();
+        List<ReducedPlayer> playerList = gui.getClientModel().getOpponents();
         playerList.add(gui.getClientModel().getPlayer());
 
         JPlayer jPlayer;

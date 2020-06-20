@@ -152,6 +152,9 @@ public class ServerConnectionSocket {
                 serverClientHandler.callWatchDog(true); //restart the game for the remaining ones
             }
 
+            //reset
+            waitingConnection.clear();
+
             //load lobby if there is one to load
             File f = new File(Lobby.BACKUP_PATH);
             if (f.exists())

@@ -313,7 +313,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                 synchronized (numOfThreadDone) {
                     numOfThreadDone.getAndIncrement();
-                    numOfThreadDone.notifyAll();
+                    if (numOfThreadDone.get() == 2)
+                        numOfThreadDone.notifyAll();
                 }
             }
         };
@@ -353,7 +354,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                 synchronized (numOfThreadDone) {
                     numOfThreadDone.getAndIncrement();
-                    numOfThreadDone.notifyAll();
+                    if (numOfThreadDone.get() == 2)
+                        numOfThreadDone.notifyAll();
                 }
             }
         };

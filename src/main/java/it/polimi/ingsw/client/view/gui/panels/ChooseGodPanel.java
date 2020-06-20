@@ -253,6 +253,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
                 mg.getGui().generateDemand(DemandType.CHOOSE_CARD, god);
                 break;
+
+            default:
+                break;
         }
     }
 

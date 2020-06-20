@@ -344,8 +344,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     return;
                 }
 
-                if (reducedCardList.size() > 1) return; //safety check, cannot happen normally!
-
                 ReducedCard chosen;
                 if (deck.size() == 1) //if the chosen card is not present in deck
                     prevPlayer = currentPlayer;
@@ -353,13 +351,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 chosen = reducedCardList.get(0); //picks the card chosen by the prev player
                 ReducedPlayer current = opponents.stream() //finds prev player within the opponents
                         .filter(p -> p.getNickname().equals(prevPlayer))
-                        .reduce(null, (a, b) -> a != null
+                        .reduce(player, (a, b) -> a != player //accumulator -> if the prev player is not an opponent, then it must be you!
                                 ? a
                                 : b
                         );
-
-                if (current == null) //if the prev player is not an opponent, then it must be you!
-                    current = player;
 
                 current.setCard(chosen); //assigns to the prev player the card he chose
                 deck.removeIf(card -> card.getGod().equals(chosen.getGod())); //removes the chosen card from the deck
@@ -388,7 +383,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             default:
-                LOGGER.info("Not a valid answerType " + answer.getContext());
+                LOGGER.info("Not a valid answer context " + answer.getContext());
                 break;
         }
     }
