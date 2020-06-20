@@ -119,7 +119,7 @@ public class AdditionalPower implements GameState {
         if (returnContent == null) //if usePower went wrong
             return returnError(); //then report error
 
-        if(Move.reachedThirdLevel(game)) { //if the current player has won, then notify it to everyone!
+        if (Move.reachedThirdLevel(game)) { //if the current player has won, then notify it to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().getNickName()));

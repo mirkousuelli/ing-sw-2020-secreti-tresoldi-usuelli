@@ -102,9 +102,9 @@ public class Malus {
         Malus malus = (Malus) obj;
 
         return malusType.equals(malus.getMalusType()) &&
-               permanent == malus.isPermanent() &&
-               numberOfTurns == malus.getNumberOfTurns() &&
-               direction.containsAll(malus.getDirection());
+                permanent == malus.isPermanent() &&
+                numberOfTurns == malus.getNumberOfTurns() &&
+                direction.containsAll(malus.getDirection());
     }
 
     /**

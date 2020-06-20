@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VictoryTest {
 
@@ -36,7 +36,7 @@ public class VictoryTest {
         game.setState(State.VICTORY);
 
         //it checks that the state is actually victory
-        assertEquals("victory",game.getState().getName());
+        assertEquals("victory", game.getState().getName());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.START)));
         ReturnContent returnContent = game.gameEngine();

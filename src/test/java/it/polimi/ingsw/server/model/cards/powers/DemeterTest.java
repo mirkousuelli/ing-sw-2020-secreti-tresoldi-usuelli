@@ -42,8 +42,6 @@ public class DemeterTest {
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(Level.BOTTOM, emptyPower.getLevel());
@@ -74,8 +72,6 @@ public class DemeterTest {
         assertFalse(power1.usePower(player1, emptyBuild, board.getAround(emptyBuild)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
@@ -104,8 +100,6 @@ public class DemeterTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
@@ -144,8 +138,6 @@ public class DemeterTest {
         assertFalse(power1.usePower(player1, completeTower, board.getAround(completeTower)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
@@ -173,8 +165,6 @@ public class DemeterTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, notAdjacent, board.getAround(notAdjacent)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());

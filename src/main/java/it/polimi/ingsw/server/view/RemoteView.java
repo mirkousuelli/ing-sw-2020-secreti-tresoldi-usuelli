@@ -19,14 +19,14 @@ public class RemoteView extends View {
             try {
                 processMessage(demand);
             } catch (Exception e) {
-                logger.log( Level.SEVERE, e.toString(), e);
+                logger.log(Level.SEVERE, e.toString(), e);
             }
         }
     }
 
     private final ServerClientHandler serverClientHandler;
 
-    public RemoteView(String player, ServerClientHandler serverClientHandler){
+    public RemoteView(String player, ServerClientHandler serverClientHandler) {
         super(player);
         this.serverClientHandler = serverClientHandler;
         serverClientHandler.addObserver(new MessageReceiver());

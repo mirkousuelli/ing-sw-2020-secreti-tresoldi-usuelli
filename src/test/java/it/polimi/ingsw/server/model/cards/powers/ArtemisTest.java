@@ -48,8 +48,6 @@ public class ArtemisTest {
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
 
-
-
         assertEquals(emptyPower.getPawn(), player1.getWorkers().get(0));
         assertEquals(emptyPower, player1.getWorkers().get(0).getLocation());
         assertEquals(emptyMove, player1.getWorkers().get(0).getPreviousLocation());
@@ -76,8 +74,6 @@ public class ArtemisTest {
         board.move(player1, emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, emptyMove, board.getAround(emptyMove)));
-
-
 
 
         assertEquals(emptyMove.getPawn(), player1.getWorkers().get(0));
@@ -110,8 +106,6 @@ public class ArtemisTest {
         board.move(player1, emptyMove);
         //move with power
         assertFalse(power1.usePower(player1, moreThanOneLevelMove, board.getAround(moreThanOneLevelMove)));
-
-
 
 
         assertEquals(emptyMove.getPawn(), player1.getWorkers().get(0));
@@ -153,8 +147,6 @@ public class ArtemisTest {
         assertFalse(power1.usePower(player1, dome, board.getAround(dome)));
 
 
-
-
         assertEquals(emptyMove.getPawn(), player1.getWorkers().get(0));
         assertEquals(emptyMove, player1.getWorkers().get(0).getLocation());
         assertNull(dome.getPawn());
@@ -189,8 +181,6 @@ public class ArtemisTest {
 
         //move with power
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));
-
-
 
 
         assertEquals(emptyMove.getPawn(), player1.getWorkers().get(0));

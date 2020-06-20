@@ -18,7 +18,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StartTest {
 
@@ -75,12 +76,12 @@ public class StartTest {
         // it checks that the operation is made successfully and then changes to ChooseCard state
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
-        assertEquals(God.APOLLO.toString(),game.getDeck().popCard(God.APOLLO).getName());
-        assertEquals(God.HESTIA.toString(),game.getDeck().popCard(God.HESTIA).getName());
-        assertEquals(God.ZEUS.toString(),game.getDeck().popCard(God.ZEUS).getName());
+        assertEquals(God.APOLLO.toString(), game.getDeck().popCard(God.APOLLO).getName());
+        assertEquals(God.HESTIA.toString(), game.getDeck().popCard(God.HESTIA).getName());
+        assertEquals(God.ZEUS.toString(), game.getDeck().popCard(God.ZEUS).getName());
 
         // if the god isn't in the deck it throws a NullPointerException
-        assertThrows(NullPointerException.class , () -> game.getDeck().popCard(God.ATLAS).getName());
-        assertThrows(NullPointerException.class , () -> game.getDeck().popCard(God.DEMETER).getName());
+        assertThrows(NullPointerException.class, () -> game.getDeck().popCard(God.ATLAS).getName());
+        assertThrows(NullPointerException.class, () -> game.getDeck().popCard(God.DEMETER).getName());
     }
 }

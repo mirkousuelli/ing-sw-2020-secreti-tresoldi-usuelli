@@ -34,7 +34,7 @@ public class GameTest {
 
         assertEquals(0, game1.getPlayerList().indexOf(p1));
         assertEquals(3, game1.getNumPlayers());
-        assertEquals("Mirko",game1.getPlayer(1).getNickName());
+        assertEquals("Mirko", game1.getPlayer(1).getNickName());
 
         // it checks that the current player is the first one and then changes
         assertEquals(p1, game1.getCurrentPlayer());
@@ -48,10 +48,10 @@ public class GameTest {
 
         assertEquals(0, game2.getPlayerList().indexOf(p1));
         assertEquals(2, game2.getNumPlayers());
-        assertEquals(p1 ,game2.getPlayerList().get(0));
+        assertEquals(p1, game2.getPlayerList().get(0));
 
         // it checks that the state is correctly set to Start
-        assertTrue(game1.getState()instanceof Start);
+        assertTrue(game1.getState() instanceof Start);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class GameTest {
 
         //throws an IndexOutOfBoundsException since the player with index 2 has been removed from the game
         assertThrows(IndexOutOfBoundsException.class,
-                ()-> game.getPlayer(2));
+                () -> game.getPlayer(2));
     }
 
 
@@ -117,12 +117,12 @@ public class GameTest {
 
 
         assertEquals(board, game.getBoard());
-        assertTrue(game.getState()instanceof Victory);
-        assertEquals(State.BUILD,game.getPrevState());
+        assertTrue(game.getState() instanceof Victory);
+        assertEquals(State.BUILD, game.getPrevState());
         assertEquals(3, game.getChosenGods().size());
         assertEquals(God.ARTEMIS, game.getChosenGods().get(0).getGod());
         assertEquals(p2, game.getCurrentPlayer());
-        assertEquals(0,game.getStarter());
+        assertEquals(0, game.getStarter());
 
         //cleans the game and then check that all the pieces of information are reset
         game.clean();
@@ -132,6 +132,6 @@ public class GameTest {
         assertEquals(State.START, game.getPrevState());
         assertEquals(0, game.getChosenGods().size());
         assertEquals(p1, game.getCurrentPlayer());
-        assertEquals(-1,game.getStarter());
+        assertEquals(-1, game.getStarter());
     }
 }

@@ -37,8 +37,8 @@ public class MovePower<S> extends ActivePower<S> {
      * different God powers
      *
      * @param currentPlayer the player that uses the power
-     * @param cellToMove the chosen cell to move to
-     * @param adjacency list of cells around the worker
+     * @param cellToMove    the chosen cell to move to
+     * @param adjacency     list of cells around the worker
      * @return {@code true} if the power is used correctly, {@code false} otherwise
      */
     @Override
@@ -52,8 +52,7 @@ public class MovePower<S> extends ActivePower<S> {
             Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
             return move(currentPlayer, cellToMove, opponentWorker, opponentCellToMove);
-        }
-        else if (getAllowedAction().equals(MovementType.PUSH))
+        } else if (getAllowedAction().equals(MovementType.PUSH))
             return push(currentPlayer, cellToMove, adjacency);
         else
             return move(currentPlayer, cellToMove, null, null);
@@ -64,13 +63,15 @@ public class MovePower<S> extends ActivePower<S> {
         if (workerToUse.getLocation().equals(cellToMove)) return false; //you cannot push yourself!
 
         Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a shallow copy, it's noy the original from the board
-        if (workerToPushNewPos == null) return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
+        if (workerToPushNewPos == null)
+            return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
 
         Block opponentCellToMove = (Block) findCell(adjacency, workerToPushNewPos.getX(), workerToPushNewPos.getY()); //gets the new position of the worker to push in the board
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
         if (opponentCellToMove == null) return false; //verifies that the worker to push is push only of a unit
-        if (!opponentCellToMove.isWalkable()) return false; //cannot push the worker to push onto a non walkable cell (occupied or dome-level cell)
+        if (!opponentCellToMove.isWalkable())
+            return false; //cannot push the worker to push onto a non walkable cell (occupied or dome-level cell)
 
         return move(currentPlayer, cellToMove, opponentWorker, opponentCellToMove);
     }
@@ -82,9 +83,9 @@ public class MovePower<S> extends ActivePower<S> {
      * <p>
      * This method is used only for Minotaur and Apollo, whose power allows this kind of movement
      *
-     * @param currentPlayer the current player
-     * @param cellToMove the chosen cell where to move
-     * @param opponentWorker the worker that is pushed or swapped
+     * @param currentPlayer      the current player
+     * @param cellToMove         the chosen cell where to move
+     * @param opponentWorker     the worker that is pushed or swapped
      * @param opponentCellToMove the new block where the opponent's worker is moved
      * @return {@code true} after the move is complete, {@code false} if the chosen cell has no opponent's worker
      */
@@ -99,8 +100,7 @@ public class MovePower<S> extends ActivePower<S> {
             opponentWorker.setPreviousLocation(opponentWorker.getPreviousLocation());
             opponentWorker.setLocation(opponentCellToMove);
             ((Block) cellToMove).addPawn(workerToUse);
-        }
-        else if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1)
+        } else if (constraints.isPerimCell() && !Cell.isPerim(cellToMove) && numberOfActionsRemaining == -1)
             numberOfActionsRemaining = 0;
 
         return true;
@@ -110,12 +110,12 @@ public class MovePower<S> extends ActivePower<S> {
      * Method that identifies the new cell of the opponent's worker
      *
      * @param list list of cells where the cell can be
-     * @param x x-coordinate of the cell to be found
-     * @param y y-coordinate of the cell to be found
+     * @param x    x-coordinate of the cell to be found
+     * @param y    y-coordinate of the cell to be found
      * @return the cell where the opponent's worker is
      */
     public Cell findCell(List<Cell> list, int x, int y) {
-        for (Cell c: list){
+        for (Cell c : list) {
             if (c.getX() == x && c.getY() == y && c.isFree())
                 return c;
         }
@@ -126,15 +126,15 @@ public class MovePower<S> extends ActivePower<S> {
     public static Cell lineEqTwoPoints(Cell from, Cell to) {
         if (from == null) return null;
         if (to == null) return null;
-        if (to.getX() == from.getX() && to.getY() == from.getY()) return null; //'from' and 'to' cannot be the same cell!
+        if (to.getX() == from.getX() && to.getY() == from.getY())
+            return null; //'from' and 'to' cannot be the same cell!
 
         if (to.getX() != from.getX()) { //y = mx + q (slope-intercept)
             float m = ((float) (to.getY() - from.getY())) / ((float) (to.getX() - from.getX())); //slope
-            float q = from.getY() - m*from.getX(); //intercept
+            float q = from.getY() - m * from.getX(); //intercept
 
-            return MovePower.fetchNextCell(from, to, m ,q);
-        }
-        else { //x = k (vertical line)
+            return MovePower.fetchNextCell(from, to, m, q);
+        } else { //x = k (vertical line)
             int y;
             if (from.getY() > to.getY())
                 y = to.getY() - 1;
@@ -157,14 +157,13 @@ public class MovePower<S> extends ActivePower<S> {
             newX = to.getX() - 1;
 
         if (newX >= 0 && newX <= 4) {
-            int newY = (int) (m*newX + q);
+            int newY = (int) (m * newX + q);
 
             if (newY >= 0 && newY <= 4)
                 return new Block(newX, newY);
             else
                 return null;
-        }
-        else
+        } else
             return null;
     }
 }

@@ -93,7 +93,7 @@ public class ChooseCard implements GameState {
      * <p>
      * This method is static since can be used in other classes
      *
-     * @param game the game that is being played, where to apply the malus
+     * @param game   the game that is being played, where to apply the malus
      * @param timing timing of the malus
      */
     public static void applyMalus(Game game, Timing timing) {

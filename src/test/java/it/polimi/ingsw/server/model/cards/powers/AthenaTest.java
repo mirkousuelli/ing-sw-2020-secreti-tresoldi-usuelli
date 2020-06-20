@@ -60,8 +60,6 @@ public class AthenaTest {
         assertFalse(board.move(player2, cannotMoveUpCell));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertNull(player1.getCurrentWorker().getPreviousBuild());

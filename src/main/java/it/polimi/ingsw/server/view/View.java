@@ -9,15 +9,15 @@ public abstract class View extends Observable<ActionToPerformView> implements Ob
 
     private final String player;
 
-    protected View(String player){
+    protected View(String player) {
         this.player = player;
     }
 
-    public String getPlayer(){
+    public String getPlayer() {
         return player;
     }
 
-    public void processMessage(Demand demand){
+    public void processMessage(Demand demand) {
         notify(new ActionToPerformView(player, demand, this));
     }
 

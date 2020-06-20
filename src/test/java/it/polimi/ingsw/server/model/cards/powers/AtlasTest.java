@@ -39,8 +39,6 @@ class AtlasTest {
         assertTrue(power1.usePower(player1, empty, board.getAround(empty)));
 
 
-
-
         assertEquals(Level.DOME, empty.getLevel());
         assertEquals(Level.GROUND, empty.getPreviousLevel());
         assertEquals(empty, player1.getCurrentWorker().getPreviousBuild());
@@ -67,8 +65,6 @@ class AtlasTest {
 
         //build con power
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
-
-
 
 
         assertEquals(Level.GROUND, occupiedCell.getLevel());
@@ -101,8 +97,6 @@ class AtlasTest {
         assertFalse(power1.usePower(player1, alreadyDomeCell, board.getAround(alreadyDomeCell)));
 
 
-
-
         assertEquals(Level.DOME, alreadyDomeCell.getLevel());
         assertEquals(Level.TOP, alreadyDomeCell.getPreviousLevel());
         assertEquals(alreadyDomeCell, player1.getCurrentWorker().getPreviousBuild());
@@ -127,8 +121,6 @@ class AtlasTest {
 
         //build con power
         assertFalse(power1.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));
-
-
 
 
         assertEquals(Level.GROUND, notAdjacentCell.getLevel());

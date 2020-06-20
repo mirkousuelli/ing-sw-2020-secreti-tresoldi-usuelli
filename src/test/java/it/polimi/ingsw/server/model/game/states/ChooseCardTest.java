@@ -17,7 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChooseCardTest {
 
@@ -72,7 +73,6 @@ public class ChooseCardTest {
     }
 
 
-
     @Test
     void wrongPickGodTest() throws ParserConfigurationException, SAXException {
 
@@ -105,7 +105,7 @@ public class ChooseCardTest {
 
         //since the player picked a God that isn't in the deck, he has to choose again
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
-        assertThrows(NullPointerException.class , () -> p1.getCard().getGod());
+        assertThrows(NullPointerException.class, () -> p1.getCard().getGod());
         assertEquals(p1, game.getCurrentPlayer());
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 
@@ -115,7 +115,7 @@ public class ChooseCardTest {
 
         //since the player picked a God that has already been chosen, he has to choose again
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
-        assertThrows(NullPointerException.class , () -> p1.getCard().getGod());
+        assertThrows(NullPointerException.class, () -> p1.getCard().getGod());
         assertEquals(p1, game.getCurrentPlayer());
         assertEquals(State.CHOOSE_CARD, returnContent.getState());
 

@@ -38,15 +38,16 @@ public class BuildPower<S> extends ActivePower<S> {
      * Method that builds on the chosen cell, considering every case of different God powers
      *
      * @param currentPlayer the player that uses the power
-     * @param cellToBuild the chosen cell to build on
-     * @param adjacency list of cells around the worker
+     * @param cellToBuild   the chosen cell to build on
+     * @param adjacency     list of cells around the worker
      * @return {@code true} if the power is used correctly, {@code false} otherwise
      */
     @Override
     protected boolean useActivePower(Player currentPlayer, Cell cellToBuild, List<Cell> adjacency) {
         if (!constraints.isUnderItself() && !cellToBuild.isFree()) return false;
         if (constraints.isUnderItself() && cellToBuild.getLevel().equals(Level.TOP)) return false;
-        if (!adjacency.contains(workerToUse.getLocation()) && !cellToBuild.equals(workerToUse.getLocation())) return false;
+        if (!adjacency.contains(workerToUse.getLocation()) && !cellToBuild.equals(workerToUse.getLocation()))
+            return false;
 
         if (getAllowedAction().equals(BlockType.DOME))
             return build(cellToBuild, 4);
@@ -61,7 +62,7 @@ public class BuildPower<S> extends ActivePower<S> {
      * dome at any level
      *
      * @param cellToBuild chosen cell to build on
-     * @param level level that wants to be built
+     * @param level       level that wants to be built
      * @return {@code true} after the build is complete
      */
     private boolean build(Cell cellToBuild, int level) {

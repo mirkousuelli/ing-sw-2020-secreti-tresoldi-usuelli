@@ -41,8 +41,6 @@ public class HephaestusTest {
         assertTrue(power1.usePower(player1, empty, board.getAround(empty)));
 
 
-
-
         assertEquals(Level.MIDDLE, empty.getLevel());
         assertEquals(Level.BOTTOM, empty.getPreviousLevel());
         assertEquals(empty, player1.getCurrentWorker().getPreviousBuild());
@@ -70,8 +68,6 @@ public class HephaestusTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
@@ -107,8 +103,6 @@ public class HephaestusTest {
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(Level.GROUND, worker1Player2.getLevel());
@@ -140,8 +134,6 @@ public class HephaestusTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());

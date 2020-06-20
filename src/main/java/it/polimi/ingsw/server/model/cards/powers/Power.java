@@ -15,17 +15,17 @@ import it.polimi.ingsw.server.model.cards.powers.tags.*;
 /**
  * Class that represents the generic power of a God.
  * <p>
- *     It allows us to describe each characteristic of every God.
- *     Different attributes are used to describe a god's power.
- *     For example, Demeter's power allows to build one additional time, so {@code effect} will be {@code Effect.BUILD} and {@code timing} will be {@code Timing.ADDITIONAL}.
+ * It allows us to describe each characteristic of every God.
+ * Different attributes are used to describe a god's power.
+ * For example, Demeter's power allows to build one additional time, so {@code effect} will be {@code Effect.BUILD} and {@code timing} will be {@code Timing.ADDITIONAL}.
  * <p>
- *     The values of the attributes for each god are loaded from a xml file by a xml parser.
- *     So, it is possible to add new gods with only little changes.
+ * The values of the attributes for each god are loaded from a xml file by a xml parser.
+ * So, it is possible to add new gods with only little changes.
  * <p>
- *     This class is immutable, so the xml parser uses a temporary class that extends this class.
- *     The temporary sub-class only has a setter for each attribute of Power.
- *     Powers must have also a constructor which take an instance of the temporary sub-class to initialize by copy its attributes.
- *     Power should have a getter for each attribute of Power.
+ * This class is immutable, so the xml parser uses a temporary class that extends this class.
+ * The temporary sub-class only has a setter for each attribute of Power.
+ * Powers must have also a constructor which take an instance of the temporary sub-class to initialize by copy its attributes.
+ * Power should have a getter for each attribute of Power.
  */
 public class Power<S> {
 
@@ -91,13 +91,13 @@ public class Power<S> {
     /**
      * Implements the algorithm to do the actions related to a God power.
      * <p>
-     *     It analyses the values of the attributes of class Power and performs the right actions for the detected power.
-     *     Each one of these subclasses represents a different type of power.
-     *     That is to say, powers can be active or passive.
-     *     <ol>
-     *         <li>Active powers must be explicitly called to be used. They can be move powers or build ones.
-     *         <li>Passive powers are always active or activated on a particular condition, they cannot be called by the player. They can be malus powers or win condition ones.
-     *     </ol>
+     * It analyses the values of the attributes of class Power and performs the right actions for the detected power.
+     * Each one of these subclasses represents a different type of power.
+     *  is to say, powers can be active or passive.
+     * <ol>
+     *     <li>Active powers must be explicitly called to be used. They can be move powers or build ones.
+     *     <li>Passive powers are always active or activated on a particular condition, they cannot be called by the player. They can be malus powers or win condition ones.
+     * </ol>
      *
      * @return the outcome of the operation.
      *

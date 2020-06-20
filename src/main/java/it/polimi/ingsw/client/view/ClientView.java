@@ -75,7 +75,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     protected Thread asyncReadFromModel() {
-        Thread t = new Thread (
+        Thread t = new Thread(
                 () -> {
                     try {
                         while (isActive()) {
@@ -92,7 +92,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
                                 update();
                             }
                         }
-                    } catch (InterruptedException e){
+                    } catch (InterruptedException e) {
                         if (isActive())
                             LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
                         Thread.currentThread().interrupt();

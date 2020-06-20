@@ -115,6 +115,6 @@ public abstract class SantoriniRunnable<S> implements Runnable {
      * Customizes what the object's {@code run} method does
      *
      * @throws InterruptedException the exception thrown when the thread is interrupted
-     * */
+     */
     protected abstract void startThreads() throws InterruptedException;
 }

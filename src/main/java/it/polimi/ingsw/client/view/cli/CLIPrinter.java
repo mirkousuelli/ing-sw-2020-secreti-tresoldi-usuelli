@@ -11,7 +11,10 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -138,7 +141,7 @@ public class CLIPrinter<S> {
                         : b)
         );
 
-        out.println("You: "+ Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "\n");
+        out.println("You: " + Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "\n");
     }
 
     private void printAvailableGods() {
@@ -207,9 +210,9 @@ public class CLIPrinter<S> {
         }
 
         List<ReducedAnswerCell> cellList = Arrays.stream(reducedBoard)
-                                                 .flatMap(Arrays::stream)
-                                                 .filter(x -> !x.getActionList().contains(ReducedAction.DEFAULT))
-                                                 .collect(Collectors.toList());
+                .flatMap(Arrays::stream)
+                .filter(x -> !x.getActionList().contains(ReducedAction.DEFAULT))
+                .collect(Collectors.toList());
 
         List<ReducedAction> reducedActions = cellList.stream()
                 .map(ReducedAnswerCell::getActionList)
@@ -225,7 +228,7 @@ public class CLIPrinter<S> {
             out.println(
                     cellList.stream()
                             .filter(c -> c.getActionList().contains(action))
-                            .map(c -> "(" + c.getX() + ", " +c.getY() + ")")
+                            .map(c -> "(" + c.getX() + ", " + c.getY() + ")")
                             .reduce(null, (a, b) -> a != null
                                     ? a + ", " + b
                                     : b
@@ -248,7 +251,7 @@ public class CLIPrinter<S> {
         synchronized (clientModel.lock) {
             if (clientModel.isYourTurn())
                 isYourTurn = true;
-            currentPlayer= clientModel.getCurrentPlayer();
+            currentPlayer = clientModel.getCurrentPlayer();
         }
 
         if (isYourTurn)
@@ -286,11 +289,11 @@ public class CLIPrinter<S> {
         else if (initlaFunct != null)
             initlaFunct.accept(stringMap.get(demandType));
 
-       synchronized (clientModel.lock) {
-           ret = clientModel.isYourTurn();
-       }
+        synchronized (clientModel.lock) {
+            ret = clientModel.isYourTurn();
+        }
 
-       return ret;
+        return ret;
     }
 }
 

@@ -96,15 +96,15 @@ public class ChooseWorker implements GameState {
                 return returnError();
             }
 
-        //first save
-        GameMemory.save(game, Lobby.BACKUP_PATH);
+            //first save
+            GameMemory.save(game, Lobby.BACKUP_PATH);
         }
 
         //validate input
-        if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains((Worker) ((Block) chosenWorker).getPawn()))
+        if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains(((Block) chosenWorker).getPawn()))
             return returnError();
 
-        if(cannotMoveAny()) //if currentPlayer cannot move any of his workers
+        if (cannotMoveAny()) //if currentPlayer cannot move any of his workers
             returnContent = removeWorkersAndPlayer(); //then he loses and his workers have to be removed
         else //else he can choose one of his workers
             returnContent = chooseWorker(chosenWorker);
@@ -149,8 +149,7 @@ public class ChooseWorker implements GameState {
 
             //save
             GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
-        }
-        else {
+        } else {
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setState(State.VICTORY);
             returnContent.setPayload(new ReducedPlayer(game.getPlayerList().stream()
@@ -171,7 +170,7 @@ public class ChooseWorker implements GameState {
 
         for (Worker w : currentPlayer.getWorkers()) {
             if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
-                if(Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
+                if (Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
                     // the player has to pick a worker and the game goes to Move state
                     currentPlayer.setCurrentWorker(w);
 

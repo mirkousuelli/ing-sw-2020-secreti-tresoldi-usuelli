@@ -38,8 +38,6 @@ public class ZeusTest {
         assertTrue(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
 
 
-
-
         assertEquals(Level.BOTTOM, worker1Player1.getLevel());
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousBuild());
     }
@@ -67,8 +65,6 @@ public class ZeusTest {
         assertFalse(power1.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
 
 
-
-
         assertEquals(Level.TOP, worker1Player1.getLevel());
         assertEquals(Level.MIDDLE, worker1Player1.getPreviousLevel());
         assertNull(player1.getCurrentWorker().getPreviousBuild());
@@ -93,8 +89,6 @@ public class ZeusTest {
 
         //build with power
         assertFalse(power1.usePower(player1, notUnderItselfCell, board.getAround(notUnderItselfCell)));
-
-
 
 
         assertEquals(Level.GROUND, worker1Player1.getLevel());

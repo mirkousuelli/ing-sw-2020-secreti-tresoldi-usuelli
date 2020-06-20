@@ -12,7 +12,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ChronusTest {
@@ -35,7 +36,7 @@ public class ChronusTest {
         player1.setCard(deck.popCard(God.CHRONUS));
         power1 = (WinConditionPower) player1.getCard().getPower(0);
 
-        Block worker1Player1 = (Block) board.getCell(1,1);
+        Block worker1Player1 = (Block) board.getCell(1, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));
@@ -65,7 +66,7 @@ public class ChronusTest {
         player1.setCard(deck.popCard(God.CHRONUS));
         power1 = (WinConditionPower) player1.getCard().getPower(0);
 
-        Block worker1Player1 = (Block) board.getCell(1,1);
+        Block worker1Player1 = (Block) board.getCell(1, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
         player1.setCurrentWorker(player1.getWorkers().get(0));

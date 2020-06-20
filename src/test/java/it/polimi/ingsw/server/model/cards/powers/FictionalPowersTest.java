@@ -142,7 +142,6 @@ public class FictionalPowersTest {
     }
 
 
-
     private Card fictional2Card() {
         Card fictional2Card = new Card();
         MovePower fictional2Power = new MovePower<>();
@@ -200,8 +199,6 @@ public class FictionalPowersTest {
         movePowerCell3.setLevel(Level.BOTTOM);
 
 
-
-
         //first additional move with power and the bottom-level unmoved worker on a not perim cell
         assertTrue(power.usePower(player1, movePowerCell1, board.getAround(movePowerCell1)));
         assertEquals(worker2Player1, unmovedWorker.getPreviousLocation());
@@ -250,8 +247,6 @@ public class FictionalPowersTest {
         worker2Player1.setLevel(Level.TOP);
 
 
-
-
         //first additional move with power and NOT the bottom-level unmoved worker on a not perim cell
         assertFalse(power.usePower(player1, movePowerCell1, board.getAround(movePowerCell1)));
         assertEquals(worker2Player1, unmovedWorker.getPreviousLocation());
@@ -285,8 +280,6 @@ public class FictionalPowersTest {
         worker2Player1.setLevel(Level.BOTTOM);
 
 
-
-
         //first additional move with power and the bottom-level CURRENT worker on a not perim cell
         assertFalse(power.usePower(player1, movePowerCell1, board.getAround(movePowerCell1)));
         assertEquals(worker2Player1, movedWorker.getPreviousLocation());
@@ -318,8 +311,6 @@ public class FictionalPowersTest {
 
         //set bottom level to the current worker location
         worker2Player1.setLevel(Level.BOTTOM);
-
-
 
 
         //first additional move with power and the bottom-level unmoved worker on a PERIM cell

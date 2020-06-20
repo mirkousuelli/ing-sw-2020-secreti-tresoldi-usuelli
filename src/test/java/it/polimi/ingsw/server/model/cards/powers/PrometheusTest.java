@@ -46,8 +46,6 @@ public class PrometheusTest {
         board.build(player1, emptyBuild);
 
 
-
-
         assertEquals(Level.MIDDLE, emptyBuild.getLevel());
         assertEquals(Level.BOTTOM, emptyBuild.getPreviousLevel());
         assertEquals(emptyBuild, player1.getCurrentWorker().getPreviousBuild());
@@ -80,8 +78,6 @@ public class PrometheusTest {
         assertFalse(board.move(player1, emptyMove));
 
 
-
-
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
         assertEquals(MalusType.MOVE, player1.getMalusList().get(0).getMalusType());
@@ -107,8 +103,6 @@ public class PrometheusTest {
 
         //build with power
         assertFalse(power1.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));
-
-
 
 
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
@@ -138,8 +132,6 @@ public class PrometheusTest {
         assertFalse(power1.usePower(player1, occupiedCell, board.getAround(occupiedCell)));
 
 
-
-
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());
         assertEquals(worker1Player1, player1.getCurrentWorker().getLocation());
         assertEquals(0, player1.getMalusList().size());
@@ -167,8 +159,6 @@ public class PrometheusTest {
 
         //build with power
         assertFalse(power1.usePower(player1, completeTower, board.getAround(completeTower)));
-
-
 
 
         assertEquals(worker1Player1, player1.getCurrentWorker().getPreviousLocation());

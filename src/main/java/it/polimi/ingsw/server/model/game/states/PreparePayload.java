@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 public class PreparePayload {
 
     //PreparePayload is a static class, so its constructor must be private!
-    private PreparePayload() {}
+    private PreparePayload() {
+    }
 
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         if (game == null || timing == null || state == null) return new ArrayList<>();
@@ -155,7 +156,8 @@ public class PreparePayload {
         List<ReducedAnswerCell> ret = new ArrayList<>();
         Cell c;
 
-        if (!Move.isPresentAtLeastOneCellToMoveTo(game, game.getCurrentPlayer().getCurrentWorker().getLocation())) return new ArrayList<>();
+        if (!Move.isPresentAtLeastOneCellToMoveTo(game, game.getCurrentPlayer().getCurrentWorker().getLocation()))
+            return new ArrayList<>();
 
         for (ReducedAnswerCell rac : toReturn) {
             c = game.getBoard().getCell(rac.getX(), rac.getY());
@@ -186,8 +188,7 @@ public class PreparePayload {
         if (state.equals(State.MOVE)) {
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
             tempList = addChangedCells(game, State.MOVE);
-        }
-        else
+        } else
             possibleBuilds = new ArrayList<>();
 
         List<Cell> specialBuilds = new ArrayList<>(game.getBoard().getSpecialBuilds(game.getCurrentPlayer().getCurrentWorker().getLocation(), game.getCurrentPlayer(), timing));

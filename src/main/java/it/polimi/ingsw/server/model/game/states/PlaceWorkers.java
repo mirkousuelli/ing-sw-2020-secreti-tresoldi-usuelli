@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Class that represents the state where each player has to place his workers on the board at the beginning of the game
  */
-public class PlaceWorkers implements GameState{
+public class PlaceWorkers implements GameState {
 
     private final Game game;
 

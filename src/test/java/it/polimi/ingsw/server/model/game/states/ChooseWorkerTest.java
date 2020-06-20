@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ChooseWorkerTest {
@@ -49,14 +49,14 @@ public class ChooseWorkerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        assertEquals("chooseWorker",game.getState().getName());
+        assertEquals("chooseWorker", game.getState().getName());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
-        assertEquals(State.MOVE,returnContent.getState());
+        assertEquals(State.MOVE, returnContent.getState());
         assertEquals(p1.getCurrentWorker(), game.getCurrentPlayer().getWorker(2));
         assertEquals(worker2Player1, p1.getCurrentWorker().getLocation());
     }
@@ -92,7 +92,7 @@ public class ChooseWorkerTest {
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
-        assertEquals(State.CHOOSE_WORKER,returnContent.getState());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
         //assertNull(p1.getCurrentWorker());
     }
 

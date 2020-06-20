@@ -67,8 +67,6 @@ public class PoseidonTest {
         assertTrue(power.usePower(player1, emptyPower3, board.getAround(emptyPower3)));
 
 
-
-
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
         assertEquals(worker2Player1.getPawn(), player1.getWorkers().get(1));
         assertEquals(Level.GROUND, emptyPower.getPreviousLevel());
@@ -113,8 +111,6 @@ public class PoseidonTest {
         assertFalse(power.usePower(player1, emptyPower3, board.getAround(emptyPower3)));
 
 
-
-
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
         assertEquals(worker2Player1.getPawn(), player1.getWorkers().get(1));
         assertEquals(Level.TOP, emptyPower.getPreviousLevel());
@@ -146,8 +142,6 @@ public class PoseidonTest {
         assertFalse(power.usePower(player1, worker1Player1, board.getAround(worker1Player1)));
 
 
-
-
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
         assertEquals(worker2Player1.getPawn(), player1.getWorkers().get(1));
         assertEquals(Level.GROUND, worker1Player1.getPreviousLevel());
@@ -175,8 +169,6 @@ public class PoseidonTest {
 
         //build with power and an unmoved ground-level worker
         assertFalse(power.usePower(player1, notAdjacentCell, board.getAround(notAdjacentCell)));
-
-
 
 
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));

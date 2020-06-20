@@ -21,7 +21,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BuildTest {
 
@@ -70,7 +71,7 @@ public class BuildTest {
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel()); // the level of the chosen cell is increased by one after the build
 
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
         assertEquals(State.CHOOSE_WORKER, returnContent.getState()); // the state is now chooseWorker (for the new current player)
     }
 
@@ -117,7 +118,7 @@ public class BuildTest {
         //it checks that the impossible build is actually not allowed
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState()); // the player has to build again
-        assertEquals(p1,game.getCurrentPlayer()); // the current player isn't changed since the build wasn't correctly made
+        assertEquals(p1, game.getCurrentPlayer()); // the current player isn't changed since the build wasn't correctly made
         assertEquals(Level.TOP, cellToBuildOn.getLevel()); // the level of the cell isn't changed
     }
 
@@ -163,7 +164,7 @@ public class BuildTest {
         //it checks that the player cannot build under itself (only zeus can)
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState());
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
     }
 
@@ -208,7 +209,7 @@ public class BuildTest {
         //it checks that it's not possible to build on a dome
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState()); // the player has to build again
-        assertEquals(p1,game.getCurrentPlayer()); // the current player isn't changed since the build wasn't correctly made
+        assertEquals(p1, game.getCurrentPlayer()); // the current player isn't changed since the build wasn't correctly made
         assertEquals(Level.DOME, cellToBuildOn.getLevel()); // the level of the cell isn't changed
     }
 
@@ -221,8 +222,6 @@ ________________________________________________________________________________
     TESTS ON GODS POWER
 ___________________________________________________________________________________________________________________________________
 */
-
-
 
 
     // ATLAS: Your Worker may build a dome at any level.
@@ -268,10 +267,9 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(Level.DOME, cellToBuildOn.getLevel()); // the level of the chosen cell is increased by one after the build
 
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
         assertEquals(State.CHOOSE_WORKER, returnContent.getState()); // the state is now chooseWorker (for the new current player)
     }
-
 
 
     // CHRONUS: You also win when there are at least five Complete Towers on the board.
@@ -294,8 +292,8 @@ ________________________________________________________________________________
         game.assignCard(God.CHRONUS);
         power1 = (WinConditionPower) p1.getCard().getPower(0);
 
-        Block worker1Player1 = (Block) board.getCell(1,1);
-        Block chosenCell = (Block) board.getCell(2,2);
+        Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block chosenCell = (Block) board.getCell(2, 2);
 
 
         p1.initializeWorkerPosition(1, worker1Player1);
@@ -319,7 +317,6 @@ ________________________________________________________________________________
         assertEquals(State.VICTORY, returnContent.getState());
 */
     }
-
 
 
     // DEMETER: Your Worker may build one additional time, but not on the same space.
@@ -431,7 +428,7 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
         assertEquals(State.CHOOSE_WORKER, rc.getState());
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
     }
 
     // Hestia: Can build a second time but not on a perimeter cell
@@ -488,7 +485,7 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(Level.BOTTOM, cell2.getLevel());
         assertEquals(State.CHOOSE_WORKER, rc.getState());
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
     }
 
     @Test
@@ -553,9 +550,8 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
         assertEquals(Level.BOTTOM, cellToBuildOn2.getLevel());
         assertEquals(State.CHOOSE_WORKER, rc.getState());
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
     }
-
 
 
     // ZEUS: Your Worker may build a block under itself.
@@ -600,7 +596,7 @@ ________________________________________________________________________________
         //it checks that the player build under itself since he has zeus
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
-        assertEquals(p2,game.getCurrentPlayer()); // the current player is now the next one
+        assertEquals(p2, game.getCurrentPlayer()); // the current player is now the next one
         assertEquals(Level.MIDDLE, w1p1.getLevel());
     }
 
@@ -718,7 +714,7 @@ ________________________________________________________________________________
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
-        assertEquals(p2,game.getCurrentPlayer());
+        assertEquals(p2, game.getCurrentPlayer());
 
         game.setCurrentPlayer(p1);
         game.setState(State.ADDITIONAL_POWER);
@@ -729,7 +725,7 @@ ________________________________________________________________________________
         assertEquals(AnswerType.ERROR, rc.getAnswerType());
         assertEquals(Level.TOP, cellToBuildOn.getLevel());
         assertEquals(State.ADDITIONAL_POWER, rc.getState());
-        assertEquals(p1,game.getCurrentPlayer()); // the current player is still p1
+        assertEquals(p1, game.getCurrentPlayer()); // the current player is still p1
     }
 
     @Test

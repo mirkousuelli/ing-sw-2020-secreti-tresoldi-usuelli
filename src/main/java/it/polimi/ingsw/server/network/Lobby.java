@@ -126,7 +126,7 @@ public class Lobby {
     void deletePlayer(String player) {
         ServerClientHandler playerHandler = playingConnection.keySet().stream()
                 .filter(serverClientHandler -> serverClientHandler.getName().equals(player))
-                .reduce(null, (a,b) -> a != null
+                .reduce(null, (a, b) -> a != null
                         ? a
                         : b);
 
@@ -139,7 +139,7 @@ public class Lobby {
      * @param player the player connection that is going to be remove
      */
     void deletePlayer(ServerClientHandler player) {
-        if(!playingConnection.containsKey(player)) return;
+        if (!playingConnection.containsKey(player)) return;
 
         View playerToRemove = playingConnection.get(player);
 
@@ -221,7 +221,7 @@ public class Lobby {
     /**
      * Method that adds the player's nickname with its own connection
      *
-     * @param player player's nickname
+     * @param player              player's nickname
      * @param serverClientHandler player's connection
      */
     synchronized void addPlayer(String player, ServerClientHandler serverClientHandler) {

@@ -69,6 +69,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------GETTER-----------------------------------------------------------*/
+
     /**
      * Method that pops the first demand inside the buffer
      *
@@ -98,6 +99,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------SETTER-----------------------------------------------------------*/
+
     /**
      * Method that sets if the connection is activer or not
      *
@@ -134,7 +136,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     void setOkToRestart(boolean okToRestart) {
         synchronized (lockRestart) {
-        isOkToRestart = okToRestart;
+            isOkToRestart = okToRestart;
         }
     }
 
@@ -149,6 +151,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------PREDICATE--------------------------------------------------------*/
+
     /**
      * Method that check demand buffer
      *
@@ -212,6 +215,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------SOCKET-----------------------------------------------------------*/
+
     /**
      * Method that defines a synchronous sending type of answer
      *
@@ -269,8 +273,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 setConnected(false);
                 this.notifyAll();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
         }
 
@@ -281,6 +284,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /*-----------------------------------------------THREAD-----------------------------------------------------------*/
+
     /**
      * Method that defines an asynchronous sending type of answer
      *
@@ -325,43 +329,43 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      */
     private Runnable notifierThread() {
         return () -> {
-                Demand demand;
-                Lobby lobby;
+            Demand demand;
+            Lobby lobby;
 
-                try {
-                    while (isActive()) {
-                        synchronized (buffer) {
-                            while (!hasDemand()) buffer.wait();
-                            demand = getDemand();
-                        }
-
-                        if (!isActive())
-                            break;
-
-                        lobby = server.getLobby();
-                        if (lobby == null) {
-                            setActive(false);
-                            break;
-                        }
-
-                        LOGGER.info("Notifying...");
-                        synchronized (lobby.getController()) {
-                            notify(demand);
-                        }
-                        LOGGER.info("Notified");
+            try {
+                while (isActive()) {
+                    synchronized (buffer) {
+                        while (!hasDemand()) buffer.wait();
+                        demand = getDemand();
                     }
-                } catch (InterruptedException e) {
-                    if (isActive())
-                        LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
-                    Thread.currentThread().interrupt();
-                    setActive(false);
 
-                    synchronized (numOfThreadDone) {
-                        numOfThreadDone.getAndIncrement();
-                        numOfThreadDone.notifyAll();
+                    if (!isActive())
+                        break;
+
+                    lobby = server.getLobby();
+                    if (lobby == null) {
+                        setActive(false);
+                        break;
                     }
+
+                    LOGGER.info("Notifying...");
+                    synchronized (lobby.getController()) {
+                        notify(demand);
+                    }
+                    LOGGER.info("Notified");
                 }
-            };
+            } catch (InterruptedException e) {
+                if (isActive())
+                    LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
+                Thread.currentThread().interrupt();
+                setActive(false);
+
+                synchronized (numOfThreadDone) {
+                    numOfThreadDone.getAndIncrement();
+                    numOfThreadDone.notifyAll();
+                }
+            }
+        };
     }
 
     /**
@@ -371,17 +375,17 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      */
     private Runnable watchDogThread() {
         return () -> {
-                try {
-                    synchronized (this) {
-                        while (isActive()) this.wait();
-                    }
-                } catch (InterruptedException e) {
-                    if (isActive())
-                        LOGGER.log(Level.INFO, e, () -> "watchDogThread: Failed to receive!");
-                    Thread.currentThread().interrupt();
-                    setActive(false);
+            try {
+                synchronized (this) {
+                    while (isActive()) this.wait();
                 }
-            };
+            } catch (InterruptedException e) {
+                if (isActive())
+                    LOGGER.log(Level.INFO, e, () -> "watchDogThread: Failed to receive!");
+                Thread.currentThread().interrupt();
+                setActive(false);
+            }
+        };
     }
 
     /**
@@ -433,7 +437,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
-
     /*-----------------------------------------------THREAD HELPER----------------------------------------------------*/
     private void matchRoutine() {
         Demand demand;
@@ -451,8 +454,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             if (newGame) { //newGame
                 newGame(demand);
                 break;
-            }
-            else { //normal gameFlow
+            } else { //normal gameFlow
                 LOGGER.info("Consuming...");
                 synchronized (buffer) {
                     buffer.addLast(demand);
@@ -477,7 +479,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         else
             reloadStart(); //reload
     }
-
 
 
     private void basicInitialization() throws InterruptedException {
@@ -546,7 +547,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             }
         }
     }
-
 
 
     /**
@@ -635,7 +635,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
         } while (toRepeat);
     }
-
 
 
     void callWatchDog(boolean connected) {

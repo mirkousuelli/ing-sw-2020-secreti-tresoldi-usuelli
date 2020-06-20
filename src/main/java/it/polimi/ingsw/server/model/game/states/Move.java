@@ -59,7 +59,7 @@ public class Move implements GameState {
     }
 
     private boolean checkIfContained(List<Cell> possibleMoves, Cell cell) {
-        for (Cell c: possibleMoves) {
+        for (Cell c : possibleMoves) {
             if (c.getX() == cell.getX() && c.getY() == cell.getY())
                 return true;
         }
@@ -116,7 +116,7 @@ public class Move implements GameState {
     /**
      * Method that checks if there is at least one cell to move to from the chosen cell
      *
-     * @param game the current game
+     * @param game         the current game
      * @param cellToMoveTo the cell from which the control is made
      * @return {@code false} if there are no cells to move to from the given cell, {@code true} otherwise
      */
@@ -132,7 +132,8 @@ public class Move implements GameState {
                 .collect(Collectors.toList());
 
         if (remainingCells.isEmpty()) return false;
-        if (remainingCells.size() == 1 && !remainingCells.get(0).isFree() && (!((Block) remainingCells.get(0)).getPawn().equals(game.getCurrentPlayer().getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString()))) return false;
+        if (remainingCells.size() == 1 && !remainingCells.get(0).isFree() && (!((Block) remainingCells.get(0)).getPawn().equals(game.getCurrentPlayer().getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString())))
+            return false;
         if (currentPlayerMalusList.isEmpty()) return true;
 
         return remainingCells.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
@@ -170,11 +171,11 @@ public class Move implements GameState {
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) //if it is asked to use a power
             returnContent = usePower(); //then usePower
         else
-           returnContent = move(); //else it must be a move (verified in Controller), so move!
+            returnContent = move(); //else it must be a move (verified in Controller), so move!
 
 
         Player victorious = ChangeTurn.controlWinCondition(game);
-        if(victorious != null) { //if the current player has won, then notify its victory to everyone!
+        if (victorious != null) { //if the current player has won, then notify its victory to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setPayload(new ReducedPlayer(victorious.getNickName()));
@@ -191,7 +192,7 @@ public class Move implements GameState {
 
         Power p = currentPlayer.getCard().getPower(0);
         if (p.getEffect().equals(Effect.MALUS) && returnContent.getAnswerType().equals(AnswerType.SUCCESS) && //if the current player's god has a malus power
-          ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //and if the current player has activated its god's personal malus
+                ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //and if the current player has activated its god's personal malus
             ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
 
             //save
@@ -243,8 +244,7 @@ public class Move implements GameState {
                 returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
                 returnContent.setState(State.VICTORY);
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
-            }
-            else { //else, which means that no one won in this turn, the game switches to the next state
+            } else { //else, which means that no one won in this turn, the game switches to the next state
                 returnContent.setAnswerType(AnswerType.SUCCESS);
 
                 Effect effect = game.getCurrentPlayer().getCard().getPower(0).getEffect();
@@ -284,8 +284,7 @@ public class Move implements GameState {
         else if (p.getEffect().equals(Effect.BUILD) && p.getPersonalMalus() != null && p.getPersonalMalus().getMalusType().equals(MalusType.MOVE) &&
                 ((BuildPower) p).usePower(currentPlayer, cellToMoveTo, game.getBoard().getAround(cellToMoveTo))) { //else if it's a build power with a move malus and usePower goes well
             returnContent = buildPower(); //go to build
-        }
-        else //if it isn't an active power or usePower doesn't go well
+        } else //if it isn't an active power or usePower doesn't go well
             returnContent = returnError(); //then report error
 
         return returnContent;
@@ -309,8 +308,7 @@ public class Move implements GameState {
         if (((MovePower) p).getNumberOfActionsRemaining() == -1 && p.getConstraints().getNumberOfAdditional() == -1) { //if the current player can move multiple times
             returnContent.setState(State.MOVE); //then remain in move
             returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
-        }
-        else { //else go to build
+        } else { //else go to build
             returnContent.setState(State.BUILD);
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
         }

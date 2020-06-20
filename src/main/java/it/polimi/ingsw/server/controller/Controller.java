@@ -22,6 +22,7 @@ public class Controller implements Observer<ActionToPerformView> {
 
     /**
      * Constructor of the controller
+     *
      * @param model the game which the controller is connected to
      */
     public Controller(Game model) {
@@ -43,7 +44,7 @@ public class Controller implements Observer<ActionToPerformView> {
         }
 
         if (!actionToPerformView.getDemand().getHeader().equals(DemandType.USE_POWER) &&
-          !model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString()) && !model.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
+                !model.getState().getName().equals(actionToPerformView.getDemand().getHeader().toString()) && !model.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
             actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Not permitted")));
             LOGGER.info(() -> "Not permitted!");
             return;
@@ -55,8 +56,7 @@ public class Controller implements Observer<ActionToPerformView> {
         if (returnContent == null || returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             actionToPerformView.getIView().reportError(new Answer<>(AnswerType.ERROR, new ReducedMessage("Error")));
             LOGGER.info(() -> "Error!");
-        }
-        else
+        } else
             model.setState(returnContent.getState());
 
         LOGGER.info(() -> "state: " + model.getState().getName());

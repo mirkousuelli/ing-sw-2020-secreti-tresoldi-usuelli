@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChooseStarterTest {
 
@@ -33,7 +33,7 @@ public class ChooseStarterTest {
 
         game.setState(State.CHOOSE_STARTER);
 
-        assertEquals("chooseStarter",game.getState().getName());
+        assertEquals("chooseStarter", game.getState().getName());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_STARTER, new ReducedMessage("Fabio"))));
         ReturnContent returnContent = game.gameEngine();
@@ -64,6 +64,6 @@ public class ChooseStarterTest {
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_STARTER, returnContent.getState());
-        assertEquals( -1, game.getStarter());
+        assertEquals(-1, game.getStarter());
     }
 }

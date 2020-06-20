@@ -66,7 +66,7 @@ public abstract class ActivePower<S> extends Power<S> {
      * Method that controls that the constraints are verified and there's no active malus on the cell
      *
      * @param currentPlayer the current player
-     * @param cellToUse the cell where to control
+     * @param cellToUse     the cell where to control
      * @return {@code true} if the constraints are verified properly and the cell doesn't have any malus active,
      * {@code false} otherwise
      */
@@ -81,7 +81,7 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(w -> !w.equals(currentWorker))
                     .reduce(null, (w1, w2) -> w1 != null ? w1 : w2);
 
-        if(!verifyWorkerLevel(workerToUse.getLocation())) return false;
+        if (!verifyWorkerLevel(workerToUse.getLocation())) return false;
 
         List<Malus> correctMalus = new ArrayList<>();
         if (effect.equals(Effect.MALUS))
@@ -89,7 +89,8 @@ public abstract class ActivePower<S> extends Power<S> {
                     .filter(m -> m.getMalusType().equals(((Malus) allowedAction).getMalusType()))
                     .collect(Collectors.toList());
 
-        if (!correctMalus.isEmpty() && !ActivePower.verifyMalus(correctMalus, workerToUse.getLocation(), cellToUse)) return false;
+        if (!correctMalus.isEmpty() && !ActivePower.verifyMalus(correctMalus, workerToUse.getLocation(), cellToUse))
+            return false;
 
         return verifyConstraints(cellToUse);
     }
@@ -122,13 +123,14 @@ public abstract class ActivePower<S> extends Power<S> {
      * if we consider Zeus), {@code false} otherwise
      */
     private boolean verifyConstraints(Cell cellToUse) {
-        if (constraints.isPerimCell() && !Cell.isPerim(cellToUse))  return false;
-        if (constraints.isNotPerimCell() && Cell.isPerim(cellToUse))  return false;
+        if (constraints.isPerimCell() && !Cell.isPerim(cellToUse)) return false;
+        if (constraints.isNotPerimCell() && Cell.isPerim(cellToUse)) return false;
         if (constraints.isUnderItself() && !cellToUse.equals(workerToUse.getLocation())) return false;
         if (cellToUse.isComplete()) return false;
 
         if (constraints.isSameCell() && !cellToUse.equals(constraintsMap.get(effect).apply(workerToUse))) return false;
-        if (constraints.isNotSameCell() && cellToUse.equals(constraintsMap.get(effect).apply(workerToUse))) return false;
+        if (constraints.isNotSameCell() && cellToUse.equals(constraintsMap.get(effect).apply(workerToUse)))
+            return false;
 
         if (constraints.isUnderItself())
             return workerToUse.getLocation().equals(cellToUse);
@@ -142,13 +144,14 @@ public abstract class ActivePower<S> extends Power<S> {
      * during the same turn)
      *
      * @param currentPlayer the current player
-     * @param cellToUse the chosen cell
-     * @param adjacency list of cells around the worker
+     * @param cellToUse     the chosen cell
+     * @param adjacency     list of cells around the worker
      * @return {@code true} if the power is used properly, {@code false} if for some reason it wasn't possible to use it
      */
     public boolean usePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency) {
         if (!preamble(currentPlayer, cellToUse)) return false;
-        if (timing.equals(Timing.ADDITIONAL) && numberOfActionsRemaining == 0 && constraints.getNumberOfAdditional() >= 1) return false;
+        if (timing.equals(Timing.ADDITIONAL) && numberOfActionsRemaining == 0 && constraints.getNumberOfAdditional() >= 1)
+            return false;
         if (numberOfActionsRemaining == 0 && constraints.getNumberOfAdditional() == -1) return false;
         if (!useActivePower(currentPlayer, cellToUse, adjacency)) return false;
 
@@ -167,8 +170,8 @@ public abstract class ActivePower<S> extends Power<S> {
      * depending on the power type
      *
      * @param currentPlayer player that uses the power
-     * @param cellToUse cell where to use the power
-     * @param adjacency list of cells around worker's position
+     * @param cellToUse     cell where to use the power
+     * @param adjacency     list of cells around worker's position
      * @return {@code true} if the power is used correctly, {@code false} otherwise
      */
     protected abstract boolean useActivePower(Player currentPlayer, Cell cellToUse, List<Cell> adjacency);
@@ -180,8 +183,8 @@ public abstract class ActivePower<S> extends Power<S> {
      * @return {@code true} if the cell is adjacent to the worker position, {@code false} otherwise
      */
     private boolean isAdjacent(Cell cellToUse) {
-        return (cellToUse.getX() - workerToUse.getLocation().getX() >= -1 && cellToUse.getX() - workerToUse.getLocation().getX() <=1  &&
-                cellToUse.getY() - workerToUse.getLocation().getY() >= -1 && cellToUse.getY() - workerToUse.getLocation().getY() <=1);
+        return (cellToUse.getX() - workerToUse.getLocation().getX() >= -1 && cellToUse.getX() - workerToUse.getLocation().getX() <= 1 &&
+                cellToUse.getY() - workerToUse.getLocation().getY() >= -1 && cellToUse.getY() - workerToUse.getLocation().getY() <= 1);
     }
 
     /**
@@ -191,7 +194,7 @@ public abstract class ActivePower<S> extends Power<S> {
      * The malus can depend on the direction (which can be different depending on the different Gods) that the malus
      * is applied to: for example Persephone forces opponents to move up whenever they can
      *
-     * @param malus the god's mlaus of the current player
+     * @param malus  the god's mlaus of the current player
      * @param worker the current worker
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
@@ -208,16 +211,16 @@ public abstract class ActivePower<S> extends Power<S> {
      * The malus can depend on the direction (which can be different depending on the different Gods) that the malus
      * is applied to: for example Persephone forces opponents to move up whenever they can
      *
-     * @param maluses list of maluses
+     * @param maluses        list of maluses
      * @param workerLocation the location of the worker
-     * @param cellToUse the cell that gets checked
+     * @param cellToUse      the cell that gets checked
      * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
      */
     public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
         List<Malus> malusesFiltered;
         BiPredicate<Cell, Cell> biFunct;
 
-        if (maluses!= null) {
+        if (maluses != null) {
             malusesFiltered = maluses.stream()
                     .filter(malus -> malus.isPermanent() || malus.getNumberOfTurnsUsed() < malus.getNumberOfTurns())
                     .collect(Collectors.toList());

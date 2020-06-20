@@ -21,7 +21,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MoveTest {
 
@@ -274,7 +275,6 @@ ________________________________________________________________________________
 */
 
 
-
     // APOLLO: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated.
     @Test
     void movingWithApolloTest() throws ParserConfigurationException, SAXException {
@@ -324,7 +324,6 @@ ________________________________________________________________________________
         assertEquals(Level.BOTTOM, p1.getWorker(1).getLevel());
         assertEquals(Level.GROUND, p2.getWorker(1).getLevel());
     }
-
 
 
     // ARTEMIS: Your Worker may move one additional time, but not back to its initial space.
@@ -414,8 +413,8 @@ ________________________________________________________________________________
         game.assignCard(God.ATHENA);
         p1.initializeWorkerPosition(1, (Block) board.getCell(0, 0));
         p1.setCurrentWorker(p1.getWorker(1));
-        board.getCell(0,1).setLevel(Level.BOTTOM);
-        board.move(p1, board.getCell(0 ,1));
+        board.getCell(0, 1).setLevel(Level.BOTTOM);
+        board.move(p1, board.getCell(0, 1));
         ChooseCard.applyMalus(game, Timing.END_TURN);
 
         game.setCurrentPlayer(p2);
@@ -434,8 +433,6 @@ ________________________________________________________________________________
         assertEquals(chosenCell.getPawn(), p2.getWorker(1));
         assertNull(w1p2.getPawn());
     }
-
-
 
 
     // MINOTAUR: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level.
@@ -537,7 +534,6 @@ ________________________________________________________________________________
     }
 
 
-
     // PERSEPHONE: If possible, at least one Worker must move up this turn.
     @Test
     void movingWithPersephoneMalusActiveTest() throws ParserConfigurationException, SAXException {
@@ -581,7 +577,6 @@ ________________________________________________________________________________
         assertEquals(State.BUILD, returnContent.getState());
         assertEquals(chosenCell.getPawn(), p2.getWorker(1));
     }
-
 
 
     // TRITON: Each time your Worker moves into a perimeter space, it may immediately move again.
@@ -639,7 +634,7 @@ ________________________________________________________________________________
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
-        rc= game.gameEngine();
+        rc = game.gameEngine();
 
         // it checks that if the player moves to a perimeter cell, he can move his worker again
         assertEquals(AnswerType.SUCCESS, rc.getAnswerType());
@@ -782,7 +777,6 @@ ________________________________________________________________________________
     }
 
 
-
     @Test
     void notMovingUpWithPersephoneMalusActiveTest() throws ParserConfigurationException, SAXException {
         /*@function
@@ -851,8 +845,8 @@ ________________________________________________________________________________
         game.assignCard(God.ATHENA);
         p1.initializeWorkerPosition(1, (Block) board.getCell(0, 0));
         p1.setCurrentWorker(p1.getWorker(1));
-        board.getCell(0,1).setLevel(Level.BOTTOM);
-        board.move(p1, board.getCell(0 ,1));
+        board.getCell(0, 1).setLevel(Level.BOTTOM);
+        board.move(p1, board.getCell(0, 1));
         ChooseCard.applyMalus(game, Timing.END_TURN);
 
         game.setCurrentPlayer(p2);

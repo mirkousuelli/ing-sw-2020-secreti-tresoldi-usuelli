@@ -40,7 +40,7 @@ public class MinotaurTest {
         player1.setCard(deck.popCard(God.MINOTAUR));
         power1 = (MovePower) player1.getCard().getPower(0);
 
-        Block worker1Player1 = (Block) board.getCell(0,0);
+        Block worker1Player1 = (Block) board.getCell(0, 0);
         Block worker1Player2 = (Block) board.getCell(1, 1);
 
         player1.initializeWorkerPosition(1, worker1Player1);
@@ -85,20 +85,18 @@ public class MinotaurTest {
                 return findCell(adjacency, cell.getX() + 1, cell.getY() - 1);
             else
                 return findCell(adjacency, cell.getX() + 1, cell.getY());
-        }
-        else if (currCell.getX() > cell.getX()) {
+        } else if (currCell.getX() > cell.getX()) {
             if (currCell.getY() < cell.getY())
                 return findCell(adjacency, cell.getX() - 1, cell.getY() + 1);
             else if (currCell.getY() > cell.getY())
                 return findCell(adjacency, cell.getX() - 1, cell.getY() - 1);
             else
                 return findCell(adjacency, cell.getX() - 1, cell.getY());
-        }
-        else {
+        } else {
             if (currCell.getY() < cell.getY())
-                return findCell(adjacency, cell.getX() , cell.getY() + 1);
+                return findCell(adjacency, cell.getX(), cell.getY() + 1);
             else if (currCell.getY() > cell.getY())
-                return findCell(adjacency, cell.getX() , cell.getY() - 1);
+                return findCell(adjacency, cell.getX(), cell.getY() - 1);
         }
 
         return null;
@@ -109,7 +107,7 @@ public class MinotaurTest {
          * it identifies the new cell of the opponent's worker
          */
 
-        for (Cell c: list){
+        for (Cell c : list) {
             if (c.getX() == x && c.getY() == y)
                 return c;
         }
@@ -148,8 +146,6 @@ public class MinotaurTest {
 
         //push
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
-
-
 
 
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
@@ -199,8 +195,6 @@ public class MinotaurTest {
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
 
-
-
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
         assertNull(newPos.getPawn());
@@ -242,8 +236,6 @@ public class MinotaurTest {
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
 
-
-
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
 
@@ -280,8 +272,6 @@ public class MinotaurTest {
 
         //push
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));
-
-
 
 
         assertEquals(worker2Player1.getPawn(), player1.getWorkers().get(1));

@@ -146,8 +146,7 @@ public class CLIScanner<S> {
                 if (payload == null) {
                     out.printError();
                     toRepeat = true; //toRepeat because input values are wrong
-                }
-                else {
+                } else {
                     payloadList.add(payload);
                     toRepeat = index(currentState, i); //toRepeat because there are more values to read!
                     if (toRepeat)
@@ -225,7 +224,6 @@ public class CLIScanner<S> {
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
-
     /*---------------------------------------------------PARSER-------------------------------------------------------*/
     private S parseString(String string) {
         return (S) (new ReducedMessage(string));
@@ -259,7 +257,6 @@ public class CLIScanner<S> {
         return (S) (God.parseString(string));
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     /*---------------------------------------------------CHECKER------------------------------------------------------*/
@@ -298,7 +295,7 @@ public class CLIScanner<S> {
     private boolean checkCell(String cellString) {
         ReducedAnswerCell cell = getReducedCell(cellString);
 
-        return  cell == null;
+        return cell == null;
     }
 
     private boolean isToRepeat(String string) {
@@ -365,12 +362,11 @@ public class CLIScanner<S> {
         ret.add(string.charAt(0) - 48);
         ret.add(string.charAt(2) - 48);
 
-        if(clientModel.checkCell(ret.get(0), ret.get(1))) return new ArrayList<>();
+        if (clientModel.checkCell(ret.get(0), ret.get(1))) return new ArrayList<>();
 
         return ret;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     private void skipAdditionalPower(String value) {
@@ -398,7 +394,8 @@ public class CLIScanner<S> {
     }
 
     private void stayInCurrentState(DemandType currentState, boolean toUsePower) {
-        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER)) return;
+        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER))
+            return;
         if (!toUsePower) return;
 
         int numOfAdditional = clientModel.getNumberOfAdditional();

@@ -58,7 +58,7 @@ class ControllerTest {
 
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
-        player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(1,1)));
+        player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 1)));
 
         assertEquals(player1, game.getCurrentPlayer());
         assertEquals(Level.BOTTOM, game.getBoard().getCell(1, 1).getLevel());
@@ -94,7 +94,7 @@ class ControllerTest {
         game.setCurrentPlayer(player1);
         game.setState(State.MOVE);
 
-        player2View.processMessage(new Demand<>(DemandType.MOVE, new ReducedDemandCell(3,1)));
+        player2View.processMessage(new Demand<>(DemandType.MOVE, new ReducedDemandCell(3, 1)));
 
         assertEquals(AnswerType.ERROR, serverStub.answer.getHeader());
         assertEquals(player1, game.getCurrentPlayer());
@@ -131,13 +131,13 @@ class ControllerTest {
         game.assignCard(God.APOLLO);
         game.setState(State.MOVE);
 
-        player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(2,4)));
+        player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(2, 4)));
 
         assertEquals(AnswerType.ERROR, serverStub.answer.getHeader());
         assertEquals(player1, game.getCurrentPlayer());
         //assertEquals(DemandType.BUILD, serverStub.answer.getContext());
         assertNull(chosenCell.getPawn());
-        assertEquals(player1.getCurrentWorker(),worker1player1.getPawn());
+        assertEquals(player1.getCurrentWorker(), worker1player1.getPawn());
     }
 
     @Test
@@ -175,7 +175,7 @@ class ControllerTest {
 
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
-        player1View.processMessage(new Demand<>(DemandType.MOVE, new ReducedDemandCell(2,2)));
+        player1View.processMessage(new Demand<>(DemandType.MOVE, new ReducedDemandCell(2, 2)));
 
         assertEquals(AnswerType.ERROR, serverStub.answer.getHeader());
         assertEquals(player1, game.getCurrentPlayer());

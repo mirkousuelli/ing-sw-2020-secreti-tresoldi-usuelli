@@ -52,8 +52,6 @@ public class PersephoneTest {
         assertFalse(board.move(player2, emptyMove));
 
 
-
-
         assertEquals(worker1Player2, player2.getWorkers().get(0).getLocation());
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
         assertEquals(MalusType.MOVE, player2.getMalusList().get(0).getMalusType());
@@ -88,8 +86,6 @@ public class PersephoneTest {
         assertTrue(power1.usePower(opponents, player1));
         //move up
         assertTrue(board.move(player2, tower));
-
-
 
 
         assertEquals(tower, player2.getWorkers().get(0).getLocation());

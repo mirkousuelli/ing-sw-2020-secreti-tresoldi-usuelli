@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class PlaceWorkersTest {
@@ -34,14 +34,14 @@ public class PlaceWorkersTest {
         game.addPlayer(p2);
 
         List<ReducedWorker> workersPlayer1 = new ArrayList<>();
-        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0,0, false);
-        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2,4, true);
+        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0, 0, false);
+        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2, 4, true);
         workersPlayer1.add(w1p1);
         workersPlayer1.add(w2p1);
 
         List<ReducedWorker> workersPlayer2 = new ArrayList<>();
-        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1,3, false);
-        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 2,2, true);
+        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1, 3, false);
+        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 2, 2, true);
         workersPlayer2.add(w1p2);
         workersPlayer2.add(w2p2);
 
@@ -91,14 +91,14 @@ public class PlaceWorkersTest {
         game.addPlayer(p2);
 
         List<ReducedWorker> workersPlayer1 = new ArrayList<>();
-        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0,0, false);
-        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2,4, true);
+        ReducedWorker w1p1 = new ReducedWorker(p1.nickName, 0, 0, false);
+        ReducedWorker w2p1 = new ReducedWorker(p1.nickName, 2, 4, true);
         workersPlayer1.add(w1p1);
         workersPlayer1.add(w2p1);
 
         List<ReducedWorker> workersPlayer2 = new ArrayList<>();
-        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1,3, false);
-        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 0,0, true);
+        ReducedWorker w1p2 = new ReducedWorker(p2.nickName, 1, 3, false);
+        ReducedWorker w2p2 = new ReducedWorker(p2.nickName, 0, 0, true);
         workersPlayer2.add(w1p2);
         workersPlayer2.add(w2p2);
 

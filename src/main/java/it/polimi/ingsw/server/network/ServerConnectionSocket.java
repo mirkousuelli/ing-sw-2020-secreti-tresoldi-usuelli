@@ -15,7 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,8 +80,7 @@ public class ServerConnectionSocket {
                 socket = serverSocket.accept();
                 handler = new ServerClientHandlerSocket(socket, this);
                 executor.submit(handler);
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Got an Exception, serverSocket closed", e);
                 isActive = false; //In case the serverSocket gets closed
             }
@@ -139,8 +141,7 @@ public class ServerConnectionSocket {
         if (waitingConnection.size() + 1 > lobby.getNumberOfPlayers() && lobby.getNumberOfPlayers() > 0) { //a player (c) has been defeated but the are other players remaining (more than one)
             lobby.deletePlayer(c.getName());
             lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
-        }
-        else if (lobby.getNumberOfPlayers() == -1) { //creator disconnects before selecting the number of players
+        } else if (lobby.getNumberOfPlayers() == -1) { //creator disconnects before selecting the number of players
             if (c.isCreator()) {
                 ServerClientHandlerSocket newCreator = new ArrayList<>(waitingConnection.values()).get(0);
 
@@ -151,8 +152,7 @@ public class ServerConnectionSocket {
                 newCreator.setOkToRestart(false);
                 newCreator.callWatchDog(true);
             }
-        }
-        else {
+        } else {
             for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.send(new Answer<>(AnswerType.CLOSE));
                 waitRestart(serverClientHandler);
@@ -171,7 +171,7 @@ public class ServerConnectionSocket {
     /**
      * Method that operates the proper connection
      *
-     * @param c player's connection
+     * @param c    player's connection
      * @param name player's nickname
      * @return {@code true} connected successfully, {@code false} connection gone wrong
      */
@@ -180,19 +180,17 @@ public class ServerConnectionSocket {
             if (lobby.isReloaded()) {
                 if (connectReload(c, name))
                     return true; //toRepeat
-            }
-            else {
+            } else {
                 Boolean toRepeat = connectBasic(c, name); //if toRepeat is null there is still something to do
                 if (toRepeat != null)
                     return toRepeat;
             }
-        }
-        else //creator
+        } else //creator
             createLobby(c);
 
         waitingConnection.put(name, c); //creator or joiner
 
-        if(canStart()) //add everyone to the game if the number of players is reached
+        if (canStart()) //add everyone to the game if the number of players is reached
             startMatch();
 
         if (!isLobbyReloaded())
@@ -207,8 +205,7 @@ public class ServerConnectionSocket {
         if (waitingConnection.get(name) != null) { //userName already exists --> changeName or exit client-side
             c.send(new Answer<>(AnswerType.ERROR));
             toRepeat = true; //toRepeat
-        }
-        else if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side
+        } else if (waitingConnection.keySet().size() == lobby.getNumberOfPlayers()) { //lobby full --> exit server-side
             c.closeSocket();
             c.setLoggingOut(false);
             toRepeat = false; //not toRepeat because it has to stop
@@ -222,8 +219,7 @@ public class ServerConnectionSocket {
             if (!waitingConnection.keySet().isEmpty()) { //not present in reloaded lobby and someone is already waiting --> changeName or exit client-side
                 c.send(new Answer<>(AnswerType.ERROR));
                 return true; //toRepeat
-            }
-            else //not present in reloaded lobby but no waiting players, so create a new lobby
+            } else //not present in reloaded lobby but no waiting players, so create a new lobby
                 createLobby(c);
         }
 
@@ -239,7 +235,7 @@ public class ServerConnectionSocket {
         waitingConnection.values().stream()
                 .sorted(Comparator.comparing(ServerClientHandler::isCreator, Comparator.reverseOrder()))
                 .collect(Collectors.toList())
-                .forEach( c -> {
+                .forEach(c -> {
                     if (i.get() <= lobby.getNumberOfPlayers()) {
                         lobby.addPlayer(c.getName(), c);
                         i.getAndIncrement();
@@ -280,7 +276,7 @@ public class ServerConnectionSocket {
     /**
      * Method that sets the game players dimension by processing the demand
      *
-     * @param c creator's connection
+     * @param c      creator's connection
      * @param demand demand message received containing number of players information
      * @return {@code true} something went wrong, {@code false} match started
      */
@@ -318,8 +314,7 @@ public class ServerConnectionSocket {
             c.setLoggingOut(true);
             c.closeSocket();
             return false;
-        }
-        else if (response.equals("y")) {
+        } else if (response.equals("y")) {
             if (!alreadyNewGame) {
                 waitingConnection.clear();
                 waitingConnectionFromReload.clear();

@@ -63,7 +63,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     /*------------------------------------------------------THREAD----------------------------------------------------*/
     private Thread asyncReadFromConnection() {
-        Thread t = new Thread (
+        Thread t = new Thread(
                 () -> {
                     try {
                         Answer<S> answerTemp;
@@ -110,7 +110,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         read.join();
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     /*-------------------------------------------------------UPDATE---------------------------------------------------*/
@@ -240,8 +239,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     currentState = DemandType.CHOOSE_WORKER;
                 else
                     currentState = nextState;
-            }
-            else
+            } else
                 isReloaded = false;
         }
     }
@@ -329,7 +327,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             case CARD:
                 List<ReducedCard> reducedCardList = ((List<ReducedCard>) answer.getPayload());
 
-                if (reducedCardList == null || reducedCardList.isEmpty()) return; //safety check, cannot happen normally!
+                if (reducedCardList == null || reducedCardList.isEmpty())
+                    return; //safety check, cannot happen normally!
                 if (deck.isEmpty() || deck.size() > opponents.size() + 1) { //happens only to the creator during chooseDeck
                     deck = reducedCardList;
                     return;
@@ -398,7 +397,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     /*------------------------------------------------------GET-------------------------------------------------------*/
@@ -480,7 +478,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
-
     /*------------------------------------------------------SET-------------------------------------------------------*/
     public synchronized void setNextState(DemandType nextState) {
         this.nextState = nextState;
@@ -494,7 +491,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         this.numberOfAdditional = numberOfAdditional;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     /*---------------------------------------------------PREDICATE----------------------------------------------------*/
@@ -522,7 +518,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return ret;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
-
 
 
     /*-----------------------------------------------------SUPPORT----------------------------------------------------*/

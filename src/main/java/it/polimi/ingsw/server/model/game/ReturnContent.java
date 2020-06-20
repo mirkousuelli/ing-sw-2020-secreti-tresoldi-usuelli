@@ -5,12 +5,12 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 /**
  * Class that represents the content that is returned after every gameEngine
  * <p>
- *      <ol> It contains:
- *          <li> answerType, which is the outcome of the action
- *          <li> payload, containing the element used to make each action (for example if the action is a build, the payload is the reducedDemandCell that corresponds to the cell where the player decided to build)
- *          <li> state, the State that the game changed to after the action are made
- *          <li> changeTurn, that tells when the current player is changed
- *      </ol>
+ * <ol> It contains:
+ *     <li> answerType, which is the outcome of the action
+ *     <li> payload, containing the element used to make each action (for example if the action is a build, the payload is the reducedDemandCell that corresponds to the cell where the player decided to build)
+ *     <li> state, the State that the game changed to after the action are made
+ *     <li> changeTurn, that tells when the current player is changed
+ * </ol>
  *
  * @param <S> the generic parameter of this class
  */

@@ -54,7 +54,7 @@ public class ChangeTurn implements GameState {
      *
      * @return {@code true} if only one player is left in the game, {@code false} otherwise
      */
-    private boolean onePlayerRemaining(){
+    private boolean onePlayerRemaining() {
         return game.getNumPlayers() == 1;
     }
 
@@ -66,9 +66,9 @@ public class ChangeTurn implements GameState {
      */
     public static Player controlWinCondition(Game game) {
         if (game.getPrevState() == null ||
-            game.getCurrentPlayer().getCard() == null ||
-            game.getCurrentPlayer().getCurrentWorker() == null ||
-            game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return null;
+                game.getCurrentPlayer().getCard() == null ||
+                game.getCurrentPlayer().getCurrentWorker() == null ||
+                game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return null;
 
         return game.getPlayerList().stream()
                 .filter(player -> player.getCard().getPower(0).getEffect().equals(Effect.WIN_COND))
@@ -102,7 +102,7 @@ public class ChangeTurn implements GameState {
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
         Player victorious = ChangeTurn.controlWinCondition(game);
-        if(victorious != null || onePlayerRemaining()) {
+        if (victorious != null || onePlayerRemaining()) {
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setState(State.VICTORY);
 
@@ -110,8 +110,7 @@ public class ChangeTurn implements GameState {
                 returnContent.setPayload(new ReducedPlayer(victorious.nickName));
             else
                 returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
-        }
-        else {
+        } else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
             resetPower();
             removeMalus();

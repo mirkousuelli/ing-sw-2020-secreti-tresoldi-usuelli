@@ -193,8 +193,7 @@ public class Build implements GameState {
             if (p.getEffect().equals(Effect.BUILD) && p.getTiming().equals(Timing.ADDITIONAL)) { //if the current player's god has an additional power
                 returnContent = additionalPower(); //then evaluate if it can be used
                 toReturn = (List<ReducedAnswerCell>) returnContent.getPayload();
-            }
-            else {
+            } else {
                 returnContent.setState(State.CHOOSE_WORKER); //else end his turn and start a new one
                 returnContent.setChangeTurn(true);
             }
@@ -239,8 +238,7 @@ public class Build implements GameState {
         ) {
             returnContent.setState(State.CHOOSE_WORKER); //then go to choose worker, end the current turn and start a new one
             returnContent.setChangeTurn(true);
-        }
-        else
+        } else
             returnContent.setState(State.ASK_ADDITIONAL_POWER); //else ask if the current player wants to use the additional power
 
         returnContent.setPayload(payload);

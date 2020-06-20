@@ -41,8 +41,6 @@ public class HestiaTest {
         assertTrue(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(Level.BOTTOM, emptyPower.getLevel());
@@ -72,8 +70,6 @@ public class HestiaTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
@@ -109,8 +105,6 @@ public class HestiaTest {
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
 
-
-
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());
         assertEquals(Level.GROUND, emptyBuild.getPreviousLevel());
         assertEquals(Level.GROUND, worker1Player2.getLevel());
@@ -142,8 +136,6 @@ public class HestiaTest {
         board.build(player1, emptyBuild);
         //build with power
         assertFalse(power1.usePower(player1, emptyPower, board.getAround(emptyPower)));
-
-
 
 
         assertEquals(Level.BOTTOM, emptyBuild.getLevel());

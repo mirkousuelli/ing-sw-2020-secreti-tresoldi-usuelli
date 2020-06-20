@@ -46,8 +46,6 @@ class ApolloTest {
         assertTrue(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
 
 
-
-
         assertEquals(worker1Player1.getPawn(), player2.getWorkers().get(0));
         assertEquals(worker1Player2.getPawn(), player1.getWorkers().get(0));
 
@@ -84,8 +82,6 @@ class ApolloTest {
 
         //swap same player worker
         assertFalse(power1.usePower(player1, worker2Player1, board.getAround(worker2Player1)));
-
-
 
 
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
@@ -125,8 +121,6 @@ class ApolloTest {
         assertFalse(power1.usePower(player1, empty, board.getAround(empty)));
 
 
-
-
         assertEquals(worker1Player1.getPawn(), player1.getWorkers().get(0));
         assertNull(empty.getPawn());
         assertEquals(worker1Player1, player1.getWorkers().get(0).getLocation());
@@ -160,8 +154,6 @@ class ApolloTest {
 
         //swap
         assertFalse(power1.usePower(player1, worker1Player2, board.getAround(worker1Player2)));
-
-
 
 
         assertEquals(worker1Player2.getPawn(), player2.getWorkers().get(0));
