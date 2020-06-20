@@ -127,7 +127,6 @@ public class GameTest {
         //cleans the game and then check that all the pieces of information are reset
         game.clean();
 
-
         assertEquals(board, game.getBoard());
         assertEquals(State.START, game.getPrevState());
         assertEquals(0, game.getChosenGods().size());

@@ -107,10 +107,6 @@ public class Build implements GameState {
             returnContent.setPayload(new ReducedPlayer(victorious.nickName));
         }
 
-
-        if (returnContent.getAnswerType().equals(AnswerType.SUCCESS))
-            PreparePayload.mergeReducedAnswerCellList(((List<ReducedAnswerCell>) returnContent.getPayload()), PreparePayload.removeBlockedWorkers(game));
-
         //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
         GameMemory.save(game.getCurrentPlayer(), State.BUILD, Lobby.BACKUP_PATH);
