@@ -53,11 +53,11 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.HESTIA);
 
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1,6))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 6))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
         assertEquals(Level.MIDDLE, cell1.getLevel());
@@ -92,11 +92,11 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.HESTIA);
 
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1,2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p2,game.getCurrentPlayer());
+        assertEquals(p2, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
         assertEquals(Level.TOP, cell1.getLevel());
@@ -131,11 +131,11 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.HESTIA);
 
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1,2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
         assertEquals(Level.DOME, cell1.getLevel());
@@ -170,11 +170,11 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1,2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState());
         assertEquals(p1.getWorker(1), cell1.getPawn());
@@ -209,11 +209,11 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1,2))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
         assertEquals(State.VICTORY, returnContent.getState());
         assertEquals(p1.getWorker(1), cell1.getPawn());

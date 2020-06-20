@@ -98,8 +98,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/send_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         c.gridy = 3;
         c.gridx = 1;
@@ -118,12 +118,16 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        GUI gui = ((ManagerPanel) panels).getGui();
-        String name = nickText.getText();
-
         if (!e.getSource().equals(sendButton)) return;
-        if (name == null || name.equals("")) {
-            errorMessage.setText("Error! Incorrect nickname...");
+
+        GUI gui = ((ManagerPanel) panels).getGui();
+
+        String name = parseName(nickText.getText());
+        String address = parseAddress(serverAdd.getText());
+        Integer port = parsePort(serverPort.getText());
+
+        if (name.equals("") || address.equals("") || port == null) {
+            errorMessage.setText("Error! Incorrect input...");
             errorMessage.setVisible(true);
             return;
         }
@@ -132,13 +136,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
             gui.getClientModel().getPlayer().setNickname(name);
             gui.generateDemand(DemandType.CONNECT, new ReducedMessage(name));
             error = false;
-        }
-        else
-            gui.initialRequest(
-                    name,
-                    serverAdd.getText(),
-                    Integer.parseInt(serverPort.getText())
-            );
+        } else
+            gui.initialRequest(name, address, port);
 
         sendButton.setEnabled(false);
     }
@@ -156,17 +155,64 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
-        }
-        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
+        } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
             error = true;
             errorMessage.setText("Nickname already existing!");
             errorMessage.setVisible(true);
             sendButton.setEnabled(true);
-        }
-        else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
+        } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
             this.panelIndex.next(this.panels);
             gui.free();
         }
+    }
+
+    private String parseName(String name) {
+        if (name == null)
+            return "";
+        else
+            return name;
+    }
+
+    private String parseAddress(String address) {
+        if (address == null) return "";
+        if (address.equals("")) return "127.0.0.1";
+
+        String[] fields = address.split("\\.");
+
+        if (fields.length != 4) return "";
+
+        int field;
+        int i = 0;
+
+        do {
+            try {
+                field = Integer.parseInt(fields[0]);
+                if (field < 0 || field > 255)
+                    return "";
+                i++;
+            } catch (NumberFormatException e) {
+                return "";
+            }
+        } while (i < 4);
+
+        return address;
+    }
+
+    private Integer parsePort(String portString) {
+        if (portString == null) return null;
+        if (portString.equals("")) return 1337;
+
+        int port;
+
+        try {
+            port = Integer.parseInt(portString);
+            if (port < 0)
+                return null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        return port;
     }
 }

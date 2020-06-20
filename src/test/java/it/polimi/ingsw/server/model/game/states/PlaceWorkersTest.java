@@ -66,15 +66,15 @@ public class PlaceWorkersTest {
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
 
         // check that the picked cells actually have workers, which means that they are not free
-        assertFalse(game.getBoard().getCell(0,0).isFree());
-        assertFalse(game.getBoard().getCell(2,2).isFree());
-        assertFalse(game.getBoard().getCell(1,3).isFree());
-        assertFalse(game.getBoard().getCell(2,4).isFree());
+        assertFalse(game.getBoard().getCell(0, 0).isFree());
+        assertFalse(game.getBoard().getCell(2, 2).isFree());
+        assertFalse(game.getBoard().getCell(1, 3).isFree());
+        assertFalse(game.getBoard().getCell(2, 4).isFree());
 
         // check that any different cell has no workers, which means that it is free
-        assertTrue(game.getBoard().getCell(1,1).isFree());
-        assertTrue(game.getBoard().getCell(4,0).isFree());
-        assertTrue(game.getBoard().getCell(2,3).isFree());
+        assertTrue(game.getBoard().getCell(1, 1).isFree());
+        assertTrue(game.getBoard().getCell(4, 0).isFree());
+        assertTrue(game.getBoard().getCell(2, 3).isFree());
 
     }
 
@@ -105,7 +105,7 @@ public class PlaceWorkersTest {
         game.setCurrentPlayer(game.getPlayer(game.getStarter()));
         game.setState(State.PLACE_WORKERS);
 
-        assertEquals("placeWorkers",game.getState().getName());
+        assertEquals("placeWorkers", game.getState().getName());
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.PLACE_WORKERS, workersPlayer1)));
         ReturnContent returnContent = game.gameEngine();

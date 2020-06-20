@@ -293,8 +293,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     hidePowerButton();
 
                 gui.getClientModel().setAdditionalPowerUsed(numOfAdditional == 1);
-            }
-            else
+            } else
                 hidePowerButton();
         }
 
@@ -312,13 +311,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             if (status.equals(JCellStatus.USE_POWER)) {
                 currentState = DemandType.ADDITIONAL_POWER;
                 gui.getClientModel().setNextState(gui.getClientModel().getPrevState().equals(DemandType.MOVE) ? DemandType.BUILD : DemandType.CHOOSE_WORKER);
-            }
-            else if (status.equals(JCellStatus.BUILD)) {
+            } else if (status.equals(JCellStatus.BUILD)) {
                 currentState = DemandType.BUILD;
                 gui.getClientModel().setNextState(DemandType.CHOOSE_WORKER);
                 hidePowerButton();
-            }
-            else if (status.equals(JCellStatus.MOVE)) {
+            } else if (status.equals(JCellStatus.MOVE)) {
                 currentState = DemandType.MOVE;
                 gui.getClientModel().setNextState(DemandType.BUILD);
                 hidePowerButton();
@@ -362,7 +359,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = ((ManagerPanel) panels).getGui();
         JMap map = game.getJMap();
 
-        List<ReducedAction> reducedActionList  = reducedAnswerCellList.stream()
+        List<ReducedAction> reducedActionList = reducedAnswerCellList.stream()
                 .map(ReducedAnswerCell::getActionList)
                 .flatMap(List::stream)
                 .distinct()
@@ -387,13 +384,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER)) {
                         if (gui.getClientModel().getPrevState().equals(DemandType.MOVE)) {
                             setPossibleUsePowerMove(jCellList);
-                        }
-                        else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD)) {
+                        } else if (gui.getClientModel().getPrevState().equals(DemandType.BUILD)) {
                             setPossibleUsePowerBuild(jCellList);
                             endTurnButton.setEnabled(true);
                         }
-                    }
-                    else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.MOVE))
+                    } else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.MOVE))
                         setPossibleUsePowerMove(jCellList);
                     else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD))
                         setPossibleUsePowerBuild(jCellList);
@@ -467,8 +462,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
                     this.panelIndex.next(this.panels);
                     return;
-                }
-                else
+                } else
                     game.removePlayer(((ReducedPlayer) gui.getAnswer().getPayload()).getNickname());
 
                 if (!gui.getClientModel().isYourTurn()) {
@@ -547,8 +541,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             if (updatedCell.getWorker().isGender()) {
                 prevPlayer.setUpMaleWorker(jCellWorker);
                 prevPlayer.getMaleWorker().setId(updatedCell.getWorker().getId());
-            }
-            else {
+            } else {
                 prevPlayer.setUpFemaleWorker(jCellWorker);
                 prevPlayer.getFemaleWorker().setId(updatedCell.getWorker().getId());
             }

@@ -55,7 +55,6 @@ public class MiscTest {
         Malus verifyMalus = new Malus();
 
 
-
         permanentMalus.setPermanent(true);
         permanentMalus.setNumberOfTurns(3);
         permanentMalus.setMalusType(MalusType.BUILD);
@@ -86,9 +85,6 @@ public class MiscTest {
         player1.initializeWorkerPosition(1, worker1player1);
         player1.setCurrentWorker(player1.getWorker(1));
         player1.getWorker(1).setPreviousLocation(prevLoc);
-
-
-
 
 
         assertNotEquals(permanentMalus, nonPermanentMalus);

@@ -107,8 +107,7 @@ public class ManagerPanel extends JPanel {
                     ((JBlockDecorator) cell).buildUp();
 
                 ((JBlockDecorator) cell).addDecoration(JCellStatus.DOME);
-            }
-            else {
+            } else {
                 while (cell.getStatus().ordinal() < reducedAnswerCell.getLevel().toInt() && !cell.getStatus().equals(JCellStatus.TOP))
                     ((JBlockDecorator) cell).buildUp();
             }
@@ -124,8 +123,7 @@ public class ManagerPanel extends JPanel {
                 jPlayer.setUpMaleWorker(jCellWorker);
                 jPlayer.getMaleWorker().setId(2);
                 currentWorker = true;
-            }
-            else {
+            } else {
                 jPlayer.setUpFemaleWorker(jCellWorker);
                 jPlayer.getFemaleWorker().setId(1);
             }

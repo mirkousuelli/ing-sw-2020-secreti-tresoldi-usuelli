@@ -93,7 +93,7 @@ public class Power<S> {
      * <p>
      * It analyses the values of the attributes of class Power and performs the right actions for the detected power.
      * Each one of these subclasses represents a different type of power.
-     *  is to say, powers can be active or passive.
+     * is to say, powers can be active or passive.
      * <ol>
      *     <li>Active powers must be explicitly called to be used. They can be move powers or build ones.
      *     <li>Passive powers are always active or activated on a particular condition, they cannot be called by the player. They can be malus powers or win condition ones.

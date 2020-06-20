@@ -54,7 +54,7 @@ public class AskAdditionalPowerTest {
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.BUILD, returnContent.getState());
 
@@ -83,7 +83,7 @@ public class AskAdditionalPowerTest {
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p2,game.getCurrentPlayer());
+        assertEquals(p2, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
 
@@ -118,7 +118,7 @@ public class AskAdditionalPowerTest {
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
 
@@ -153,7 +153,7 @@ public class AskAdditionalPowerTest {
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
 
-        assertEquals(p1,game.getCurrentPlayer());
+        assertEquals(p1, game.getCurrentPlayer());
         assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
         assertEquals(State.ADDITIONAL_POWER, returnContent.getState());
 

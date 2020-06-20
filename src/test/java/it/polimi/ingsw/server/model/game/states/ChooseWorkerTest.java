@@ -136,7 +136,7 @@ public class ChooseWorkerTest {
         ReturnContent returnContent = game.gameEngine();
 
         assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
-        assertEquals(State.VICTORY,returnContent.getState());
+        assertEquals(State.VICTORY, returnContent.getState());
     }
 
     @Test
@@ -188,10 +188,10 @@ public class ChooseWorkerTest {
 
         // the player is defeated
         assertEquals(AnswerType.DEFEAT, returnContent.getAnswerType());
-        assertEquals(State.CHOOSE_WORKER,returnContent.getState());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
 
         // the player is removed from the game (with his workers)
-        assertEquals(2,game.getNumPlayers());
+        assertEquals(2, game.getNumPlayers());
         assertEquals(0, p3.getWorkers().size());
 
         // the other players keep playing the match and the current player is switched correctly
