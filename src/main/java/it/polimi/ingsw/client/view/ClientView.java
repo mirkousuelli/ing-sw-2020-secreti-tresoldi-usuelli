@@ -94,7 +94,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
                         }
                     } catch (InterruptedException e) {
                         if (isActive())
-                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException, asyncReadFromModel not working", e);
                         Thread.currentThread().interrupt();
                         setActive(false);
                     }
@@ -112,7 +112,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
             clientConnectionSocket = new ClientConnectionSocket<>(ip, port);
             clientConnectionSocket.setClientView(this);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException");
+            LOGGER.log(Level.SEVERE, "Got an IOException", e);
             System.exit(1);
         }
 

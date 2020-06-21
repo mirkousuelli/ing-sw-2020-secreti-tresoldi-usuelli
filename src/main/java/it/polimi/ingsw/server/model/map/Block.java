@@ -41,7 +41,8 @@ public class Block implements Cell {
         }
     }
 
-    public Block(){}
+    public Block() {
+    }
 
     @Override
     public int getX() {
@@ -63,11 +64,11 @@ public class Block implements Cell {
     }
 
     public Pawn getPawn() {
-       return this.pawn;
+        return this.pawn;
     }
 
     @Override
-    public void setX(int newX){
+    public void setX(int newX) {
         if (newX >= 0 && newX < 5) {
             this.x = newX;
         }

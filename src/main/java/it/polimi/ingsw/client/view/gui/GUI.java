@@ -34,6 +34,7 @@ public class GUI<S> extends ClientView<S> {
         }
 
         Thread read = asyncReadFromModel();
+
         read.join();
     }
 

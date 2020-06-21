@@ -94,7 +94,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                         }
                     } catch (InterruptedException e) {
                         if (isActive())
-                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException, asyncReadFromConnection not working", e);
                         Thread.currentThread().interrupt();
                         setActive(false);
                     }
@@ -107,6 +107,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     @Override
     protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromConnection();
+
         read.join();
     }
     /*----------------------------------------------------------------------------------------------------------------*/

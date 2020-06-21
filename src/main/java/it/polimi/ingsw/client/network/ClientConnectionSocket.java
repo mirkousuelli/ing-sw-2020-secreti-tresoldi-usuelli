@@ -78,7 +78,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                             }
 
                             if (temp == null) { //server ko
-                                LOGGER.info("KO");
+                                LOGGER.info("Server ko!!!");
                                 System.exit(1);
                             } else {
                                 LOGGER.info("Queueing...");
@@ -123,7 +123,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                         }
                     } catch (Exception e) {
                         if (isActive())
-                            LOGGER.log(Level.SEVERE, "Got an unexpected exception, asyncWrite not working", e);
+                            LOGGER.log(Level.SEVERE, "Got an unexpected exception, asyncWriteToSocket not working", e);
                         setActive(false);
                         Thread.currentThread().interrupt();
                     }
@@ -157,7 +157,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                         }
                     } catch (InterruptedException e) {
                         if (isActive())
-                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException", e);
+                            LOGGER.log(Level.SEVERE, "Got an unexpected InterruptedException, consumer not working", e);
                         Thread.currentThread().interrupt();
                         setActive(false);
                     }
@@ -173,6 +173,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         Thread read = asyncReadFromSocket();
         Thread write = asyncWriteToSocket();
         Thread consumer = consumerThread();
+
         read.join();
         write.join();
         consumer.join();

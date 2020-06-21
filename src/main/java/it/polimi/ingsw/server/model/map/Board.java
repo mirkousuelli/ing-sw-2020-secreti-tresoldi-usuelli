@@ -172,7 +172,7 @@ public class Board implements Cloneable {
     }
 
     private boolean isNotDefaultMovePower(Power mp, Player player, Cell c, Timing timing) {
-        return !player.getWorkers().contains((Worker) ((Block) c).getPawn()) &&
+        return !player.getWorkers().contains(((Block) c).getPawn()) &&
                 !mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing);
     }
 
@@ -195,22 +195,28 @@ public class Board implements Cloneable {
      * @return list of cells where a special build is possible
      */
     public List<Cell> getSpecialBuilds(Cell cell, Player player, Timing timing) {
+        List<Cell> walkableAround = getAround(cell).stream()
+                .filter(Cell::isWalkable)
+                .collect(Collectors.toList());
 
-        List<Cell> around = getAround(cell).stream().filter(Cell::isWalkable).filter(Cell::isFree).collect(Collectors.toList());
         List<Cell> toReturn = new ArrayList<>();
-        List<Power> activePowerList = player.getCard().getPowerList().stream().filter(power -> power.getEffect().equals(Effect.BUILD)).filter(power -> power.getTiming().equals(timing)).collect(Collectors.toList());
 
-        if (activePowerList.stream().map(Power::getConstraints).map(Constraints::isUnderItself).distinct().reduce(false, (a, b) -> a ? true : b))
-            around.add(player.getCurrentWorker().getLocation());
+        List<Power> activePowerList = player.getCard().getPowerList().stream()
+                .filter(power -> power.getEffect().equals(Effect.BUILD) && power.getTiming().equals(timing))
+                .collect(Collectors.toList());
 
-        for (Cell c : around) {
-            for (Power bp : activePowerList) {
-                if (((BuildPower) bp).preamble(player, c)) {
-                    if (!(bp.getAllowedAction().equals(BlockType.NOT_DOME) && c.getLevel().equals(Level.TOP)))
-                        toReturn.add(c);
-                }
-            }
-        }
+        boolean areThereUnderItselfBuildPower = activePowerList.stream()
+                .map(Power::getConstraints)
+                .anyMatch(Constraints::isUnderItself);
+
+        if (areThereUnderItselfBuildPower)
+            walkableAround.add(player.getCurrentWorker().getLocation());
+
+        activePowerList.forEach(bp ->
+                walkableAround.stream()
+                        .filter(c -> ((BuildPower) bp).preamble(player, c) && !(bp.getAllowedAction().equals(BlockType.NOT_DOME) && c.getLevel().equals(Level.TOP)))
+                        .forEach(toReturn::add)
+        );
 
         return toReturn;
     }

@@ -63,24 +63,22 @@ public class ServerConnectionSocket {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ServerClientHandlerSocket handler;
         ExecutorService executor = Executors.newCachedThreadPool();
-        Socket socket = null;
+        Socket socket;
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             LOGGER.info("Server ready");
 
             isActive = true;
-            while (isActive) {
+            do {
                 socket = serverSocket.accept();
                 handler = new ServerClientHandlerSocket(socket, this);
                 executor.submit(handler);
-            }
-
-            executor.shutdown();
-            if (socket != null)
-                socket.close();
+            } while (isActive);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, port not available", e); //port not available
             isActive = false;
+        } finally {
+            executor.shutdown();
         }
     }
 
@@ -282,13 +280,13 @@ public class ServerConnectionSocket {
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
         int numOfPls = Integer.parseInt(value);
 
-        if (demand.getHeader() == DemandType.CREATE_GAME && (numOfPls == 2 || numOfPls == 3)) {
-            if (!lobby.isReloaded() || numOfPls == lobby.getGame().getNumPlayers()) {
-                lobby.setNumberOfPlayers(numOfPls);
-                if (canStart()) //add everyone to the game if the number of players is reached
-                    startMatch();
-                return false;
-            }
+        if (demand.getHeader() == DemandType.CREATE_GAME &&
+                (numOfPls == 2 || numOfPls == 3) &&
+                (!lobby.isReloaded() || numOfPls == lobby.getGame().getNumPlayers())) {
+            lobby.setNumberOfPlayers(numOfPls);
+            if (canStart()) //add everyone to the game if the number of players is reached
+                startMatch();
+            return false;
         }
 
         c.send(new Answer<>(AnswerType.ERROR));

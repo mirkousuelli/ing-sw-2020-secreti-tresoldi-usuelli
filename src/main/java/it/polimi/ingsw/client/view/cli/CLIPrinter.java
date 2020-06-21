@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 public class CLIPrinter<S> {
 
     private ClientModel<S> clientModel;
-    private final PrintStream out;
+    private final PrintStream out = new PrintStream(System.out, true);
     private final EnumMap<DemandType, String> stringMap;
     private final EnumMap<DemandType, Consumer<String>> initialMap;
     private final EnumMap<UpdatedPartType, Runnable> changesMap;
@@ -41,7 +41,6 @@ public class CLIPrinter<S> {
             "                                               \n\n";
 
     CLIPrinter(ClientModel<S> clientModel) {
-        this.out = new PrintStream(System.out, true);
         this.clientModel = clientModel;
 
         stringMap = new EnumMap<>(DemandType.class);

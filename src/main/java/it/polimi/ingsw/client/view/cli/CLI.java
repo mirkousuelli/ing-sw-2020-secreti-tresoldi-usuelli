@@ -89,7 +89,9 @@ public class CLI<S> extends ClientView<S> {
         initialRequest();
         out.setClientModel(clientModel);
         in.setClientModel(clientModel);
+
         Thread read = asyncReadFromModel();
+
         read.join();
     }
 
