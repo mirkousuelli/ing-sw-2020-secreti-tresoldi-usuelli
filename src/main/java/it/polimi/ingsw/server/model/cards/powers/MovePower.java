@@ -62,7 +62,7 @@ public class MovePower<S> extends ActivePower<S> {
         if (cellToMove.isFree()) return false;
         if (workerToUse.getLocation().equals(cellToMove)) return false; //you cannot push yourself!
 
-        Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a shallow copy, it's noy the original from the board
+        Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a deep copy, it's noy the original from the board
         if (workerToPushNewPos == null)
             return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
 

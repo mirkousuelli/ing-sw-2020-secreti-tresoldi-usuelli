@@ -565,23 +565,20 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      * Method that operates the log ing feature
      */
     private void logIn() {
-        Demand demand;
+        Demand demand = null;
         boolean toRepeat;
-
-        if (name != null) return;
-
         do {
-            if (!server.isInWaitingConnectionFromReload(this)) {
+            if (name == null) //only after a new game
                 demand = read();
 
-                if (demand == null)
-                    break;
-                else
-                    name = ((ReducedMessage) demand.getPayload()).getMessage();
-            }
+            if (demand == null && name == null) //error while receive a message
+                break;
+            else if (demand != null) //first time playing the game
+                name = ((ReducedMessage) demand.getPayload()).getMessage();
+            //else only after a new game
 
             synchronized (server) {
-                toRepeat = server.connect(this, name);
+                toRepeat = server.connect(this, name); //connect
             }
         } while (toRepeat);
     }

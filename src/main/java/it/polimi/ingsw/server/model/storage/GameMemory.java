@@ -68,7 +68,14 @@ public class GameMemory {
             tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, GameMemory.class.getResource("/xml/game_grammar.dtd").toURI().toString());
 
         // send DOM to file
-        tr.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(path)));
+        StreamResult streamResult = new StreamResult(new FileOutputStream(path));
+        tr.transform(new DOMSource(doc), streamResult);
+
+        try {
+            streamResult.getOutputStream().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void save(Game game, String path) {

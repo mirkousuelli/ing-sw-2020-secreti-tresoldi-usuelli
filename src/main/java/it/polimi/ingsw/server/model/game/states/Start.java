@@ -62,7 +62,7 @@ public class Start implements GameState {
 
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.START);
-        returnContent.setPayload(new ReducedMessage("null"));
+
         //validate gods
         for (God g : chosenGodList) {
             if (God.parseString(g.toString()) == null)

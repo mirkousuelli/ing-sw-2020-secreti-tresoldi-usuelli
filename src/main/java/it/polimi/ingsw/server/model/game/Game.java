@@ -296,6 +296,7 @@ public class Game extends Observable<Answer> {
         board.clean();
         chosenGods.clear();
         prevState = State.START;
+        parseState(State.START);
         currentPlayer = 0;
         starter = -1;
         players.forEach(Player::reset);

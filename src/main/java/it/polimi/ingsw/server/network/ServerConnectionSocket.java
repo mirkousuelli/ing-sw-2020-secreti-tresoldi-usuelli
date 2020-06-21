@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -89,8 +91,7 @@ public class ServerConnectionSocket {
         Game loadedGame = null;
 
         try {
-            File f = new File(Lobby.BACKUP_PATH);
-            if (f.exists()) {
+            if (Files.exists(Paths.get(Lobby.BACKUP_PATH))) {
                 loadedGame = GameMemory.load(Lobby.BACKUP_PATH);
                 if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
                     loadedGame = null;
@@ -154,8 +155,7 @@ public class ServerConnectionSocket {
             waitingConnection.clear();
 
             //load lobby if there is one to load
-            File f = new File(Lobby.BACKUP_PATH);
-            if (f.exists())
+            if (Files.exists(Paths.get(Lobby.BACKUP_PATH)))
                 loadLobby();
             else
                 lobby = null;
@@ -318,7 +318,7 @@ public class ServerConnectionSocket {
             }
 
             c.setCreator(false);
-            waitingConnectionFromReload.put(c.getName(), c);
+            //waitingConnectionFromReload.put(c.getName(), c);
             return false;
         }
 
@@ -330,6 +330,8 @@ public class ServerConnectionSocket {
      * Method that says if the lobby has been reloaded from a previous storage
      */
     boolean isLobbyReloaded() {
+        if (lobby == null) return false;
+
         boolean isReloaded;
 
         synchronized (lobby.lockLobby) {

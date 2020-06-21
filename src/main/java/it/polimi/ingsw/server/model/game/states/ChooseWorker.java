@@ -87,8 +87,7 @@ public class ChooseWorker implements GameState {
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
 
-        File f = new File(Lobby.BACKUP_PATH);
-        if (!f.exists()) {
+        if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) {
             try {
                 Files.createFile(Paths.get(Lobby.BACKUP_PATH));
             } catch (Exception e) {
@@ -140,12 +139,9 @@ public class ChooseWorker implements GameState {
             returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
             returnContent.setChangeTurn(true);
 
-            //int newCurrentPlayerIndex = (game.getIndex(currentPlayer) + 1) % game.getNumPlayers();
-            //String newCurrentPlayer = game.getPlayer(newCurrentPlayerIndex).getNickName();
             game.getCurrentPlayer().removeWorkers();
             game.removePlayer(currentPlayer.getNickName());
             game.setNumPlayers(game.getNumPlayers() - 1);
-            //game.setCurrentPlayer(game.getPlayer(newCurrentPlayer));
 
             //save
             GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
