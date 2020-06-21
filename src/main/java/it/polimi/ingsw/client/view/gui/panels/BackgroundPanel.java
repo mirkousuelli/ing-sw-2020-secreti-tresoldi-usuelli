@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 
 interface BackgroundPanel {
     String BACKGROUND = "/img/background/";
-    int WIDTH = 1245;//1067;
-    int HEIGHT = 700;//600;
+    int WIDTH = 1067;
+    int HEIGHT = 600;
 
     static ImageIcon getScaledImage(ImageIcon srcImg, int w, int h) {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
