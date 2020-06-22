@@ -4,6 +4,7 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
@@ -63,6 +64,21 @@ public class AskAdditionalPower implements GameState {
     }
 
     /**
+     * Method that returns an error if the player picked a cell where he cannot use an additional power and has to
+     * pick another cell
+     *
+     * @return returnContent, containing an answer of error and the state that remains the same
+     */
+    private ReturnContent returnError() {
+        ReturnContent returnContent = new ReturnContent<>();
+
+        returnContent.setAnswerType(AnswerType.ERROR);
+        returnContent.setState(State.ASK_ADDITIONAL_POWER);
+
+        return returnContent;
+    }
+
+    /**
      * Method that asks the player if he wants to use the additional power. The state then changes depending on the
      * message sent by the player
      *
@@ -72,7 +88,9 @@ public class AskAdditionalPower implements GameState {
         ReturnContent returnContent = new ReturnContent<>();
 
         ReducedMessage response = (ReducedMessage) game.getRequest().getDemand().getPayload();
-        State prevState = game.getPrevState();
+        State prevState = game.getPrevState() != null && (game.getPrevState().equals(State.MOVE) || game.getPrevState().equals(State.BUILD))
+                ? game.getPrevState()
+                : State.parseString(game.getCurrentPlayer().getCard().getPower(0).getEffect().toString());
 
         if (response.getMessage().equals("n")) { //if the current player does not want to use his additional power
             returnContent.setAnswerType(AnswerType.SUCCESS);
@@ -95,10 +113,12 @@ public class AskAdditionalPower implements GameState {
                 returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
             else if (effect.equals(Effect.MOVE) && p.getTiming().equals(Timing.ADDITIONAL)) //if it's an additional move power
                 returnContent.setPayload(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.ADDITIONAL_POWER));
-        }
+        } else
+            returnContent = returnError();
 
         //save
-        GameMemory.save(game.getCurrentPlayer(), State.ASK_ADDITIONAL_POWER, Lobby.BACKUP_PATH);
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), returnContent.getState(), Lobby.BACKUP_PATH);
 
         return returnContent;
     }

@@ -236,11 +236,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         workers = reducedGame.getReducedWorkerList();
         isInitializing = false;
 
-        if (isYourTurn())
-            currentState = reducedGame.getCurrentState();
-        else
-            currentState = DemandType.CHOOSE_WORKER;
-
         for (ReducedPlayer o : opponents) {
             deck.add(o.getCard());
             if (o.getNickname().equals(player.getNickname())) {
@@ -251,6 +246,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
             }
         }
+
+        if (isYourTurn()) {
+            currentState = reducedGame.getCurrentState();
+            if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
+                prevState = DemandType.parseString(player.getCard().getEffect().toString().toLowerCase());
+        }
+        else
+            currentState = DemandType.CHOOSE_WORKER;
 
         isReloaded = true;
     }
@@ -485,6 +488,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
 
     /*------------------------------------------------------SET-------------------------------------------------------*/
+    public synchronized void setPrevState(DemandType prevState) {
+        this.prevState = prevState;
+    }
+
     public synchronized void setNextState(DemandType nextState) {
         this.nextState = nextState;
     }

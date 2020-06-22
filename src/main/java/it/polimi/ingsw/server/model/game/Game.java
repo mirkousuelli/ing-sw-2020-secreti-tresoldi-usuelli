@@ -252,7 +252,9 @@ public class Game extends Observable<Answer> {
      * @return the list of opponents players
      */
     public List<Player> getOpponents() {
-        return players.stream().filter(p -> !getCurrentPlayer().equals(p)).collect(Collectors.toList());
+        return players.stream()
+                .filter(p -> !getCurrentPlayer().equals(p))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -282,9 +284,7 @@ public class Game extends Observable<Answer> {
      * @param player the nickname of the player to remove
      */
     public void removePlayer(String player) {
-        players.removeIf(p -> p.nickName.equals(player));
-
-        if (currentPlayer > players.size() - 1)
+        if (players.removeIf(p -> p.nickName.equals(player)) && currentPlayer > players.size() - 1)
             currentPlayer--;
     }
 

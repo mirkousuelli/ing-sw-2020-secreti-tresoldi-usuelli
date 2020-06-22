@@ -66,8 +66,9 @@ public class AdditionalPower implements GameState {
             returnContent = returnError();
 
         //save
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
-        GameMemory.save(game.getCurrentPlayer(), State.ADDITIONAL_POWER, Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), returnContent.getState(), Lobby.BACKUP_PATH);
 
         return returnContent;
     }

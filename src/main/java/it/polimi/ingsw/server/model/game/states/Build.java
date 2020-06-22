@@ -108,8 +108,9 @@ public class Build implements GameState {
         }
 
         //save
+        GameMemory.save(game, Lobby.BACKUP_PATH);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
-        GameMemory.save(game.getCurrentPlayer(), State.BUILD, Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), returnContent.getState(), Lobby.BACKUP_PATH);
 
         return returnContent;
     }

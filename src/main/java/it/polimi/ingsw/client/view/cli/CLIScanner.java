@@ -379,8 +379,7 @@ public class CLIScanner<S> {
 
         if (clientModel.getPrevState().equals(DemandType.MOVE))
             clientModel.setNextState(DemandType.BUILD);
-
-        if (clientModel.getPrevState().equals(DemandType.BUILD))
+        else if (clientModel.getPrevState().equals(DemandType.BUILD))
             clientModel.setNextState(DemandType.CHOOSE_WORKER);
     }
 
@@ -398,14 +397,14 @@ public class CLIScanner<S> {
     }
 
     private void stayInCurrentState(DemandType currentState, boolean toUsePower) {
-        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER))
-            return;
+        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER)) return;
         if (!toUsePower) return;
 
         int numOfAdditional = clientModel.getNumberOfAdditional();
 
         if (numOfAdditional > 0)
             clientModel.setNumberOfAdditional(numOfAdditional - 1);
+
         if (numOfAdditional != 1)
             clientModel.setNextState(clientModel.getCurrentState());
 

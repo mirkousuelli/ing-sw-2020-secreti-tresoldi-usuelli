@@ -4,12 +4,10 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
-import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
-import it.polimi.ingsw.communication.message.payload.ReducedGame;
-import it.polimi.ingsw.communication.message.payload.ReducedMessage;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
 import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
@@ -20,9 +18,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Class which implements the client-server handling as defined in its interface
@@ -45,7 +43,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private String name;
 
     final Object lockRestart = new Object();
-    private final AtomicInteger numOfThreadDone = new AtomicInteger();
+
+    private final Object lockAsyncRead = new Object();
+    private boolean isAsyncReadEnded = false;
+
+    private final Object lockNotifier = new Object();
+    private boolean isNotifierEnded = false;
 
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
@@ -308,10 +311,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             } catch (InterruptedException e) {
                 if (isActive())
                     LOGGER.log(Level.INFO, e, () -> "asyncReadFromSocketThread: Failed to receive!");
-                Thread.currentThread().interrupt();
                 setActive(false);
 
-                incrementNumOfInterruptedThread();
+                synchronized (lockAsyncRead) {
+                    isAsyncReadEnded = true;
+                    lockAsyncRead.notifyAll();
+                }
+
+                Thread.currentThread().interrupt();
             }
         };
     }
@@ -343,10 +350,14 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             } catch (InterruptedException e) {
                 if (isActive())
                     LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
-                Thread.currentThread().interrupt();
                 setActive(false);
 
-                incrementNumOfInterruptedThread();
+                synchronized (lockNotifier) {
+                    isNotifierEnded = true;
+                    lockNotifier.notifyAll();
+                }
+
+                Thread.currentThread().interrupt();
             }
         };
     }
@@ -365,8 +376,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             } catch (InterruptedException e) {
                 if (isActive())
                     LOGGER.log(Level.INFO, e, () -> "watchDogThread: Failed to receive!");
-                Thread.currentThread().interrupt();
                 setActive(false);
+                Thread.currentThread().interrupt();
             }
         };
     }
@@ -399,10 +410,17 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 readerThread.interrupt();
                 notifierThread.interrupt();
 
-                synchronized (numOfThreadDone) {
-                    while (numOfThreadDone.get() < 2) numOfThreadDone.wait();
+                synchronized (lockAsyncRead) {
+                    while (!isAsyncReadEnded) lockAsyncRead.wait();
+                    isAsyncReadEnded = false;
                 }
-                numOfThreadDone.set(0);
+
+                synchronized (lockNotifier) {
+                    while (!isNotifierEnded) lockNotifier.wait();
+                    isNotifierEnded = false;
+                }
+
+
             } while (isConnected());
         } catch (InterruptedException e) {
             if (isActive())
@@ -484,15 +502,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             reloadStart(); //reload
     }
 
-    private void incrementNumOfInterruptedThread() {
-        synchronized (numOfThreadDone) {
-            numOfThreadDone.getAndIncrement();
-            if (numOfThreadDone.get() == 2)
-                numOfThreadDone.notifyAll();
-        }
-    }
-
-
     private void basicInitialization() throws InterruptedException {
         if (creator) //createGame
             numberOfPlayers();
@@ -549,11 +558,19 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 else if (loadedGame.getState().getName().equals(State.BUILD.toString()))
                     payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
                 else if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
-                    if (loadedGame.getPrevState().equals(State.MOVE))
+                    if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
                         payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
-                    if (loadedGame.getPrevState().equals(State.BUILD))
+                    else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
                         payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
                 }
+                else if (loadedGame.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
+                    if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
+                        payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.ADDITIONAL_POWER), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE));
+                    else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
+                        payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.BUILD));
+                }
+
+                payload.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList()));
 
                 send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }

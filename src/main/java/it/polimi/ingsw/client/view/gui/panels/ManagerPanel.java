@@ -7,7 +7,9 @@ import it.polimi.ingsw.client.view.gui.component.map.JBlockDecorator;
 import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.map.Level;
 
 import javax.swing.*;
@@ -90,6 +92,12 @@ public class ManagerPanel extends JPanel {
         );
 
         //cardLayout
+        if (gui.getClientModel().getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER) && gui.getClientModel().isYourTurn()) {
+            if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.MOVE))
+                gui.getClientModel().setPrevState(DemandType.MOVE);
+            else if (gui.getClientModel().getPlayer().getCard().getEffect().equals(Effect.BUILD))
+                gui.getClientModel().setPrevState(DemandType.BUILD);
+        }
         addPanel(new GamePanel(cardLayout, this));
 
         //start

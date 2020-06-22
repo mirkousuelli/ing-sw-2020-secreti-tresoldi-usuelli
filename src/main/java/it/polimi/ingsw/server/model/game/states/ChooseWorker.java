@@ -110,7 +110,7 @@ public class ChooseWorker implements GameState {
 
         //save
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
-        GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.BACKUP_PATH);
+        GameMemory.save(game.getCurrentPlayer(), returnContent.getState(), Lobby.BACKUP_PATH);
 
         return returnContent;
     }

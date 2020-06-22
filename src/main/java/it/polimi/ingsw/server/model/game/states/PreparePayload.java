@@ -124,7 +124,7 @@ public class PreparePayload {
     }
 
 
-    static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
+    public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
         List<ReducedAnswerCell> ret = new ArrayList<>(toReturn);
 
