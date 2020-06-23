@@ -128,7 +128,7 @@ public class ServerConnectionSocket {
 
         if (waitingConnection.isEmpty()) return; //safety check
 
-        if (waitingConnection.size() + 1 > lobby.getNumberOfPlayers() && lobby.getNumberOfPlayers() > 0) { //a player (disconnectedPlayer) has been defeated but the are other players remaining (more than one)
+        if (lobby.getNumberOfPlayers() > 0 && waitingConnection.size() + 1 > lobby.getGame().getNumPlayers()) { //a player (disconnectedPlayer) has been defeated but the are other players remaining (more than one)
             System.out.println("AAAAA");
             lobby.deletePlayer(disconnectedPlayer.getName());
             lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
