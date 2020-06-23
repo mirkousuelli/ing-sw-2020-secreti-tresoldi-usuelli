@@ -13,6 +13,7 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.ActivePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
 import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
@@ -23,6 +24,8 @@ import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
+
+import java.util.HashMap;
 
 /**
  * Class that represents the state where the current player changes and the win conditions are checked
@@ -58,27 +61,6 @@ public class ChangeTurn implements GameState {
         return game.getNumPlayers() == 1;
     }
 
-    /**
-     * Method that controls if any win condition is verified (some God powers add a secondary win condition)
-     *
-     * @param game the game where to check
-     * @return {@code true} if any win condition is verified, {@code false} if not
-     */
-    public static Player controlWinCondition(Game game) {
-        if (game.getPrevState() == null ||
-                game.getCurrentPlayer().getCard() == null ||
-                game.getCurrentPlayer().getCurrentWorker() == null ||
-                game.getCurrentPlayer().getCurrentWorker().getPreviousLocation() == null) return null;
-
-        return game.getPlayerList().stream()
-                .filter(player -> player.getCard().getPower(0).getEffect().equals(Effect.WIN_COND))
-                .filter(player -> ((WinConditionPower) player.getCard().getPower(0)).usePower(game))
-                .reduce(null, (a, b) -> a != null
-                        ? a
-                        : b
-                );
-    }
-
     @Override
     public String getName() {
         return State.CHANGE_TURN.toString();
@@ -101,15 +83,11 @@ public class ChangeTurn implements GameState {
         returnContent.setState(State.CHANGE_TURN);
 
         // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        Player victorious = ChangeTurn.controlWinCondition(game);
-        if (victorious != null || onePlayerRemaining()) {
+        if (onePlayerRemaining()) {
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setState(State.VICTORY);
 
-            if (victorious != null)
-                returnContent.setPayload(new ReducedPlayer(victorious.nickName));
-            else
-                returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
+            returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
         } else {
             // Otherwise the current player is changed and the game goes to ChooseWorker state
             resetPower();

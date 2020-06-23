@@ -17,10 +17,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.cards.powers.ActivePower;
-import it.polimi.ingsw.server.model.cards.powers.BuildPower;
-import it.polimi.ingsw.server.model.cards.powers.MovePower;
-import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.*;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Malus;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
@@ -168,11 +165,11 @@ public class Move implements GameState {
             returnContent = move(); //else it must be a move (verified in Controller), so move!
 
 
-        Player victorious = ChangeTurn.controlWinCondition(game);
-        if (victorious != null) { //if the current player has won, then notify its victory to everyone!
+        if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.WIN_COND) &&
+            ((WinConditionPower) currentPlayer.getCard().getPower(0)).usePower(game)) { //if the current player has won, then notify its victory to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
-            returnContent.setPayload(new ReducedPlayer(victorious.getNickName()));
+            returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));
         }
 
 

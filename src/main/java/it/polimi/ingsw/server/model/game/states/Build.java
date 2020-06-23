@@ -17,8 +17,10 @@ import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
@@ -100,8 +102,10 @@ public class Build implements GameState {
             returnContent = build(); //else it must be a build (verified in Controller), so build!
 
 
-        Player victorious = ChangeTurn.controlWinCondition(game);
-        if (victorious != null) {
+        Player victorious = game.getPlayerList().stream()
+                .filter(player -> !player.getCard().getGod().equals(God.CHRONUS))
+                .reduce(null, (a, b) -> a != null ? a : b);
+        if (victorious != null && game.getPlayerList().stream().anyMatch(player -> player.getCard().getGod().equals(God.CHRONUS) && ((WinConditionPower) player.getCard().getPower(0)).usePower(game))) {
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setPayload(new ReducedPlayer(victorious.nickName));
