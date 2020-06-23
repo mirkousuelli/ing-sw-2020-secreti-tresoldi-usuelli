@@ -456,42 +456,33 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     public void updateFromModel() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
-        JMap map = game.getJMap();
-        DemandType currentState = gui.getClientModel().getCurrentState();
         List<ReducedAnswerCell> updatedCells;
 
         AnswerType answerType = (AnswerType) gui.getAnswer().getHeader();
         switch (answerType) {
             case CHANGE_TURN:
                 mg.getGame().setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
-                gui.free();
-                return;
+                break;
 
             case DEFEAT:
                 if (gui.getClientModel().isEnded()) {
                     mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
                     ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
                     this.panelIndex.next(this.panels);
-                    return;
                 } else
                     game.removePlayer(((ReducedPlayer) gui.getAnswer().getPayload()).getNickname());
-
-                if (!gui.getClientModel().isYourTurn()) {
-                    gui.free();
-                    return;
-                }
                 break;
 
             case CLOSE:
                 mg.addPanel(new EndPanel("saved", panelIndex, panels));
                 this.panelIndex.next(this.panels);
-                return;
+                break;
 
             case VICTORY:
                 String player = ((ReducedPlayer) gui.getAnswer().getPayload()).getNickname();
                 mg.addPanel(new EndPanel(player.equals(gui.getClientModel().getPlayer().getNickname()) ? "victory" : "lost", panelIndex, panels));
                 this.panelIndex.next(this.panels);
-                return;
+                break;
 
             case SUCCESS:
                 updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
@@ -499,11 +490,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 updateWorkers(updatedCells);
                 updateBuild(updatedCells);
 
-                if (!gui.getClientModel().isYourTurn()) {
+                if (!gui.getClientModel().isYourTurn())
                     updateMove();
-                    gui.free();
-                    return;
-                }
+                else
+                    updateCells();
                 break;
 
             case ERROR:
@@ -512,6 +502,16 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             default:
                 break;
         }
+
+        gui.free();
+    }
+
+    private void updateCells() {
+        ManagerPanel mg = (ManagerPanel) panels;
+        GUI gui = mg.getGui();
+        JMap map = game.getJMap();
+        DemandType currentState = gui.getClientModel().getCurrentState();
+        List<ReducedAnswerCell> updatedCells;
 
         switch (currentState) {
             case PLACE_WORKERS:
@@ -533,6 +533,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             default:
                 break;
         }
+
     }
 
     private void updateWorkers(List<ReducedAnswerCell> updatedCells) {
