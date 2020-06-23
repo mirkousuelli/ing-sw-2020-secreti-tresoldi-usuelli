@@ -48,7 +48,7 @@ public abstract class JCell extends JButton {
     void clear() {
         status = JCellStatus.NONE;
 
-        validate();
         repaint();
+        validate();
     }
 }

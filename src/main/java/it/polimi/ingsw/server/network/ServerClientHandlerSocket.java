@@ -410,17 +410,17 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 readerThread.interrupt();
                 notifierThread.interrupt();
 
-                synchronized (lockAsyncRead) {
-                    while (!isAsyncReadEnded) lockAsyncRead.wait();
-                    isAsyncReadEnded = false;
+                if (isConnected()) {
+                    synchronized (lockAsyncRead) {
+                        while (!isAsyncReadEnded) lockAsyncRead.wait();
+                        isAsyncReadEnded = false;
+                    }
+
+                    synchronized (lockNotifier) {
+                        while (!isNotifierEnded) lockNotifier.wait();
+                        isNotifierEnded = false;
+                    }
                 }
-
-                synchronized (lockNotifier) {
-                    while (!isNotifierEnded) lockNotifier.wait();
-                    isNotifierEnded = false;
-                }
-
-
             } while (isConnected());
         } catch (InterruptedException e) {
             if (isActive())
@@ -584,6 +584,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     private void logIn() {
         Demand demand = null;
         boolean toRepeat;
+
         do {
             if (name == null) //only after a new game
                 demand = read();

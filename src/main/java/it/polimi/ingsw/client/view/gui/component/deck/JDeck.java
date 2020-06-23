@@ -137,5 +137,8 @@ public class JDeck extends JPanel implements ActionListener {
     public void clean() {
         gods.clear();
         current = 0;
+
+        repaint();
+        validate();
     }
 }

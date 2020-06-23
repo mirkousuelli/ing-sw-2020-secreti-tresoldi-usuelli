@@ -140,8 +140,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case SUCCESS:
-                checkIsCreator(answerTemp);
                 updateCurrentState();
+                checkIsCreator(answerTemp);
                 updateReduceObjects(answerTemp);
                 updateNextState();
                 break;
@@ -191,7 +191,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private void clearAll() {
         prevState = DemandType.CONNECT;
-        currentState = DemandType.CONNECT;
+        currentState = DemandType.NEW_GAME;
         nextState = DemandType.CONNECT;
         isNewGame = false;
         isInitializing = true;
@@ -219,7 +219,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                     currentState = nextState;
             } else
                 isReloaded = false;
-        }
+        } else if (currentState.equals(DemandType.NEW_GAME))
+            currentState = DemandType.CONNECT;
     }
 
     private synchronized void updateNextState() {

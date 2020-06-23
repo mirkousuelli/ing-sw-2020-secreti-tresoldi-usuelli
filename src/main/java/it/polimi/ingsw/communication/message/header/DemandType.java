@@ -117,7 +117,7 @@ public enum DemandType {
 
         //repeat
         if (currentState.equals(NEW_GAME))
-            return START;
+            return CONNECT;
 
         //pick the next one in numerical order
         return Arrays.stream(DemandType.values())

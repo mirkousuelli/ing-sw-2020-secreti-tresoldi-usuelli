@@ -303,7 +303,10 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     public void clean() {
-        Arrays.stream(cellButton).flatMap(Arrays::stream).forEach(JCell::clear);
+        Arrays.stream(cellButton)
+                .flatMap(Arrays::stream)
+                .forEach(JCell::clear);
+
         activeCells.clear();
         powerCells.clear();
         currentWorker = null;
@@ -313,7 +316,7 @@ public class JMap extends JPanel implements ActionListener {
         turn = JCellStatus.NONE;
         gamePanel = null;
 
-        validate();
         repaint();
+        validate();
     }
 }

@@ -11,10 +11,10 @@ import java.awt.event.ActionListener;
 
 public class EndPanel extends SantoriniPanel implements ActionListener {
     private static final String EXTENSION =  ".png";
-    public static final String VICTORY = "victory" + EXTENSION;
-    public static final String DEFEAT = "defeat" + EXTENSION;
-    public static final String LOST = "lost" + EXTENSION;
-    public static final String SAVE = "saved" + EXTENSION;
+    private static final String VICTORY = "victory" + EXTENSION;
+    private static final String DEFEAT = "defeat" + EXTENSION;
+    private static final String LOST = "lost" + EXTENSION;
+    private static final String SAVE = "saved" + EXTENSION;
 
     private final String type;
 
@@ -23,7 +23,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
     private static final int BUTTON_SIZE = 150;
 
-    public EndPanel(String type, CardLayout panelIndex, JPanel panels) {
+    EndPanel(String type, CardLayout panelIndex, JPanel panels) {
         super(type + EXTENSION, panelIndex, panels);
         this.type = type + EXTENSION;
 

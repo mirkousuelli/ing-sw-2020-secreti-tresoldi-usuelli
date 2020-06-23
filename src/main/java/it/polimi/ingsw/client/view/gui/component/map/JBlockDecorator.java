@@ -116,7 +116,7 @@ public class JBlockDecorator extends JCell {
 
         removeDecoration();
 
-        validate();
         repaint();
+        validate();
     }
 }
