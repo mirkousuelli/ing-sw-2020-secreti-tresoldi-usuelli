@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EndPanel extends SantoriniPanel implements ActionListener {
-    private static final String EXTENSION =  ".png";
+    private static final String EXTENSION = ".png";
     private static final String VICTORY = "victory" + EXTENSION;
     private static final String DEFEAT = "defeat" + EXTENSION;
     private static final String LOST = "lost" + EXTENSION;
@@ -41,7 +41,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         //c.insets = new Insets(400,0,0,0);
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/play_again.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
 
         playAgainButton = new JButton(icon);
@@ -70,7 +70,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         c.anchor = GridBagConstraints.SOUTHEAST;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/quit_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
 
         quitButton = new JButton(icon);
@@ -96,7 +96,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         GUI gui = mg.getGui();
         JButton src = ((JButton) e.getSource());
 
-        switch(src.getName()) {
+        switch (src.getName()) {
             case "playAgain":
                 if (!type.equals(DEFEAT)) {
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("y"));
@@ -105,7 +105,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
                     mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
                     mg.getCurrentPanel().updateFromModel();
-                    this.panelIndex.next(this.panels);
+                    panelIndex.next(panels);
                     gui.free();
                 }
                 break;

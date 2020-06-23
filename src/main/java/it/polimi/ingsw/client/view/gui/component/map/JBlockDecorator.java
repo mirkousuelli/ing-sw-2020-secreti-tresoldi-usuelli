@@ -53,8 +53,8 @@ public class JBlockDecorator extends JCell {
         else
             add(this.worker.getPawn().getComponent());
 
-        repaint();
         validate();
+        repaint();
     }
 
     public void removeWorker() {
@@ -64,8 +64,8 @@ public class JBlockDecorator extends JCell {
             removeAll();
         worker = null;
 
-        repaint();
         validate();
+        repaint();
     }
 
     public boolean isFree() {
@@ -85,10 +85,10 @@ public class JBlockDecorator extends JCell {
     }
 
     public void buildUp() {
-        if (((JBlock)this.origin).isTop()) {
+        if (((JBlock) this.origin).isTop()) {
             this.addDecoration(JCellStatus.DOME);
         } else {
-            ((JBlock)this.origin).buildUp();
+            ((JBlock) this.origin).buildUp();
             this.setStatus(this.origin.getStatus());
         }
     }
@@ -116,7 +116,7 @@ public class JBlockDecorator extends JCell {
 
         removeDecoration();
 
-        repaint();
         validate();
+        repaint();
     }
 }

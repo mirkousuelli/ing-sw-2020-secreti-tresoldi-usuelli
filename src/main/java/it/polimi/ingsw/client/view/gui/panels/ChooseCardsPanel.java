@@ -23,9 +23,9 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JPanel chosenList;
     private JLabel godsBack;
     private JLabel cloudBack;
-    private JDeck deck;
-    private JDeck chosenDeck;
-    private JPanel layers;
+    private final JDeck deck;
+    private final JDeck chosenDeck;
+    private final JPanel layers;
     private JCard retro;
     private JLabel text;
 
@@ -87,8 +87,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         layers.add(chosenList, c);
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/clouds.png"));
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         cloudBack = new JLabel(icon);
         cloudBack.setOpaque(false);
         cloudBack.setLayout(new GridBagLayout());
@@ -144,7 +144,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.gridy = 0;
         c.weightx = 0f;
         c.weighty = 1;
-        c.insets = new Insets(0,0,0,20);
+        c.insets = new Insets(0, 0, 0, 20);
 
         choice.removeAll();
         text.setOpaque(false);
@@ -158,7 +158,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         choice.add(retro, c);
 
         c.gridx = 1;
-        c.insets = new Insets(0,20,0,0);
+        c.insets = new Insets(0, 20, 0, 0);
         choice.add(god.getCard(), c);
 
         deck.setCurrent(god);
@@ -177,7 +177,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 0f;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0,0,-20,0);
+        c.insets = new Insets(0, 0, -20, 0);
 
         godsList = new JPanel();
         godsList.setLayout(new OverlayLayout(godsList));
@@ -188,8 +188,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         layers.add(godsList, c, 0);
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/gods_menu.png"));
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 155, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BackgroundPanel.WIDTH, 155, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         godsBack = new JLabel(icon);
         godsBack.setOpaque(false);
         godsBack.setLayout(new GridBagLayout());
@@ -223,8 +223,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         activeButton = new JButton(icon);
         activeButton.setOpaque(false);
@@ -246,8 +246,8 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
         c.weighty = 1;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/remove_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         removeButton = new JButton(icon);
         removeButton.setOpaque(false);
@@ -261,7 +261,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch(((JButton)e.getSource()).getName()) {
+        switch (((JButton) e.getSource()).getName()) {
             case "send":
                 //changing panel
                 choice.removeAll();
@@ -281,7 +281,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
                 mg.getGame().setJDeck(newDeck);
                 mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
-                this.panelIndex.next(this.panels);
+                panelIndex.next(this.panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_DECK, chosenDeck.getGodList());
                 break;
 
@@ -291,7 +291,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 deck.showMiniList();
                 if (numPlayer == chosenDeck.getNum()) {
                     ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/send_button.png"));
-                    Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+                    Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
                     icon = new ImageIcon(img);
                     activeButton.setIcon(icon);
                     activeButton.setName("send");
@@ -306,7 +306,7 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 chosenDeck.showMiniList();
                 if (activeButton.getName().equalsIgnoreCase("send")) {
                     ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
-                    Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+                    Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
                     icon = new ImageIcon(img);
                     activeButton.setIcon(icon);
                     activeButton.setName("choose");
@@ -316,11 +316,10 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case "mini":
-                JMini obj = (JMini)e.getSource();
+                JMini obj = (JMini) e.getSource();
                 if (deck.getMiniList().contains(obj)) {
                     setChoice(deck, deck.getJGod(obj.getGod()));
-                }
-                else if (chosenDeck.getMiniList().contains(obj)) {
+                } else if (chosenDeck.getMiniList().contains(obj)) {
                     setChoice(chosenDeck, chosenDeck.getJGod(obj.getGod()));
                 }
                 break;

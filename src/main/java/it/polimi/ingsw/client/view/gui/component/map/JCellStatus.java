@@ -42,6 +42,7 @@ public enum JCellStatus {
         }
     }
 
+
     public static JCellStatus getWorkerType(int index, boolean gender) {
         switch (index) {
             case 0:
@@ -68,7 +69,7 @@ public enum JCellStatus {
         }
     }
 
-    public static JCellStatus parseInt (int level) {
+    public static JCellStatus parseInt(int level) {
         switch (level) {
             case 1:
                 return BOTTOM;

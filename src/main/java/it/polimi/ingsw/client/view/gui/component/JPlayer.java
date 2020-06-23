@@ -149,6 +149,7 @@ public class JPlayer extends JButton implements ActionListener {
         activeLabel.setLayout(new GridBagLayout());
         activeLabel.add(text, new GridBagConstraints());
         add(activeLabel, new GridBagConstraints());
+
         validate();
         repaint();
     }
@@ -158,6 +159,7 @@ public class JPlayer extends JButton implements ActionListener {
 
         removeAll();
         add(text, new GridBagConstraints());
+
         validate();
         repaint();
     }

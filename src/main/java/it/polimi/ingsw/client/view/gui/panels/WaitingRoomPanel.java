@@ -25,8 +25,8 @@ public class WaitingRoomPanel extends SantoriniPanel {
 
     private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/waiting.png"));
-        Image img = icon.getImage().getScaledInstance( 800, 400, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(800, 400, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         JLabel stand = new JLabel(icon);
         stand.setOpaque(false);
 
@@ -51,7 +51,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
 
         if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
-            this.panelIndex.next(this.panels);
+            panelIndex.next(panels);
             return;
         }
 
@@ -77,7 +77,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
                 case GOD:
                     mg.addPanel(new ChooseCardsPanel(panelIndex, panels, mg.getGame().getJDeck()));
                     ((ChooseCardsPanel) mg.getCurrentPanel()).numPlayer = gui.getClientModel().getNumberOfPlayers();
-                    this.panelIndex.next(this.panels);
+                    panelIndex.next(panels);
                     break;
 
                 case CARD:
@@ -85,7 +85,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
                         mg.addPanel(new ChooseGodPanel(panelIndex, panels, mg.getGame().getJDeck()));
                         ((ChooseGodPanel) mg.getCurrentPanel()).enableChoose(gui.getClientModel().isYourTurn());
                         mg.getCurrentPanel().updateFromModel();
-                        this.panelIndex.next(this.panels);
+                        panelIndex.next(panels);
                     }
                     break;
 
@@ -116,7 +116,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
         }
     }
 
-    private static int toColorIndex (String color) {
+    private static int toColorIndex(String color) {
         switch (color) {
             case "cyan":
                 return 0;

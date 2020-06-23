@@ -20,15 +20,15 @@ public class JGod {
     }
 
     public JCard getCard() {
-        return this.card;
+        return card;
     }
 
     public JMini getMini() {
-        return this.mini;
+        return mini;
     }
 
     public God getGod() {
-        return this.mini.getGod();
+        return mini.getGod();
     }
 
     public void setDescription(String description) {
@@ -37,6 +37,6 @@ public class JGod {
     }
 
     public String getDescription() {
-        return this.description;
+        return description;
     }
 }

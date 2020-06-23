@@ -39,7 +39,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         GridBagConstraints a = new GridBagConstraints();
         a.gridx = 0;
         a.gridy = 2;
-        a.insets = new Insets(0,-5,50,0);
+        a.insets = new Insets(0, -5, 50, 0);
 
         errorMessage = new JLabel("Nickname already existing!");
         errorMessage.setForeground(Color.RED);
@@ -50,8 +50,8 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/stand.png"));
-        Image img = icon.getImage().getScaledInstance( 540, 540, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(540, 540, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         stand = new JLabel(icon);
         stand.setOpaque(false);
         stand.setLayout(new GridBagLayout());
@@ -66,7 +66,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         a.anchor = GridBagConstraints.WEST;
         a.weightx = 1;
         a.weighty = 0f;
-        a.insets = new Insets(250,40,0,0);
+        a.insets = new Insets(250, 40, 0, 0);
         nickText = new JTextField(14);
         nickText.setVisible(true);
         stand.add(nickText, a);
@@ -77,7 +77,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         c.anchor = GridBagConstraints.EAST;
         c.weightx = 1;
         c.weighty = 0.1;
-        c.insets = new Insets(-135,0,0,70);
+        c.insets = new Insets(-135, 0, 0, 70);
         serverAdd = new JTextField(10);
         serverAdd.setVisible(true);
         stand.add(serverAdd, c);
@@ -88,7 +88,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         d.anchor = GridBagConstraints.EAST;
         d.weightx = 1;
         d.weighty = 0.1;
-        d.insets = new Insets(0,0,0,70);
+        d.insets = new Insets(0, 0, 0, 70);
         serverPort = new JTextField(10);
         serverPort.setVisible(true);
         stand.add(serverPort, d);
@@ -154,7 +154,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
         if (gui.getClientModel().getCurrentState().equals(DemandType.CREATE_GAME)) {
             mg.addPanel(new NumPlayerPanel(panelIndex, panels));
-            this.panelIndex.next(this.panels);
+            panelIndex.next(panels);
         } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
             error = true;
             errorMessage.setText("Nickname already existing!");
@@ -162,7 +162,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
             sendButton.setEnabled(true);
         } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {
             mg.addPanel(new WaitingRoomPanel(panelIndex, panels));
-            this.panelIndex.next(this.panels);
+            panelIndex.next(panels);
             gui.free();
         }
     }

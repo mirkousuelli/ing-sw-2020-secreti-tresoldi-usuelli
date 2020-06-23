@@ -101,7 +101,7 @@ public class ManagerPanel extends JPanel {
         addPanel(new GamePanel(cardLayout, this));
 
         //start
-        this.cardLayout.next(this);
+        cardLayout.next(this);
         gui.free();
     }
 
