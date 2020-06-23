@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.view;
 
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.observer.Observable;
-import it.polimi.ingsw.communication.observer.Observer;
+import it.polimi.ingsw.server.observer.Observable;
+import it.polimi.ingsw.server.observer.Observer;
 
 public abstract class View extends Observable<ActionToPerformView> implements Observer<Answer>, IView {
 

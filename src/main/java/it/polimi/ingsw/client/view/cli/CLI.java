@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
-import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
@@ -16,7 +15,6 @@ public class CLI<S> extends ClientView<S> {
         super(clientModel);
         out = new CLIPrinter<>(clientModel);
         in = new CLIScanner<>(out, clientModel);
-
     }
 
     public CLI() {
@@ -43,6 +41,7 @@ public class CLI<S> extends ClientView<S> {
                     isYourTurn = true;
                 break;
 
+            case CLOSE:
             case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;
@@ -52,10 +51,6 @@ public class CLI<S> extends ClientView<S> {
                 out.printSuccess();
                 isYourTurn = out.printChanges(clientModel.getCurrentState());
                 break;
-
-            case CLOSE:
-                setActive(false);
-                return;
 
             case CHANGE_TURN:
                 out.printCurrentPlayer();
@@ -80,8 +75,7 @@ public class CLI<S> extends ClientView<S> {
     private void startUI() {
         if (clientModel.getCurrentState().equals(DemandType.START)) return;
 
-        if (clientModel.isYourTurn() || getAnswer().getHeader().equals(AnswerType.VICTORY) || getAnswer().getHeader().equals(AnswerType.ERROR))
-            createDemand(in.requestInput(clientModel.getCurrentState()));
+        createDemand(in.requestInput(clientModel.getCurrentState()));
     }
 
     @Override

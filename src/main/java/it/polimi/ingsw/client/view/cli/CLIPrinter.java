@@ -272,10 +272,24 @@ public class CLIPrinter<S> {
     }
 
     void printEnd(String context) {
-        if (clientModel.isEnded())
-            out.println("It's your " + context + "!");
-        else
-            out.println("It's " + ((ReducedPlayer) clientModel.getAnswer().getPayload()).getNickname() + "'s " + context + "!");
+        switch (context.toLowerCase()) {
+            case "victory":
+            case "defeat":
+                ReducedPlayer player = clientModel.getPlayer(((ReducedPlayer) clientModel.getAnswer().getPayload()).getNickname());
+
+                if (clientModel.isEnded())
+                    out.println("It's your " + context + "!");
+                else
+                    out.println("It's " + Color.RESET + player.getColor() + player.getNickname() + Color.RESET + "'s " + context + "!");
+                break;
+
+            case "close":
+                out.println("game saved and closed!");
+                break;
+
+            default:
+                break;
+        }
     }
 
     boolean printChanges(DemandType demandType) {

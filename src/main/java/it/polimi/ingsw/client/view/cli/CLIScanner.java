@@ -47,7 +47,6 @@ public class CLIScanner<S> {
         this.out = out;
         this.clientModel = clientModel;
 
-
         messageMap = new EnumMap<>(DemandType.class);
         toRepeatMap = new EnumMap<>(DemandType.class);
         indexMap = new EnumMap<>(DemandType.class);
@@ -136,6 +135,8 @@ public class CLIScanner<S> {
             value = readLine();
             if (value != null)
                 toRepeat = repeat(currentState, value);
+            else
+                return null;
 
             if (toRepeat)
                 out.printError(); //toRepeat because input values are wrong
@@ -164,13 +165,16 @@ public class CLIScanner<S> {
     }
 
     String readLine() {
+        String value;
+
         try {
-            return in.readLine();
+            value = in.readLine();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException", e);
+            value = null;
         }
 
-        return null;
+        return value;
     }
 
     private boolean repeat(DemandType currentState, String value) {
@@ -397,7 +401,8 @@ public class CLIScanner<S> {
     }
 
     private void stayInCurrentState(DemandType currentState, boolean toUsePower) {
-        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER)) return;
+        if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER))
+            return;
         if (!toUsePower) return;
 
         int numOfAdditional = clientModel.getNumberOfAdditional();

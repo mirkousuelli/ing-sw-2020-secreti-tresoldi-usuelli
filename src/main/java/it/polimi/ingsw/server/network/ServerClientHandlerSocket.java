@@ -6,7 +6,7 @@ import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.*;
 import it.polimi.ingsw.communication.message.xml.FileXML;
-import it.polimi.ingsw.communication.observer.Observable;
+import it.polimi.ingsw.server.observer.Observable;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Class which implements the client-server handling as defined in its interface

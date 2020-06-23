@@ -1,4 +1,4 @@
-package it.polimi.ingsw.communication.observer;
+package it.polimi.ingsw.server.observer;
 
 public interface Observer<T> {
 

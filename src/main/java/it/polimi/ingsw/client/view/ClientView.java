@@ -139,7 +139,6 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
             case DEFEAT:
             case VICTORY:
                 becomeFree();
-                releaseInputStream();
                 break;
 
             default:
@@ -148,8 +147,4 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     protected abstract void update();
-
-    protected void releaseInputStream() {
-
-    }
 }
