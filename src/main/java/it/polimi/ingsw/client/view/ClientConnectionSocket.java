@@ -1,7 +1,5 @@
-package it.polimi.ingsw.client.network;
+package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.SantoriniRunnable;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.xml.FileXML;
@@ -22,7 +20,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
     private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
 
-    public ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
+    ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
         super();
         socket = new Socket(ip, port);
         file = new FileXML(socket);
@@ -30,15 +28,15 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         buffer = new LinkedList<>();
     }
 
-    public ClientConnectionSocket(String ip, int port) throws IOException {
+    ClientConnectionSocket(String ip, int port) throws IOException {
         this(ip, port, null);
     }
 
-    public void setClientView(ClientView<S> clientView) {
+    void setClientView(ClientView<S> clientView) {
         this.clientView = clientView;
     }
 
-    public Answer<S> getFirstAnswer() {
+    Answer<S> getFirstAnswer() {
         Answer<S> answer;
 
         synchronized (buffer) {
@@ -48,7 +46,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return answer;
     }
 
-    public boolean hasAnswer() {
+    boolean hasAnswer() {
         boolean ret;
 
         synchronized (buffer) {
@@ -81,6 +79,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 LOGGER.info("Server ko!!!");
                                 System.exit(1);
                             } else {
+                                clientView.freeOnExit(temp.getHeader());
                                 LOGGER.info("Queueing...");
                                 synchronized (buffer) {
                                     buffer.add(temp);

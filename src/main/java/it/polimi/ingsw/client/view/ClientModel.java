@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.communication.Color;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.DemandType;
@@ -39,7 +38,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
     private static final int DIM = 5;
 
-    public ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
+    ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
         super();
 
         reducedBoard = new ReducedAnswerCell[DIM][DIM];

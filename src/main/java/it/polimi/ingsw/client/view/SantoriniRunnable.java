@@ -14,8 +14,8 @@ public abstract class SantoriniRunnable<S> implements Runnable {
     private Demand<S> demand;
     private Answer<S> answer;
 
-    public final Object lockDemand = new Object();
-    public final Object lockAnswer = new Object();
+    final Object lockDemand = new Object();
+    final Object lockAnswer = new Object();
     public final Object lock = new Object();
 
     private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
@@ -48,7 +48,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
-    public boolean isActive() {
+    boolean isActive() {
         boolean ret;
 
         synchronized (lock) {
@@ -58,13 +58,13 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         return ret;
     }
 
-    public void setActive(boolean active) {
+    void setActive(boolean active) {
         synchronized (lock) {
             isActive = active;
         }
     }
 
-    public boolean isChanged() {
+    boolean isChanged() {
         boolean ret;
 
         synchronized (lock) {
@@ -74,7 +74,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         return ret;
     }
 
-    public void setChanged(boolean changed) {
+    void setChanged(boolean changed) {
         synchronized (lock) {
             isChanged = changed;
         }
@@ -86,7 +86,7 @@ public abstract class SantoriniRunnable<S> implements Runnable {
         }
     }
 
-    public Demand<S> getDemand() {
+    Demand<S> getDemand() {
         Demand<S> temp;
 
         synchronized (lockDemand) {

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.network.ClientConnectionSocket;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
@@ -16,7 +16,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     protected ClientModel<S> clientModel;
 
     private boolean isFree = false;
-    public final Object lockFree;
+    final Object lockFree;
 
     protected static final Logger LOGGER = Logger.getLogger(ClientView.class.getName());
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -32,7 +32,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         this(null);
     }
 
-    public void setClientModel(ClientModel<S> clientModel) {
+    private void setClientModel(ClientModel<S> clientModel) {
         this.clientModel = clientModel;
     }
 
@@ -40,7 +40,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         return clientModel;
     }
 
-    public boolean isFree() {
+    boolean isFree() {
         boolean ret;
 
         synchronized (lockFree) {
@@ -50,7 +50,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
-    public void setFree(boolean free) {
+    void setFree(boolean free) {
         synchronized (lockFree) {
             isFree = free;
         }
@@ -66,6 +66,8 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     protected void createDemand(Demand<S> demand) {
+        if (demand == null) return;
+
         setDemand(demand);
         setChanged(true);
 
@@ -131,5 +133,23 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         }
     }
 
+    void freeOnExit(AnswerType answerType) {
+        switch (answerType) {
+            case CLOSE:
+            case DEFEAT:
+            case VICTORY:
+                becomeFree();
+                releaseInputStream();
+                break;
+
+            default:
+                break;
+        }
+    }
+
     protected abstract void update();
+
+    protected void releaseInputStream() {
+
+    }
 }
