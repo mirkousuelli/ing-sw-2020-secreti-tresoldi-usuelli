@@ -4,14 +4,17 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
-import it.polimi.ingsw.communication.message.payload.*;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
+import it.polimi.ingsw.communication.message.payload.ReducedGame;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
+import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.communication.message.xml.FileXML;
-import it.polimi.ingsw.server.observer.Observable;
 import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.game.states.PreparePayload;
+import it.polimi.ingsw.server.observer.Observable;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -561,8 +564,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                         payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
                     else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
                         payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
-                }
-                else if (loadedGame.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
+                } else if (loadedGame.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
                     if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
                         payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.ADDITIONAL_POWER), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE));
                     else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))

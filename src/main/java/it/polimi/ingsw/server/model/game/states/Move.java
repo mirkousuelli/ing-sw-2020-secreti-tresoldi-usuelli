@@ -166,7 +166,7 @@ public class Move implements GameState {
 
 
         if (currentPlayer.getCard().getPower(0).getEffect().equals(Effect.WIN_COND) &&
-            ((WinConditionPower) currentPlayer.getCard().getPower(0)).usePower(game)) { //if the current player has won, then notify its victory to everyone!
+                ((WinConditionPower) currentPlayer.getCard().getPower(0)).usePower(game)) { //if the current player has won, then notify its victory to everyone!
             returnContent.setState(State.VICTORY);
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setPayload(new ReducedPlayer(currentPlayer.getNickName()));

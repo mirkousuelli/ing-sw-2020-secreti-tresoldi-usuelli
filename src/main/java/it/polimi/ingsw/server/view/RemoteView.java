@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.view;
 
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.server.observer.Observer;
 import it.polimi.ingsw.server.network.ServerClientHandler;
+import it.polimi.ingsw.server.observer.Observer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

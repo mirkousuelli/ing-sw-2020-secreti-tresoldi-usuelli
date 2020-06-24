@@ -27,7 +27,6 @@ import it.polimi.ingsw.server.model.map.Worker;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;

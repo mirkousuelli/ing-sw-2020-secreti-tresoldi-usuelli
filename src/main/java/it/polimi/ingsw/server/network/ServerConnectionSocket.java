@@ -168,8 +168,8 @@ public class ServerConnectionSocket {
     /**
      * Method that operates the proper connection
      *
-     * @param player    player's connection
-     * @param name player's nickname
+     * @param player player's connection
+     * @param name   player's nickname
      * @return {@code true} connected successfully, {@code false} connection gone wrong
      */
     synchronized boolean connect(ServerClientHandlerSocket player, String name) {
@@ -273,7 +273,7 @@ public class ServerConnectionSocket {
     /**
      * Method that sets the game players dimension by processing the demand
      *
-     * @param player      creator's connection
+     * @param player creator's connection
      * @param demand demand message received containing number of players information
      * @return {@code true} something went wrong, {@code false} match started
      */

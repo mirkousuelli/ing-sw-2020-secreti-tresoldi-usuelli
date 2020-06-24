@@ -251,8 +251,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             currentState = reducedGame.getCurrentState();
             if (currentState.equals(DemandType.ASK_ADDITIONAL_POWER))
                 prevState = DemandType.parseString(player.getCard().getEffect().toString().toLowerCase());
-        }
-        else
+        } else
             currentState = DemandType.CHOOSE_WORKER;
 
         isReloaded = true;
