@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
 
@@ -101,8 +102,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.add(godsList, c);
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/gods_menu.png"));
-        Image img = icon.getImage().getScaledInstance( BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BackgroundPanel.WIDTH, 130, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         godsBack = new JLabel(icon);
         godsBack.setOpaque(false);
         godsBack.setLayout(new GridBagLayout());
@@ -120,8 +121,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.ipady = -120;
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         chooseButton = new JButton(icon);
         chooseButton.setOpaque(false);
@@ -145,7 +146,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.weightx = 1;
         c.weighty = 0.8;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(30,0,0,0);
+        c.insets = new Insets(30, 0, 0, 0);
 
         choice = new JPanel();
         choice.setLayout(new GridBagLayout());
@@ -163,7 +164,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         c.gridy = 0;
         c.weightx = 0f;
         c.weighty = 1;
-        c.insets = new Insets(0,0,0,20);
+        c.insets = new Insets(0, 0, 0, 20);
 
         retro.removeAll();
         choice.removeAll();
@@ -180,7 +181,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         choice.add(retro, c);
 
         c.gridx = 1;
-        c.insets = new Insets(0,20,0,0);
+        c.insets = new Insets(0, 20, 0, 0);
         choice.add(god.getCard(), c);
 
         deck.setCurrent(god);
@@ -220,9 +221,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch(((JButton)e.getSource()).getName()) {
+        switch (((JButton) e.getSource()).getName()) {
             case "mini":
-                JMini obj = (JMini)e.getSource();
+                JMini obj = (JMini) e.getSource();
                 if (deck.getMiniList().contains(obj)) {
                     setChoice(deck, deck.getJGod(obj.getGod()));
                 }
@@ -248,7 +249,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                     ChooseGodPanel.setGods((ManagerPanel) panels);
                     mg.addPanel(new ChooseStarterPanel(panelIndex, panels, mg.getGame()));
                     ((ChooseStarterPanel) mg.getCurrentPanel()).addPlayers(mg.getGame().getPlayerList());
-                    this.panelIndex.next(this.panels);
+                    panelIndex.next(panels);
                 }
 
                 mg.getGui().generateDemand(DemandType.CHOOSE_CARD, god);
@@ -315,7 +316,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             ChooseGodPanel.setGods((ManagerPanel) panels);
             mg.addPanel(new GamePanel(panelIndex, panels));
             mg.getCurrentPanel().updateFromModel();
-            this.panelIndex.next(this.panels);
+            panelIndex.next(panels);
             return;
         }
 

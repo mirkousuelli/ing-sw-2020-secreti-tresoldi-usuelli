@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 import it.polimi.ingsw.client.view.gui.component.map.JDecorator;
 
 public class JWorker {
+
     private final JDecorator pawn;
 
     private JCell cell;

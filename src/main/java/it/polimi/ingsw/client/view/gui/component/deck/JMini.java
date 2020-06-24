@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JMini extends JButton {
+
     private static final int SIZE_X = 65;
     private static final int SIZE_Y = 90;
 
@@ -34,9 +35,9 @@ public class JMini extends JButton {
         setBorderPainted(false);
         setName("mini");
 
-        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
-        Image img = icon.getImage().getScaledInstance( SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        ImageIcon icon = new ImageIcon(getClass().getResource(path));
+        Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         setIcon(icon);
     }
 
@@ -47,10 +48,11 @@ public class JMini extends JButton {
     public void active() {
         active = true;
 
-        ImageIcon icon = new ImageIcon(this.getClass().getResource(activePath));
+        ImageIcon icon = new ImageIcon(getClass().getResource(activePath));
         Image img = icon.getImage().getScaledInstance(SIZE_X, SIZE_Y, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
         add(new JLabel(icon), new GridBagConstraints());
+
         validate();
         repaint();
     }

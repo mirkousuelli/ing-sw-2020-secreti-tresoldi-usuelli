@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class JMap extends JPanel implements ActionListener {
 
     public static final int DIM = 5;
-    private final JCell[][] cellButton;
+    private JCell[][] cellButton;
     private final List<JCell> activeCells;
     private final List<JCell> powerCells;
     private JWorker currentWorker;
@@ -149,11 +149,11 @@ public class JMap extends JPanel implements ActionListener {
 
     public void showPowerCells() {
         for (JCell cell : activeCells)
-            if (!((JBlockDecorator)cell).getDecoration().equals(JCellStatus.MALUS))
-                ((JBlockDecorator)cell).removeDecoration();
+            if (!((JBlockDecorator) cell).getDecoration().equals(JCellStatus.MALUS))
+                ((JBlockDecorator) cell).removeDecoration();
 
         for (JCell cell : powerCells)
-            ((JBlockDecorator)cell).addDecoration(JCellStatus.USE_POWER);
+            ((JBlockDecorator) cell).addDecoration(JCellStatus.USE_POWER);
 
         repaint();
         validate();
@@ -161,11 +161,11 @@ public class JMap extends JPanel implements ActionListener {
 
     public void hidePowerCells() {
         for (JCell cell : powerCells)
-            ((JBlockDecorator)cell).removeDecoration();
+            ((JBlockDecorator) cell).removeDecoration();
 
         for (JCell cell : activeCells)
-            if (((JBlockDecorator)cell).getDecoration() == null)
-                ((JBlockDecorator)cell).addDecoration(turn);
+            if (((JBlockDecorator) cell).getDecoration() == null)
+                ((JBlockDecorator) cell).addDecoration(turn);
 
         repaint();
         validate();
@@ -223,15 +223,14 @@ public class JMap extends JPanel implements ActionListener {
                     if (status.equals(JCellStatus.BUILD))
                         ((JBlockDecorator) src).buildUp();
                     else if (status.equals(JCellStatus.MOVE))
-                            moveWorker(src);
+                        moveWorker(src);
                     else if (status.equals(JCellStatus.USE_POWER)) {
                         if (power.equals(JCellStatus.BUILD)) {
                             if (managerPanel.getGui().getClientModel().getPlayer().getCard().isDomePower())
                                 ((JBlockDecorator) src).addDecoration(JCellStatus.DOME);
                             else
                                 ((JBlockDecorator) src).buildUp();
-                        }
-                        else if (power.equals(JCellStatus.MOVE)) {
+                        } else if (power.equals(JCellStatus.MOVE)) {
                             if (managerPanel.getGui().getClientModel().getPlayer().getCard().isPushPower())
                                 pushWorker(src);
                             else
@@ -242,10 +241,11 @@ public class JMap extends JPanel implements ActionListener {
 
                     gamePanelButton.setEnabled(false);
                     gamePanel.generateDemand(((JBlockDecorator) src).getBlock(), status);
+
                     validate();
                     repaint();
                 }
-            } else if (positioning > 0 && ((JBlockDecorator)src).isFree()) {
+            } else if (positioning > 0 && ((JBlockDecorator) src).isFree()) {
                 currentPlayer.setUpWorker(src);
                 positioning--;
 
@@ -253,9 +253,9 @@ public class JMap extends JPanel implements ActionListener {
                     gamePanel.generateDemand(currentPlayer.getWorkers().stream().map(JWorker::getLocation).collect(Collectors.toList()), JCellStatus.NONE);
 
                 revalidate();
-            } else if (!((JBlockDecorator)src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator)src).getJWorker()) && managerPanel.getGui().getClientModel().getCurrentState().equals(DemandType.CHOOSE_WORKER)) {
-                gamePanel.generateDemand(((JBlockDecorator)src).getBlock(), JCellStatus.CHOOSE_WORKER);
-                currentWorker = ((JBlockDecorator)src).getJWorker();
+            } else if (!((JBlockDecorator) src).isFree() && getCurrentPlayer().getWorkers().contains(((JBlockDecorator) src).getJWorker()) && managerPanel.getGui().getClientModel().getCurrentState().equals(DemandType.CHOOSE_WORKER)) {
+                gamePanel.generateDemand(((JBlockDecorator) src).getBlock(), JCellStatus.CHOOSE_WORKER);
+                currentWorker = ((JBlockDecorator) src).getJWorker();
             }
         }
     }
@@ -275,15 +275,15 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     private JCell lineEqTwoPoints(JCell from, JCell to) {
-        if (to.getXCoordinate() == from.getXCoordinate() && to.getYCoordinate() == from.getYCoordinate()) return null; //from and to cannot be the same cell!
+        if (to.getXCoordinate() == from.getXCoordinate() && to.getYCoordinate() == from.getYCoordinate())
+            return null; //from and to cannot be the same cell!
 
         if (to.getXCoordinate() != from.getXCoordinate()) { //y = mx + q (slope-intercept)
             float m = ((float) (to.getYCoordinate() - from.getYCoordinate())) / ((float) (to.getXCoordinate() - from.getXCoordinate())); //slope
-            float q = from.getYCoordinate() - m*from.getXCoordinate(); //intercept
+            float q = from.getYCoordinate() - m * from.getXCoordinate(); //intercept
 
-            return fetchNextCell(from, to, m ,q);
-        }
-        else { //x = k (vertical line)
+            return fetchNextCell(from, to, m, q);
+        } else { //x = k (vertical line)
             if (from.getYCoordinate() > to.getYCoordinate())
                 return getCell(to.getXCoordinate(), to.getYCoordinate() - 1);
             else
@@ -299,7 +299,7 @@ public class JMap extends JPanel implements ActionListener {
         else
             newX = to.getXCoordinate() - 1;
 
-        return getCell(newX, (int) (m*newX + q));
+        return getCell(newX, (int) (m * newX + q));
     }
 
     public void clean() {
@@ -316,7 +316,9 @@ public class JMap extends JPanel implements ActionListener {
         turn = JCellStatus.NONE;
         gamePanel = null;
 
-        repaint();
+        removeAll();
+        revalidate();
         validate();
+        repaint();
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
+
     private final List<JGod> gods;
     private int current;
 
@@ -20,18 +21,18 @@ public class JDeck extends JPanel implements ActionListener {
     }
 
     public JDeck() {
-        this.gods = new ArrayList<>();
+        gods = new ArrayList<>();
         setLayout(new GridBagLayout());
         setOpaque(false);
     }
 
     public int getNum() {
-        return this.gods.size();
+        return gods.size();
     }
 
     public void addGod(JGod god) {
-        this.gods.add(god);
-        this.setCurrent(god);
+        gods.add(god);
+        setCurrent(god);
     }
 
     public void addGod(God god) {
@@ -40,10 +41,10 @@ public class JDeck extends JPanel implements ActionListener {
 
     public void setCurrent(JGod chosen) {
         if (gods.contains(chosen)) {
-            if (current < this.getNum())
-                this.gods.get(current).getMini().disactive();
-            this.current = this.gods.indexOf(chosen);
-            this.gods.get(current).getMini().active();
+            if (current < getNum())
+                gods.get(current).getMini().disactive();
+            current = gods.indexOf(chosen);
+            gods.get(current).getMini().active();
         }
     }
 
@@ -77,6 +78,7 @@ public class JDeck extends JPanel implements ActionListener {
             add(god.getMini(), c);
             i++;
         }
+
         validate();
         repaint();
     }
@@ -104,15 +106,15 @@ public class JDeck extends JPanel implements ActionListener {
     }
 
     public JGod pop(JGod god) {
-        int index = this.gods.indexOf(god);
+        int index = gods.indexOf(god);
 
         if (index == -1) return god;
 
-        JGod toPop = this.gods.remove(index);
+        JGod toPop = gods.remove(index);
         remove(toPop.getMini());
         toPop.getMini().disactive();
-        if (this.gods.size() > 0)
-            setCurrent(this.gods.get(0));
+        if (gods.size() > 0)
+            setCurrent(gods.get(0));
         return toPop;
     }
 
@@ -138,7 +140,7 @@ public class JDeck extends JPanel implements ActionListener {
         gods.clear();
         current = 0;
 
-        repaint();
         validate();
+        repaint();
     }
 }

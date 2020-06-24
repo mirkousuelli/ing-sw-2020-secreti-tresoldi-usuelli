@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JPlayer extends JButton implements ActionListener {
+
     private final String nickname;
     private final int id;
 
@@ -149,6 +150,7 @@ public class JPlayer extends JButton implements ActionListener {
         activeLabel.setLayout(new GridBagLayout());
         activeLabel.add(text, new GridBagConstraints());
         add(activeLabel, new GridBagConstraints());
+
         validate();
         repaint();
     }
@@ -158,6 +160,7 @@ public class JPlayer extends JButton implements ActionListener {
 
         removeAll();
         add(text, new GridBagConstraints());
+
         validate();
         repaint();
     }

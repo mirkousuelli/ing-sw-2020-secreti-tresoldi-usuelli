@@ -7,23 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JGame {
+
     private final List<JPlayer> players;
     private int current;
     private JDeck deck;
     private final JMap map;
 
-    public JGame(JDeck deck){
-        this.players = new ArrayList<>();
+    public JGame(JDeck deck) {
+        players = new ArrayList<>();
         this.deck = deck;
         map = new JMap();
     }
 
-    public JGame(){
+    public JGame() {
         this(new JDeck());
     }
 
     public void addPlayer(String nickname, int index) {
-        this.players.add(new JPlayer(nickname, index));
+        players.add(new JPlayer(nickname, index));
     }
 
     public JPlayer getPlayer(int index) {
@@ -41,11 +42,11 @@ public class JGame {
 
     public void setCurrentPlayer(JPlayer chosen) {
         if (players.contains(chosen)) {
-            if (current < this.getNumPlayer())
-                this.players.get(current).disactive();
-            this.current = this.players.indexOf(chosen);
-            this.players.get(current).active();
-            this.map.setCurrentPlayer(this.players.get(current));
+            if (current < getNumPlayer())
+                players.get(current).disactive();
+            current = players.indexOf(chosen);
+            players.get(current).active();
+            map.setCurrentPlayer(players.get(current));
         }
     }
 
@@ -55,7 +56,7 @@ public class JGame {
     }
 
     public JPlayer getCurrentPlayer() {
-        return this.players.get(this.current);
+        return players.get(current);
     }
 
     public List<JPlayer> getPlayerList() {
@@ -73,7 +74,7 @@ public class JGame {
     }
 
     public int getNumPlayer() {
-        return this.players.size();
+        return players.size();
     }
 
     public JDeck getJDeck() {

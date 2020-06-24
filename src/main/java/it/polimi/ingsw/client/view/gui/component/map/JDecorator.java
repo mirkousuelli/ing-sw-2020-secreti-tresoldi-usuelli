@@ -10,29 +10,28 @@ public class JDecorator {
 
     public JDecorator(JCellStatus decoration) {
         this.decoration = decoration;
-        this.component = new JLabel();
-        this.component.setLayout(new GridBagLayout());
+        component = new JLabel();
+        component.setLayout(new GridBagLayout());
 
         if (decoration.getPath() != null) {
             ImageIcon icon = new ImageIcon(this.getClass().getResource(decoration.getPath()));
             Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
             icon = new ImageIcon(img);
 
-            this.component.setIcon(icon);
-        }
-        else
-            this.component.setIcon(null);
+            component.setIcon(icon);
+        } else
+            component.setIcon(null);
 
-        this.component.revalidate();
+        component.revalidate();
     }
 
     public JDecorator() {
-        this.decoration = JCellStatus.NONE;
+        decoration = JCellStatus.NONE;
 
-        this.component = new JLabel();
-        this.component.setLayout(new GridBagLayout());
-        this.component.setIcon(null);
-        this.component.revalidate();
+        component = new JLabel();
+        component.setLayout(new GridBagLayout());
+        component.setIcon(null);
+        component.revalidate();
     }
 
     public JCellStatus getDecoration() {
@@ -50,8 +49,8 @@ public class JDecorator {
             ImageIcon icon = new ImageIcon(this.getClass().getResource(decoration.getPath()));
             Image img = icon.getImage().getScaledInstance(DIMENSION, DIMENSION, Image.SCALE_SMOOTH);
             icon = new ImageIcon(img);
-            this.component.setIcon(icon);
-            this.component.revalidate();
+            component.setIcon(icon);
+            component.revalidate();
         }
     }
 
@@ -61,7 +60,7 @@ public class JDecorator {
     }
 
     public void removeOver() {
-        this.component.removeAll();
-        this.component.revalidate();
+        component.removeAll();
+        component.revalidate();
     }
 }

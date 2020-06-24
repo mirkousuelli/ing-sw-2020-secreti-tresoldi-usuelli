@@ -79,7 +79,7 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 LOGGER.info("Server ko!!!");
                                 System.exit(1);
                             } else {
-                                clientView.freeOnExit(temp.getHeader());
+                                //clientView.freeOnExit(temp.getHeader());
                                 LOGGER.info("Queueing...");
                                 synchronized (buffer) {
                                     buffer.add(temp);

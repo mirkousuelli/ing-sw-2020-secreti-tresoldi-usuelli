@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class StartPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "intro.png";
     private static final int BUTTON_SIZE = 150;
 
@@ -21,8 +22,8 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/play_button.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         c.gridy = 2;
         c.gridx = 0;
@@ -30,7 +31,7 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
-        c.insets = new Insets(0,0,-450,0);
+        c.insets = new Insets(0, 0, -450, 0);
 
         playButton = new JButton(icon);
         playButton.setOpaque(false);
@@ -45,6 +46,6 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (!e.getSource().equals(playButton)) return;
 
-        this.panelIndex.next(this.panels);
+        panelIndex.next(panels);
     }
 }

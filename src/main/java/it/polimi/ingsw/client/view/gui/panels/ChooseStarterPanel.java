@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseStarterPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 200;
 
@@ -25,13 +26,13 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         super(imgPath, panelIndex, panels);
 
         this.game = game;
-        this.tags = new ArrayList<>();
+        tags = new ArrayList<>();
 
         createWaitStand();
         createChooseButton();
     }
 
-    private  void createWaitStand() {
+    private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/lobby.png"));
         Image img = icon.getImage().getScaledInstance(420, 540, Image.SCALE_SMOOTH);
         icon = new ImageIcon(img);
@@ -50,22 +51,22 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
 
             players.get(i).addActionListener(this);
 
-            this.tags.add(players.get(i));
-            this.stand.add(this.tags.get(i), c);
+            tags.add(players.get(i));
+            stand.add(tags.get(i), c);
         }
     }
 
-    private  void createChooseButton() {
+    private void createChooseButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = this.game.getNumPlayer();
+        c.gridy = game.getNumPlayer();
 
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/choose_starter.png"));
-        Image img = icon.getImage().getScaledInstance( BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-        icon = new ImageIcon( img );
+        Image img = icon.getImage().getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
 
         chooseButton = new JButton(icon);
-        chooseButton.setPreferredSize(new Dimension(BUTTON_SIZE,200));
+        chooseButton.setPreferredSize(new Dimension(BUTTON_SIZE, 200));
         chooseButton.setOpaque(false);
         chooseButton.setContentAreaFilled(false);
         chooseButton.setBorderPainted(false);
@@ -77,19 +78,19 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (((JButton)e.getSource()).getName()) {
+        switch (((JButton) e.getSource()).getName()) {
             case "player":
-                this.game.setCurrentPlayer((JPlayer) e.getSource());
+                game.setCurrentPlayer((JPlayer) e.getSource());
                 break;
             case "choose":
-                for (JPlayer p : this.game.getPlayerList()) {
+                for (JPlayer p : game.getPlayerList()) {
                     p.removeActionListener(this);
                 }
 
                 ManagerPanel mg = (ManagerPanel) panels;
 
                 mg.addPanel(new GamePanel(panelIndex, panels));
-                this.panelIndex.next(this.panels);
+                panelIndex.next(panels);
                 mg.getGui().generateDemand(DemandType.CHOOSE_STARTER, new ReducedMessage(game.getCurrentPlayer().getNickname()));
                 break;
         }

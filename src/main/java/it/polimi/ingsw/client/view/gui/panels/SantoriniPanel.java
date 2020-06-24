@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
+
     private final String imgPath;
     private final Image img;
 
@@ -40,8 +41,8 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         double scaleFactor = Math.min(1d, BackgroundPanel.getScaleFactorToFit(
                 new Dimension(img.getWidth(null), img.getHeight(null)), getSize()));
 
-        this.scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
-        this.scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
+        scaleWidth = (int) Math.round(img.getWidth(null) * scaleFactor);
+        scaleHeight = (int) Math.round(img.getHeight(null) * scaleFactor);
 
         Image scaled = img.getScaledInstance(scaleWidth, scaleHeight, Image.SCALE_SMOOTH);
 
@@ -56,7 +57,7 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(this.scaleWidth, this.scaleHeight);
+        return new Dimension(scaleWidth, scaleHeight);
     }
 
     public void updateFromModel() {

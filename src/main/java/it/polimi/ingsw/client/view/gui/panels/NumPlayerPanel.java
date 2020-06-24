@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
 
     private JButton _2playersButton;
