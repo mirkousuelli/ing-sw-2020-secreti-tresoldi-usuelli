@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WaitingRoomPanel extends SantoriniPanel {
+
     private static final String imgPath = "menu.png";
 
     public WaitingRoomPanel(CardLayout panelIndex, JPanel panels) {

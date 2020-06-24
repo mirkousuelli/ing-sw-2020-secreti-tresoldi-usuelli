@@ -309,7 +309,6 @@ public class JMap extends JPanel implements ActionListener {
 
         activeCells.clear();
         powerCells.clear();
-        cellButton = new JCell[DIM][DIM];
         currentWorker = null;
         currentPlayer = null;
         positioning = -1;
@@ -317,6 +316,8 @@ public class JMap extends JPanel implements ActionListener {
         turn = JCellStatus.NONE;
         gamePanel = null;
 
+        removeAll();
+        revalidate();
         validate();
         repaint();
     }

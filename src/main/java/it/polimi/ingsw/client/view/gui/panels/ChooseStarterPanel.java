@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseStarterPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 200;
 

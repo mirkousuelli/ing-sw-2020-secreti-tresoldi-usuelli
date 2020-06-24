@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JMini extends JButton {
+
     private static final int SIZE_X = 65;
     private static final int SIZE_Y = 90;
 

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JDeck extends JPanel implements ActionListener {
+
     private final List<JGod> gods;
     private int current;
 

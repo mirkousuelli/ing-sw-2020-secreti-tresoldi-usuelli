@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JPlayer extends JButton implements ActionListener {
+
     private final String nickname;
     private final int id;
 

@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.component.deck;
 import it.polimi.ingsw.server.model.cards.gods.God;
 
 public class JGod {
+
     private final JCard card;
     private final JMini mini;
 

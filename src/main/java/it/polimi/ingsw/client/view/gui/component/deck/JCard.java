@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class JCard extends JLabel {
+
     private static final int SIZE_X = 170; //190;
     private static final int SIZE_Y = 280; //= 310;
 

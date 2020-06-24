@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
 

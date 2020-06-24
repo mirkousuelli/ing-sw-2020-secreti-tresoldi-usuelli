@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
+
     private final String imgPath;
     private final Image img;
 

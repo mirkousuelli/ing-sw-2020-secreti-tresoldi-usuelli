@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ManagerPanel extends JPanel {
+
     private final CardLayout cardLayout;
     private final GUI gui;
 
@@ -158,5 +159,10 @@ public class ManagerPanel extends JPanel {
     void clean() {
         clientPlayer = null;
         game.clean();
+
+        removeAll();
+        revalidate();
+        validate();
+        repaint();
     }
 }

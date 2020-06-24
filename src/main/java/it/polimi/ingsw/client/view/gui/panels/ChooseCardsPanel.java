@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "menu.png";
     private static final int BUTTON_SIZE = 175;
 

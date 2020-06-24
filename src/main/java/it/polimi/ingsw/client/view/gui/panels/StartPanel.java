@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class StartPanel extends SantoriniPanel implements ActionListener {
+
     private static final String imgPath = "intro.png";
     private static final int BUTTON_SIZE = 150;
 

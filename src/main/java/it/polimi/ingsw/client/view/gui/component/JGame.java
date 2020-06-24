@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JGame {
+
     private final List<JPlayer> players;
     private int current;
     private JDeck deck;
