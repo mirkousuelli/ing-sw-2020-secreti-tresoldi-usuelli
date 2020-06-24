@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class JMap extends JPanel implements ActionListener {
 
     public static final int DIM = 5;
-    private JCell[][] cellButton;
+    private final JCell[][] cellButton;
     private final List<JCell> activeCells;
     private final List<JCell> powerCells;
     private JWorker currentWorker;
@@ -314,10 +314,9 @@ public class JMap extends JPanel implements ActionListener {
         positioning = -1;
         power = JCellStatus.NONE;
         turn = JCellStatus.NONE;
+        gamePanel.removeAll();
         gamePanel = null;
 
-        removeAll();
-        revalidate();
         validate();
         repaint();
     }

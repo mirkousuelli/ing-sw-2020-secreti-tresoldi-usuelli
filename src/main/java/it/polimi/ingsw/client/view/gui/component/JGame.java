@@ -11,7 +11,7 @@ public class JGame {
     private final List<JPlayer> players;
     private int current;
     private JDeck deck;
-    private final JMap map;
+    private JMap map;
 
     public JGame(JDeck deck) {
         players = new ArrayList<>();
@@ -90,9 +90,14 @@ public class JGame {
     }
 
     public void clean() {
+        players.forEach(JPlayer::clean);
         players.clear();
         current = 0;
         deck.clean();
+
         map.clean();
+        map.removeAll();
+        map.revalidate();
+        map = new JMap();
     }
 }

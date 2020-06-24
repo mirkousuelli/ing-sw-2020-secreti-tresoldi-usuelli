@@ -215,4 +215,15 @@ public class JPlayer extends JButton implements ActionListener {
             chooseWorker = false;
         }
     }
+
+    void clean() {
+        ((JBlockDecorator) femaleWorker.getLocation()).removeWorker();
+        ((JBlockDecorator) maleWorker.getLocation()).removeWorker();
+        femaleWorker = null;
+        maleWorker = null;
+
+        chooseWorker = false;
+        active = false;
+        card = null;
+    }
 }
