@@ -308,6 +308,11 @@ public class ServerConnectionSocket {
 
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
+        if (lobby != null) {
+            lobby.clean();
+            lobby = null;
+        }
+
         if (response.equals("n")) {
             player.setLoggingOut(true);
             player.closeSocket();
@@ -315,8 +320,6 @@ public class ServerConnectionSocket {
         } else if (response.equals("y")) {
             if (!alreadyNewGame) {
                 waitingConnection.clear();
-                lobby.clean();
-                lobby = null;
                 alreadyNewGame = true;
             }
 

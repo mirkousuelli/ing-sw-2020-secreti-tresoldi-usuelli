@@ -600,6 +600,50 @@ ________________________________________________________________________________
         assertEquals(Level.MIDDLE, w1p1.getLevel());
     }
 
+    @Test
+    void buildingUnderWithZeusWinTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Zeus as God and chooses a cell under his current worker, the build is actually made
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        Board board = game.getBoard();
+        Block w1p1 = (Block) board.getCell(1, 1);
+
+        p1.initializeWorkerPosition(1, w1p1);
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        w1p1.setLevel(Level.MIDDLE);
+
+        game.setState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ZEUS);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 1))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+        ReturnContent returnContent = game.gameEngine();
+
+        //it checks that the player build under itself since he has zeus
+        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
+        assertEquals(State.VICTORY, returnContent.getState());
+        assertEquals(Level.TOP, w1p1.getLevel());
+    }
+
 
 
 

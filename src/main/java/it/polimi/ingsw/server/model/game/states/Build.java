@@ -94,27 +94,44 @@ public class Build implements GameState {
 
         //validate input
         if (cellToBuildUp == null || cellToBuildUp.isComplete())
-            returnError();
+            return returnError();
 
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) //if it is asked to use a power
             returnContent = usePower(); //then usePower
         else
             returnContent = build(); //else it must be a build (verified in Controller), so build!
 
-
-        Player victorious = game.getPlayerList().stream()
-                .filter(player -> !player.getCard().getGod().equals(God.CHRONUS))
-                .reduce(null, (a, b) -> a != null ? a : b);
-        if (victorious != null && game.getPlayerList().stream().anyMatch(player -> player.getCard().getGod().equals(God.CHRONUS) && ((WinConditionPower) player.getCard().getPower(0)).usePower(game))) {
-            returnContent.setState(State.VICTORY);
-            returnContent.setAnswerType(AnswerType.VICTORY);
-            returnContent.setPayload(new ReducedPlayer(victorious.nickName));
-        }
+        returnContent = hasSomeoneWon(returnContent);
 
         //save
         GameMemory.save(game, Lobby.BACKUP_PATH);
         GameMemory.save(game.parseState(returnContent.getState()), Lobby.BACKUP_PATH);
         GameMemory.save(game.getCurrentPlayer(), returnContent.getState(), Lobby.BACKUP_PATH);
+
+        return returnContent;
+    }
+
+    private ReturnContent hasSomeoneWon(ReturnContent returnContentSuccess) {
+        if (returnContentSuccess.getAnswerType().equals(AnswerType.SUCCESS)) {
+            Player victorious = game.getPlayerList().stream()
+                    .filter(player -> player.getCard().getGod().equals(God.CHRONUS))
+                    .reduce(null, (a, b) -> a != null ? a : b);
+            if (victorious != null && ((WinConditionPower) victorious.getCard().getPower(0)).usePower(game))
+                return victory(victorious);
+
+            if (Move.reachedThirdLevel(game)) //zeus use power from MIDDLE to TOP
+                return victory(game.getCurrentPlayer());
+        }
+
+        return returnContentSuccess;
+    }
+
+    private ReturnContent victory(Player victorious) {
+        ReturnContent returnContent = new ReturnContent<>();
+
+        returnContent.setState(State.VICTORY);
+        returnContent.setAnswerType(AnswerType.VICTORY);
+        returnContent.setPayload(new ReducedPlayer(victorious.nickName));
 
         return returnContent;
     }
