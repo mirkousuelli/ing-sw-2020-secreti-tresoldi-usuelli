@@ -472,7 +472,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
             synchronized (lobby.lockLobby) {
                 newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
-                lobby.setReloaded(false);
             }
 
             if (newGame) { //newGame

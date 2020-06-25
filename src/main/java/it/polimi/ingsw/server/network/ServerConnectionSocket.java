@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  * Class which manages the server side connection protocol through sockets
  */
 public class ServerConnectionSocket {
+
     private final int port;
 
     private final Map<String, ServerClientHandlerSocket> waitingConnection = new HashMap<>();
@@ -146,6 +147,12 @@ public class ServerConnectionSocket {
             }
         } else {
             System.out.println("CCCCCCC");
+            //load lobby if there is one to load
+            lobby = null;
+            if (Files.exists(Paths.get(Lobby.BACKUP_PATH)))
+                loadLobby();
+
+
             for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.setIsToRestart(true);
                 serverClientHandler.send(new Answer<>(AnswerType.CLOSE));
@@ -156,12 +163,6 @@ public class ServerConnectionSocket {
 
             //reset
             waitingConnection.clear();
-
-            //load lobby if there is one to load
-            if (Files.exists(Paths.get(Lobby.BACKUP_PATH)))
-                loadLobby();
-            else
-                lobby = null;
         }
     }
 

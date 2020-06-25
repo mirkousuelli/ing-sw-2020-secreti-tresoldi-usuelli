@@ -116,18 +116,24 @@ public class Move implements GameState {
         List<Malus> currentPlayerMalusList = currentPlayer.getMalusList();
         List<Cell> around = game.getBoard().getAround(cellToMoveTo);
 
-        List<Cell> remainingCells = around.stream()
+        List<Cell> remainingCellsToBuild = around.stream()
                 .filter(c -> !c.getLevel().equals(Level.DOME))
                 .filter(c -> c.isFree() || ((Block) c).getPawn().equals(currentPlayer.getCurrentWorker()))
+                .collect(Collectors.toList());
+
+        List<Cell> remainingCellsToMove = remainingCellsToBuild.stream()
                 .filter(c -> (c.getLevel().toInt() - cellToMoveTo.getLevel().toInt() <= 1))
                 .collect(Collectors.toList());
 
-        if (remainingCells.isEmpty()) return false;
-        if (remainingCells.size() == 1 && !remainingCells.get(0).isFree() && (!((Block) remainingCells.get(0)).getPawn().equals(game.getCurrentPlayer().getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString())))
-            return false;
+        if (remainingCellsToMove.isEmpty()) return false;
+        if (remainingCellsToMove.size() == 1 &&
+                !remainingCellsToMove.get(0).isFree() &&
+                (!((Block) remainingCellsToMove.get(0)).getPawn().equals(currentPlayer.getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString())) &&
+                remainingCellsToBuild.size() == 1 &&
+                remainingCellsToBuild.containsAll(remainingCellsToMove)) return false;
         if (currentPlayerMalusList.isEmpty()) return true;
 
-        return remainingCells.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
+        return remainingCellsToMove.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
     }
 
     @Override

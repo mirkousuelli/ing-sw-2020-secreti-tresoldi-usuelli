@@ -59,7 +59,7 @@ public class ChooseWorker implements GameState {
     private boolean cannotMoveAny() {
         List<Worker> workerList = game.getCurrentPlayer().getWorkers();
 
-        return workerList.stream().noneMatch(w -> Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation()));
+        return workerList.stream().noneMatch(this::isWorkerAbleToMove);
     }
 
     @Override
@@ -128,6 +128,14 @@ public class ChooseWorker implements GameState {
         return returnContent;
     }
 
+    private boolean isWorkerAbleToMove(Worker worker) {
+        List<Cell> around = game.getBoard().getAround(worker.getLocation());
+
+        return around.stream()
+                .filter(Cell::isWalkable)
+                .anyMatch(cell -> cell.getLevel().toInt() - worker.getLocation().getLevel().toInt() <= 1);
+    }
+
     private ReturnContent removeWorkersAndPlayer() {
         ReturnContent returnContent = new ReturnContent<>();
         Player currentPlayer = game.getCurrentPlayer();
@@ -165,7 +173,7 @@ public class ChooseWorker implements GameState {
 
         for (Worker w : currentPlayer.getWorkers()) {
             if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
-                if (Move.isPresentAtLeastOneCellToMoveTo(game, w.getLocation())) {
+                if (isWorkerAbleToMove(w)) {
                     // the player has to pick a worker and the game goes to Move state
                     currentPlayer.setCurrentWorker(w);
 
