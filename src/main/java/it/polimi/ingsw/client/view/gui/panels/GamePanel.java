@@ -470,8 +470,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
                     ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
                     this.panelIndex.next(this.panels);
-                } else
+                } else { //TODO remove card from enemy section?
                     game.removePlayer(((ReducedPlayer) gui.getAnswer().getPayload()).getNickname());
+                    if (gui.getClientModel().isYourTurn())
+                        updateCells();
+                }
                 break;
 
             case CLOSE:
