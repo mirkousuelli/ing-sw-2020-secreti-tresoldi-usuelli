@@ -16,7 +16,9 @@ public class ReducedMessage {
         this.message = message;
     }
 
-    public ReducedMessage() {}
+    public ReducedMessage() {
+
+    }
 
     public String getMessage() {
         return message;

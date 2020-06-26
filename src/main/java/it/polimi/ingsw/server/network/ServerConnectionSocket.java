@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Class which manages the server side connection protocol through sockets
@@ -38,8 +40,11 @@ public class ServerConnectionSocket {
 
     private Lobby lobby;
     private boolean isActive;
-    private boolean alreadyNewGame;
 
+    private final Map<Integer, Lobby> loadedLobbyMap;
+
+    private static final String LOBBY_DIR = "backups/backup";
+    private static final String EXTENSION = ".xml";
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     /**
@@ -51,10 +56,11 @@ public class ServerConnectionSocket {
         this.port = port;
 
         lobby = null;
-        loadLobby();
+        loadedLobbyMap = new HashMap<>();
+        /*loadLobbies();*/
+        loadLastLobby();
 
         isActive = false;
-        alreadyNewGame = false;
     }
 
     /**
@@ -83,10 +89,59 @@ public class ServerConnectionSocket {
         }
     }
 
+    private void loadLobbies() {
+        int numOfLobby = 0;
+
+        try (Stream<Path> files = Files.list(Paths.get(LOBBY_DIR))) {
+            numOfLobby = (int) files.count();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, couldn't count lobbies", e);
+        }
+
+        Lobby lobbyLoaded;
+        for (int i = 0; i < numOfLobby; i++) {
+            lobbyLoaded = loadLobby(i);
+            if (lobbyLoaded != null)
+                loadedLobbyMap.put(getLobbyPlayerListHashCode(lobbyLoaded), lobbyLoaded);
+        }
+
+
+    }
+
+    private int getLobbyPlayerListHashCode(Lobby lobby) {
+        return lobby.getGame().getPlayerList().hashCode();
+
+    }
+
     /**
      * Method that load a previous lobby in order to recover a past match saved
      */
-    private void loadLobby() {
+    private Lobby loadLobby(int i) {
+        Game loadedGame = null;
+        Lobby loadedLobby = null;
+
+        try {
+            if (Files.exists(Paths.get(LOBBY_DIR + i + EXTENSION))) {
+                loadedGame = GameMemory.load(LOBBY_DIR + i + EXTENSION);
+                if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
+                    loadedGame = null;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
+        }
+
+        if (loadedGame != null) {
+            loadedLobby = new Lobby(loadedGame);
+            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+        }
+
+        return loadedLobby;
+    }
+
+    /**
+     * Method that load a previous lobby in order to recover a past match saved
+     */
+    private void loadLastLobby() {
         Game loadedGame = null;
 
         try {
@@ -150,7 +205,9 @@ public class ServerConnectionSocket {
             //load lobby if there is one to load
             lobby = null;
             if (Files.exists(Paths.get(Lobby.BACKUP_PATH)))
-                loadLobby();
+                loadLastLobby();
+
+            //TODO rename
 
 
             for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
@@ -313,16 +370,14 @@ public class ServerConnectionSocket {
             lobby = null;
         }
 
+        //reset
+        waitingConnection.clear();
+
         if (response.equals("n")) {
             player.setLoggingOut(true);
             player.closeSocket();
             return false;
         } else if (response.equals("y")) {
-            if (!alreadyNewGame) {
-                waitingConnection.clear();
-                alreadyNewGame = true;
-            }
-
             player.setCreator(false);
             return false;
         }

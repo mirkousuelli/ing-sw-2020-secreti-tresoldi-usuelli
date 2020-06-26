@@ -10,6 +10,8 @@ import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
+import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
@@ -285,14 +287,14 @@ public class PreparePayloadTest {
         p3.initializeWorkerPosition(2, worker2Player3);
 
         //initialize blocks' level
-        board.getCell(0,0).setLevel(Level.BOTTOM);
-        ((Block) board.getCell(0,0)).setPreviousLevel(Level.GROUND);
+        board.getCell(0, 0).setLevel(Level.BOTTOM);
+        ((Block) board.getCell(0, 0)).setPreviousLevel(Level.GROUND);
 
-        board.getCell(0,2).setLevel(Level.BOTTOM);
-        ((Block) board.getCell(0,2)).setPreviousLevel(Level.GROUND);
+        board.getCell(0, 2).setLevel(Level.BOTTOM);
+        ((Block) board.getCell(0, 2)).setPreviousLevel(Level.GROUND);
 
-        board.getCell(0,3).setLevel(Level.TOP);
-        ((Block) board.getCell(0,3)).setPreviousLevel(Level.MIDDLE);
+        board.getCell(0, 3).setLevel(Level.TOP);
+        ((Block) board.getCell(0, 3)).setPreviousLevel(Level.MIDDLE);
 
         worker2Player1.setLevel(Level.BOTTOM);
         worker2Player1.setPreviousLevel(Level.GROUND);
@@ -378,5 +380,117 @@ public class PreparePayloadTest {
 
         assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
         assertEquals(State.CHOOSE_WORKER, returnContent.getState());
+    }
+
+    @Test
+    void PreparePayloadUsePowerForPrometheus() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player picked a cell under his current worker, he has to choose a different one
+         */
+
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PROMETHEUS);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker2Player1 = (Block) board.getCell(0, 0);
+
+        Block worker1Player2 = (Block) board.getCell(3, 2);
+        Block worker2Player2 = (Block) board.getCell(2, 2);
+
+        Block worker1Player3 = (Block) board.getCell(0, 4);
+        Block worker2Player3 = (Block) board.getCell(2, 3);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        p3.initializeWorkerPosition(1, worker1Player3);
+        p3.initializeWorkerPosition(2, worker2Player3);
+
+        //define cells where is possible to use a "use power"
+        Block cellToBuildOn1 = (Block) board.getCell(1, 1);
+        Block cellToBuildOn2 = (Block) board.getCell(0, 1);
+        Block cellToBuildOn3 = (Block) board.getCell(2, 0);
+        Block cellToBuildOn4 = (Block) board.getCell(2, 1);
+
+
+        //set current player
+        game.setCurrentPlayer(p1);
+
+        //set state
+        game.setState(State.CHOOSE_WORKER);
+
+        //set cells' level
+        cellToBuildOn1.setLevel(Level.BOTTOM);
+        cellToBuildOn1.setPreviousLevel(Level.GROUND);
+
+        cellToBuildOn2.setLevel(Level.MIDDLE);
+        cellToBuildOn2.setPreviousLevel(Level.GROUND);
+
+
+        //verify chooseWorker Prometheus cells
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker1Player1.getX(), worker1Player1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(5, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn1.getX(), cellToBuildOn1.getY(), ReducedAction.USEPOWER, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn2.getX(), cellToBuildOn2.getY(), ReducedAction.USEPOWER)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn3.getX(), cellToBuildOn3.getY(), ReducedAction.USEPOWER, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn4.getX(), cellToBuildOn4.getY(), ReducedAction.USEPOWER, ReducedAction.MOVE)).count());
+
+
+        //set state
+        game.setState(State.MOVE);
+
+        //verify build -- usePower -- Prometheus cells
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn1.getX(), cellToBuildOn1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        returnContent = game.gameEngine();
+        payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(4, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn1.getX(), cellToBuildOn1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn3.getX(), cellToBuildOn3.getY(), ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn4.getX(), cellToBuildOn4.getY(), ReducedAction.MOVE)).count());
+
+        assertEquals(Level.MIDDLE, cellToBuildOn1.getLevel());
+        assertEquals(Level.BOTTOM, cellToBuildOn1.getPreviousLevel());
+        assertEquals(cellToBuildOn1, p1.getCurrentWorker().getPreviousBuild());
+
+        assertEquals(1, p1.getMalusList().size());
+        assertEquals(MalusType.MOVE, p1.getMalusList().get(0).getMalusType());
+        assertEquals(1, p1.getMalusList().get(0).getDirection().size());
+        assertEquals(MalusLevel.UP, p1.getMalusList().get(0).getDirection().get(0));
+
     }
 }

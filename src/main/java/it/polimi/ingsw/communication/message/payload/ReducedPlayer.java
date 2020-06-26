@@ -17,9 +17,9 @@ public class ReducedPlayer {
     /**
      * Constructor of the reduced player, initialising it with the information passed with the parameters
      *
-     * @param player the name of the player, which is unique in a game (two or more players cannot have the same nickname)
-     * @param color the color of the player
-     * @param card the card that the player has: it is set to its reduced version or to null if he doesn't have it
+     * @param player    the name of the player, which is unique in a game (two or more players cannot have the same nickname)
+     * @param color     the color of the player
+     * @param card      the card that the player has: it is set to its reduced version or to null if he doesn't have it
      * @param isCreator parameter that tells if the player is the one who created the lobby
      */
     public ReducedPlayer(String player, String color, Card card, boolean isCreator) {
@@ -45,11 +45,11 @@ public class ReducedPlayer {
         this(player, null, null, false);
     }
 
-    public ReducedPlayer(String player, String color ,boolean isCreator) {
+    public ReducedPlayer(String player, String color, boolean isCreator) {
         this(player, color, null, isCreator);
     }
 
-    public ReducedPlayer(String player,boolean isCreator) {
+    public ReducedPlayer(String player, boolean isCreator) {
         this(player, null, null, isCreator);
     }
 

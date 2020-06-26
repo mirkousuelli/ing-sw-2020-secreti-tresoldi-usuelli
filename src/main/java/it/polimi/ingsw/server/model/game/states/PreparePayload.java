@@ -36,17 +36,22 @@ public class PreparePayload {
 
     private static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state, boolean currentWorker) {
         List<ReducedAnswerCell> toReturn;
+        List<ReducedAnswerCell> toReturnWithPersonalMalus;
 
         Player currentPlayer = game.getCurrentPlayer();
         Worker worker = currentPlayer.getCurrentWorker();
         Cell workerLocation = worker.getLocation();
 
         List<Malus> maluses = currentPlayer.getMalusList();
-        boolean personalMalus;
+        boolean personalMalus = false;
 
 
         toReturn = PreparePayload.preparePayloadMoveBasic(game, timing, state); //possible and special moves
-        personalMalus = PreparePayload.preparePayloadMovePersonalMalus(game, state, toReturn); //remove cell blocked by a personal malus
+        toReturnWithPersonalMalus = PreparePayload.preparePayloadMovePersonalMalus(game, state, toReturn); //remove cell blocked by a personal malus
+        if (!toReturnWithPersonalMalus.isEmpty()) {
+            personalMalus = true;
+            toReturn = toReturnWithPersonalMalus;
+        }
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //add changed cell by a move action
 
         if (maluses != null && !maluses.isEmpty() && !personalMalus) {
@@ -76,10 +81,9 @@ public class PreparePayload {
         return ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
     }
 
-    private static boolean preparePayloadMovePersonalMalus(Game game, State state, List<ReducedAnswerCell> toReturn) {
+    private static List<ReducedAnswerCell> preparePayloadMovePersonalMalus(Game game, State state, List<ReducedAnswerCell> toReturn) {
         List<Cell> possibleBuilds;
         List<ReducedAnswerCell> toReturnMalus;
-        boolean personalMalus = false;
 
         Player currentPlayer = game.getCurrentPlayer();
 
@@ -89,11 +93,10 @@ public class PreparePayload {
         if (state.equals(State.CHOOSE_WORKER) && malus != null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) { //if the current player has a personal move malus active
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(currentPlayer.getCurrentWorker().getLocation())); //then find the cells blocked by the said malus
             toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.USEPOWER, game.getPlayerList(), possibleBuilds, new ArrayList<>());
-            toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, toReturnMalus);
-            personalMalus = true;
+            return PreparePayload.mergeReducedAnswerCellList(toReturn, toReturnMalus);
         }
 
-        return personalMalus;
+        return new ArrayList<>();
     }
 
     private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {

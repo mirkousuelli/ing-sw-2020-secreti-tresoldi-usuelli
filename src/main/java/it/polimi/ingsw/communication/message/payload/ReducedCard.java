@@ -19,7 +19,7 @@ public class ReducedCard {
 
     private Effect effect;
     private MovementType movePower;
-    private  BlockType buildPower;
+    private BlockType buildPower;
     private boolean additionalPower;
     private int numberOfAdditional;
 
@@ -39,7 +39,9 @@ public class ReducedCard {
         buildPower = effect.equals(Effect.BUILD) ? (BlockType) card.getPower(0).getAllowedAction() : null;
     }
 
-    public ReducedCard() {}
+    public ReducedCard() {
+
+    }
 
     public God getGod() {
         return god;

@@ -32,8 +32,8 @@ public class ReducedAnswerCell extends ReducedDemandCell {
      * It initialises its attributes, setting its coordinates to the designated one and all the other attributes to
      * the classic behaviour (for example setting its level to ground and the list of action to default)
      *
-     * @param x x-coordinate of the cell
-     * @param y y-coordinate of the cell
+     * @param x      x-coordinate of the cell
+     * @param y      y-coordinate of the cell
      * @param worker the worker that can be on this cell
      */
     public ReducedAnswerCell(int x, int y, ReducedWorker worker) {
@@ -136,7 +136,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
      * Method that prepares the cell passed as parameter, returning its reduced version after setting its coordinates
      * and its level. If the chosen cell is occupied by a worker it also initialises the worker (and his id) on the cell
      *
-     * @param c the cell that the reduced version is obtained from
+     * @param c          the cell that the reduced version is obtained from
      * @param playerList list of players
      * @return the reduced version of the cell (with the eventual worker on it)
      */
@@ -175,7 +175,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         for (Cell c : specialAction) {
             found = null;
             for (ReducedAnswerCell reducedCell : toReturn) {
-                if(c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
+                if (c.getX() == reducedCell.getX() && c.getY() == reducedCell.getY()) {
                     found = reducedCell;
                     break;
                 }
@@ -184,8 +184,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
                 temp = ReducedAnswerCell.prepareCell(c, playerList);
                 temp.replaceDefaultAction(ReducedAction.USEPOWER);
                 toReturn.add(temp);
-            }
-            else if (!found.getActionList().contains(ReducedAction.DEFAULT))
+            } else if (!found.getActionList().contains(ReducedAction.DEFAULT))
                 found.getActionList().add(ReducedAction.USEPOWER);
         }
 
