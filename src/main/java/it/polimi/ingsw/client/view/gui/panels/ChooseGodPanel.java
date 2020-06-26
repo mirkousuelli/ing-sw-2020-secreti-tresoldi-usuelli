@@ -234,6 +234,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
                 GUI gui = mg.getGui();
                 God god = chosenGod;
 
+                if (chosenGod == null || !mg.getGame().getJDeck().getGodList().contains(chosenGod)) break;
+
                 chooseButton.setEnabled(false);
                 mg.getGame().getCurrentPlayer().setJCard(new JCard(god));
                 mg.getClientPlayer().setJCard(mg.getGame().getCurrentPlayer().getJCard());

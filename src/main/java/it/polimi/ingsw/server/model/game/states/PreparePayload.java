@@ -190,7 +190,7 @@ public class PreparePayload {
 
         if (state.equals(State.MOVE)) {
             possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(game.getCurrentPlayer().getCurrentWorker()));
-            tempList = addChangedCells(game, State.MOVE);
+            tempList = PreparePayload.addChangedCells(game, State.MOVE);
         } else
             possibleBuilds = new ArrayList<>();
 
