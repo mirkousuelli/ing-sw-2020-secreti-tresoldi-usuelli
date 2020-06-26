@@ -93,14 +93,14 @@ public class MovePower<S> extends ActivePower<S> {
         if (currentPlayer.getWorkers().contains(opponentWorker)) return false;
         if (opponentWorker == null && !cellToMove.isFree()) return false;
 
+        if (opponentWorker != null) {
+            opponentWorker.setPreviousLocation(opponentWorker.getLocation());
+            opponentWorker.setLocation(opponentCellToMove);
+        }
+
         workerToUse.setPreviousLocation(workerToUse.getLocation());
         workerToUse.setLocation((Block) cellToMove);
-
-        if (opponentWorker != null) {
-            opponentWorker.setPreviousLocation(opponentWorker.getPreviousLocation());
-            opponentWorker.setLocation(opponentCellToMove);
-            ((Block) cellToMove).addPawn(workerToUse);
-        }
+        ((Block) cellToMove).addPawn(workerToUse);
 
         return true;
     }

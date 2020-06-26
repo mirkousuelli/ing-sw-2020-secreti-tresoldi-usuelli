@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PreparePayloadTest {
 
@@ -383,7 +384,7 @@ public class PreparePayloadTest {
     }
 
     @Test
-    void PreparePayloadUsePowerForPrometheus() throws ParserConfigurationException, SAXException {
+    void preparePayloadUsePowerForPrometheus() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks that if the player picked a cell under his current worker, he has to choose a different one
          */
@@ -492,5 +493,136 @@ public class PreparePayloadTest {
         assertEquals(1, p1.getMalusList().get(0).getDirection().size());
         assertEquals(MalusLevel.UP, p1.getMalusList().get(0).getDirection().get(0));
 
+    }
+
+    @Test
+    void preparePayloadMovingWithMinotaurTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Minotaur as God, he can move to an occupied cell and the opponent's worker is pushed back (if possible)
+         */
+
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.MINOTAUR);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker2Player1 = (Block) board.getCell(0, 1);
+
+        Block worker1Player2 = (Block) board.getCell(1, 1);
+        Block worker2Player2 = (Block) board.getCell(1, 0);
+
+        Block worker1Player3 = (Block) board.getCell(2, 0);
+        Block worker2Player3 = (Block) board.getCell(0, 2);
+
+        Block newPos1 = (Block) board.getCell(2, 2);
+        Block newPos2 = (Block) board.getCell(3, 3);
+        Block newPos3 = (Block) board.getCell(4, 4);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+        p2.setCurrentWorker(p2.getWorker(1));
+
+        p3.initializeWorkerPosition(1, worker1Player3);
+        p3.initializeWorkerPosition(2, worker2Player3);
+
+        //set state
+        game.setState(State.MOVE);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(worker1Player2.getX(), worker1Player2.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        //Minotaur in 1,1 - Opponent in 2,2
+        assertEquals(5, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.BUILD)).count()); //0,0
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player2.getX(), worker1Player2.getY(), ReducedAction.DEFAULT)).count()); //1,1
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos1.getX(), newPos1.getY(), ReducedAction.DEFAULT)).count()); //2,2
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 2, 1, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 1, 2, ReducedAction.BUILD)).count());
+        //0,1 1,0 0,2 2,0 occupied
+
+        assertEquals(worker1Player1, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(worker1Player2, p1.getCurrentWorker().getLocation());
+        assertEquals(worker1Player2, p2.getCurrentWorker().getPreviousLocation());
+        assertEquals(newPos1, p2.getCurrentWorker().getLocation());
+
+
+
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(newPos1.getX(), newPos1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        returnContent = game.gameEngine();
+        payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        //Minotaur in 2,2 - Opponent in 3,3
+        assertEquals(9, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player2.getX(), worker1Player2.getY(), ReducedAction.BUILD)).count()); //1,1
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos1.getX(), newPos1.getY(), ReducedAction.DEFAULT)).count()); //2,2
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos2.getX(), newPos2.getY(), ReducedAction.DEFAULT)).count()); //3,3
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 2, 1, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 2, 3, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 1, 2, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 1, 3, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 3, 1, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 3, 2, ReducedAction.BUILD)).count());
+
+
+        assertEquals(worker1Player2, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(newPos1, p1.getCurrentWorker().getLocation());
+        assertEquals(newPos1, p2.getCurrentWorker().getPreviousLocation());
+        assertEquals(newPos2, p2.getCurrentWorker().getLocation());
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(newPos2.getX(), newPos2.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        returnContent = game.gameEngine();
+        payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        //Minotaur in 3,3 - Opponent in 4,4
+        assertEquals(9, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos1.getX(), newPos1.getY(), ReducedAction.BUILD)).count()); //2,2
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos2.getX(), newPos2.getY(), ReducedAction.DEFAULT)).count()); //3,3
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos3.getX(), newPos3.getY(), ReducedAction.DEFAULT)).count()); //4,4
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 3, 2, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 3, 4, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 2, 3, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 2, 4, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 4, 2, ReducedAction.BUILD)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 4, 3, ReducedAction.BUILD)).count());
+
+
+        assertEquals(newPos1, p1.getCurrentWorker().getPreviousLocation());
+        assertEquals(newPos2, p1.getCurrentWorker().getLocation());
+        assertEquals(newPos2, p2.getCurrentWorker().getPreviousLocation());
+        assertEquals(newPos3, p2.getCurrentWorker().getLocation());
     }
 }

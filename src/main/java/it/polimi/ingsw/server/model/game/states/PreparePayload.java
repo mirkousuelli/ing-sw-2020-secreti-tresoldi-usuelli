@@ -204,26 +204,29 @@ public class PreparePayload {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
         Player currentPlayer = game.getCurrentPlayer();
+        Worker currentWorker = currentPlayer.getCurrentWorker();
 
-        temp = ReducedAnswerCell.prepareCell(currentPlayer.getCurrentWorker().getLocation(), game.getPlayerList());
+        temp = ReducedAnswerCell.prepareCell(currentWorker.getLocation(), game.getPlayerList()); //add the new position of the current worker if it was moved in this turn
         tempList.add(temp);
 
         Power power = currentPlayer.getCard().getPower(0);
         if (power.getEffect().equals(Effect.MOVE) && power.getAllowedAction().equals(MovementType.PUSH) &&
-                game.getState().getName().equals(State.MOVE.toString()) && game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) {
-            Worker worker = game.getPlayerList().stream()
-                    .filter(p -> !p.nickName.equals(game.getCurrentPlayer().nickName))
+                game.getState().getName().equals(State.MOVE.toString()) && game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) { //if Minotaur's power has been used during this turn
+            Worker worker = game.getPlayerList().stream() //then add the new position of the opponent worker pushed by Minotaur itself
+                    .filter(p -> !p.nickName.equals(currentPlayer.nickName))
                     .map(Player::getWorkers)
-                    .flatMap(List::stream)
-                    .filter(w -> w.getPreviousLocation().equals(currentPlayer.getCurrentWorker().getLocation()))
+                    .flatMap(List::stream) //get all opponent's workers
+                    .filter(w -> w.getPreviousLocation().equals(currentWorker.getLocation())) //find the opponent's worker pushed by Minotaur (its prevLoc is now Minotaur's currLoc)
                     .reduce(null, (a, b) -> a != null ? a : b);
 
-            temp = ReducedAnswerCell.prepareCell(worker.getLocation(), game.getPlayerList());
-            tempList.add(temp);
+            if (worker != null) {
+                temp = ReducedAnswerCell.prepareCell(worker.getLocation(), game.getPlayerList());
+                tempList.add(temp);
+            }
         }
 
-        if (!currentPlayer.getCurrentWorker().getPreviousLocation().equals(currentPlayer.getCurrentWorker().getLocation())) {
-            temp = ReducedAnswerCell.prepareCell(currentPlayer.getCurrentWorker().getPreviousLocation(), game.getPlayerList());
+        if (!currentWorker.getPreviousLocation().equals(currentWorker.getLocation())) {
+            temp = ReducedAnswerCell.prepareCell(currentWorker.getPreviousLocation(), game.getPlayerList());
             if (state.equals(State.MOVE) && temp.isFree())
                 temp.replaceDefaultAction(ReducedAction.BUILD);
             tempList.add(temp);
