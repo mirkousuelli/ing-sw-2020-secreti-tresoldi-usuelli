@@ -200,6 +200,18 @@ public class PreparePayload {
         return PreparePayload.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
+    public static List<ReducedAnswerCell> preparePayloadBuildAdditional(Game game) {
+        ReducedAnswerCell temp;
+        List<ReducedAnswerCell> toReturn = new ArrayList<>();
+        Player currentPlayer = game.getCurrentPlayer();
+        Worker currentWorker = currentPlayer.getCurrentWorker();
+
+        temp = ReducedAnswerCell.prepareCell(currentWorker.getPreviousBuild(), game.getPlayerList()); //add the new position of the current worker if it was moved in this turn
+        toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, temp);
+
+        return toReturn;
+    }
+
     static List<ReducedAnswerCell> addChangedCells(Game game, State state) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();

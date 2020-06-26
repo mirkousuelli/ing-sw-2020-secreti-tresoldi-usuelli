@@ -625,4 +625,76 @@ public class PreparePayloadTest {
         assertEquals(newPos2, p2.getCurrentWorker().getPreviousLocation());
         assertEquals(newPos3, p2.getCurrentWorker().getLocation());
     }
+
+    @Test
+    void preparePayloadBuildingWithHestiaPowerTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that if the player has Minotaur as God, he can move to an occupied cell and the opponent's worker is pushed back (if possible)
+         */
+
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.DEMETER);
+
+        game.setCurrentPlayer(p3);
+        game.assignCard(God.ATLAS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HESTIA);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(0, 0);
+        Block worker2Player1 = (Block) board.getCell(2, 3);
+
+        Block worker1Player2 = (Block) board.getCell(3, 3);
+        Block worker2Player2 = (Block) board.getCell(0, 3);
+
+        Block worker1Player3 = (Block) board.getCell(2, 4);
+        Block worker2Player3 = (Block) board.getCell(4, 2);
+
+        Block completeTower1 = (Block) board.getCell(1, 1);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+        p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        p3.initializeWorkerPosition(1, worker1Player3);
+        p3.initializeWorkerPosition(2, worker2Player3);
+
+        //set state
+        game.setState(State.ASK_ADDITIONAL_POWER);
+        game.setPrevState(State.BUILD);
+        completeTower1.setPreviousLevel(Level.MIDDLE);
+        completeTower1.setLevel(Level.TOP);
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.ADDITIONAL_POWER, new ReducedDemandCell(completeTower1.getX(), completeTower1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        //Hestia in 0,0 - Build on in 1,1
+        assertEquals(1, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, completeTower1.getX(), completeTower1.getY(), ReducedAction.DEFAULT)).count());
+
+        assertEquals(completeTower1, p1.getCurrentWorker().getPreviousBuild());
+    }
 }

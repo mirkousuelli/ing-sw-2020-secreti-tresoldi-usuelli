@@ -150,7 +150,7 @@ public class AdditionalPower implements GameState {
             returnContent = new ReturnContent<>();
             returnContent.setAnswerType(AnswerType.SUCCESS);
             returnContent.setState(State.CHOOSE_WORKER);
-            returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
+            returnContent.setPayload(PreparePayload.preparePayloadBuildAdditional(game));
             returnContent.setChangeTurn(true);
 
             //save
