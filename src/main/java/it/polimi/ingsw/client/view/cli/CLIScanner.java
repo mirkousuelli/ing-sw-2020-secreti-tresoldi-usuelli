@@ -126,7 +126,6 @@ public class CLIScanner<S> {
         String value;
 
         do {
-            toRepeat = true;
             toUsePower = false;
             payload = null;
 
@@ -407,12 +406,14 @@ public class CLIScanner<S> {
 
         int numOfAdditional = clientModel.getNumberOfAdditional();
 
-        if (numOfAdditional > 0)
-            clientModel.setNumberOfAdditional(numOfAdditional - 1);
+        if (numOfAdditional != 0) {
+            if (numOfAdditional > 0)
+                clientModel.setNumberOfAdditional(numOfAdditional - 1);
 
-        if (numOfAdditional != 1)
-            clientModel.setNextState(clientModel.getCurrentState());
+            if (numOfAdditional != 1)
+                clientModel.setNextState(clientModel.getCurrentState());
 
-        clientModel.setAdditionalPowerUsed(numOfAdditional == 0);
+            clientModel.setAdditionalPowerUsed(numOfAdditional == 1);
+        }
     }
 }

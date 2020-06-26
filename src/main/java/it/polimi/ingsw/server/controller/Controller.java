@@ -4,10 +4,10 @@ import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
-import it.polimi.ingsw.server.observer.Observer;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.observer.Observer;
 import it.polimi.ingsw.server.view.ActionToPerformView;
 
 import java.util.logging.Logger;

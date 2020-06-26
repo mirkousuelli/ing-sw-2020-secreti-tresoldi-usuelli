@@ -280,7 +280,7 @@ public class CLIPrinter<S> {
                 if (clientModel.isEnded())
                     out.println("It's your " + context + "!");
                 else
-                    out.println("It's " + Color.RESET + player.getColor() + player.getNickname() + Color.RESET + "'s " + context + "!");
+                    out.println("It's " + Color.RESET + Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "'s " + context + "!");
                 break;
 
             case "close":
