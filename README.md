@@ -1,6 +1,7 @@
 # Santorini - GC15
 Final project in Software Engineering (3CFU) - Politecnico di Milano, Computer Science Engineering BSc.
 ![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
+
 Java implementation of the board game called Santorini edited by Cranio Creations.
 
 ## What we have done
