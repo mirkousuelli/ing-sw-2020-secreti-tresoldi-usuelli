@@ -501,6 +501,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case ERROR:
+                updateCells();
                 break;
 
             default:
