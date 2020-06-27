@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
@@ -20,10 +22,16 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ChooseWorkerTest {
+
+    private boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction) {
+        return rac.getX() == x && rac.getY() == y && rac.getActionList().size() == 1 && rac.getActionList().contains(reducedAction);
+    }
 
     @Test
     void correctChosenWorkerTest() throws ParserConfigurationException, SAXException {
@@ -197,5 +205,260 @@ public class ChooseWorkerTest {
         // the other players keep playing the match and the current player is switched correctly
         assertEquals(p1, game.getCurrentPlayer());
 
+    }
+
+    @Test
+    void gettingStuckTest() throws ParserConfigurationException, SAXException {
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HESTIA);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(0, 1);
+        Block worker2Player1 = (Block) board.getCell(2, 1);
+
+        Block worker1Player2 = (Block) board.getCell(1, 0);
+        Block worker2Player2 = (Block) board.getCell(2, 3);
+
+        Block completeTower1 = (Block) board.getCell(1, 1);
+        Block completeTower2 = (Block) board.getCell(2, 2);
+        Block completeTower3 = (Block) board.getCell(3, 2);
+        Block completeTower4 = (Block) board.getCell(3, 1);
+        Block completeTower5 = (Block) board.getCell(3, 0);
+        Block middleTower1 = (Block) board.getCell(2, 0);
+
+        Block newPos = (Block) board.getCell(1, 2);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+        p1.setCurrentWorker(p1.getWorker(2));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        //set state
+        game.setState(State.CHOOSE_WORKER);
+
+        //set cell's level
+        completeTower1.setPreviousLevel(Level.TOP);
+        completeTower1.setLevel(Level.DOME);
+
+        completeTower2.setPreviousLevel(Level.TOP);
+        completeTower2.setLevel(Level.DOME);
+
+        completeTower3.setPreviousLevel(Level.TOP);
+        completeTower3.setLevel(Level.DOME);
+
+        completeTower4.setPreviousLevel(Level.TOP);
+        completeTower4.setLevel(Level.DOME);
+
+        completeTower5.setPreviousLevel(Level.TOP);
+        completeTower5.setLevel(Level.DOME);
+
+        middleTower1.setPreviousLevel(Level.BOTTOM);
+        middleTower1.setLevel(Level.MIDDLE);
+
+        worker1Player1.setPreviousLevel(Level.BOTTOM);
+        worker1Player1.setLevel(Level.MIDDLE);
+
+        worker2Player1.setPreviousLevel(Level.BOTTOM);
+        worker2Player1.setLevel(Level.MIDDLE);
+
+        worker1Player2.setPreviousLevel(Level.GROUND);
+        worker1Player2.setLevel(Level.BOTTOM);
+
+        newPos.setPreviousLevel(Level.BOTTOM);
+        newPos.setLevel(Level.MIDDLE);
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker2Player1.getX(), worker2Player1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(3, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos.getX(), newPos.getY(), ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
+
+    }
+
+    @Test
+    void gettingStuck1Test() throws ParserConfigurationException, SAXException {
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HESTIA);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker2Player1 = (Block) board.getCell(2, 1);
+
+        Block worker1Player2 = (Block) board.getCell(2, 2);
+        Block worker2Player2 = (Block) board.getCell(3, 1);
+
+        Block completeTower1 = (Block) board.getCell(1, 1);
+        Block completeTower2 = (Block) board.getCell(3, 0);
+        Block completeTower3 = (Block) board.getCell(3, 2);
+        Block middleTower1 = (Block) board.getCell(2, 0);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+        p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        //set state
+        game.setState(State.CHOOSE_WORKER);
+
+        //set cell's level
+        completeTower1.setPreviousLevel(Level.TOP);
+        completeTower1.setLevel(Level.DOME);
+
+        completeTower2.setPreviousLevel(Level.TOP);
+        completeTower2.setLevel(Level.DOME);
+
+        completeTower3.setPreviousLevel(Level.TOP);
+        completeTower3.setLevel(Level.DOME);
+
+        middleTower1.setPreviousLevel(Level.BOTTOM);
+        middleTower1.setLevel(Level.MIDDLE);
+
+        worker1Player1.setPreviousLevel(Level.GROUND);
+        worker1Player1.setLevel(Level.BOTTOM);
+
+        worker2Player1.setPreviousLevel(Level.BOTTOM);
+        worker2Player1.setLevel(Level.MIDDLE);
+
+        worker2Player2.setPreviousLevel(Level.GROUND);
+        worker2Player2.setLevel(Level.BOTTOM);
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker1Player1.getX(), worker1Player1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(4, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 0, 0, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 0, 1, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker2Player1.getX(), worker2Player1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        returnContent = game.gameEngine();
+        payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(3, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 1, 2, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
+    }
+
+    @Test
+    void oneWorkerBlockedTest() throws ParserConfigurationException, SAXException {
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.HESTIA);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.ATLAS);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(3, 0);
+        Block worker2Player1 = (Block) board.getCell(2, 4);
+
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker2Player2 = (Block) board.getCell(3, 3);
+
+        Block middleTower1 = (Block) board.getCell(2, 1);
+        Block middleTower3 = (Block) board.getCell(3, 1);
+        Block middleTower2 = (Block) board.getCell(4, 1);
+        Block middleTower4 = (Block) board.getCell(2, 2);
+        Block bottomTower1 = (Block) board.getCell(3, 2);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+        p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        //set state
+        game.setState(State.CHOOSE_WORKER);
+
+        //set cell's level
+        middleTower1.setPreviousLevel(Level.BOTTOM);
+        middleTower1.setLevel(Level.MIDDLE);
+
+        middleTower2.setPreviousLevel(Level.BOTTOM);
+        middleTower2.setLevel(Level.MIDDLE);
+
+        middleTower3.setPreviousLevel(Level.BOTTOM);
+        middleTower3.setLevel(Level.MIDDLE);
+
+        middleTower4.setPreviousLevel(Level.BOTTOM);
+        middleTower4.setLevel(Level.MIDDLE);
+
+        bottomTower1.setPreviousLevel(Level.GROUND);
+        bottomTower1.setLevel(Level.BOTTOM);
+
+        worker1Player1.setPreviousLevel(Level.GROUND);
+        worker1Player1.setLevel(Level.BOTTOM);
+
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker1Player2.getX(), worker1Player2.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
     }
 }

@@ -126,11 +126,6 @@ public class Move implements GameState {
                 .collect(Collectors.toList());
 
         if (remainingCellsToMove.isEmpty()) return false;
-        if (remainingCellsToMove.size() == 1 &&
-                !remainingCellsToMove.get(0).isFree() &&
-                (!((Block) remainingCellsToMove.get(0)).getPawn().equals(currentPlayer.getCurrentWorker()) || game.getState().getName().equals(State.CHOOSE_WORKER.toString())) &&
-                remainingCellsToBuild.size() == 1 &&
-                remainingCellsToBuild.containsAll(remainingCellsToMove)) return false;
         if (currentPlayerMalusList.isEmpty()) return true;
 
         return remainingCellsToMove.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
