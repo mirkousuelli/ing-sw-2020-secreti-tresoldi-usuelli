@@ -523,7 +523,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         waitStart();
 
         synchronized (lobby.lockLobby) {
-            if (lobby.isFull() && !lobby.isPresentInGame(this)) {
+            if (lobby.isFull() && !lobby.isPresentInLobby(this)) {
                 setLoggingOut(true);
                 closeSocket();
             }

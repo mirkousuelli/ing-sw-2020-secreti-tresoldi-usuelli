@@ -7,6 +7,7 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
@@ -15,7 +16,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Class which manages the server side connection protocol through sockets
@@ -40,6 +44,14 @@ public class ServerConnectionSocket {
     private boolean isActive;
     private boolean alreadyNewGame;
 
+    private final Map<Integer, Lobby> loadedLobbyMap;
+    private final Map<Integer, Integer> loadedLobbyPathMap;
+    private int numOfLobbies;
+
+    private static final String LOBBY_DIR = "backups";
+    private static final String LOBBY_NAME = LOBBY_DIR + "/backup";
+    private static final String EXTENSION = ".xml";
+
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     /**
@@ -51,7 +63,10 @@ public class ServerConnectionSocket {
         this.port = port;
 
         lobby = null;
-        loadLastLobby();
+        loadedLobbyMap = new HashMap<>();
+        loadedLobbyPathMap = new HashMap<>();
+        numOfLobbies = 0;
+        loadLobbies();
 
         isActive = false;
         alreadyNewGame = false;
@@ -83,15 +98,47 @@ public class ServerConnectionSocket {
         }
     }
 
+    private void loadLobbies() {
+        int numOfLobby = 0;
+
+        if (!Files.exists(Paths.get(LOBBY_DIR))) return;
+
+        try (Stream<Path> files = Files.list(Paths.get(LOBBY_DIR))) {
+            numOfLobby = (int) files.count();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, couldn't count lobbies", e);
+        }
+
+        numOfLobbies = numOfLobby;
+        Lobby lobbyLoaded;
+        int lobbyHashCode;
+        for (int i = 1; i <= numOfLobby; i++) {
+            lobbyLoaded = loadLobby(i);
+            if (lobbyLoaded != null) {
+                lobbyHashCode = getLobbyPlayerListHashCode(lobbyLoaded);
+                loadedLobbyMap.put(lobbyHashCode, lobbyLoaded);
+                loadedLobbyPathMap.put(lobbyHashCode, i);
+            }
+        }
+    }
+
+    private int getLobbyPlayerListHashCode(Lobby lobby) {
+        return lobby.getGame().getPlayerList().stream()
+                .map(Player::getNickName)
+                .collect(Collectors.toList())
+                .hashCode();
+    }
+
     /**
-     * Method that load a previous lobby in order to recover a past match saved
+     * Method that load all the previous lobbies in order to recover a past match saved
      */
-    private void loadLastLobby() {
+    private Lobby loadLobby(int i) {
         Game loadedGame = null;
+        Lobby loadedLobby = null;
 
         try {
-            if (Files.exists(Paths.get(Lobby.BACKUP_PATH))) {
-                loadedGame = GameMemory.load(Lobby.BACKUP_PATH);
+            if (Files.exists(Paths.get(LOBBY_NAME + i + EXTENSION))) {
+                loadedGame = GameMemory.load(LOBBY_NAME + i + EXTENSION);
                 if (loadedGame.getState().getName().equals(State.VICTORY.toString()))
                     loadedGame = null;
             }
@@ -100,9 +147,11 @@ public class ServerConnectionSocket {
         }
 
         if (loadedGame != null) {
-            lobby = new Lobby(loadedGame);
-            lobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+            loadedLobby = new Lobby(loadedGame);
+            loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
         }
+
+        return loadedLobby;
     }
 
     /**
@@ -119,6 +168,8 @@ public class ServerConnectionSocket {
             player.closeSocket();
             isActive = false;
         }
+
+        numOfLobbies++;
     }
 
     /**
@@ -147,10 +198,8 @@ public class ServerConnectionSocket {
             }
         } else {
             System.out.println("CCCCCCC");
-            //load lobby if there is one to load
-            lobby = null;
-            if (Files.exists(Paths.get(Lobby.BACKUP_PATH)))
-                loadLastLobby();
+            //load lobbies if there at least one to load
+            moveAndLoadLobbies();
 
             for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.setIsToRestart(true);
@@ -165,6 +214,28 @@ public class ServerConnectionSocket {
         }
     }
 
+    private void moveAndLoadLobbies() {
+        loadedLobbyMap.put(getLobbyPlayerListHashCode(lobby), lobby);
+        numOfLobbies++;
+        lobby = null;
+
+        try {
+            if (!Files.exists(Paths.get(LOBBY_DIR)))
+                Files.createDirectory(Paths.get(LOBBY_DIR));
+            Files.createFile(Paths.get(LOBBY_NAME + numOfLobbies + EXTENSION));
+            Files.move(Paths.get(Lobby.BACKUP_PATH), Paths.get(LOBBY_NAME + numOfLobbies + EXTENSION), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, couldn't move file", e);
+        }
+    }
+
+    private Lobby isPlayerInALobby(String name) {
+        return loadedLobbyMap.values().stream()
+                .reduce(null, (lobby1, lobby2) -> lobby1 != null && lobby1.isPresentInGame(name)
+                        ? lobby1
+                        : lobby2);
+    }
+
     /**
      * Method that operates the proper connection
      *
@@ -173,16 +244,29 @@ public class ServerConnectionSocket {
      * @return {@code true} connected successfully, {@code false} connection gone wrong
      */
     synchronized boolean connect(ServerClientHandlerSocket player, String name) {
-        if (lobby != null) {
-            if (lobby.isReloaded()) {
-                if (connectReload(player, name))
-                    return true; //toRepeat
-            } else {
-                Boolean toRepeat = connectBasic(player, name); //if toRepeat is null there is still something to do
-                if (toRepeat != null)
-                    return toRepeat;
+        if (!loadedLobbyMap.isEmpty() || lobby != null) { //if some lobbies where loaded, maybe 'player' is in one of them
+            if (lobby != null) { //if 'player' isn't the first one to connect (which means another player loaded lobby or created a new one)
+                if (lobby.isReloaded()) { //if lobby is reloaded
+                    if (connectReload(player, name))
+                        return true; //toRepeat
+                } else { //else it is a new lobby
+                    Boolean toRepeat = connectBasic(player, name); //if toRepeat is null there is still something to do
+                    if (toRepeat != null)
+                        return toRepeat;
+                }
+            } else { //'player' is the first one to connect
+                Lobby lobbyLoaded = isPlayerInALobby(name); //search a lobby with player
+                if (lobbyLoaded != null) { //if 'player' is in a lobby
+                    lobby = lobbyLoaded; //then that lobby will be the one that will be used for this match
+                    if (connectReload(player, name))
+                        return true; //toRepeat
+                    else
+                        removeLobbyFromLobbyDir(lobby);
+                }
+                else
+                    createLobby(player); //else create a new lobby
             }
-        } else //creator
+        } else //creator (no lobbies to load)
             createLobby(player);
 
         waitingConnection.put(name, player); //creator or joiner
@@ -194,6 +278,25 @@ public class ServerConnectionSocket {
             player.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, player.isCreator())));
 
         return false; //not toRepeat
+    }
+
+    private void removeLobbyFromLobbyDir(Lobby lobby) {
+        int lobbyHashCode = getLobbyPlayerListHashCode(lobby);
+        Integer numberOfLobby = loadedLobbyPathMap.get(lobbyHashCode);
+        if (numberOfLobby == null) return;
+
+        int i = numberOfLobby + 1;
+        try {
+            while (Files.exists(Paths.get(LOBBY_NAME + i + EXTENSION)))
+                Files.move(Paths.get(LOBBY_NAME + i + EXTENSION), Paths.get(LOBBY_NAME + (i - 1) + EXTENSION), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Got an IOException, couldn't delete a lobby");
+        }
+
+        loadedLobbyMap.remove(lobbyHashCode);
+        loadedLobbyPathMap.remove(lobbyHashCode);
+        if (numOfLobbies > 0)
+            numOfLobbies--;
     }
 
     private synchronized Boolean connectBasic(ServerClientHandlerSocket player, String name) {
@@ -327,6 +430,11 @@ public class ServerConnectionSocket {
         if (!alreadyNewGame) {
             lobby.clean();
             lobby = null;
+            try {
+                Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Got an IOException, couldn't delete lobby", e);
+            }
             waitingConnection.clear();
             alreadyNewGame = true;
         }

@@ -264,7 +264,7 @@ public class Lobby {
      * @param c players' connection
      * @return {@code true} it is present, {@code false} it is not
      */
-    boolean isPresentInGame(ServerClientHandler c) {
+    boolean isPresentInLobby(ServerClientHandler c) {
         return playingConnection.get(c) != null;
     }
 
