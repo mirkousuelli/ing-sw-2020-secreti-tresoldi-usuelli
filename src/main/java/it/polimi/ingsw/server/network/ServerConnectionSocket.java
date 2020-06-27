@@ -262,8 +262,7 @@ public class ServerConnectionSocket {
                         return true; //toRepeat
                     else
                         removeLobbyFromLobbyDir(lobby);
-                }
-                else
+                } else
                     createLobby(player); //else create a new lobby
             }
         } else //creator (no lobbies to load)
