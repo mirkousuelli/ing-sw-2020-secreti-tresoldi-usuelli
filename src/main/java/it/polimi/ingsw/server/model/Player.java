@@ -52,7 +52,7 @@ public class Player {
     /**
      * Method that connects a worker with his owner and sets his initial position on the board
      *
-     * @param id a number between 1 and 2 that identifies each worker of every player
+     * @param id       a number between 1 and 2 that identifies each worker of every player
      * @param position the block where the worker is placed at the beginning
      * @return {@code true} if the worker is initialised properly, {@code false} if the chosen id is not correct or
      * if the chosen position is occupied
@@ -63,7 +63,7 @@ public class Player {
 
         this.addWorker(new Worker(id, position));
 
-        if  (id == 1)
+        if (id == 1)
             setCurrentWorker(getWorker(id));
 
         // setting male and female
@@ -174,7 +174,7 @@ public class Player {
         for (Malus m : malusList) {
             if (m.isPermanent()) {
                 malusList.removeIf(malus -> malus.equals(m));
-                return  m;
+                return m;
             }
         }
 

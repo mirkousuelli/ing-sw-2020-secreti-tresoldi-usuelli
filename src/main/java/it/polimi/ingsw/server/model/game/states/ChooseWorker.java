@@ -32,7 +32,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Class that represents the state where a player has to choose the worker he wants to use during his turn
