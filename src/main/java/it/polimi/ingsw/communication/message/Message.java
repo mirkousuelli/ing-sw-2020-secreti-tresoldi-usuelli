@@ -18,7 +18,8 @@ public abstract class Message<H, P> {
         this.payload = payload;
     }
 
-    public Message(){}
+    public Message() {
+    }
 
     public H getHeader() {
         return this.header;

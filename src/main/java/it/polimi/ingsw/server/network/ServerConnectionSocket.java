@@ -67,6 +67,7 @@ public class ServerConnectionSocket {
         loadedLobbyPathMap = new HashMap<>();
         numOfLobbies = 0;
         loadLobbies();
+        moveAndLoadLobbies();
 
         isActive = false;
         alreadyNewGame = false;
@@ -215,9 +216,13 @@ public class ServerConnectionSocket {
     }
 
     private void moveAndLoadLobbies() {
-        loadedLobbyMap.put(getLobbyPlayerListHashCode(lobby), lobby);
-        numOfLobbies++;
+        if (lobby != null) {
+            loadedLobbyMap.put(getLobbyPlayerListHashCode(lobby), lobby);
+            loadedLobbyPathMap.put(getLobbyPlayerListHashCode(lobby), numOfLobbies);
+        }
         lobby = null;
+
+        if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) return;
 
         try {
             if (!Files.exists(Paths.get(LOBBY_DIR)))
@@ -292,8 +297,11 @@ public class ServerConnectionSocket {
 
         int i = numberOfLobby + 1;
         try {
-            while (Files.exists(Paths.get(LOBBY_NAME + i + EXTENSION)))
+            while (Files.exists(Paths.get(LOBBY_NAME + i + EXTENSION))) {
                 Files.move(Paths.get(LOBBY_NAME + i + EXTENSION), Paths.get(LOBBY_NAME + (i - 1) + EXTENSION), StandardCopyOption.REPLACE_EXISTING);
+                i++;
+            }
+            Files.deleteIfExists(Paths.get(LOBBY_NAME + (i - 1) + EXTENSION));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, couldn't delete a lobby");
         }

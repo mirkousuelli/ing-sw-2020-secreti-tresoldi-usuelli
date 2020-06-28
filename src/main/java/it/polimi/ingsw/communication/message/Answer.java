@@ -40,7 +40,8 @@ public class Answer<S> extends Message<AnswerType, S> {
         this.context = msg.getContext();
     }
 
-    public Answer(){}
+    public Answer() {
+    }
 
     public UpdatedPartType getContext() {
         return this.context;

@@ -134,9 +134,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         }
 
         if (error) {
+            error = false;
             gui.getClientModel().getPlayer().setNickname(name);
             gui.generateDemand(DemandType.CONNECT, new ReducedMessage(name));
-            error = false;
         } else
             gui.initialRequest(name, address, port);
 

@@ -469,6 +469,14 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     this.panelIndex.next(this.panels);
                 } else {
                     game.removePlayer(((ReducedPlayer) gui.getAnswer().getPayload()).getNickname());
+                    left.removeAll();
+                    int enemy = 0;
+                    for (JPlayer p : this.game.getPlayerList()) {
+                        if (!p.equals(this.clientPlayer)) {
+                            createEnemySection(p, enemy++);
+                            p.setCardViewSize(true);
+                        }
+                    }
                     if (gui.getClientModel().isYourTurn())
                         updateCells();
                 }
@@ -498,6 +506,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case ERROR:
+                updateCells();
                 break;
 
             default:

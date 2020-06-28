@@ -3,7 +3,6 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
-import it.polimi.ingsw.server.observer.Observable;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Card;
@@ -14,6 +13,7 @@ import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
 import it.polimi.ingsw.server.model.map.Level;
+import it.polimi.ingsw.server.observer.Observable;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -317,7 +317,7 @@ public class Game extends Observable<Answer> {
         if (!returnContent.getAnswerType().equals(AnswerType.ERROR)) {
             if (returnContent.isChangeTurn()) {
                 setState(new ChangeTurn(this));
-                 rc = state.gameEngine();
+                rc = state.gameEngine();
 
                 if (!rc.getAnswerType().equals(AnswerType.ERROR))
                     notify(new Answer<>(AnswerType.CHANGE_TURN, rc.getPayload()));

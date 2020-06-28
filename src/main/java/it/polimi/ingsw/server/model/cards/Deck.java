@@ -16,7 +16,10 @@ import it.polimi.ingsw.server.model.cards.gods.GodParser;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +50,7 @@ public class Deck {
     }
 
     public Card getCard(God god) {
-        return cards.stream().filter(c -> c.getGod().equals(god)).reduce(null, (a,b) -> a != null ? a : b);
+        return cards.stream().filter(c -> c.getGod().equals(god)).reduce(null, (a, b) -> a != null ? a : b);
     }
 
     public void fetchCard(God god) {
@@ -73,7 +76,7 @@ public class Deck {
 
         if (!cards.isEmpty()) {
             for (Card card : cards) {
-                if (card.getGod().equals(god)){
+                if (card.getGod().equals(god)) {
                     pickedCard = card.clone();
                     cards.remove(pickedCard);
                 }

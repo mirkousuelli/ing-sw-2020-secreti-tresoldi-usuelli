@@ -99,7 +99,7 @@ public enum DemandType {
      * Method that returns the following state, depending on the current one
      *
      * @param currentState the current state of the game
-     * @param isCreator parameter that tells if the player is the creator of the lobby
+     * @param isCreator    parameter that tells if the player is the creator of the lobby
      * @return the next state based on the current one
      */
     public static DemandType getNextState(DemandType currentState, boolean isCreator) {
@@ -110,7 +110,7 @@ public enum DemandType {
             return CHOOSE_CARD;
 
         if (currentState.equals(CHOOSE_CARD) && !isCreator)
-                return PLACE_WORKERS;
+            return PLACE_WORKERS;
 
         if (currentState.equals(ADDITIONAL_POWER) || currentState.equals(BUILD))
             return CHOOSE_WORKER;

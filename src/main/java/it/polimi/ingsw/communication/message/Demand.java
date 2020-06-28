@@ -27,6 +27,7 @@ public class Demand<S> extends Message<DemandType, S> {
         super(msg.getHeader(), msg.getPayload());
     }
 
-    public Demand(){}
+    public Demand() {
+    }
 
 }

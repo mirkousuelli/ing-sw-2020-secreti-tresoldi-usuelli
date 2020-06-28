@@ -590,10 +590,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      */
     private void logIn() {
         Demand demand = null;
-        boolean toRepeat;
+        boolean toRepeat = false;
 
         do {
-            if (name == null) //only after a new game
+            if (name == null || toRepeat) //only after a new game
                 demand = read();
 
             if (demand == null && name == null) //error while receive a message
