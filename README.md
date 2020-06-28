@@ -1,5 +1,6 @@
 # Final project in Software Engineering 2019/2020
 Santorini, GC15 - Computer Science Engineering BSc, Politecnico di Milano.
+
 ![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
 
 Java implementation of the board game called Santorini edited by Cranio Creations.
@@ -19,15 +20,15 @@ Generate jar files (client and server) through maven by executing the following 
 mvn clean
 mvn package
 ```
-- Server:
+- **Server**:
 ```shell
 java -jar target/GC15-server-jar-with-dependencies.jar
 ```
-- Client CLI:
+- **Client CLI**:
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
 ```
-- Client GUI: double click on **target/GC15-client-jar-with-dependencies.jar** icon.
+- **Client GUI**: double click on **target/GC15-client-jar-with-dependencies.jar** icon.
 
 ## Students
 - Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
