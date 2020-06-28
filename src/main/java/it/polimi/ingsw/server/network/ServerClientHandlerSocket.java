@@ -530,7 +530,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         waitStart();
 
         synchronized (lobby.lockLobby) {
-            if (lobby.isFull() && !lobby.isPresentInLobby(this)) {
+            if (lobby.isFull() && !lobby.isPresentInGame(name)) {
                 setLoggingOut(true);
                 closeSocket();
             }
@@ -593,7 +593,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         boolean toRepeat = false;
 
         do {
-            if (name == null || toRepeat) //only after a new game
+            if (name == null || toRepeat) //after a new game or if the name chosen by the player is already taken
                 demand = read();
 
             if (demand == null && name == null) //error while receive a message

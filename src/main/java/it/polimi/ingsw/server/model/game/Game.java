@@ -320,14 +320,14 @@ public class Game extends Observable<Answer> {
                 rc = state.gameEngine();
 
                 if (!rc.getAnswerType().equals(AnswerType.ERROR))
-                    notify(new Answer<>(AnswerType.CHANGE_TURN, rc.getPayload()));
+                    notify(new Answer<>(rc.getAnswerType(), rc.getPayload()));
             }
 
-            if (returnContent.getPayload() != null)
+            if (returnContent.getPayload() != null && (rc == null || !rc.getAnswerType().equals(AnswerType.VICTORY)))
                 notify(new Answer<>(returnContent.getAnswerType(), UpdatedPartType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
         }
 
-        if (rc != null && rc.getAnswerType().equals(AnswerType.ERROR))
+        if (rc != null && (rc.getAnswerType().equals(AnswerType.ERROR) || rc.getAnswerType().equals(AnswerType.VICTORY)))
             return rc;
         else
             return returnContent;

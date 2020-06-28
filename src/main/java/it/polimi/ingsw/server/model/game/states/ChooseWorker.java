@@ -29,6 +29,7 @@ import it.polimi.ingsw.server.network.Lobby;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,10 +57,22 @@ public class ChooseWorker implements GameState {
      * @return {@code true} if the current player cannot move any of his workers, {@code false} if he can move at least
      * one of them
      */
-    private boolean cannotMoveAny() {
-        List<Worker> workerList = game.getCurrentPlayer().getWorkers();
+    static boolean cannotMoveAny(Game game, Player player) {
+        List<Worker> workerList = player.getWorkers();
 
-        return workerList.stream().noneMatch(this::isWorkerAbleToMove);
+        return workerList.stream().noneMatch(worker -> ChooseWorker.isWorkerAbleToMove(game, worker));
+    }
+
+    private static boolean cannotMoveAny(Game game) {
+        return ChooseWorker.cannotMoveAny(game, game.getCurrentPlayer());
+    }
+
+    private static boolean isWorkerAbleToMove(Game game, Worker worker) {
+        List<Cell> around = game.getBoard().getAround(worker.getLocation());
+
+        return around.stream()
+                .filter(Cell::isWalkable)
+                .anyMatch(cell -> cell.getLevel().toInt() - worker.getLocation().getLevel().toInt() <= 1);
     }
 
     @Override
@@ -102,7 +115,7 @@ public class ChooseWorker implements GameState {
         if (chosenWorker.isFree() || !game.getCurrentPlayer().getWorkers().contains(((Block) chosenWorker).getPawn()))
             return returnError();
 
-        if (cannotMoveAny()) //if currentPlayer cannot move any of his workers
+        if (ChooseWorker.cannotMoveAny(game)) //if currentPlayer cannot move any of his workers
             returnContent = removeWorkersAndPlayer(); //then he loses and his workers have to be removed
         else //else he can choose one of his workers
             returnContent = chooseWorker(chosenWorker);
@@ -126,14 +139,6 @@ public class ChooseWorker implements GameState {
         returnContent.setState(State.CHOOSE_WORKER);
 
         return returnContent;
-    }
-
-    private boolean isWorkerAbleToMove(Worker worker) {
-        List<Cell> around = game.getBoard().getAround(worker.getLocation());
-
-        return around.stream()
-                .filter(Cell::isWalkable)
-                .anyMatch(cell -> cell.getLevel().toInt() - worker.getLocation().getLevel().toInt() <= 1);
     }
 
     private ReturnContent removeWorkersAndPlayer() {
@@ -173,7 +178,7 @@ public class ChooseWorker implements GameState {
 
         for (Worker w : currentPlayer.getWorkers()) {
             if (w.getX() == chosenWorker.getX() && w.getY() == chosenWorker.getY()) {
-                if (isWorkerAbleToMove(w)) {
+                if (ChooseWorker.isWorkerAbleToMove(game, w)) {
                     // the player has to pick a worker and the game goes to Move state
                     currentPlayer.setCurrentWorker(w);
 
