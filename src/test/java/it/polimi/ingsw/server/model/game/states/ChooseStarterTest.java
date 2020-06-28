@@ -66,4 +66,28 @@ public class ChooseStarterTest {
         assertEquals(State.CHOOSE_STARTER, returnContent.getState());
         assertEquals(-1, game.getStarter());
     }
+
+    @Test
+    void pickingChallengerAsStarterTest() throws ParserConfigurationException, SAXException {
+        // if the Challenger picks himself as starter, the state changes to place workers and the starter is set
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        Player p3 = new Player("Riccardo");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+        game.addPlayer(p3);
+
+        game.setState(State.CHOOSE_STARTER);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_STARTER, new ReducedMessage("Fabio"))));
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.PLACE_WORKERS, returnContent.getState());
+        assertEquals(game.getPlayerList().indexOf(p1), game.getStarter());
+        assertEquals("Fabio", game.getCurrentPlayer().getNickName());
+    }
 }
