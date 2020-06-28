@@ -100,6 +100,9 @@ public class Player {
         workers.remove(worker);
     }
 
+    /**
+     * Method that removes both workers from the list of workers of the player
+     */
     public void removeWorkers() {
         workers.stream().map(Worker::getLocation).forEach(Block::removePawn);
         workers.clear();

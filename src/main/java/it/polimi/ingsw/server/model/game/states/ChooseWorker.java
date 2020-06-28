@@ -52,9 +52,11 @@ public class ChooseWorker implements GameState {
     }
 
     /**
-     * Method that tells if the current player cannot move any of his workers
+     * Method that tells if the given player cannot move any of his workers
      *
-     * @return {@code true} if the current player cannot move any of his workers, {@code false} if he can move at least
+     * @param game   the game where to check
+     * @param player the player to control
+     * @return {@code true} if the given player cannot move any of his workers, {@code false} if he can move at least
      * one of them
      */
     static boolean cannotMoveAny(Game game, Player player) {
@@ -63,10 +65,23 @@ public class ChooseWorker implements GameState {
         return workerList.stream().noneMatch(worker -> ChooseWorker.isWorkerAbleToMove(game, worker));
     }
 
+    /**
+     * Method that tells if the current player cannot move any of his workers
+     *
+     * @param game the game that is being played
+     * @return {@code true} if the current player cannot move any of his workers, {@code false} if he can move at least
+     * one of them
+     */
     private static boolean cannotMoveAny(Game game) {
         return ChooseWorker.cannotMoveAny(game, game.getCurrentPlayer());
     }
 
+    /**
+     * Method that checks if the given worker can be moved
+     *
+     * @param worker the worker that is checked
+     * @return {@code true} if the chosen worker can be moved, {@code false} otherwise
+     */
     private static boolean isWorkerAbleToMove(Game game, Worker worker) {
         List<Cell> around = game.getBoard().getAround(worker.getLocation());
 
@@ -141,6 +156,13 @@ public class ChooseWorker implements GameState {
         return returnContent;
     }
 
+
+    /**
+     * Method that removes the player (with his workers) that cannot has lost. If there are more than 2 players the
+     * opponents keep playing the game, otherwise the other player is the winner
+     *
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent removeWorkersAndPlayer() {
         ReturnContent returnContent = new ReturnContent<>();
         Player currentPlayer = game.getCurrentPlayer();
@@ -171,6 +193,12 @@ public class ChooseWorker implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that actually picks the player that has been selected by the player
+     *
+     * @param chosenWorker the cell containing the worker picked by the player
+     * @return returnContent, which contains information like the outcome of the actions and the next state
+     */
     private ReturnContent chooseWorker(Cell chosenWorker) {
         ReturnContent returnContent = null;
         Player currentPlayer = game.getCurrentPlayer();

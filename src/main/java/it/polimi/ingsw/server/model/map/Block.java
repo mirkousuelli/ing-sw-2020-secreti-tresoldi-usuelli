@@ -127,7 +127,7 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that cleans the block, removing possible pawns and setting its level back to ground
+     * Method that cleans this block, removing possible pawns and setting its level back to ground
      */
     @Override
     public void clean() {
@@ -137,7 +137,7 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that adds a pawn on the block (if it is walkable, otherwise it does nothing)
+     * Method that adds a pawn on this block (if it is walkable, otherwise it does nothing)
      *
      * @param newPawn the pawn to add
      */
@@ -149,7 +149,7 @@ public class Block implements Cell {
     }
 
     /**
-     * Method that removes an eventual pawn from the block
+     * Method that removes an eventual pawn from this block
      */
     public void removePawn() {
         this.pawn = null;

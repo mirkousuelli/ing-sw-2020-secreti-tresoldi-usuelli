@@ -126,7 +126,6 @@ public class PreparePayload {
         return toReturn;
     }
 
-
     public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
         List<ReducedAnswerCell> ret = new ArrayList<>(toReturn);
@@ -182,7 +181,6 @@ public class PreparePayload {
 
         return new ArrayList<>(set);
     }
-
 
     public static List<ReducedAnswerCell> preparePayloadBuild(Game game, Timing timing, State state) {
         List<Cell> possibleBuilds;

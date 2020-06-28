@@ -171,6 +171,15 @@ public class Board implements Cloneable {
         return toReturn;
     }
 
+    /**
+     * Method that checks if the power's type is not default
+     *
+     * @param mp     the power that is checked
+     * @param player the player that the worker belongs to
+     * @param c      the cell containing the worker
+     * @param timing the timing of the power
+     * @return {@code true} if the power is not default, {@code false} otherwise
+     */
     private boolean isNotDefaultMovePower(Power mp, Player player, Cell c, Timing timing) {
         return !player.getWorkers().contains(((Block) c).getPawn()) &&
                 !mp.getAllowedAction().equals(MovementType.DEFAULT) && mp.getTiming().equals(timing);
@@ -330,14 +339,16 @@ public class Board implements Cloneable {
         return false;
     }
 
+    /**
+     * Method that make the action to allow a basic move, which are: removing the pawn from the current cell, updating
+     * previous cell with the old current cell and updatinh the current cell with the new cell that the worker moved to
+     *
+     * @param worker  the worker that is being used
+     * @param newCell the cell where to move to
+     */
     public void basicMove(Worker worker, Cell newCell) {
-        // removing pawn from the current cell
         worker.getLocation().removePawn();
-
-        // updating previous cell with the old current cell
         worker.setPreviousLocation((worker.getLocation()));
-
-        // updating current cell with the new cell just moved on
         worker.setLocation((Block) newCell);
     }
 

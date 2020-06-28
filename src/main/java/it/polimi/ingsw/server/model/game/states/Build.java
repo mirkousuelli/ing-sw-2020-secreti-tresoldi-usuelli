@@ -111,6 +111,15 @@ public class Build implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that checks if someone won after a build.
+     * <p> This can only happen if someone has either Chronus or Zeus: in the first case because the fifth complete
+     * tower has been built, with Zeus in case the player built under himself while he was on a second level (going this
+     * way to a third level)
+     *
+     * @param returnContentSuccess the return content to be checked
+     * @return {@code true} if someone won after a build, {@code false} if not
+     */
     private ReturnContent hasSomeoneWon(ReturnContent returnContentSuccess) {
         if (returnContentSuccess.getAnswerType().equals(AnswerType.SUCCESS)) {
             Player victorious = game.getPlayerList().stream()
@@ -126,6 +135,12 @@ public class Build implements GameState {
         return returnContentSuccess;
     }
 
+    /**
+     * Method that sets the state (and the answer type) to victory, returning the player that won
+     *
+     * @param victorious the player that is the winner
+     * @return returnContent, containing the player that won
+     */
     private ReturnContent victory(Player victorious) {
         ReturnContent returnContent = new ReturnContent<>();
 

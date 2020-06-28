@@ -58,18 +58,27 @@ public class MovePower<S> extends ActivePower<S> {
             return move(currentPlayer, cellToMove, null, null);
     }
 
+    /**
+     * Method that allows a player that has Minotaur as God to use his power and move to a cell occupied by an opponent's
+     * worker and pushing it to the next cell
+     *
+     * @param currentPlayer the player that makes the push
+     * @param cellToMove    the chosen cell to move to (that has to be occupied by an opponent's worker)
+     * @param adjacency     list of cells around the worker
+     * @return {@code true} if the push is made correctly, {@code false} otherwise
+     */
     private boolean push(Player currentPlayer, Cell cellToMove, List<Cell> adjacency) {
         if (cellToMove.isFree()) return false;
         if (workerToUse.getLocation().equals(cellToMove)) return false; //you cannot push yourself!
 
-        Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a deep copy, it's noy the original from the board
+        Cell workerToPushNewPos = MovePower.lineEqTwoPoints(workerToUse.getLocation(), cellToMove); //new position of the worker to push, it is a deep copy, it's not the original from the board
         if (workerToPushNewPos == null)
-            return false; //happens when the worker to push is on a perimeter cell and it is pushed overboard
+            return false; //happens when the worker to push is on a perimeter cell and it is pushed outside the board
 
         Block opponentCellToMove = (Block) MovePower.findCell(adjacency, workerToPushNewPos.getX(), workerToPushNewPos.getY()); //gets the new position of the worker to push in the board
         Worker opponentWorker = ((Worker) ((Block) cellToMove).getPawn());
 
-        if (opponentCellToMove == null) return false; //verifies that the worker to push is push only of a unit
+        if (opponentCellToMove == null) return false; //verifies that the worker to push is pushed only of a unit
         if (!opponentCellToMove.isWalkable())
             return false; //cannot push the worker to push onto a non walkable cell (occupied or dome-level cell)
 
@@ -81,7 +90,7 @@ public class MovePower<S> extends ActivePower<S> {
      * worker who is moved accordingly (who, depending on the current player's God power, is pushed back or swapped
      * with the worker that is moving)
      * <p>
-     * This method is used only for Minotaur and Apollo, whose power allows this kind of movement
+     * This method is used only for Minotaur and Apollo, whose powers allow this kind of movement
      *
      * @param currentPlayer      the current player
      * @param cellToMove         the chosen cell where to move
@@ -122,6 +131,13 @@ public class MovePower<S> extends ActivePower<S> {
         return null;
     }
 
+    /**
+     * Method that locates the cell where the worker is pushed after an opponent used Minotaur power
+     *
+     * @param from the cell where the opponent's worker comes from
+     * @param to   the cell where the opponent's worker moved to
+     * @return the cell where the worker is pushed to
+     */
     public static Cell lineEqTwoPoints(Cell from, Cell to) {
         if (from == null) return null;
         if (to == null) return null;

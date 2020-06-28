@@ -30,7 +30,7 @@ public class Deck {
     private final GodParser parser;
 
     /**
-     * Constructor of the player, that creates the list of the cards
+     * Constructor of the deck, that creates the list of the cards
      *
      * @throws ParserConfigurationException
      * @throws SAXException

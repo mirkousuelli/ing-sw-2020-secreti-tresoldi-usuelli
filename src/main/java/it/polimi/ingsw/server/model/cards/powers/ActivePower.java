@@ -109,6 +109,12 @@ public abstract class ActivePower<S> extends Power<S> {
         }
     }
 
+    /**
+     * Method that controls the worker initial position given its cell
+     *
+     * @param workerLocation the cell where the worker is located
+     * @return {@code true} if the level of the worker is correct, {@code false} if not
+     */
     private boolean verifyWorkerLevel(Cell workerLocation) {
         if (workerInitPos.equals(WorkerPosition.DEFAULT)) return true;
 

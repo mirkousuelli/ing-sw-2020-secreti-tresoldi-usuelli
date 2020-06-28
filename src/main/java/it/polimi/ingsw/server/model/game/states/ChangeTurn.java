@@ -131,6 +131,9 @@ public class ChangeTurn implements GameState {
         return returnContent;
     }
 
+    /**
+     * Method that resets a power by setting the number of possible actions back to the original value
+     */
     private void resetPower() {
         if (game.getCurrentPlayer().getCard() != null) {
             Power p = game.getCurrentPlayer().getCard().getPower(0);
@@ -139,6 +142,9 @@ public class ChangeTurn implements GameState {
         }
     }
 
+    /**
+     * Method that removes the malus from the current player and then saves the game
+     */
     private void removeMalus() {
         Player currentPlayer = game.getCurrentPlayer();
 
@@ -153,6 +159,9 @@ public class ChangeTurn implements GameState {
         }
     }
 
+    /**
+     * Method that saves the game, with the current state as ChooseWorker
+     */
     private void save(State state) {
         if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&
                 !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&

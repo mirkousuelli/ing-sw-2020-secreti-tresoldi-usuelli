@@ -83,14 +83,6 @@ public abstract class Pawn implements Cell {
         }
     }
 
-
-    /* @abstractMethod - @predicate
-     * it says if the pawn can change its location and it is not defined in here since it depends from the kind
-     * of pawn (for instance token cannot move whereas workers can)
-     */
-    public abstract boolean isMovable();
-
-
     /**
      * Method that checks if the current cell is walkable
      *

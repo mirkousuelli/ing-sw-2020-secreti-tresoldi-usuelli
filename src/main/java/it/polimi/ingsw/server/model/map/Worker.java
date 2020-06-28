@@ -75,16 +75,6 @@ public class Worker extends Pawn {
         }
     }
 
-    /**
-     * Method that checks if the worker can be moved
-     *
-     * @return {@code true} if the worker can be moved, {@code false} otherwise
-     */
-    @Override
-    public boolean isMovable() {
-        return true;
-    }
-
     public void setGender(boolean gender) {
         this.gender = gender;
     }

@@ -34,15 +34,6 @@ public class Victory implements GameState {
         this.game = game;
     }
 
-    /**
-     * Method that cleans the board, deleting the pawns too
-     *
-     * @param game the game which the board is cleaned
-     */
-    private void endGame(Game game) {
-        game.getBoard().clean();
-    }
-
     @Override
     public String getName() {
         return State.VICTORY.toString();
@@ -63,7 +54,7 @@ public class Victory implements GameState {
         returnContent.setState(State.START);
 
         GameMemory.save(this, Lobby.BACKUP_PATH);
-        endGame(game);
+        game.getBoard().clean();
 
         return returnContent;
     }
