@@ -14,21 +14,31 @@ We implemented all the requirements listed for the maximum assessment of 30L.
 5) :trident: Advanced gods
 6) :floppy_disk: Persistence
 
+## Coverage
+- Controller = 100%
+- Model = 93%
+
 ## Usage
 Generate jar files (client and server) through maven by executing the following commands:
 ```shell
 mvn clean
 mvn package
 ```
-- **Server**:
+- **Server**
+Default port:
 ```shell
 java -jar target/GC15-server-jar-with-dependencies.jar
 ```
-- **Client CLI**:
+Chosen port:
+```shell
+java -jar target/GC15-server-jar-with-dependencies.jar -p <port_num>
+```
+- **Client CLI**
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
 ```
-- **Client GUI**: double click on **target/GC15-client-jar-with-dependencies.jar** icon.
+- **Client GUI**
+double click on **target/GC15-client-jar-with-dependencies.jar** icon.
 
 ## Students
 - Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
