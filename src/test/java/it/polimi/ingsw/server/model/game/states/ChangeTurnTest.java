@@ -123,6 +123,8 @@ public class ChangeTurnTest {
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(4, 4);
         Block cellToBuildOn = (Block) board.getCell(1, 1);
         Block cellToBuildOn1 = (Block) board.getCell(0, 2);
         Block cellToMoveTo = (Block) board.getCell(0, 1);
@@ -136,6 +138,9 @@ public class ChangeTurnTest {
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
         game.assignCard(God.PROMETHEUS);
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         //usePower that adds a personal malus
         game.setState(State.MOVE);

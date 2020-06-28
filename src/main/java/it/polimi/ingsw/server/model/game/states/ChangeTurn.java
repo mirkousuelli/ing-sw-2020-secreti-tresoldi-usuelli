@@ -23,6 +23,10 @@ import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Class that represents the state where the current player changes and the win conditions are checked
  */
@@ -46,6 +50,30 @@ public class ChangeTurn implements GameState {
         int index = (game.getIndex(game.getCurrentPlayer()) + 1) % game.getNumPlayers();
 
         game.setCurrentPlayer(game.getPlayerList().get(index));
+    }
+
+    private ReturnContent removeTwoDefeatedPlayers() {
+        if (game.getNumPlayers() != 3) return  null;
+
+        List<Player> defeatedPlayers = game.getPlayerList().stream()
+                .filter(player -> ChooseWorker.cannotMoveAny(game, player))
+                .collect(Collectors.toList());
+
+        if (defeatedPlayers.size() != 2) return null;
+
+        ReturnContent returnContent = new ReturnContent<>();
+
+        defeatedPlayers.forEach(player -> {
+            player.removeWorkers();
+            game.removePlayer(player.nickName);
+            game.setNumPlayers(game.getNumPlayers() - 1);
+        });
+
+        returnContent.setAnswerType(AnswerType.VICTORY);
+        returnContent.setState(State.VICTORY);
+        returnContent.setPayload(new ReducedPlayer(game.getPlayerList().get(0).nickName));
+
+        return returnContent;
     }
 
     /**
@@ -78,23 +106,27 @@ public class ChangeTurn implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.CHANGE_TURN);
 
-        // Check if any win condition is verified (or if only one player remains); if so the game goes to Victory state
-        if (onePlayerRemaining()) {
+        //check if any win condition is verified (or if only one player remains)
+        if (onePlayerRemaining()) { //if so the game goes to victory state
             returnContent.setAnswerType(AnswerType.VICTORY);
             returnContent.setState(State.VICTORY);
 
             returnContent.setPayload(new ReducedPlayer(currentPlayer.nickName));
-        } else {
-            // Otherwise the current player is changed and the game goes to ChooseWorker state
-            resetPower();
-            removeMalus();
-            changeCurrentPlayer();
+        } else { //otherwise the current player is changed and the game goes to ChooseWorker state
+            resetPower(); //reset turn-limited power
+            removeMalus(); //reset turn-limited malus
 
-            returnContent.setAnswerType(AnswerType.CHANGE_TURN);
-            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+            ReturnContent ret = removeTwoDefeatedPlayers();
+            if (ret == null) { //if there are no defeated players
+                changeCurrentPlayer(); //then set the new current worker
+
+                returnContent.setAnswerType(AnswerType.CHANGE_TURN);
+                returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
+            } else //else there is only one player remaining!
+                returnContent = ret;
         }
 
-        save();
+        save(returnContent.getState());
 
         return returnContent;
     }
@@ -121,13 +153,13 @@ public class ChangeTurn implements GameState {
         }
     }
 
-    private void save() {
+    private void save(State state) {
         if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&
                 !game.getPrevState().equals(State.CHOOSE_CARD) && !game.getPrevState().equals(State.CHOOSE_STARTER) &&
                 !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
 
             //save
-            GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.BACKUP_PATH);
+            GameMemory.save(game.getCurrentPlayer(), state, Lobby.BACKUP_PATH);
         }
     }
 }

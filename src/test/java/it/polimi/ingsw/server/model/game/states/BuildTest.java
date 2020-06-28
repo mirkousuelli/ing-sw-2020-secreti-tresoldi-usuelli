@@ -46,10 +46,15 @@ public class BuildTest {
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(2, 2);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(4, 4);
         Block cellToBuildOn = (Block) board.getCell(2, 3);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.MIDDLE);
 
@@ -95,10 +100,15 @@ public class BuildTest {
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cellToBuildOn = (Block) board.getCell(2, 3);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.TOP);
 
@@ -142,10 +152,15 @@ public class BuildTest {
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cellToBuildOn = (Block) board.getCell(1, 1);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.TOP);
 
@@ -187,10 +202,15 @@ public class BuildTest {
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(4, 4);
         Block cellToBuildOn = (Block) board.getCell(2, 1);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.DOME);
 
@@ -298,7 +318,7 @@ public class BuildTest {
 
         returnContent = game.gameEngine();
 
-        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
     }
 
 
@@ -325,11 +345,16 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(2, 2);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cellToBuildOn = (Block) board.getCell(2, 3);
 
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.BOTTOM);
 
@@ -368,7 +393,6 @@ ________________________________________________________________________________
         game.addPlayer(p1);
         game.addPlayer(p2);
         Board board = game.getBoard();
-        WinConditionPower power1;
 
         game.setCurrentPlayer(p2);
         game.assignCard(God.DEMETER);
@@ -376,14 +400,16 @@ ________________________________________________________________________________
         game.addPlayer(p1);
         game.setCurrentPlayer(p1);
         game.assignCard(God.CHRONUS);
-        power1 = (WinConditionPower) p1.getCard().getPower(0);
 
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 4);
         Block chosenCell = (Block) board.getCell(2, 2);
 
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
 
         for (int i = 0; i < 4; i++) {
             Block tower = (Block) board.getCell(i, 0);
@@ -398,10 +424,8 @@ ________________________________________________________________________________
         ReturnContent returnContent = game.gameEngine();
 
         // the win condition power is verified
-        assertTrue(power1.usePower(game));
-   /*     assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
+        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
         assertEquals(State.VICTORY, returnContent.getState());
-*/
     }
 
 
@@ -423,11 +447,16 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(2, 3);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cell1 = (Block) board.getCell(2, 2);
         Block cell2 = (Block) board.getCell(3, 3);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cell1.setLevel(Level.MIDDLE);
         cell2.setLevel(Level.GROUND);
@@ -482,10 +511,15 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker1Player2 = (Block) board.getCell(4, 4);
+        Block worker1Player3 = (Block) board.getCell(3, 3);
         Block cellToBuildOn = (Block) board.getCell(1, 1);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.BOTTOM);
 
@@ -535,11 +569,16 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cell1 = (Block) board.getCell(1, 2);
         Block cell2 = (Block) board.getCell(2, 2);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cell1.setLevel(Level.MIDDLE);
         cell2.setLevel(Level.GROUND);
@@ -591,12 +630,17 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(0, 4);
         Block cellToBuildOn1 = (Block) board.getCell(1, 1);
         Block cellToBuildOn2 = (Block) board.getCell(0, 1);
         Block cellToMoveOn = (Block) board.getCell(0, 0);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         game.setState(State.MOVE);
 
@@ -658,9 +702,14 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block w1p1 = (Block) board.getCell(1, 1);
+        Block w1p2 = (Block) board.getCell(4, 4);
+        Block w1p3 = (Block) board.getCell(3, 3);
 
         p1.initializeWorkerPosition(1, w1p1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, w1p2);
+        p3.initializeWorkerPosition(1, w1p3);
 
         w1p1.setLevel(Level.BOTTOM);
 
@@ -703,9 +752,14 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block w1p1 = (Block) board.getCell(1, 1);
+        Block w1p2 = (Block) board.getCell(4, 0);
+        Block w1p3 = (Block) board.getCell(4, 4);
 
         p1.initializeWorkerPosition(1, w1p1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p1.initializeWorkerPosition(1, w1p2);
+        p1.initializeWorkerPosition(1, w1p3);
 
         w1p1.setLevel(Level.MIDDLE);
 
@@ -759,11 +813,17 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 1);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(4, 4);
         Block cell1 = (Block) board.getCell(1, 2);
         Block cell2 = (Block) board.getCell(2, 2);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
+
 
         cell1.setLevel(Level.MIDDLE);
         cell2.setLevel(Level.GROUND);
@@ -818,10 +878,15 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker1Player2 = (Block) board.getCell(4, 4);
+        Block worker1Player3 = (Block) board.getCell(4, 0);
         Block cellToBuildOn = (Block) board.getCell(1, 1);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         cellToBuildOn.setLevel(Level.MIDDLE);
 
@@ -875,10 +940,15 @@ ________________________________________________________________________________
 
         Board board = game.getBoard();
         Block worker1Player1 = (Block) board.getCell(1, 0);
+        Block worker1Player2 = (Block) board.getCell(4, 0);
+        Block worker1Player3 = (Block) board.getCell(4, 4);
         Block cellToDoActions = (Block) board.getCell(1, 1);
 
         p1.initializeWorkerPosition(1, worker1Player1);
         p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p3.initializeWorkerPosition(1, worker1Player3);
 
         game.setState(State.MOVE);
 

@@ -35,7 +35,7 @@ public class CLI<S> extends ClientView<S> {
 
             case DEFEAT:
                 out.printEnd(answerTemp.getHeader().toString());
-                if (((ReducedPlayer) answerTemp.getPayload()).getNickname().equals(clientModel.getPlayer().getNickname()))
+                if (clientModel.isEnded())
                     System.exit(1);
                 else
                     isYourTurn = true;

@@ -418,10 +418,14 @@ public class ServerConnectionSocket {
 
         String response = ((ReducedMessage) demand.getPayload()).getMessage();
 
+        if (lobby != null && waitingConnection.size() > 0 && lobby.getNumberOfPlayers() > 0 && lobby.getNumberOfPlayers() < waitingConnection.size()) {
+            closeConnection(player);
+            return false; //not toRepeat
+        }
+
         if (response.equals("n")) {
             resetLobby();
-            player.setLoggingOut(true);
-            player.closeSocket();
+            closeConnection(player);
             return false;
         } else if (response.equals("y")) {
             resetLobby();
@@ -445,6 +449,11 @@ public class ServerConnectionSocket {
             waitingConnection.clear();
             alreadyNewGame = true;
         }
+    }
+
+    private void closeConnection(ServerClientHandlerSocket player) {
+        player.setLoggingOut(true);
+        player.closeSocket();
     }
 
     /**
