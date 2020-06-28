@@ -24,7 +24,7 @@ Generate jar files (client and server) through maven by executing the following 
 mvn clean
 mvn package
 ```
-- **Server**__
+- **Server**<br />
 Default port:
 ```shell
 java -jar target/GC15-server-jar-with-dependencies.jar
@@ -37,7 +37,7 @@ java -jar target/GC15-server-jar-with-dependencies.jar -p <port_num>
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
 ```
-- **Client GUI**__
+- **Client GUI**<br />
 double click on **target/GC15-client-jar-with-dependencies.jar** icon.
 
 ## Students
