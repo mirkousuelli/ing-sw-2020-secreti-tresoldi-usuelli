@@ -55,7 +55,7 @@ public class ServerConnectionSocket {
     private static final Logger LOGGER = Logger.getLogger(ServerConnectionSocket.class.getName());
 
     /**
-     * Constructor which initialize the server socket through its port
+     * Constructor which initializes the server socket through its port
      *
      * @param port server socket port
      */
@@ -73,7 +73,7 @@ public class ServerConnectionSocket {
     }
 
     /**
-     * Method that starts server socket connection stream and manages its behaviours until closing part
+     * Method that starts server socket connection stream and manages its behaviour until closing part
      */
     public void startServer() {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
@@ -130,7 +130,7 @@ public class ServerConnectionSocket {
     }
 
     /**
-     * Method that load all the previous lobbies in order to recover a past match saved
+     * Method that loads all the previous lobbies in order to recover a past match that had been saved
      */
     private Lobby loadLobby(int i) {
         Game loadedGame = null;
@@ -229,6 +229,12 @@ public class ServerConnectionSocket {
         }
     }
 
+    /**
+     * Method that controls if a player is present in a lobby
+     *
+     * @param name the nickname of the player to search
+     * @return {@code true} if the player exists in a lobby, {@code false} otherwise
+     */
     private Lobby isPlayerInALobby(String name) {
         return loadedLobbyMap.values().stream()
                 .reduce(null, (lobby1, lobby2) -> lobby1 != null && lobby1.isPresentInGame(name)
@@ -241,7 +247,7 @@ public class ServerConnectionSocket {
      *
      * @param player player's connection
      * @param name   player's nickname
-     * @return {@code true} connected successfully, {@code false} connection gone wrong
+     * @return {@code true} if connected successfully, {@code false} if the connection went wrong
      */
     synchronized boolean connect(ServerClientHandlerSocket player, String name) {
         if (!loadedLobbyMap.isEmpty() || lobby != null) { //if some lobbies where loaded, maybe 'player' is in one of them
@@ -326,7 +332,7 @@ public class ServerConnectionSocket {
     }
 
     /**
-     * Method that makes the match starting
+     * Method that starts the game
      */
     private void startMatch() {
         AtomicInteger i = new AtomicInteger();
@@ -352,9 +358,9 @@ public class ServerConnectionSocket {
     }
 
     /**
-     * Method that approve the intention to start the game checking all the condition
+     * Method that approves the intention to start the game checking all the conditions
      *
-     * @return {@code true} the game can start, {@code false} the game cannot start
+     * @return {@code true} if the game can start, {@code false} otherwise
      */
     boolean canStart() {
         int waitingConnectionSize;
@@ -377,8 +383,8 @@ public class ServerConnectionSocket {
      * Method that sets the game players dimension by processing the demand
      *
      * @param player creator's connection
-     * @param demand demand message received containing number of players information
-     * @return {@code true} something went wrong, {@code false} match started
+     * @param demand demand message received containing information about the number of players
+     * @return {@code true} if something went wrong, {@code false} if the match started
      */
     synchronized boolean numOfPlayers(ServerClientHandlerSocket player, Demand demand) {
         if (demand == null) return false;
@@ -400,10 +406,11 @@ public class ServerConnectionSocket {
     }
 
     /**
-     * Method that adds the worker to the list of workers of the player
+     * Method that asks if the player wants to play a new game, when the previous one is ended
      *
-     * @param player creator's connection
-     * @return {@code true} new game started, {@code false} creator logged out
+     * @param player players's connection
+     * @param demand the demand message sent by the player that contains his answer
+     * @return {@code true} if the player wants to play again, {@code false} otherwise
      */
     synchronized boolean newGame(ServerClientHandlerSocket player, Demand demand) {
         if (demand == null) return false;
@@ -425,6 +432,9 @@ public class ServerConnectionSocket {
         return true;
     }
 
+    /**
+     * Method that cleans the lobby and resets it
+     */
     private void resetLobby() {
         if (!alreadyNewGame) {
             lobby.clean();
@@ -454,11 +464,6 @@ public class ServerConnectionSocket {
         return isReloaded;
     }
 
-    /**
-     * Method that gets the current lobby
-     *
-     * @return {@code Lobby} current lobby
-     */
     Lobby getLobby() {
         Lobby toReturn;
 

@@ -37,10 +37,5 @@ public interface ServerClientHandler {
      */
     boolean isCreator();
 
-    /**
-     * Method that gets connection player's name
-     *
-     * @return {@code String} player's name
-     */
     String getName();
 }

@@ -67,9 +67,6 @@ public class Lobby {
         reloaded = true;
     }
 
-    /**
-     * Method that gets the current number of player
-     */
     int getNumberOfPlayers() {
         int ret;
 
@@ -80,9 +77,6 @@ public class Lobby {
         return ret;
     }
 
-    /**
-     * Method that gets the current player list in a reduced format
-     */
     public List<ReducedPlayer> getReducedPlayerList() {
         List<ReducedPlayer> reducedPlayerList = new ArrayList<>();
         ReducedPlayer reducedPlayer;
@@ -101,28 +95,23 @@ public class Lobby {
         return reducedPlayerList;
     }
 
-    /**
-     * Method that establishes the proper connection server side with the set of players
-     *
-     * @param view used to match players' connection
-     */
     private ServerClientHandler getServerClientHandler(View view) {
         return playingConnection.keySet().stream()
                 .filter(c -> playingConnection.get(c).equals(view))
                 .reduce(null, (a, b) -> a != null ? a : b);
     }
 
-    /**
-     * Method that sets the current number of players
-     *
-     * @param numberOfPlayers new number of players
-     */
     void setNumberOfPlayers(int numberOfPlayers) {
         synchronized (lockLobby) {
             this.numberOfPlayers = numberOfPlayers;
         }
     }
 
+    /**
+     * Method that removes players from the server given his nickname
+     *
+     * @param player the player's nickname that is removed
+     */
     void deletePlayer(String player) {
         ServerClientHandler playerHandler = playingConnection.keySet().stream()
                 .filter(serverClientHandler -> serverClientHandler.getName().equals(player))
@@ -136,7 +125,7 @@ public class Lobby {
     /**
      * Method that removes players connection from the server
      *
-     * @param player the player connection that is going to be remove
+     * @param player the player connection that is removed
      */
     void deletePlayer(ServerClientHandler player) {
         if (!playingConnection.containsKey(player)) return;
@@ -153,11 +142,6 @@ public class Lobby {
         playerColor.remove(playerToRemove);
     }
 
-    /**
-     * Method that sets the current player
-     *
-     * @param player new current player
-     */
     void setCurrentPlayer(String player) {
         synchronized (game) {
             game.setCurrentPlayer(game.getPlayer(player));
@@ -199,11 +183,6 @@ public class Lobby {
         return numberOfPlayersNum == playerViewListSize;
     }
 
-    /**
-     * Method that sets if the lobby's game has been reloaded
-     *
-     * @param reloaded if reloaded
-     */
     void setReloaded(boolean reloaded) {
         synchronized (lockLobby) {
             this.reloaded = reloaded;
@@ -259,7 +238,7 @@ public class Lobby {
     }
 
     /**
-     * Method that check if a player is present by its connection
+     * Method that check if a player is present in the lobby, given its connection
      *
      * @param c players' connection
      * @return {@code true} it is present, {@code false} it is not
@@ -269,7 +248,7 @@ public class Lobby {
     }
 
     /**
-     * Method that check if a player is present by its nickname
+     * Method that check if a player is present in the game, given its nickname
      *
      * @param name players' nickname
      * @return {@code true} it is present, {@code false} it is not
@@ -293,6 +272,9 @@ public class Lobby {
         game.clean();
     }
 
+    /**
+     * Method that deletes the backup (if it exists)
+     */
     private void removeBackUp() {
         try {
             Files.deleteIfExists(Paths.get(BACKUP_PATH));

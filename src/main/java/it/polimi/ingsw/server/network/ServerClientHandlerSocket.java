@@ -93,11 +93,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         return demand;
     }
 
-    /**
-     * Method that gets connection player's name
-     *
-     * @return {@code String} player's name
-     */
     @Override
     public String getName() {
         return name;
@@ -109,7 +104,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /*-----------------------------------------------SETTER-----------------------------------------------------------*/
 
     /**
-     * Method that sets if the connection is activer or not
+     * Method that sets if the connection is active or not
      *
      * @param isActive for saying connection status
      */
@@ -122,7 +117,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that sets the player game creator
+     * Method that sets the player that created the game
      *
      * @param creator saying if this connection is reported to the creator
      */
@@ -158,7 +153,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /*-----------------------------------------------PREDICATE--------------------------------------------------------*/
 
     /**
-     * Method that check demand buffer
+     * Method that check if the buffer has a demand (or is empty otherwise)
      *
      * @return {@code true} demand to be processed, {@code false} demand buffer empty
      */
@@ -173,9 +168,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that says if the connection is actived
+     * Method that says if the connection is active
      *
-     * @return {@code true} connection active, {@code false} connection not active
+     * @return {@code true} if the connection is active, {@code false} if it's not
      */
     synchronized boolean isActive() {
         return isActive;
@@ -186,7 +181,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that checks if the connection belong to the creator
+     * Method that checks if the connection belongs to the creator
      *
      * @return {@code true} if connection belongs to the creator, {@code false} it doesn't belong to the creator
      */
@@ -245,7 +240,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that reads and notify the controller about new demand request received
+     * Method that reads and notify the controller about the new demand request that is received
      *
      * @return {@code Demand} last demand received
      */
@@ -265,7 +260,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that close the connection
+     * Method that closes the connection
      */
     void closeSocket() {
         try {
@@ -299,7 +294,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method which start running a thread for the reading task
+     * Method which starts running a thread for the reading task
      *
      * @return {@code Thread} reading thread
      */
@@ -326,7 +321,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that start running a notifier thread for the controller side in order to support
+     * Method that starts running a notifier thread for the controller side in order to support
      * the reading thread
      *
      * @return {@code Thread} new notifier thread
@@ -365,7 +360,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that start running a thread which checks connection active state
+     * Method that starts running a thread which checks connection active state
      *
      * @return {@code Thread} new active checker thread
      */
@@ -488,6 +483,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
     }
 
+    /**
+     * Method that allows to log in and then proceed to start a game or reload a previous one (if there is a backup)
+     *
+     * @throws InterruptedException if the thread has been interrupted in some way
+     */
     private void initialization() throws InterruptedException {
         boolean reload;
 
@@ -503,6 +503,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             reloadStart(); //reload
     }
 
+    /**
+     * Method that allows the basic initialization of a game, either by creating it (if nobody has already done it) or
+     * by joining it otherwise. It then waits for players to join and when the correct number of player is reached the
+     * game begins.
+     *
+     * @throws InterruptedException if the thread has been interrupted in some way
+     */
     private void basicInitialization() throws InterruptedException {
         if (creator) //createGame
             numberOfPlayers();
@@ -515,7 +522,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that manage the waiting flow for the joining initial part of the application
+     * Method that handles the waiting for the game to have the correct number of players in it
      */
     private void waitNumberOfPlayers() throws InterruptedException {
         Lobby lobby = server.getLobby();
@@ -531,7 +538,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method which defines the reloaded beginning from a previous match still in playing byt the same players
+     * Method which defines the reloaded beginning from a previous match still being played by the same players
      */
     private void reloadStart() throws InterruptedException {
         ReducedGame reducedGame;
@@ -579,7 +586,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
 
     /**
-     * Method that operates the log ing feature
+     * Method that operates the log in feature
      */
     private void logIn() {
         Demand demand = null;
@@ -602,7 +609,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that manage the number of players through the demand received
+     * Method that manages the number of players through the demand received
      */
     private void numberOfPlayers() {
         Demand demand;
@@ -647,7 +654,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     }
 
     /**
-     * Method that makes a new game creation after the proper demand received
+     * Method that creates a new game after the proper demand is received
      */
     private void newGame(Demand demand) {
         boolean toRepeat = false;
