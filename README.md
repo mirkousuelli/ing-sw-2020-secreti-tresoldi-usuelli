@@ -14,12 +14,11 @@ We implemented all the requirements listed for the maximum assessment of 30L, as
 5) :trident: Advanced gods
 6) :floppy_disk: Persistence
 
-## Coverage
+## Line Coverage
 - Controller = 100%
 - Model = 93%
-We didn't reach 100% for the model because of the usage of several try/catch structures and default-switch cases.
 
-### Testig
+### Testing
 We made 178 tests for both model and controller, the latter has been tested also through stubs; in order to run them successfully:
 ```shell
 mvn test
