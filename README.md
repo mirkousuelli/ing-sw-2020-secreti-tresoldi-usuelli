@@ -1,12 +1,12 @@
 # Final project in Software Engineering 2019/2020
-Santorini, GC15 - Computer Science Engineering BSc, Politecnico di Milano.
+### Santorini, GC15 - Computer Science Engineering BSc, Politecnico di Milano.
 
 ![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
 
 Java implementation of the board game called Santorini edited by Cranio Creations.
 
 ## What we have done
-We implemented all the requirements listed for the maximum assessment of 30L.
+We implemented all the requirements listed for the maximum assessment of 30L, as indicated in the requirements.
 1) :books: Complete rules
 2) :video_game: CLI
 3) :palm_tree: GUI
@@ -17,6 +17,13 @@ We implemented all the requirements listed for the maximum assessment of 30L.
 ## Coverage
 - Controller = 100%
 - Model = 93%
+We didn't reach 100% for the model because of the usage of several try/catch structures and default-switch cases.
+
+### Testig
+We made 178 tests for both model and controller, the latter has been tested also through stubs; in order to run them successfully:
+```shell
+mvn test
+```
 
 ## Usage
 Generate jar files (client and server) through maven by executing the following commands:
@@ -29,10 +36,11 @@ Default port:
 ```shell
 java -jar target/GC15-server-jar-with-dependencies.jar
 ```
-Chosen port:
+<br />Chosen port:
 ```shell
 java -jar target/GC15-server-jar-with-dependencies.jar -p <port_num>
 ```
+where <num_port> stands for the socket port which both server and clients will use for the connection.
 - **Client CLI**
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
