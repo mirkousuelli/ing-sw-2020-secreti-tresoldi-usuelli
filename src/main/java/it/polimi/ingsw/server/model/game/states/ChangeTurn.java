@@ -52,30 +52,6 @@ public class ChangeTurn implements GameState {
         game.setCurrentPlayer(game.getPlayerList().get(index));
     }
 
-    private ReturnContent removeTwoDefeatedPlayers() {
-        if (game.getNumPlayers() != 3) return  null;
-
-        List<Player> defeatedPlayers = game.getPlayerList().stream()
-                .filter(player -> ChooseWorker.cannotMoveAny(game, player))
-                .collect(Collectors.toList());
-
-        if (defeatedPlayers.size() != 2) return null;
-
-        ReturnContent returnContent = new ReturnContent<>();
-
-        defeatedPlayers.forEach(player -> {
-            player.removeWorkers();
-            game.removePlayer(player.nickName);
-            game.setNumPlayers(game.getNumPlayers() - 1);
-        });
-
-        returnContent.setAnswerType(AnswerType.VICTORY);
-        returnContent.setState(State.VICTORY);
-        returnContent.setPayload(new ReducedPlayer(game.getPlayerList().get(0).nickName));
-
-        return returnContent;
-    }
-
     /**
      * Method that controls if there's only one player remaining
      *
@@ -115,15 +91,10 @@ public class ChangeTurn implements GameState {
         } else { //otherwise the current player is changed and the game goes to ChooseWorker state
             resetPower(); //reset turn-limited power
             removeMalus(); //reset turn-limited malus
+            changeCurrentPlayer(); //then set the new current worker
 
-            ReturnContent ret = removeTwoDefeatedPlayers();
-            if (ret == null) { //if there are no defeated players
-                changeCurrentPlayer(); //then set the new current worker
-
-                returnContent.setAnswerType(AnswerType.CHANGE_TURN);
-                returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
-            } else //else there is only one player remaining!
-                returnContent = ret;
+            returnContent.setAnswerType(AnswerType.CHANGE_TURN);
+            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().nickName));
         }
 
         save(returnContent.getState());
@@ -168,7 +139,10 @@ public class ChangeTurn implements GameState {
                 !game.getPrevState().equals(State.PLACE_WORKERS) && !game.getPrevState().equals(State.CHANGE_TURN)) {
 
             //save
-            GameMemory.save(game.getCurrentPlayer(), state, Lobby.BACKUP_PATH);
+            if (state.equals(State.CHANGE_TURN))
+                GameMemory.save(game.getCurrentPlayer(), State.CHOOSE_WORKER, Lobby.BACKUP_PATH);
+            else
+                GameMemory.save(game.getCurrentPlayer(), state, Lobby.BACKUP_PATH);
         }
     }
 }

@@ -47,10 +47,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     final Object lockRestart = new Object();
 
     private final Object lockAsyncRead = new Object();
-    private boolean isAsyncReadEnded = false;
+    private boolean isAsyncReadEnded;
 
     private final Object lockNotifier = new Object();
-    private boolean isNotifierEnded = false;
+    private boolean isNotifierEnded;
 
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
@@ -73,6 +73,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         isToRestart = false;
 
         name = null;
+
+        setAsyncReadEnded(false);
+        setNotifierEnded(false);
     }
 
 
@@ -145,6 +148,18 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             this.isToRestart = toRestart;
         }
     }
+
+    private void setAsyncReadEnded(boolean asyncReadEnded) {
+        synchronized (lockAsyncRead) {
+            isAsyncReadEnded = asyncReadEnded;
+        }
+    }
+
+    private void setNotifierEnded(boolean notifierEnded) {
+        synchronized (lockNotifier) {
+            isNotifierEnded = notifierEnded;
+        }
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -208,6 +223,26 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
 
         return isToRestartCopy;
+    }
+
+    private boolean isAsyncReadEnded() {
+        boolean toReturn;
+
+        synchronized (lockAsyncRead) {
+            toReturn = isAsyncReadEnded;
+        }
+
+        return toReturn;
+    }
+
+    private boolean isNotifierEnded() {
+        boolean toReturn;
+
+        synchronized (lockNotifier) {
+            toReturn = isNotifierEnded;
+        }
+
+        return toReturn;
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 
@@ -309,13 +344,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 if (isActive())
                     LOGGER.log(Level.INFO, e, () -> "asyncReadFromSocketThread: Failed to receive!");
                 setActive(false);
-
+                Thread.currentThread().interrupt();
+            } finally {
                 synchronized (lockAsyncRead) {
-                    isAsyncReadEnded = true;
+                    setAsyncReadEnded(true);
                     lockAsyncRead.notifyAll();
                 }
-
-                Thread.currentThread().interrupt();
             }
         };
     }
@@ -348,13 +382,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 if (isActive())
                     LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
                 setActive(false);
-
+                Thread.currentThread().interrupt();
+            } finally {
                 synchronized (lockNotifier) {
-                    isNotifierEnded = true;
+                    setNotifierEnded(true);
                     lockNotifier.notifyAll();
                 }
-
-                Thread.currentThread().interrupt();
             }
         };
     }
@@ -409,13 +442,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                 if (isConnected()) {
                     synchronized (lockAsyncRead) {
-                        while (!isAsyncReadEnded) lockAsyncRead.wait();
-                        isAsyncReadEnded = false;
+                        while (!isAsyncReadEnded()) lockAsyncRead.wait();
+                        setAsyncReadEnded(false);
                     }
 
                     synchronized (lockNotifier) {
-                        while (!isNotifierEnded) lockNotifier.wait();
-                        isNotifierEnded = false;
+                        while (!isNotifierEnded()) lockNotifier.wait();
+                        setNotifierEnded(false);
                     }
                 }
             } while (isConnected());
@@ -503,6 +536,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             reloadStart(); //reload
     }
 
+
     /**
      * Method that allows the basic initialization of a game, either by creating it (if nobody has already done it) or
      * by joining it otherwise. It then waits for players to join and when the correct number of player is reached the
@@ -542,14 +576,12 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      */
     private void reloadStart() throws InterruptedException {
         ReducedGame reducedGame;
-        Game loadedGame;
         Lobby lobby = server.getLobby();
 
         waitStart(); //wait other players
 
         synchronized (lobby.lockLobby) {
             lobby.lockLobby.notifyAll();
-            loadedGame = lobby.getGame();
             reducedGame = new ReducedGame(lobby);
         }
 
@@ -559,31 +591,52 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         //resume game
         synchronized (lobby.lockLobby) {
             if (lobby.isCurrentPlayerInGame(this)) {
-                List<ReducedAnswerCell> payload = new ArrayList<>();
-
-                if (loadedGame.getState().getName().equals(State.MOVE.toString()))
-                    payload = PreparePayload.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
-                else if (loadedGame.getState().getName().equals(State.BUILD.toString()))
-                    payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
-                else if (loadedGame.getState().getName().equals(State.ADDITIONAL_POWER.toString())) {
-                    if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
-                        payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
-                    else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
-                        payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
-                } else if (loadedGame.getState().getName().equals(State.ASK_ADDITIONAL_POWER.toString())) {
-                    if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
-                        payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.ADDITIONAL_POWER), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE));
-                    else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
-                        payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.BUILD));
-                }
-
+                List<ReducedAnswerCell> payload = preparePayload(lobby);
+                System.out.print("aaaa");
                 payload.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList()));
-
                 send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }
         }
     }
 
+    private List<ReducedAnswerCell> preparePayload(Lobby lobby) {
+        List<ReducedAnswerCell> payload = new ArrayList<>();
+        Game loadedGame = lobby.getGame();
+
+        if (loadedGame.getState() == null) return payload;
+
+        switch (loadedGame.getState().getName()) {
+            case "chooseWorker":
+                break;
+
+            case "move":
+                payload = PreparePayload.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
+                break;
+
+            case "build":
+                payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE);
+                break;
+
+            case "additionalPower":
+                if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
+                    payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
+                else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
+                    payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
+                break;
+
+            case "askAdditionalPower":
+                if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
+                    payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.ADDITIONAL_POWER), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE));
+                else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
+                    payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.BUILD));
+                break;
+
+            default:
+                break;
+        }
+
+        return payload;
+    }
 
     /**
      * Method that operates the log in feature
