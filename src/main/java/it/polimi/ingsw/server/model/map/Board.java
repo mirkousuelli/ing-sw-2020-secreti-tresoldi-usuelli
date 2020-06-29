@@ -276,13 +276,13 @@ public class Board implements Cloneable {
 
                     for (Cell around : this.getAround(workerLocation)) {
                         // checking level difference
-                        if (workerLocation.getLevel().toInt() == around.getLevel().toInt()) {
+                        if (workerLocation.getLevel().toInt().equals(around.getLevel().toInt())) {
                             //removing from the list to return
                             toReturn.remove(around);
                         }
                     }
 
-                    if (toReturn.size() == 0) {
+                    if (toReturn.isEmpty()) {
                         toReturn = copy;
                     }
                 }
