@@ -158,7 +158,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
             panelIndex.next(panels);
         } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.ERROR)) {
             error = true;
-            errorMessage.setText("Nickname already existing!");
+            errorMessage.setText("wrong nickname!");
             errorMessage.setVisible(true);
             sendButton.setEnabled(true);
         } else if (gui.getClientModel().getCurrentState().equals(DemandType.CONNECT) && gui.getAnswer().getHeader().equals(AnswerType.SUCCESS)) {

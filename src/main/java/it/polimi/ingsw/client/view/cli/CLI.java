@@ -3,8 +3,8 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
+import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
-import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 
 public class CLI<S> extends ClientView<S> {
 
@@ -37,14 +37,17 @@ public class CLI<S> extends ClientView<S> {
                 out.printEnd(answerTemp.getHeader().toString());
                 if (clientModel.isEnded())
                     System.exit(1);
-                else
+                else {
                     isYourTurn = true;
+                    createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
+                }
                 break;
 
             case CLOSE:
             case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;
+                createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
                 break;
 
             case SUCCESS:

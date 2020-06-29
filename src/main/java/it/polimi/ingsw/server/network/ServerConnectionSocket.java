@@ -126,7 +126,6 @@ public class ServerConnectionSocket {
      */
     void suddenDisconnection(ServerClientHandlerSocket disconnectedPlayer) {
         deletePlayer(disconnectedPlayer); //delete the disconnected player
-        System.out.print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq " + disconnectedPlayer.getName());
 
         if (waitingConnection.isEmpty()) return; //safety check
 
@@ -147,6 +146,11 @@ public class ServerConnectionSocket {
             }
         } else {
             System.out.println("CCCCCCC");
+            lobby.clean();
+            lobby = null;
+            loadLobby();
+            lobby.setNumberOfPlayers(lobby.getNumberOfPlayers());
+
             for (ServerClientHandlerSocket serverClientHandler : waitingConnection.values()) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.setIsToRestart(true);
                 serverClientHandler.send(new Answer<>(AnswerType.CLOSE));
@@ -157,10 +161,6 @@ public class ServerConnectionSocket {
 
             //reset
             waitingConnection.clear();
-            lobby.clean();
-            lobby = null;
-            loadLobby();
-            lobby.setNumberOfPlayers(lobby.getNumberOfPlayers());
         }
     }
 
@@ -181,7 +181,7 @@ public class ServerConnectionSocket {
                 if (toRepeat != null)
                     return toRepeat;
             }
-        } else //creator (no lobbies to load)
+        } else //creator
             createLobby(player);
 
         waitingConnection.put(name, player); //creator or joiner
@@ -211,9 +211,12 @@ public class ServerConnectionSocket {
     }
 
     private synchronized boolean connectReload(ServerClientHandlerSocket player, String name) {
-        if (!lobby.isPresentInGame(name)) { //not present in reloaded lobby--> changeName or exit client-side
-            player.send(new Answer<>(AnswerType.ERROR));
-            return true; //toRepeat
+        if (!lobby.isPresentInGame(name)) {
+            if (!waitingConnection.isEmpty()) { //not present in reloaded lobby and someone in already waiting--> changeName or exit client-side
+                player.send(new Answer<>(AnswerType.ERROR));
+                return true; //toRepeat
+            } else //not present in reloaded lobby but no waiting players, so create a new lobby
+                createLobby(player);
         }
 
         return false;

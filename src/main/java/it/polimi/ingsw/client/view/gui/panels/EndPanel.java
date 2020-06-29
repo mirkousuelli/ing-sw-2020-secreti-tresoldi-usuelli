@@ -99,6 +99,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
         switch (src.getName()) {
             case "playAgain":
+                gui.generateDemand(DemandType.NEW_GAME, "close");
                 if (!type.equals(DEFEAT)) {
                     mg.clean();
 

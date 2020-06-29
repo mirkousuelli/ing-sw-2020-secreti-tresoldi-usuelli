@@ -21,6 +21,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,12 +47,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     final Object lockRestart = new Object();
 
-    private final Object lockAsyncRead = new Object();
-    private boolean isAsyncReadEnded;
-
-    private final Object lockNotifier = new Object();
-    private boolean isNotifierEnded;
-
     private static final Logger LOGGER = Logger.getLogger(ServerClientHandlerSocket.class.getName());
 
     /**
@@ -73,9 +68,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         isToRestart = false;
 
         name = null;
-
-        setAsyncReadEnded(false);
-        setNotifierEnded(false);
     }
 
 
@@ -148,18 +140,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             this.isToRestart = toRestart;
         }
     }
-
-    private void setAsyncReadEnded(boolean asyncReadEnded) {
-        synchronized (lockAsyncRead) {
-            isAsyncReadEnded = asyncReadEnded;
-        }
-    }
-
-    private void setNotifierEnded(boolean notifierEnded) {
-        synchronized (lockNotifier) {
-            isNotifierEnded = notifierEnded;
-        }
-    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -224,26 +204,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
         return isToRestartCopy;
     }
-
-    private boolean isAsyncReadEnded() {
-        boolean toReturn;
-
-        synchronized (lockAsyncRead) {
-            toReturn = isAsyncReadEnded;
-        }
-
-        return toReturn;
-    }
-
-    private boolean isNotifierEnded() {
-        boolean toReturn;
-
-        synchronized (lockNotifier) {
-            toReturn = isNotifierEnded;
-        }
-
-        return toReturn;
-    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -290,6 +250,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
         if (demand == null)
             callWatchDog(false);
+        else if (demand.getPayload() != null && demand.getPayload().toString().equals("close"))
+            callWatchDog(true);
 
         return demand;
     }
@@ -333,7 +295,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code Thread} reading thread
      */
-    private Runnable asyncReadFromSocket() {
+    private Runnable asyncReadFromSocket(CountDownLatch countDownLatch) {
         return () -> {
             try {
                 do {
@@ -346,10 +308,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 setActive(false);
                 Thread.currentThread().interrupt();
             } finally {
-                synchronized (lockAsyncRead) {
-                    setAsyncReadEnded(true);
-                    lockAsyncRead.notifyAll();
-                }
+                countDownLatch.countDown();
             }
         };
     }
@@ -360,7 +319,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @return {@code Thread} new notifier thread
      */
-    private Runnable notifierThread() {
+    private Runnable notifierThread(CountDownLatch countDownLatch) {
         return () -> {
             Demand demand;
             Lobby lobby;
@@ -384,10 +343,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 setActive(false);
                 Thread.currentThread().interrupt();
             } finally {
-                synchronized (lockNotifier) {
-                    setNotifierEnded(true);
-                    lockNotifier.notifyAll();
-                }
+                countDownLatch.countDown();
             }
         };
     }
@@ -427,9 +383,10 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
             do {
                 setActive(isConnected());
+                CountDownLatch countDownLatch = new CountDownLatch(2);
 
-                readerThread = new Thread(asyncReadFromSocket());
-                notifierThread = new Thread(notifierThread());
+                readerThread = new Thread(asyncReadFromSocket(countDownLatch));
+                notifierThread = new Thread(notifierThread(countDownLatch));
                 watchDogThread = new Thread(watchDogThread());
 
                 readerThread.start();
@@ -440,17 +397,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 readerThread.interrupt();
                 notifierThread.interrupt();
 
-                if (isConnected()) {
-                    synchronized (lockAsyncRead) {
-                        while (!isAsyncReadEnded()) lockAsyncRead.wait();
-                        setAsyncReadEnded(false);
-                    }
-
-                    synchronized (lockNotifier) {
-                        while (!isNotifierEnded()) lockNotifier.wait();
-                        setNotifierEnded(false);
-                    }
-                }
+                countDownLatch.await();
             } while (isConnected());
         } catch (InterruptedException e) {
             if (isActive())
@@ -649,14 +596,19 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             if (name == null || toRepeat) //after a new game or if the name chosen by the player is already taken
                 demand = read();
 
-            if (demand == null && name == null) //error while receive a message
-                break;
-            else if (demand != null) //first time playing the game
+            if (demand == null) //error while receive a message
+                send(new Answer<>(AnswerType.ERROR));
+            else if (name == null || toRepeat) //first time playing the game
                 name = ((ReducedMessage) demand.getPayload()).getMessage();
-            //else only after a new game
+            else if (!demand.getPayload().equals("y")) {
+                callWatchDog(false);
+                return;
+            }
 
-            synchronized (server) {
-                toRepeat = server.connect(this, name); //connect
+            if (demand != null || name != null) {
+                synchronized (server) {
+                    toRepeat = server.connect(this, name); //connect
+                }
             }
         } while (toRepeat);
     }
