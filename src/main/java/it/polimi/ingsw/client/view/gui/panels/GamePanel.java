@@ -477,6 +477,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                             p.setCardViewSize(true);
                         }
                     }
+                    validate();
+                    repaint();
                     if (gui.getClientModel().isYourTurn())
                         updateCells();
                 }

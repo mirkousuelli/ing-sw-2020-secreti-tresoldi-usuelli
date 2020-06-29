@@ -108,7 +108,8 @@ public class Move implements GameState {
      * @return {@code true} if a worker reached the third level, {@code false} otherwise
      */
     static boolean reachedThirdLevel(Game game) {
-        return game.getCurrentPlayer().getCurrentWorker().getLevel().equals(Level.TOP);
+        return game.getCurrentPlayer().getCurrentWorker().getLevel().equals(Level.TOP) &&
+                game.getCurrentPlayer().getCurrentWorker().getPreviousLocation().getLevel().equals(Level.MIDDLE);
     }
 
     /**

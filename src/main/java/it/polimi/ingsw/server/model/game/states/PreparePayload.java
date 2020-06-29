@@ -221,7 +221,8 @@ public class PreparePayload {
 
         Power power = currentPlayer.getCard().getPower(0);
         if (power.getEffect().equals(Effect.MOVE) && power.getAllowedAction().equals(MovementType.PUSH) &&
-                game.getState().getName().equals(State.MOVE.toString()) && game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) { //if Minotaur's power has been used during this turn
+                game.getState().getName().equals(State.MOVE.toString()) &&
+                (game.getRequest() == null || game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER))) { //if Minotaur's power has been used during this turn
             Worker worker = game.getPlayerList().stream() //then add the new position of the opponent worker pushed by Minotaur itself
                     .filter(p -> !p.nickName.equals(currentPlayer.nickName))
                     .map(Player::getWorkers)

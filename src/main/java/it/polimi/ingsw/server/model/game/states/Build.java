@@ -127,9 +127,6 @@ public class Build implements GameState {
                     .reduce(null, (a, b) -> a != null ? a : b);
             if (victorious != null && ((WinConditionPower) victorious.getCard().getPower(0)).usePower(game))
                 return victory(victorious);
-
-            if (Move.reachedThirdLevel(game)) //zeus use power from MIDDLE to TOP
-                return victory(game.getCurrentPlayer());
         }
 
         return returnContentSuccess;
