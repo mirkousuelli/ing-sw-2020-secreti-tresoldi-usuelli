@@ -57,6 +57,7 @@ public class Lobby {
     public Lobby(Game game) {
         this.game = game;
         controller = new Controller(game);
+
         playerViewList = new ArrayList<>();
         playingConnection = new HashMap<>();
         playerColor = new HashMap<>();
@@ -105,21 +106,6 @@ public class Lobby {
         synchronized (lockLobby) {
             this.numberOfPlayers = numberOfPlayers;
         }
-    }
-
-    /**
-     * Method that removes players from the server given his nickname
-     *
-     * @param player the player's nickname that is removed
-     */
-    void deletePlayer(String player) {
-        ServerClientHandler playerHandler = playingConnection.keySet().stream()
-                .filter(serverClientHandler -> serverClientHandler.getName().equals(player))
-                .reduce(null, (a, b) -> a != null
-                        ? a
-                        : b);
-
-        deletePlayer(playerHandler);
     }
 
     /**
@@ -183,12 +169,6 @@ public class Lobby {
         return numberOfPlayersNum == playerViewListSize;
     }
 
-    void setReloaded(boolean reloaded) {
-        synchronized (lockLobby) {
-            this.reloaded = reloaded;
-        }
-    }
-
     public synchronized Game getGame() {
         return game;
     }
@@ -238,16 +218,6 @@ public class Lobby {
     }
 
     /**
-     * Method that check if a player is present in the lobby, given its connection
-     *
-     * @param c players' connection
-     * @return {@code true} it is present, {@code false} it is not
-     */
-    boolean isPresentInLobby(ServerClientHandler c) {
-        return playingConnection.get(c) != null;
-    }
-
-    /**
      * Method that check if a player is present in the game, given its nickname
      *
      * @param name players' nickname
@@ -268,7 +238,6 @@ public class Lobby {
         playingConnection.clear();
         reloaded = false;
         numberOfPlayers = -1;
-        removeBackUp();
         game.clean();
     }
 
