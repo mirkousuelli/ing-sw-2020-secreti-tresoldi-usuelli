@@ -125,6 +125,10 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         this.prevLevel = prevLevel;
     }
 
+    /**
+     * Method that clears this cell by setting the level (and previous level) to GROUND, removing eventual pawns and
+     * resetting the possible actions to default
+     */
     public void clear() {
         level = Level.GROUND;
         prevLevel = Level.GROUND;
@@ -134,7 +138,7 @@ public class ReducedAnswerCell extends ReducedDemandCell {
 
     /**
      * Method that prepares the cell passed as parameter, returning its reduced version after setting its coordinates
-     * and its level. If the chosen cell is occupied by a worker it also initialises the worker (and his id) on the cell
+     * and its level. If the chosen cell is occupied by a worker it also initializes the worker (and his id) on the cell
      *
      * @param c          the cell that the reduced version is obtained from
      * @param playerList list of players
@@ -161,6 +165,16 @@ public class ReducedAnswerCell extends ReducedDemandCell {
         return temp;
     }
 
+    /**
+     * Method that prepares the list of cell passed as parameter, returning their reduced version after setting their
+     * coordinates and level.
+     *
+     * @param reducedAction  the action that is made
+     * @param playerList     list of players
+     * @param possibleAction list of cells containing all possible actions
+     * @param specialAction  list of cells containing special actions
+     * @return the reduced version of the cell (with the eventual worker on it)
+     */
     public static List<ReducedAnswerCell> prepareList(ReducedAction reducedAction, List<Player> playerList, List<Cell> possibleAction, List<Cell> specialAction) {
         List<ReducedAnswerCell> toReturn = new ArrayList<>();
         ReducedAnswerCell temp;
