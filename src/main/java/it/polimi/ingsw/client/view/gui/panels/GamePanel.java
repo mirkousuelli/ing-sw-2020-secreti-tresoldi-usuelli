@@ -64,6 +64,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     private void createMap() {
+        int offset = 0;
         GridBagConstraints mapCon = new GridBagConstraints();
 
         mapCon.anchor = GridBagConstraints.CENTER;
@@ -74,7 +75,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         mapCon.weightx = 0.075;
         mapCon.weighty = 1;
         mapCon.fill = GridBagConstraints.BOTH;
-        mapCon.insets = new Insets(70, 30, 85, 70);
+
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
+            offset = 20;
+
+        mapCon.insets = new Insets(70, 30 + offset, 85, 70);
 
         add(this.game.getJMap(), mapCon);
     }
