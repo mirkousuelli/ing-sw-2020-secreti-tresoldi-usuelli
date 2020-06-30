@@ -6,7 +6,7 @@
 Java implementation of the board game called Santorini edited by Cranio Creations.
 
 ## What we have done
-We implemented all the requirements listed for the maximum assessment of 30L, as indicated in the requirements.
+We implemented all the requirements listed for a maximum assessment of 30L, as indicated in the requirements.
 1) :books: Complete rules
 2) :video_game: CLI
 3) :palm_tree: GUI
