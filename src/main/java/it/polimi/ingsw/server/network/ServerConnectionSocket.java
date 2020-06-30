@@ -498,7 +498,12 @@ public class ServerConnectionSocket {
         if (demand == null) return false;
 
         String value = ((ReducedMessage) demand.getPayload()).getMessage();
-        int numOfPls = Integer.parseInt(value);
+        int numOfPls;
+        try {
+            numOfPls = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return true; //toRepeat
+        }
 
         if (demand.getHeader() == DemandType.CREATE_GAME &&
                 (numOfPls == 2 || numOfPls == 3) &&
@@ -559,9 +564,9 @@ public class ServerConnectionSocket {
             pendingPlayers.remove(player.getName());
             player.setCreator(false);
             return false; //not toRepeat because a new game has to start
-        }
+        } else if (!response.equals("close"))
+            player.send(new Answer<>(AnswerType.ERROR));
 
-        player.send(new Answer<>(AnswerType.ERROR));
         return true; //toRepeat
     }
 
