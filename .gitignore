@@ -11,4 +11,5 @@ lib
 target
 out
 .scannerwork
+backups
 backup_lobby.xml

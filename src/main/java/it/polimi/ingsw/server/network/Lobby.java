@@ -180,37 +180,36 @@ public class Lobby {
     /**
      * Method that adds the player's nickname with its own connection
      *
-     * @param player              player's nickname
-     * @param serverClientHandler player's connection
+     * @param player player's connection
      */
-    synchronized void addPlayer(String player, ServerClientHandler serverClientHandler) {
+    synchronized void addPlayer(ServerClientHandler player) {
         if (playingConnection.size() == numberOfPlayers) return;
 
-        RemoteView v = new RemoteView(player, serverClientHandler);
+        RemoteView view = new RemoteView(player.getName(), player);
 
-        playerViewList.add(v);
-        playingConnection.put(serverClientHandler, v);
-        playerColor.put(v, new ReducedPlayer(v.getPlayer(), Color.values()[playerViewList.size()].toString()));
+        playerViewList.add(view);
+        playingConnection.put(player, view);
+        playerColor.put(view, new ReducedPlayer(view.getPlayer(), Color.values()[playerViewList.size()].toString()));
 
-        v.addObserver(controller);
-        game.addObserver(v);
+        view.addObserver(controller);
+        game.addObserver(view);
 
         if (!reloaded)
-            game.addPlayer(player);
+            game.addPlayer(player.getName());
     }
 
     /**
      * Method that check if the current player is connected inside the game
      *
-     * @param c current player's connection
+     * @param player current player's connection
      * @return {@code true} if it is connected, {@code false} if it is not
      */
-    boolean isCurrentPlayerInGame(ServerClientHandler c) {
+    boolean isCurrentPlayerInGame(ServerClientHandler player) {
         boolean ret;
 
         synchronized (game) {
             synchronized (playingConnection) {
-                ret = game.getCurrentPlayer().nickName.equals(playingConnection.get(c).getPlayer());
+                ret = game.getCurrentPlayer().nickName.equals(playingConnection.get(player).getPlayer());
             }
         }
 

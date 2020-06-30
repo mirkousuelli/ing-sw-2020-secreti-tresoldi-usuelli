@@ -266,11 +266,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         try {
             LOGGER.info("Closing the socket...");
             socket.close();
-            synchronized (this) {
-                setActive(false);
-                setConnected(false);
-                this.notifyAll();
-            }
+            callWatchDog(false);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Got an IOException, cannot close the socket", e);
         }
@@ -413,7 +409,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             if (!loggingOut) {
                 server.suddenDisconnection(this);
                 LOGGER.info(() -> name + " sudden disconnection!");
-            }
+            } else
+                server.removeFromPending(this);
         }
     }
     /*----------------------------------------------------------------------------------------------------------------*/
