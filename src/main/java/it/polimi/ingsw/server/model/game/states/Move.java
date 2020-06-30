@@ -193,7 +193,7 @@ public class Move implements GameState {
         Power p = currentPlayer.getCard().getPower(0);
         if (p.getEffect().equals(Effect.MALUS) && returnContent.getAnswerType().equals(AnswerType.SUCCESS) && //if the current player's god has a malus power
                 ActivePower.verifyMalus((Malus) p.getAllowedAction(), currentPlayer.getCurrentWorker())) { //and if the current player has activated its god's personal malus
-            ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it
+            ChooseCard.applyMalus(game, Timing.END_TURN); //then apply it (athena)
 
             //save
             GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);

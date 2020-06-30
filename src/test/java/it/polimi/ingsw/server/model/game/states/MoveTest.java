@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.game.states;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -650,6 +653,66 @@ ________________________________________________________________________________
         assertEquals(State.BUILD, rc.getState());
         assertNull(cell2.getPawn());
         assertEquals(cell3.getPawn(), p1.getCurrentWorker());
+    }
+
+    @Test
+    void persephoneVsPrometheusTest() throws ParserConfigurationException, SAXException {
+        //set game
+        Game game = new Game();
+        Board board = game.getBoard();
+
+        //set players
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+
+        //add players to the game
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        //assign a god everyone in the game
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.PERSEPHONE);
+
+        //set up malus
+        ChooseCard.applyMalus(game, Timing.DEFAULT);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.PROMETHEUS);
+
+
+        //set game state
+        game.setState(State.MOVE);
+
+        //initialize state
+        Block worker1Player1 = (Block) board.getCell(4, 4);
+        Block worker2Player1 = (Block) board.getCell(2, 2);
+
+        Block worker1Player2 = (Block) board.getCell(2, 0);
+        Block worker2Player2 = (Block) board.getCell(0, 0);
+
+        Block bottomTower1 = (Block) board.getCell(4, 3);
+
+        p1.initializeWorkerPosition(1, worker1Player1);
+        p1.initializeWorkerPosition(2, worker2Player1);
+        p1.setCurrentWorker(p1.getWorker(1));
+
+        p2.initializeWorkerPosition(1, worker1Player2);
+        p2.initializeWorkerPosition(2, worker2Player2);
+
+        //set cells' level
+        bottomTower1.setLevel(Level.BOTTOM);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(bottomTower1.getX(), bottomTower1.getY()))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+
+        ReturnContent returnContent = game.gameEngine();
+        List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
+
+        assertEquals(4, payload.size());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count()); //4,4
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 3, 4, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 3, 3, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 4, 3, ReducedAction.DEFAULT)).count());
     }
 
 

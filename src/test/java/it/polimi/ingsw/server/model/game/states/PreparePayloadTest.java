@@ -27,15 +27,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PreparePayloadTest {
 
-    private boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction) {
+    static boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction) {
         return rac.getX() == x && rac.getY() == y && rac.getActionList().size() == 1 && rac.getActionList().contains(reducedAction);
     }
 
-    private boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction1, ReducedAction reducedAction2) {
+    static boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction1, ReducedAction reducedAction2) {
         return rac.getX() == x && rac.getY() == y && rac.getActionList().size() == 2 && rac.getActionList().contains(reducedAction1) && rac.getActionList().contains(reducedAction2);
     }
 

@@ -7,7 +7,6 @@ import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
-import it.polimi.ingsw.server.model.cards.powers.WinConditionPower;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
@@ -21,10 +20,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BuildTest {
 
@@ -650,7 +646,7 @@ ________________________________________________________________________________
     }
 
     @Test
-    void buildingUnderWithZeusWinTest() throws ParserConfigurationException, SAXException {
+    void buildingUnderWithZeusNotWinTest() throws ParserConfigurationException, SAXException {
         /*@function
          * it checks that if the player has Zeus as God and chooses a cell under his current worker, the build is actually made
          */
@@ -693,9 +689,10 @@ ________________________________________________________________________________
         ReturnContent returnContent = game.gameEngine();
 
         //it checks that the player build under itself since he has zeus
-        assertEquals(AnswerType.VICTORY, returnContent.getAnswerType());
-        assertEquals(State.VICTORY, returnContent.getState());
+        assertEquals(AnswerType.SUCCESS, returnContent.getAnswerType());
+        assertEquals(State.CHOOSE_WORKER, returnContent.getState());
         assertEquals(Level.TOP, w1p1.getLevel());
+        assertEquals(p2, game.getCurrentPlayer());
     }
 
 

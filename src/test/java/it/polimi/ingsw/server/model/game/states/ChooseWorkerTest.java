@@ -21,17 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ChooseWorkerTest {
-
-    private boolean checkReducedAnswerCell(ReducedAnswerCell rac, int x, int y, ReducedAction reducedAction) {
-        return rac.getX() == x && rac.getY() == y && rac.getActionList().size() == 1 && rac.getActionList().contains(reducedAction);
-    }
 
     @Test
     void correctChosenWorkerTest() throws ParserConfigurationException, SAXException {
@@ -293,9 +288,9 @@ public class ChooseWorkerTest {
         List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
 
         assertEquals(3, payload.size());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, newPos.getX(), newPos.getY(), ReducedAction.MOVE)).count());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, newPos.getX(), newPos.getY(), ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
 
     }
 
@@ -372,10 +367,10 @@ public class ChooseWorkerTest {
         List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
 
         assertEquals(4, payload.size());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 0, 0, ReducedAction.MOVE)).count());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 0, 1, ReducedAction.MOVE)).count());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 0, 0, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 0, 1, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
 
 
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(worker2Player1.getX(), worker2Player1.getY()))));
@@ -385,9 +380,9 @@ public class ChooseWorkerTest {
         payload = (List<ReducedAnswerCell>) returnContent.getPayload();
 
         assertEquals(3, payload.size());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, 1, 2, ReducedAction.MOVE)).count());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, middleTower1.getX(), middleTower1.getY(), ReducedAction.MOVE)).count()); //2,0
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, 1, 2, ReducedAction.MOVE)).count());
+        assertEquals(1, payload.stream().filter(rac -> PreparePayloadTest.checkReducedAnswerCell(rac, worker2Player1.getX(), worker2Player1.getY(), ReducedAction.DEFAULT)).count());
     }
 
     @Test

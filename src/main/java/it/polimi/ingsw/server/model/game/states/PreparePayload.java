@@ -45,6 +45,11 @@ public class PreparePayload {
         List<Malus> maluses = currentPlayer.getMalusList();
         boolean personalMalus = false;
 
+        if (maluses.stream().anyMatch(Malus::isPermanent) &&
+                game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER) &&
+                currentPlayer.getCard().getPower(0).getPersonalMalus() != null)
+            maluses.removeIf(Malus::isPermanent);
+
 
         toReturn = PreparePayload.preparePayloadMoveBasic(game, timing, state); //possible and special moves
         toReturnWithPersonalMalus = PreparePayload.preparePayloadMovePersonalMalus(game, state, toReturn); //remove cell blocked by a personal malus
@@ -54,7 +59,7 @@ public class PreparePayload {
         }
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //add changed cell by a move action
 
-        if (maluses != null && !maluses.isEmpty() && !personalMalus) {
+        if (!maluses.isEmpty() && !personalMalus) {
             for (ReducedAnswerCell c : toReturn) {
                 if (!ActivePower.verifyMalus(maluses, workerLocation, game.getBoard().getCell(c.getX(), c.getY()))) //if a malus (personal or not) is active on a cell
                     c.resetAction(); //then remove every possible action on that cell
@@ -91,7 +96,7 @@ public class PreparePayload {
         Power power = currentPlayer.getCard().getPower(0);
         Malus malus = power.getPersonalMalus();
         if (state.equals(State.CHOOSE_WORKER) && malus != null && malus.getMalusType().equals(MalusType.MOVE) && power.getEffect().equals(Effect.BUILD)) { //if the current player has a personal move malus active
-            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(currentPlayer.getCurrentWorker().getLocation())); //then find the cells blocked by the said malus
+            possibleBuilds = new ArrayList<>(game.getBoard().getPossibleBuilds(currentPlayer.getCurrentWorker().getLocation())); //then find the cells which activate the malus
             toReturnMalus = ReducedAnswerCell.prepareList(ReducedAction.USEPOWER, game.getPlayerList(), possibleBuilds, new ArrayList<>());
             return PreparePayload.mergeReducedAnswerCellList(toReturn, toReturnMalus);
         }
@@ -101,8 +106,12 @@ public class PreparePayload {
 
     private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {
         Player currentPlayer = game.getCurrentPlayer();
-        boolean isToReturnOnlyDefault = toReturn.stream().allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT));
-        List<Malus> permanentMoveMaluses = currentPlayer.getMalusList().stream().filter(m -> m.getMalusType().equals(MalusType.MOVE)).filter(Malus::isPermanent).collect(Collectors.toList());
+        boolean isToReturnOnlyDefault = toReturn.stream()
+                .allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT));
+        List<Malus> permanentMoveMaluses = currentPlayer.getMalusList().stream()
+                .filter(m -> m.getMalusType().equals(MalusType.MOVE))
+                .filter(Malus::isPermanent)
+                .collect(Collectors.toList());
 
         //permanent "If possible" maluses
         if (isToReturnOnlyDefault && !permanentMoveMaluses.isEmpty()) {
