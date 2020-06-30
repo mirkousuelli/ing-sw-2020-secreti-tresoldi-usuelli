@@ -172,6 +172,7 @@ public class ServerConnectionSocket {
      * @return {@code true} if connected successfully, {@code false} if the connection went wrong
      */
     synchronized boolean connect(ServerClientHandlerSocket player, String name) {
+        System.out.print("oooooooooooooo");
         if (lobby != null) { //if 'player' isn't the first one to connect (which means another player loaded lobby or created a new one)
             if (lobby.isReloaded()) { //if lobby is reloaded
                 if (connectReload(player, name))

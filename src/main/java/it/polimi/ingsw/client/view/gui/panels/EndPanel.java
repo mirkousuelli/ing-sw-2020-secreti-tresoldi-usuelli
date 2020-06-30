@@ -113,7 +113,7 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case "quit":
-                if (!type.equals(DEFEAT))
+                if (type.equals(VICTORY) || type.equals(LOST))
                     gui.generateDemand(DemandType.NEW_GAME, new ReducedMessage("n"));
 
                 System.exit(1);

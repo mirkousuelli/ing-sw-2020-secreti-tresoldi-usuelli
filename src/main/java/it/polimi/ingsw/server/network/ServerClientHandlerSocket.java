@@ -248,10 +248,13 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         }
         LOGGER.info("Received!");
 
-        if (demand == null)
+        if (demand == null) {
+            setActive(false);
             callWatchDog(false);
-        else if (demand.getPayload() != null && demand.getPayload().toString().equals("close"))
+        } else if (demand.getPayload() != null && demand.getPayload().toString().equals("close")) {
+            setActive(false);
             callWatchDog(true);
+        }
 
         return demand;
     }
@@ -358,6 +361,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             try {
                 synchronized (this) {
                     while (isActive()) this.wait();
+                    setActive(false);
                 }
             } catch (InterruptedException e) {
                 if (isActive())
@@ -445,6 +449,9 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         while (isActive()) {
             demand = read();
 
+            if (!isActive())
+                return;
+
             synchronized (lobby.lockLobby) {
                 newGame = lobby.getGame().getState().getName().equals(State.VICTORY.toString());
             }
@@ -470,6 +477,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      */
     private void initialization() throws InterruptedException {
         boolean reload;
+
+        if (!isActive()) return;
 
         logIn(); //connect
 
@@ -600,10 +609,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 send(new Answer<>(AnswerType.ERROR));
             else if (name == null || toRepeat) //first time playing the game
                 name = ((ReducedMessage) demand.getPayload()).getMessage();
-            else if (!demand.getPayload().equals("y")) {
-                callWatchDog(false);
-                return;
-            }
+
+            if (!isActive() || !isConnected()) return;
 
             if (demand != null || name != null) {
                 synchronized (server) {
