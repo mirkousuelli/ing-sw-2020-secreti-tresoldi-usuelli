@@ -6,16 +6,18 @@ import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Level;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.ParserConfigurationException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class LoadGameTest {
-    private final String pathFile = "src/test/resources/xml/backup_test.xml";
 
     @Test
     public void LoadMatchTest() throws ParserConfigurationException, SAXException {
-        Game game = GameMemory.load(pathFile);
+        String pathFile = "/xml/backup_test.xml";
+        Game game = GameMemory.load(this.getClass().getResource(pathFile).toString());
 
         /* lobby */
         assertEquals(game.getNumPlayers(), 3);

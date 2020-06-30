@@ -61,11 +61,7 @@ public class GameMemory {
         tr.setOutputProperty(OutputKeys.INDENT, "yes");
         tr.setOutputProperty(OutputKeys.METHOD, "xml");
         tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-        if (path.contains("src"))
-            tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "../../../main/resources/xml/game_grammar.dtd");
-        else
-            tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, GameMemory.class.getResource("/xml/game_grammar.dtd").toURI().toString());
+        tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, GameMemory.class.getResource("/xml/game_grammar.dtd").toURI().toString());
 
         // send DOM to file
         StreamResult streamResult = new StreamResult(new FileOutputStream(path));

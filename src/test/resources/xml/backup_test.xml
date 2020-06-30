@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE game SYSTEM "../../../main/resources/xml/game_grammar.dtd">
+<!DOCTYPE game SYSTEM
+        "file:/C:/Users/Fabio/IdeaProjects/ing-sw-2020-secreti-tresoldi-usuelli/target/test-classes/xml/game_grammar.dtd">
 <game>
     <lobby>
         <player>
