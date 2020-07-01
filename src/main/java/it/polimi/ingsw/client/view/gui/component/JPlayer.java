@@ -12,6 +12,12 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the player in the GUI.
+ * <p>
+ * It contains its nickname and id, the card he owns, his workers (a male and a female) and information on this player
+ * to be the current one in the game (which means he has to make some actions depending on the current state).
+ */
 public class JPlayer extends JButton implements ActionListener {
 
     private final String nickname;
@@ -42,6 +48,12 @@ public class JPlayer extends JButton implements ActionListener {
     private int fontSize;
 
 
+    /**
+     * Constructor of the player, which is initialised with its nickname and index
+     *
+     * @param nickname the nickname of the player
+     * @param index    index of the player
+     */
     public JPlayer(String nickname, int index) {
         this.nickname = nickname;
         id = index;
@@ -92,6 +104,9 @@ public class JPlayer extends JButton implements ActionListener {
         maleWorker.getLocation().addActionListener(this);
     }
 
+    /**
+     * Method that removes both workers for this player
+     */
     public void removeWorkers() {
         ((JBlockDecorator) maleWorker.getLocation()).removeWorker();
         maleWorker = null;
@@ -100,6 +115,11 @@ public class JPlayer extends JButton implements ActionListener {
         femaleWorker = null;
     }
 
+    /**
+     * Method that sets this player's worker in the given cell
+     *
+     * @param position the cell where the worker is placed
+     */
     public void setUpWorker(JCell position) {
         if (femaleWorker == null)
             setUpFemaleWorker(position);
@@ -125,6 +145,9 @@ public class JPlayer extends JButton implements ActionListener {
         maleWorker.setId(2);
     }
 
+    /**
+     * Method that allows a player to pick one of his workers at the beginning of his turn
+     */
     public void chooseWorker() {
         ((JBlockDecorator) this.maleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
         ((JBlockDecorator) this.femaleWorker.getLocation()).addDecoration(JCellStatus.CHOOSE_WORKER);
@@ -139,6 +162,10 @@ public class JPlayer extends JButton implements ActionListener {
         this.currentWorker = currentWorker;
     }
 
+    /**
+     * Method that sets this player to be the current one in the game (which means he has to do some actions depending
+     * on the current state)
+     */
     public void active() {
         this.active = true;
 
@@ -155,6 +182,9 @@ public class JPlayer extends JButton implements ActionListener {
         repaint();
     }
 
+    /**
+     * Method that sets this player to be not the active anymore
+     */
     public void disactive() {
         active = false;
 
@@ -216,6 +246,10 @@ public class JPlayer extends JButton implements ActionListener {
         }
     }
 
+    /**
+     * Method that removes this player's workers from the board and unlinks them. It also sets this player to non-active
+     * and sets his card to null
+     */
     void clean() {
         ((JBlockDecorator) femaleWorker.getLocation()).removeWorker();
         ((JBlockDecorator) maleWorker.getLocation()).removeWorker();

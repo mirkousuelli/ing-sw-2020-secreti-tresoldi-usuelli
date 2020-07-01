@@ -6,6 +6,11 @@ import it.polimi.ingsw.client.view.gui.component.map.JMap;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the game in the GUI.
+ * <p>
+ * It contains the list if players in the game, the index of the current one, the deck that is being used and the map.
+ */
 public class JGame {
 
     private final List<JPlayer> players;
@@ -13,6 +18,11 @@ public class JGame {
     private JDeck deck;
     private JMap map;
 
+    /**
+     * Constructor of the JGame, creating the list of players, the deck and the map (all empty)
+     *
+     * @param deck the deck that is used in the game
+     */
     public JGame(JDeck deck) {
         players = new ArrayList<>();
         this.deck = deck;
@@ -23,6 +33,12 @@ public class JGame {
         this(new JDeck());
     }
 
+    /**
+     * Method that adds the chosen player to the game, given its nickname and index
+     *
+     * @param nickname the nickname of the player that is added
+     * @param index    the index of the added player
+     */
     public void addPlayer(String nickname, int index) {
         players.add(new JPlayer(nickname, index));
     }
@@ -63,6 +79,11 @@ public class JGame {
         return new ArrayList<>(players);
     }
 
+    /**
+     * Method that removes the player (with his workers) from the list of players in the game
+     *
+     * @param playerName
+     */
     public void removePlayer(String playerName) {
         JPlayer playerToRemove = getPlayer(playerName);
 
@@ -89,6 +110,10 @@ public class JGame {
         return map;
     }
 
+    /**
+     * Method that cleans the game: it removes every player (resetting also each one of them) and the current
+     * player's index, cleans the deck and the map.
+     */
     public void clean() {
         players.forEach(JPlayer::clean);
         players.clear();

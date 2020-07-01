@@ -9,6 +9,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Class that represents the panel where the Challenger has to decide how many players will be in his game
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -18,6 +23,13 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private static final int BUTTON_SIZE = 250;
 
+    /**
+     * Constructor of the panel where the challenger has to click on the button corresponding to the number of players
+     * he wants to play with
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public NumPlayerPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
         create2PlayerButton();

@@ -6,11 +6,19 @@ import it.polimi.ingsw.client.view.gui.panels.ManagerPanel;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Class that represents the main frame of the application, which contains the title and tha main JPanel
+ */
 public class SantoriniFrame extends JFrame {
 
     private static final String TITLE = "Santorini";
     private final JPanel main;
 
+    /**
+     * Constructor of the SantoriniFrame
+     *
+     * @param gui the interface that is used
+     */
     public SantoriniFrame(GUI gui) {
         super();
 

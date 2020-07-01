@@ -10,6 +10,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Class that represents the panel that is shown after the player started the game. It contains the fields where he has
+ * to insert his nickname, server IP and port.
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -24,6 +30,13 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     private boolean error = false;
 
+    /**
+     * Constructor of the panel where the player has to fill the fields in order to be able to play.
+     * The nickname is unique, so two different players cannot have the same nickname.
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public NicknamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 

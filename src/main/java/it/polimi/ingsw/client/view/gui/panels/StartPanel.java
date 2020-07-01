@@ -5,6 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Class that represents the panel that is shown first when the game is launched
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class StartPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "intro.png";
@@ -12,6 +17,12 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
 
     private JButton playButton;
 
+    /**
+     * Constructor of the start panel, which creates also the play button
+     *
+     * @param panelIndex index of the panel
+     * @param panels     the panels used
+     */
     public StartPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 

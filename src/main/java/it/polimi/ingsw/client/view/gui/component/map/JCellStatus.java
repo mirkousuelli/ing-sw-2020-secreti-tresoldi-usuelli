@@ -2,6 +2,9 @@ package it.polimi.ingsw.client.view.gui.component.map;
 
 import it.polimi.ingsw.communication.message.header.DemandType;
 
+/**
+ * Enumeration that represents the decoration of the cell: for example if
+ */
 public enum JCellStatus {
 
     NONE(null),
@@ -23,6 +26,11 @@ public enum JCellStatus {
 
     public final String path;
 
+    /**
+     * Constructor of the JCellStatus
+     *
+     * @param path the path containing the proper image
+     */
     JCellStatus(String path) {
         this.path = path;
     }

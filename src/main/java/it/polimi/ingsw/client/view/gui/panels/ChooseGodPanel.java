@@ -18,6 +18,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+/**
+ * Class that represents the panel where each player has to pick the God he wants to use during the game. The choice
+ * is between the cards chosen by the Challenger, who has to pick last (so he will receive the last card available).
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -32,6 +38,14 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     private JCard retro;
     private God chosenGod;
 
+    /**
+     * Constructor of the panel where each player can choose the card to use. By clicking on each card the player can
+     * see its special power.
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     * @param deck       the deck containing the cards chosen by the Challenger
+     */
     public ChooseGodPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 

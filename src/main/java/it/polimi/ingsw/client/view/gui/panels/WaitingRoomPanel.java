@@ -14,10 +14,22 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the panel where the player has to wait for remaining players to join the game. When the correct
+ * number of players is reached the game starts.
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class WaitingRoomPanel extends SantoriniPanel {
 
     private static final String imgPath = "menu.png";
 
+    /**
+     * Constructor of the panel for the waiting room
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public WaitingRoomPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 

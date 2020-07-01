@@ -12,6 +12,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that represents the panel where the Challenger has to decide the player that will start playing first.
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class ChooseStarterPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -22,6 +27,14 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
     private final JGame game;
     private JButton chooseButton;
 
+    /**
+     * Constructor of the panel which contains the nicknames of all players in the game, among which the Challenger
+     * has to pick the one of the starter.
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     * @param game       the game that is being played
+     */
     public ChooseStarterPanel(CardLayout panelIndex, JPanel panels, JGame game) {
         super(imgPath, panelIndex, panels);
 

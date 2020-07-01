@@ -23,6 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the panel where the actual game is played: the player can see the map with all its elements (
+ * pawns, buildings...) and can make actions depending on the current state of the game.
+ * <p>
+ * It contains the player's card, opponents' card and buttons that allow the player to quit, use his God power or end
+ * his turn (for when he doesn't want to use his additional power, when his card would allow him to do it)
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class GamePanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "map.png";
@@ -36,6 +45,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JButton powerButton;
     private JButton endTurnButton;
 
+    /**
+     * Constructor of the panel where the actual game is played. The map is created and also the sections containing
+     * the cards of the player and of the opponent(s)
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public GamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 
@@ -265,6 +281,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         cardButton.applyNormal();
     }
 
+    /**
+     * Method that generates the demand from the given cells
+     *
+     * @param chosenJCells the list of cells where to generate the demand from
+     * @param status       the status of the cell
+     */
     public void generateDemand(List<JCell> chosenJCells, JCellStatus status) {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -367,6 +389,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         endTurnButton.setEnabled(false);
     }
 
+    /**
+     * Method that generates the demand from the given cell
+     *
+     * @param chosenJCell the cell where to generate the demand from
+     * @param status      the status of the cell
+     */
     public void generateDemand(JCell chosenJCell, JCellStatus status) {
         List<JCell> chosenCells = new ArrayList<>();
 

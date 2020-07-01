@@ -8,17 +8,30 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 
 import javax.swing.*;
 
+/**
+ * Class that represents the graphical user interface. It starts if the person opens the .jar file, otherwise if the
+ * game is launched by command line the interface will be the CLI.
+ * <p>
+ * It extends the abstract class {@link ClientView}
+ */
 public class GUI<S> extends ClientView<S> {
 
     private JFrame frame;
     private final Object lockReady;
     private boolean isReady;
 
+    /**
+     * Constructor of the GUI, creating the object and setting it to not ready yet (it will become available after the
+     * initial request).
+     */
     public GUI() {
         lockReady = new Object();
         isReady = false;
     }
 
+    /**
+     * Method that creates the GUI and then starts it
+     */
     public void createAndStartGUI() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new SantoriniFrame(this);
@@ -48,6 +61,14 @@ public class GUI<S> extends ClientView<S> {
         }
     }
 
+    /**
+     * Method that receives the initial requests and start threads, receiving the nickname of the player, its ip and
+     * the port that is used
+     *
+     * @param name nickname of the person that sends the initial request
+     * @param ip the ip of the player
+     * @param port the port used
+     */
     public void initialRequest(String name, String ip, int port) {
         new Thread(
                 this
@@ -61,11 +82,20 @@ public class GUI<S> extends ClientView<S> {
         }
     }
 
+    /**
+     * Method that generates the demand with the given type and payload
+     *
+     * @param demandType type of the demand
+     * @param payload the content that is sent with the demand
+     */
     public void generateDemand(DemandType demandType, S payload) {
         createDemand(new Demand<>(demandType, payload));
         becomeFree();
     }
 
+    /**
+     * Method that sets the interface to free
+     */
     public void free() {
         becomeFree();
     }

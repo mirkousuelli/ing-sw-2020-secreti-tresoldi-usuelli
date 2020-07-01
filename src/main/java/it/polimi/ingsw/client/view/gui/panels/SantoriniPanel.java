@@ -5,6 +5,11 @@ import it.polimi.ingsw.client.view.gui.GUI;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Abstract class that represents the main panel of the GUI and is represented by an index
+ * <p>
+ * It implements {@link BackgroundPanel} and is extended by panels such as {@link StartPanel}, {@link EndPanel}...
+ */
 public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
 
     private final String imgPath;
@@ -15,6 +20,13 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
     protected CardLayout panelIndex;
     protected JPanel panels;
 
+    /**
+     * Constructor of the SantoriniPanel, which is built from the path of the image, its index and its panels
+     *
+     * @param imgPath    the path where the image is located
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public SantoriniPanel(String imgPath, CardLayout panelIndex, JPanel panels) {
         this.imgPath = imgPath;
         this.panelIndex = panelIndex;
@@ -60,6 +72,10 @@ public abstract class SantoriniPanel extends JPanel implements BackgroundPanel {
         return new Dimension(scaleWidth, scaleHeight);
     }
 
+    /**
+     * Method that allows the panel to be updated with the changes. It also controls if there was a disconnection, in
+     * which case is sets the interface free
+     */
     public void updateFromModel() {
         //to override when needed
         ManagerPanel mg = (ManagerPanel) panels;

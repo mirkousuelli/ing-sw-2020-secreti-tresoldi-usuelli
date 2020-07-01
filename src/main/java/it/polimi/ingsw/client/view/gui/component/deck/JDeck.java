@@ -10,16 +10,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the deck in the GUI.
+ * <p>
+ * It contains a list of Gods (chosen by the Challenger) and an index of the current one.
+ */
 public class JDeck extends JPanel implements ActionListener {
 
     private final List<JGod> gods;
     private int current;
 
+    /**
+     * Constructor of the Deck, given a list of Gods
+     *
+     * @param list list of cards that will be in this deck
+     */
     public JDeck(List<God> list) {
         this();
         setGodList(list);
     }
 
+    /**
+     * Constructor of the Deck
+     */
     public JDeck() {
         gods = new ArrayList<>();
         setLayout(new GridBagLayout());
@@ -64,6 +77,10 @@ public class JDeck extends JPanel implements ActionListener {
         return this.gods.get(i).getMini();
     }
 
+    /**
+     * Method that displays the list of Gods in the deck (in their mini version). It is used after the Challenger
+     * picked the cards and each player has to choose one for himself.
+     */
     public void showMiniList() {
         int i = 0;
         for (JGod god : gods) {
@@ -105,6 +122,12 @@ public class JDeck extends JPanel implements ActionListener {
         return list;
     }
 
+    /**
+     * Method that pops the chosen God from the deck and removes it
+     *
+     * @param god the God to be popped
+     * @return the chosen God
+     */
     public JGod pop(JGod god) {
         int index = gods.indexOf(god);
 
@@ -136,6 +159,9 @@ public class JDeck extends JPanel implements ActionListener {
         setCurrent(getJGod(((JMini) e.getSource()).getGod()));
     }
 
+    /**
+     * Method that cleans the list of Gods in the deck
+     */
     public void clean() {
         gods.clear();
         current = 0;

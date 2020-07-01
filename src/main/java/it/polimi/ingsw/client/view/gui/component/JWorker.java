@@ -5,6 +5,11 @@ import it.polimi.ingsw.client.view.gui.component.map.JCell;
 import it.polimi.ingsw.client.view.gui.component.map.JCellStatus;
 import it.polimi.ingsw.client.view.gui.component.map.JDecorator;
 
+/**
+ * Class that represents the worker in the GUI.
+ * <p>
+ * It contains the pawn, the cell where the worker is located and its id
+ */
 public class JWorker {
 
     private final JDecorator pawn;
@@ -12,6 +17,12 @@ public class JWorker {
     private JCell cell;
     private int id;
 
+    /**
+     * Constructor of the worker
+     *
+     * @param pawn the status of the cell where the pawn is located
+     * @param cell the cell where the worker is placed
+     */
     public JWorker(JCellStatus pawn, JCell cell) {
         this.pawn = new JDecorator(pawn);
         this.cell = cell;
