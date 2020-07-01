@@ -927,4 +927,56 @@ ________________________________________________________________________________
         assertEquals(w1p2.getPawn(), p2.getWorker(1));
         assertNull(chosenCell.getPawn());
     }
+
+
+    @Test
+    void cannotUseMinotaurPowerTest() throws ParserConfigurationException, SAXException {
+        /*@function
+         * it checks that the Minotaur's power cannot be used if the cell where the worker would be pushed is already occupied
+         */
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        Board board = game.getBoard();
+        Block w1p1 = (Block) board.getCell(2, 2);
+        Block w1p2 = (Block) board.getCell(3, 3);
+        Block w2p2 = (Block) board.getCell(4, 4);
+
+
+        p1.initializeWorkerPosition(1, w1p1);
+        p2.initializeWorkerPosition(1, w1p2);
+        p2.initializeWorkerPosition(2, w2p2);
+
+        p1.setCurrentWorker(p1.getWorkers().get(0));
+
+        w1p1.setLevel(Level.GROUND);
+        w1p2.setLevel(Level.BOTTOM);
+        w2p2.setLevel(Level.BOTTOM);
+
+        game.setState(State.MOVE);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.TRITON);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.MINOTAUR);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+        ReturnContent returnContent = game.gameEngine();
+        PreparePayload.preparePayloadMove(game, Timing.DEFAULT,State.MOVE);
+
+        // it checks that the move is not possible and workers are not moved
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.MOVE, returnContent.getState());
+        assertEquals(w1p1.getPawn(), p1.getWorker(1));
+        assertEquals(w1p2.getPawn(), p2.getWorker(1));
+        assertEquals(w2p2.getPawn(), p2.getWorker(2));
+    }
+
 }

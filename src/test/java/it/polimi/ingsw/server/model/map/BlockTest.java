@@ -10,8 +10,25 @@
 
 package it.polimi.ingsw.server.model.map;
 
+import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
+import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
+import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
+import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.ReturnContent;
+import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.game.states.PreparePayload;
+import it.polimi.ingsw.server.model.storage.GameMemory;
+import it.polimi.ingsw.server.network.Lobby;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockTest {
@@ -82,6 +99,28 @@ class BlockTest {
         block.removePawn();
         // checking that now it is possible to walk on it because it is free
         assertTrue(block.isWalkable());
+    }
+
+    @Test
+    void checkLevelsTest() throws ParserConfigurationException, SAXException {
+
+        Board board = new Board();
+        Block c1 = (Block) board.getCell(2, 2);
+        Block c2 = (Block) board.getCell(3, 3);
+        Block c3 = (Block) board.getCell(4, 4);
+        Block c4 = (Block) board.getCell(1, 4);
+
+
+        c1.setLevel(Level.GROUND);
+        c2.setLevel(Level.BOTTOM);
+        c3.setLevel(Level.MIDDLE);
+        c4.setLevel(Level.TOP);
+
+        assertEquals("0",c1.getLevel().toString());
+        assertEquals("1",c2.getLevel().toString());
+        assertEquals("2",c3.getLevel().toString());
+        assertEquals("3",c4.getLevel().toString());
+
     }
 
 }

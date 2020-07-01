@@ -159,4 +159,34 @@ public class AskAdditionalPowerTest {
 
     }
 
+
+    @Test
+    void wrongAnswerTest() throws ParserConfigurationException, SAXException {
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+        Player p1 = new Player("Fabio");
+        Player p2 = new Player("Mirko");
+        game.addPlayer(p1);
+        game.addPlayer(p2);
+
+        game.setState(State.ASK_ADDITIONAL_POWER);
+        game.setPrevState(State.BUILD);
+
+        game.setCurrentPlayer(p2);
+        game.assignCard(God.MINOTAUR);
+
+        game.setCurrentPlayer(p1);
+        game.assignCard(God.ARTEMIS);
+
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("yes"))));
+        GameMemory.save(game, Lobby.BACKUP_PATH);
+        ReturnContent returnContent = game.gameEngine();
+
+        assertEquals(p1, game.getCurrentPlayer());
+        assertEquals(AnswerType.ERROR, returnContent.getAnswerType());
+        assertEquals(State.ASK_ADDITIONAL_POWER, returnContent.getState());
+
+    }
+
 }

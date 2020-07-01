@@ -133,4 +133,18 @@ public class GameTest {
         assertEquals(p1, game.getCurrentPlayer());
         assertEquals(-1, game.getStarter());
     }
+
+    @Test
+    void stateTest() throws ParserConfigurationException, SAXException {
+
+        Lobby lobby = new Lobby(new Game());
+        Game game = lobby.getGame();
+
+        assertEquals(State.PLACE_WORKERS,game.getPrevState().parseString("placeWorkers"));
+        assertEquals(State.BUILD,game.getPrevState().parseString("build"));
+        assertEquals(State.ASK_ADDITIONAL_POWER,game.getPrevState().parseString("askAdditionalPower"));
+        assertEquals(State.ADDITIONAL_POWER,game.getPrevState().parseString("additionalPower"));
+        assertEquals(State.VICTORY,game.getPrevState().parseString("vIcTOry"));
+    }
+
 }
