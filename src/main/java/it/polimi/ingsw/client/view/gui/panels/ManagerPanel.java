@@ -14,6 +14,7 @@ import it.polimi.ingsw.server.model.map.Level;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,8 @@ public class ManagerPanel extends JPanel {
     private JPlayer clientPlayer;
 
     /**
-     * Constructor of the ManagerPanel, which creates the starting panel and then adds the one for nickname.
+     * Constructor of the ManagerPanel, which creates the starting panel and then adds the one for nickname;
+     * it is based on the card layout in order to manage panels sequences.
      *
      * @param gui the interface that is used
      */
@@ -122,6 +124,12 @@ public class ManagerPanel extends JPanel {
         gui.free();
     }
 
+    /**
+     * Method which updates each block thanks to the list passed as parameters, being aware of the current level and
+     * the previous one for every block and managing the decorator pattern.
+     *
+     * @param reducedAnswerCellList   blocks to be loaded
+     */
     private void updateBuild(List<ReducedAnswerCell> reducedAnswerCellList) {
         reducedAnswerCellList.forEach(reducedAnswerCell -> {
             JCell cell = game.getJMap().getCell(reducedAnswerCell.getX(), reducedAnswerCell.getY());
@@ -139,6 +147,12 @@ public class ManagerPanel extends JPanel {
         });
     }
 
+    /**
+     * Method which loads workers' position, one player at a time.
+     *
+     * @param jPlayer   player selected
+     * @param reducedAnswerCellList workers' cell
+     */
     private void updateWorkers(JPlayer jPlayer, List<ReducedAnswerCell> reducedAnswerCellList) {
         reducedAnswerCellList.forEach(updatedCell -> {
             JCell jCellWorker = game.getJMap().getCell(updatedCell.getX(), updatedCell.getY());

@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,6 +80,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         game.getJMap().setManagerPanel((ManagerPanel) panels);
     }
 
+    /**
+     * Method which define the map in the center of the screen
+     */
     private void createMap() {
         int offset = 0;
         GridBagConstraints mapCon = new GridBagConstraints();
@@ -100,6 +104,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(this.game.getJMap(), mapCon);
     }
 
+    /**
+     * Method which defines the righ side of the screen.
+     */
     private void createRightSection() {
         GridBagConstraints rightCon = new GridBagConstraints();
 
@@ -120,6 +127,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(right, rightCon);
     }
 
+    /**
+     * Method which creates the button to quit the game.
+     */
     private void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -141,6 +151,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         quitButton.addActionListener(e -> System.exit(1));
     }
 
+    /**
+     * Method which creates the power button in order to active the power and see the option highlighted in the map
+     */
     private void createPowerButton() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -165,6 +178,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(powerButton, c);
     }
 
+    /**
+     * Method which created the end turn button in case some gods power have to be stopped in a specific moment.
+     */
     private void createEndTurnButton() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -188,6 +204,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(endTurnButton, c);
     }
 
+    /**
+     * Method which switch on the power button.
+     *
+     * @param active {@true} it active, {@false} if not active
+     */
     private void activePowerButton(boolean active) {
         powerButton.setEnabled(true);
 
@@ -206,6 +227,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         revalidate();
     }
 
+    /**
+     * Function which creates the card section on the right panel.
+     */
     private void createCardSection() {
         GridBagConstraints cardCon = new GridBagConstraints();
         GridBagConstraints playerCon = new GridBagConstraints();
@@ -220,6 +244,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         right.add(cardButton, cardCon);
     }
 
+    /**
+     * Function which creates the left section of the panel, in order to receives opponents cards to be displayed
+     */
     private void createLeftSection() {
         GridBagConstraints leftCon = new GridBagConstraints();
 
@@ -240,6 +267,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         add(left, leftCon);
     }
 
+    /**
+     * Method used to create opponents section through an identifier; the maximum number of opponent is 2, thus it fits
+     * the screen both in 2 players and 3 players
+     *
+     * @param player   opponent player
+     * @param i sequential identifier
+     */
     private void createEnemySection(JPlayer player, int i) {
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints playerCon = new GridBagConstraints();
@@ -256,26 +290,41 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         left.add(player.getJCard(), c);
     }
 
+    /**
+     * Method which displays possible move cells
+     */
     private void setPossibleMove(List<JCell> where) {
         game.getJMap().setPossibleMove(where);
         cardButton.applyNormal();
     }
 
+    /**
+     * Method which displays possible build cells
+     */
     private void setPossibleBuild(List<JCell> where) {
         game.getJMap().setPossibleBuild(where);
         cardButton.applyNormal();
     }
 
+    /**
+     * Method which displays possible use power cells about move
+     */
     private void setPossibleUsePowerMove(List<JCell> where) {
         game.getJMap().setPossibleUsePowerMove(where);
         activePowerButton(true);
     }
 
+    /**
+     * Method which displays possible use power cells about build
+     */
     private void setPossibleUsePowerBuild(List<JCell> where) {
         game.getJMap().setPossibleUsePowerBuild(where);
         activePowerButton(true);
     }
 
+    /**
+     * Method which displays possible malus cells
+     */
     private void setPossibleMalus(List<JCell> where) {
         game.getJMap().setPossibleMalus(where);
         cardButton.applyNormal();
@@ -339,6 +388,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         );
     }
 
+    /**
+     * Method which generates the demand to the server after having selected the power cell
+     *
+     * @param numOfAdditional   number of power repetition usage
+     * @param status type of cell status
+     */
     private DemandType usePowerStatus(int numOfAdditional, JCellStatus status) {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -371,6 +426,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         return currentState;
     }
 
+    /**
+     * Method which remove all the decoration above each cell of the map.
+     */
     private void removeDecorations() {
         JMap map = game.getJMap();
 
@@ -380,6 +438,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         map.removeDecoration(JCellStatus.toJCellStatus(DemandType.USE_POWER));
     }
 
+    /**
+     * Method which switches off the power button.
+     */
     private void hidePowerButton() {
         activePowerButton(false);
         cardButton.applyNormal();
@@ -402,6 +463,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         generateDemand(chosenCells, status);
     }
 
+    /**
+     * Method which defines cells (passed through a list) their status as a set.
+     *
+     * @param reducedAnswerCellList   cell to be colored with their states
+     * @param currentState type of state
+     */
     private void setJCellLAction(List<ReducedAnswerCell> reducedAnswerCellList, DemandType currentState) {
         GUI gui = ((ManagerPanel) panels).getGui();
         JMap map = game.getJMap();
@@ -551,6 +618,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         gui.free();
     }
 
+    /**
+     * Method which updates cells status.
+     */
     private void updateCells() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -581,6 +651,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     }
 
+    /**
+     * Method which updates workers' cells
+     *
+     * @param updatedCells   workers' cells
+     */
     private void updateWorkers(List<ReducedAnswerCell> updatedCells) {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -606,6 +681,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         });
     }
 
+    /**
+     * Method which updates cells after a build and manage the decoratore pattern.
+     *
+     * @param updatedCells cells to be updated after a build
+     */
     private void updateBuild(List<ReducedAnswerCell> updatedCells) {
         JMap map = game.getJMap();
         JCell jCell;
@@ -625,7 +705,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             repaint();
         }
     }
-
+    /**
+     * Method which updates workers move above the map.
+     */
     private void updateMove() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -646,6 +728,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         }
     }
 
+    /**
+     * Method which make the proper worker move inside the map.
+     */
     private void moveJWorker(ReducedPlayer p, JWorker jWorker) {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
@@ -664,12 +749,24 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         }
     }
 
+    /**
+     * Predicate which controls if is not the same worker cell
+     *
+     * @return {@true} if it is the same cell, if not {@false}
+     */
     private boolean isNotSameCell(JCell jCell, ReducedWorker reducedWorker) {
         if (jCell == null) return false;
 
         return jCell.getXCoordinate() != reducedWorker.getX() || jCell.getYCoordinate() != reducedWorker.getY();
     }
 
+    /**
+     * Method which gets the player's worker through its id
+     *
+     * @param player current player
+     * @param workers list of player's workers
+     * @param workerId worker's id
+     */
     private ReducedWorker getWorkerWithId(ReducedPlayer player, List<ReducedWorker> workers, int workerId) {
         return workers.stream()
                 .filter(w -> w.getOwner().equals(player.getNickname()))

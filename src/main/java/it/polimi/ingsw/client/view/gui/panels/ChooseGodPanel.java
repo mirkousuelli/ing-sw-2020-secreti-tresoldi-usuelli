@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -79,6 +80,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         setChoice(deck, deck.getGod(0));
     }
 
+    /**
+     * Method which loads and shows gods (miniature format) to be chosen by the creator.
+     */
     private void loadGods() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -95,6 +99,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         deck.showMiniList();
     }
 
+    /**
+     * Method which creates the swing label where to insert the list of gods afterwards its definition.
+     */
     private void createGodsList() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -125,6 +132,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         godsList.add(godsBack);
     }
 
+    /**
+     * Function which creates the button that allows to choose the selected god.
+     */
     private void createChooseButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -149,6 +159,10 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.add(chooseButton, c);
     }
 
+    /**
+     * Function which creates the main panel in the middle of the screen where is inserted the card selected in its
+     * proper size.
+     */
     private void createChoice() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -172,6 +186,12 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         layers.add(choice, c);
     }
 
+    /**
+     * Method which updates the main panel in the center with the new god selected.
+     *
+     * @param deck   deck including available cards
+     * @param god current god
+     */
     private void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -208,6 +228,11 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         chooseButton.setEnabled(enable);
     }
 
+    /**
+     * Method which updates the deck after one card has been removed because chosen.
+     *
+     * @param godToRemove   chosen god to be removed from the deck
+     */
     private void updateDeck(God godToRemove) {
         boolean found = false;
         int i = 0;
@@ -276,6 +301,9 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
         }
     }
 
+    /**
+     * Method which remove all the components and set up a new deck.
+     */
     private void removeAllComponents() {
         retro.removeAll();
         choice.removeAll();
@@ -340,6 +368,11 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
             gui.free();
     }
 
+    /**
+     * Method which sets gods cards to each opponent.
+     *
+     * @param mg manager panel
+     */
     static void setGods(ManagerPanel mg) {
         GUI gui = mg.getGui();
 

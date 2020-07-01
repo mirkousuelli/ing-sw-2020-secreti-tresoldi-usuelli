@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Class that represents the panel where the Challenger has to decide how many players will be in his game
@@ -36,6 +37,9 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         create3PlayerButton();
     }
 
+    /**
+     * Function which display the 2 players choice button in the middle of the screen.
+     */
     private void create2PlayerButton() {
         _2playersButton = new JButton(BackgroundPanel.getScaledImage(
                 new ImageIcon(this.getClass().getResource("/img/buttons/2_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));
@@ -46,6 +50,9 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         add(_2playersButton);
     }
 
+    /**
+     * Function which display the 3 players choice button in the middle of the screen.
+     */
     private void create3PlayerButton() {
         _3playersButton = new JButton(BackgroundPanel.getScaledImage(
                 new ImageIcon(this.getClass().getResource("/img/buttons/3_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));

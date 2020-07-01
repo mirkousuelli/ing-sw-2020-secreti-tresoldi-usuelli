@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,10 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         createChooseButton();
     }
 
+    /**
+     * Method which create the main label in the middle of the screen where will be displayed players' name to be
+     * chosen.
+     */
     private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/lobby.png"));
         Image img = icon.getImage().getScaledInstance(420, 540, Image.SCALE_SMOOTH);
@@ -56,6 +61,11 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         add(stand, new GridBagConstraints());
     }
 
+    /**
+     * Method which allows to add a list of players to the stand.
+     *
+     * @param players list of players
+     */
     void addPlayers(List<JPlayer> players) {
         GridBagConstraints c = new GridBagConstraints();
         for (int i = 0; i < players.size(); i++) {
@@ -69,6 +79,9 @@ public class ChooseStarterPanel extends SantoriniPanel implements ActionListener
         }
     }
 
+    /**
+     * Create the button that allows to choose the starter selected.
+     */
     private void createChooseButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;

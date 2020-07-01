@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,9 @@ public class WaitingRoomPanel extends SantoriniPanel {
         createWaitStand();
     }
 
+    /**
+     * Function which create the main label to be put in the center of the monitor
+     */
     private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/buttons/waiting.png"));
         Image img = icon.getImage().getScaledInstance(800, 400, Image.SCALE_SMOOTH);
@@ -110,6 +114,11 @@ public class WaitingRoomPanel extends SantoriniPanel {
         gui.free();
     }
 
+    /**
+     * Constructor which initializes the client connection by creating a socket connection to the server
+     *
+     * @param mg   manager panel which handle the panel sequence
+     */
     static void setUpJPlayers(ManagerPanel mg) {
         GUI gui = mg.getGui();
 
@@ -129,6 +138,11 @@ public class WaitingRoomPanel extends SantoriniPanel {
         }
     }
 
+    /**
+     * Parser which make corresponds color string to its own int identifier
+     *
+     * @param color   string denoting color
+     */
     private static int toColorIndex(String color) {
         switch (color) {
             case "cyan":

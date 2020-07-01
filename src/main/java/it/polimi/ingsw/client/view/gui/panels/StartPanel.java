@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Class that represents the panel that is shown first when the game is launched
@@ -14,7 +15,6 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "intro.png";
     private static final int BUTTON_SIZE = 150;
-
     private JButton playButton;
 
     /**
@@ -29,6 +29,9 @@ public class StartPanel extends SantoriniPanel implements ActionListener {
         createPlayButton();
     }
 
+    /**
+     * Function which generate the play button and establish its format inside the panel
+     */
     private void createPlayButton() {
         GridBagConstraints c = new GridBagConstraints();
 
