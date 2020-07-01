@@ -3,7 +3,9 @@ package it.polimi.ingsw.client.view.cli;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
+import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
+import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 /**
  * Class which communicates which the client via a command line interface
@@ -27,6 +29,8 @@ public class CLI<S> extends ClientView<S> {
         boolean isYourTurn = false;
         Answer<S> answerTemp = getAnswer();
 
+        out.printString("\n");
+
         switch (answerTemp.getHeader()) {
             case ERROR:
                 out.printError();
@@ -38,17 +42,14 @@ public class CLI<S> extends ClientView<S> {
                 out.printEnd(answerTemp.getHeader().toString());
                 if (clientModel.isEnded())
                     System.exit(1);
-                else {
+                else
                     isYourTurn = true;
-                    createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
-                }
                 break;
 
             case CLOSE:
             case VICTORY:
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;
-                createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
                 break;
 
             case SUCCESS:
@@ -71,7 +72,7 @@ public class CLI<S> extends ClientView<S> {
         }
 
         if (isYourTurn)
-            startUI();
+            startUI(answerTemp.getHeader());
 
         becomeFree();
     }
@@ -79,10 +80,37 @@ public class CLI<S> extends ClientView<S> {
     /**
      * Performs the input operations with the user and generates the message to send to the server
      */
-    private void startUI() {
+    private void startUI(AnswerType answerTempType) {
         if (clientModel.getCurrentState().equals(DemandType.START)) return;
 
-        createDemand(in.requestInput(clientModel.getCurrentState()));
+        Demand<S> demand = in.requestInput(clientModel.getCurrentState());
+
+        switch (answerTempType) {
+            case VICTORY:
+            case DEFEAT:
+                if (((ReducedMessage) demand.getPayload()).getMessage().equals("n")) {
+                    createDemand(demand);
+                    becomeFree();
+                    System.exit(1);
+                    return;
+                } else {
+                    createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
+                    becomeFree();
+                }
+                break;
+
+            case CLOSE:
+                if (((ReducedMessage) demand.getPayload()).getMessage().equals("y")) {
+                    createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
+                    becomeFree();
+                }
+                return;
+
+            default:
+                break;
+        }
+
+        createDemand(demand);
     }
 
     /**

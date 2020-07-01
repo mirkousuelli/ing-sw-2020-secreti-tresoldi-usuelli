@@ -102,6 +102,12 @@ public class Lobby {
                 .reduce(null, (a, b) -> a != null ? a : b);
     }
 
+    public void setReloaded(boolean reloaded) {
+        synchronized (this) {
+            this.reloaded = reloaded;
+        }
+    }
+
     void setNumberOfPlayers(int numberOfPlayers) {
         synchronized (lockLobby) {
             this.numberOfPlayers = numberOfPlayers;

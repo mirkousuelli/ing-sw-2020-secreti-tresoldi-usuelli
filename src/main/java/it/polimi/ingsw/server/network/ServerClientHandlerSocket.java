@@ -329,7 +329,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
                     lobby = server.getLobby();
                     if (lobby == null) {
-                        System.out.println("PROVA");
                         setActive(false);
                         break;
                     }
@@ -545,8 +544,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         synchronized (lobby.lockLobby) {
             if (lobby.isCurrentPlayerInGame(this)) {
                 List<ReducedAnswerCell> payload = preparePayload(lobby);
-                System.out.print("aaaa");
-                payload.forEach(reducedAnswerCell -> System.out.println(reducedAnswerCell.getX() + "," + reducedAnswerCell.getY() + " " + reducedAnswerCell.getActionList()));
                 send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.BOARD, payload));
             }
         }
@@ -599,13 +596,11 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         boolean toRepeat = false;
 
         do {
-            if (name == null || toRepeat) //after a new game or if the name chosen by the player is already taken
+            if (name == null || toRepeat) { //after a new game or if the name chosen by the player is already taken
                 demand = read();
-
-            if (demand == null) //error while receive a message
-                send(new Answer<>(AnswerType.ERROR));
-            else if (name == null || toRepeat) //first time playing the game
-                name = ((ReducedMessage) demand.getPayload()).getMessage();
+                if (demand != null) //first time playing the game
+                    name = ((ReducedMessage) demand.getPayload()).getMessage();
+            }
 
             if (!isActive() || !isConnected()) return;
 

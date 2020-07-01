@@ -205,6 +205,7 @@ public class ServerConnectionSocket {
         if (loadedGame != null) {
             loadedLobby = new Lobby(loadedGame);
             loadedLobby.setNumberOfPlayers(loadedGame.getNumPlayers());
+            loadedLobby.setReloaded(true);
         }
 
         return loadedLobby;
@@ -215,12 +216,14 @@ public class ServerConnectionSocket {
         int index;
         Lobby lobbyToSave;
 
-        if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) return;
-
         if (lobby != null) {
+            if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)))
+                GameMemory.save(lobby.getGame(), Lobby.BACKUP_PATH);
             lobby.clean();
             lobby = null;
         }
+
+        if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) return;
 
         lobbyToSave = loadLobby(Lobby.BACKUP_PATH);
         if (lobbyToSave == null) return;
@@ -373,8 +376,8 @@ public class ServerConnectionSocket {
             }
         } else {
             System.out.println("CCCCCCC");
-            deletePlayer(disconnectedPlayer); //delete the disconnected player
             moveAndLoadBackUpLobby(); //load lobbies if there at least one to load
+            connectedPlayers.remove(disconnectedPlayer.getName()); //delete the disconnected player
 
             for (ServerClientHandlerSocket serverClientHandler : connectedPlayers.values()) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.setIsToRestart(true);
@@ -429,8 +432,9 @@ public class ServerConnectionSocket {
         if (!loadedLobbyMap.isEmpty() || lobby != null) { //if some lobbies where loaded, maybe 'player' is in one of them
             if (lobby != null) { //if 'player' isn't the first one to connect (which means another player loaded a lobby or created a new one)
                 if (lobby.isReloaded()) { //if lobby is reloaded
-                    if (connectReload(player, name))
-                        return true; //toRepeat
+                    Boolean toRepeat = connectReload(player, name); //if toRepeat is null there is still something to do...
+                    if (toRepeat != null)
+                        return toRepeat;
                 } else { //else it is a new lobby
                     Boolean toRepeat = connectBasic(player, name); //if toRepeat is null there is still something to do...
                     if (toRepeat != null)
@@ -451,7 +455,7 @@ public class ServerConnectionSocket {
         if (canStart()) //add everyone to the game if the number of players chosen by the creator is reached
             startMatch();
 
-        if (!isLobbyReloaded())
+        if (!lobby.isReloaded())
             player.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, player.isCreator()))); //connection successful
         else if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)) && (!lobby.getGame().getState().getName().equals("chooseWorker")))
             GameMemory.save(lobby.getGame(), Lobby.BACKUP_PATH);
@@ -475,7 +479,7 @@ public class ServerConnectionSocket {
         return toRepeat;
     }
 
-    private synchronized boolean connectReload(ServerClientHandlerSocket player, String name) {
+    private synchronized Boolean connectReload(ServerClientHandlerSocket player, String name) {
         if (!lobby.isPresentInGame(name)) {
             if (!connectedPlayers.isEmpty()) { //not present in reloaded lobby and someone in already waiting --> changeName or exit client-side
                 player.send(new Answer<>(AnswerType.ERROR));
@@ -484,7 +488,7 @@ public class ServerConnectionSocket {
                 createLobby(player);
         }
 
-        return false; //not toRepeat
+        return connectBasic(player, name);
     }
 
     /**
