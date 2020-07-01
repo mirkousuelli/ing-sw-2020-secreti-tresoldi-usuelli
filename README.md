@@ -44,6 +44,10 @@ where <num_port> stands for the socket port which both server and clients will u
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
 ```
+***Commands***
+- Move: **move (<x>,<y>)**
+- Build: **build (<x>, <y>)**
+- Active power: **usePower (<x>, <y>)**
 - **Client GUI**<br />
 double click on **target/GC15-client-jar-with-dependencies.jar** icon.
 
@@ -53,6 +57,6 @@ double click on **target/GC15-client-jar-with-dependencies.jar** icon.
 - Mirko Usuelli (matr. 888170)      :   @mirkousuelli
 
 ## Professors/Tutors
-- Prof. Giampaolo Cugola
+- Prof. Gianpaolo Cugola
 - Emanuele Del Sozzo        :     @emanueledelsozzo
 - Alberto Parravicini       :     @AlbertoParravicini
