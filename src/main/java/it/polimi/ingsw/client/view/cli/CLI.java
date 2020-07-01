@@ -14,7 +14,7 @@ public class CLI<S> extends ClientView<S> {
     private final CLIPrinter<S> out;
 
     /**
-     * Constructor which initializes the cli by defining a printer and a scanner of the command line
+     * Constructor which initializes the cli by defining a printer and a scanner for the command line
      */
     public CLI() {
         super();
@@ -86,7 +86,7 @@ public class CLI<S> extends ClientView<S> {
     }
 
     /**
-     * Executes a thread which keeps the client view updated.
+     * Executes a thread which keeps the client view updated
      */
     @Override
     protected void startThreads() throws InterruptedException {

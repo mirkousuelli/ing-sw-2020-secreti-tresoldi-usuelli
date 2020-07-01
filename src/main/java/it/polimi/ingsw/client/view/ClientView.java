@@ -108,7 +108,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     }
 
     /**
-     * When a client view starts
+     * Starts the threads needed by the view
      *
      * @param name user's name
      * @param ip   server's ip

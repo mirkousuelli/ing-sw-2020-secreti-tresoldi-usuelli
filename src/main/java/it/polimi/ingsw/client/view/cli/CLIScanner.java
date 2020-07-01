@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class that manages how the input received from a command line interface
+ * Class that manages how the input is received from the command line interface
  */
 public class CLIScanner<S> {
 
