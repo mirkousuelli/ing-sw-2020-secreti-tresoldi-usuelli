@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ * Class which manages the client side connection protocol through sockets
+ */
 public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
 
     private ClientView<S> clientView;
@@ -18,18 +20,19 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
     private final FileXML file;
     private final LinkedList<Answer<S>> buffer;
 
-    private static final Logger LOGGER = Logger.getLogger(ClientConnectionSocket.class.getName());
-
-    ClientConnectionSocket(String ip, int port, ClientView<S> clientView) throws IOException {
+    /**
+     * Constructor which initializes the client connection by creating a socket connection to the server
+     *
+     * @param ip   server's ip
+     * @param port server's port
+     *
+     * @throws IOException the exception thrown when the client connection cannot open the socket
+     * */
+    ClientConnectionSocket(String ip, int port) throws IOException {
         super();
         socket = new Socket(ip, port);
         file = new FileXML(socket);
-        this.clientView = clientView;
         buffer = new LinkedList<>();
-    }
-
-    ClientConnectionSocket(String ip, int port) throws IOException {
-        this(ip, port, null);
     }
 
     void setClientView(ClientView<S> clientView) {
@@ -79,7 +82,6 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 LOGGER.info("Server ko!!!");
                                 System.exit(1);
                             } else {
-                                //clientView.freeOnExit(temp.getHeader());
                                 LOGGER.info("Queueing...");
                                 synchronized (buffer) {
                                     buffer.add(temp);
@@ -167,6 +169,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return t;
     }
 
+    /**
+     * Executes threads to read from and write to the socket. A consumer thread is also executed. This allows multiple answers to be stored if the client model is occupied
+     */
     @Override
     protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromSocket();

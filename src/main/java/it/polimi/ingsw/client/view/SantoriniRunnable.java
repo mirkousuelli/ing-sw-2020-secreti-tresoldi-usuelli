@@ -6,6 +6,9 @@ import it.polimi.ingsw.communication.message.Demand;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Abstract class standardizing the threads' management in the view. It implements {@code Runnable} and allows to customize what {@code Runnable}'s run does through the abstract method startThreads
+ */
 public abstract class SantoriniRunnable<S> implements Runnable {
 
     private boolean isActive = false;
@@ -18,9 +21,12 @@ public abstract class SantoriniRunnable<S> implements Runnable {
     final Object lockAnswer = new Object();
     public final Object lock = new Object();
 
-    private static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
+    protected static final Logger LOGGER = Logger.getLogger(SantoriniRunnable.class.getName());
 
-    public SantoriniRunnable() {
+    /**
+     * Constructor visible only in the package, it acts as the default constructor but it is not public
+     */
+    SantoriniRunnable() {
 
     }
 

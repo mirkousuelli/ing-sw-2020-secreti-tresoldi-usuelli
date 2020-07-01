@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.communication.message.Demand;
-import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
@@ -9,8 +8,10 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ * Abstract class presenting the {@code ClientModel}'s data to the user
+ */
 public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     protected ClientModel<S> clientModel;
@@ -18,18 +19,14 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
     private boolean isFree = false;
     final Object lockFree;
 
-    protected static final Logger LOGGER = Logger.getLogger(ClientView.class.getName());
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    public ClientView(ClientModel<S> clientModel) {
+    /**
+     * Constructor which initializes the client view
+     * */
+    protected ClientView() {
         super();
-        this.clientModel = clientModel;
-
         lockFree = new Object();
-    }
-
-    public ClientView() {
-        this(null);
     }
 
     private void setClientModel(ClientModel<S> clientModel) {
@@ -65,6 +62,11 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         becomeFree();
     }
 
+    /**
+     * Method used by the classes implementing the client view to send a message to the server via the {@code ClientConnection}
+     *
+     * @param demand the message to send to the server
+     */
     protected void createDemand(Demand<S> demand) {
         if (demand == null) return;
 
@@ -107,6 +109,13 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         return t;
     }
 
+    /**
+     * When a client view starts
+     *
+     * @param name user's name
+     * @param ip   server's ip
+     * @param port server's port
+     */
     protected void runThreads(String name, String ip, int port) {
         ClientConnectionSocket<S> clientConnectionSocket = null;
 
@@ -125,6 +134,9 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         executor.execute(clientModel);
     }
 
+    /**
+     * Method used by a client view to report to the {@code ClientConnection}'s consumer thread that a new message can be consumed and the client view is free to receive and handle it
+     */
     protected void becomeFree() {
         setFree(true);
 
@@ -133,18 +145,8 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         }
     }
 
-    void freeOnExit(AnswerType answerType) {
-        switch (answerType) {
-            case CLOSE:
-            case DEFEAT:
-            case VICTORY:
-                becomeFree();
-                break;
-
-            default:
-                break;
-        }
-    }
-
+    /**
+     * Performs the necessary input and output actions with the user when it is needed (i.e. there is a new answer from the server, the view requires a certain input to continue its execution)
+     */
     protected abstract void update();
 }

@@ -4,6 +4,9 @@ import it.polimi.ingsw.server.network.ServerConnectionSocket;
 
 import java.util.logging.Logger;
 
+/**
+ * Class which allows to run a server-side instance of the project
+ */
 public class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());

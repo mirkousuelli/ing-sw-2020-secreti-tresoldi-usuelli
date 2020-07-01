@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ * Reduced version of the Model-View-Controller's Model. It contains only the information needed to present the model to the user.
+ */
 public class ClientModel<S> extends SantoriniRunnable<S> {
 
     private final ClientConnectionSocket<S> clientConnection;
@@ -35,9 +37,14 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     private DemandType currentState = DemandType.CONNECT;
     private DemandType prevState = DemandType.CONNECT;
 
-    private static final Logger LOGGER = Logger.getLogger(ClientModel.class.getName());
     private static final int DIM = 5;
 
+    /**
+     * Constructor which initializes the client model by setting its attributes to an initial state.
+     *
+     * @param playerName       player's name
+     * @param clientConnection the middleman between the player and the server
+     */
     ClientModel(String playerName, ClientConnectionSocket<S> clientConnection) {
         super();
 
@@ -103,6 +110,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         return t;
     }
 
+    /**
+     * Executes a thread which keeps the client model updated. It fetches all the answers sent by the server from {@code ClientConnectionSocket} and updates consequently the client model
+     */
     @Override
     protected void startThreads() throws InterruptedException {
         Thread read = asyncReadFromConnection();
@@ -113,6 +123,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
 
     /*-------------------------------------------------------UPDATE---------------------------------------------------*/
+
+    /**
+     * Updates the client model. The update varies according to the answer received
+     */
     private void updateModel() {
         Answer<S> answerTemp;
 
@@ -396,14 +410,6 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             reducedBoard[c.getX()][c.getY()] = c;
         }
     }
-
-    private synchronized void checkIsCreator(Answer<S> answer) {
-        if (isInitializing && answer.getContext() != null && answer.getContext().equals(UpdatedPartType.PLAYER) && currentState.equals(DemandType.START)) {
-            player.setCreator(true);
-            nextState = DemandType.CREATE_GAME;
-            currentPlayer = player.getNickname();
-        }
-    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -533,8 +539,28 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
 
 
     /*-----------------------------------------------------SUPPORT----------------------------------------------------*/
+
+    /**
+     * Verifies if the given cell is within the board
+     *
+     * @param x cell's row
+     * @param y cell's column
+     */
     public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;
+    }
+
+    /**
+     * Verifies if the player is chosen to be the creator
+     *
+     * @param answer The answer sent by the server
+     */
+    private synchronized void checkIsCreator(Answer<S> answer) {
+        if (isInitializing && answer.getContext() != null && answer.getContext().equals(UpdatedPartType.PLAYER) && currentState.equals(DemandType.START)) {
+            player.setCreator(true);
+            nextState = DemandType.CREATE_GAME;
+            currentPlayer = player.getNickname();
+        }
     }
     /*----------------------------------------------------------------------------------------------------------------*/
 }

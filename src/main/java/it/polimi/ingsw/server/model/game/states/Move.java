@@ -53,7 +53,7 @@ public class Move implements GameState {
      * Method that controls if the cell is contained in the given list of cells
      *
      * @param possibleMoves the cells where the player can move his worker to
-     * @param cell the cell that is checked to be in the list of possible moves
+     * @param cell          the cell that is checked to be in the list of possible moves
      * @return
      */
     private boolean checkIfContained(List<Cell> possibleMoves, Cell cell) {

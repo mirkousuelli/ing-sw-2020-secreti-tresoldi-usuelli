@@ -1,24 +1,25 @@
 package it.polimi.ingsw.client.view.cli;
 
-import it.polimi.ingsw.client.view.ClientModel;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.Demand;
 import it.polimi.ingsw.communication.message.header.DemandType;
 
+/**
+ * Class which communicates which the client via a command line interface
+ */
 public class CLI<S> extends ClientView<S> {
 
     private final CLIScanner<S> in;
     private final CLIPrinter<S> out;
 
-    public CLI(ClientModel<S> clientModel) {
-        super(clientModel);
-        out = new CLIPrinter<>(clientModel);
-        in = new CLIScanner<>(out, clientModel);
-    }
-
+    /**
+     * Constructor which initializes the cli by defining a printer and a scanner of the command line
+     * */
     public CLI() {
-        this(null);
+        super();
+        out = new CLIPrinter<>();
+        in = new CLIScanner<>(out);
     }
 
     @Override
@@ -75,12 +76,18 @@ public class CLI<S> extends ClientView<S> {
         becomeFree();
     }
 
+    /**
+     * Performs the input operations with the user and generates the message to send to the server
+     */
     private void startUI() {
         if (clientModel.getCurrentState().equals(DemandType.START)) return;
 
         createDemand(in.requestInput(clientModel.getCurrentState()));
     }
 
+    /**
+     * Executes a thread which keeps the client view updated.
+     */
     @Override
     protected void startThreads() throws InterruptedException {
         initialRequest();

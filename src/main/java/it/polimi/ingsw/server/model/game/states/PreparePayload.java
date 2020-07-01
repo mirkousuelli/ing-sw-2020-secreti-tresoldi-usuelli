@@ -22,12 +22,28 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Class containing only static methods to prepare a list of cells where a certain action can be performed
+ */
 public class PreparePayload {
 
-    //PreparePayload is a static class, so its constructor must be private!
-    private PreparePayload() {
+    /**
+     * Private constructor that must not be called
+     * */
+    private PreparePayload() throws UnsupportedOperationException {
+        //PreparePayload is a static class, so its constructor must be private!
+        throw new UnsupportedOperationException("PreparePayload's constructor must not be called!");
     }
 
+    /**
+     * Prepares the cells the current worker can move to according to the current player's god, maluses and action performed
+     *
+     * @param game the current game
+     * @param state the current state
+     * @param timing the current player power's timing
+     *
+     * @return the list of the cells the current player can move to
+     * */
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         if (game == null || timing == null || state == null) return new ArrayList<>();
 
@@ -72,6 +88,14 @@ public class PreparePayload {
         return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
     }
 
+    /**
+     * Prepares the cells the current worker can move to with a normal move action
+     *
+     * @param game   the current game
+     * @param state  the current state
+     * @param timing the current player power's timing
+     * @return the list of the cells the current player can move to
+     */
     private static List<ReducedAnswerCell> preparePayloadMoveBasic(Game game, Timing timing, State state) {
         List<Cell> possibleMoves = new ArrayList<>();
         List<Cell> specialMoves;
@@ -86,6 +110,13 @@ public class PreparePayload {
         return ReducedAnswerCell.prepareList(ReducedAction.MOVE, game.getPlayerList(), possibleMoves, specialMoves);
     }
 
+    /**
+     * Prepares the cells the current worker can move to according to the current player's personal malus
+     *
+     * @param game  the current game
+     * @param state the current state
+     * @return the list of the cells the current player can move to
+     */
     private static List<ReducedAnswerCell> preparePayloadMovePersonalMalus(Game game, State state, List<ReducedAnswerCell> toReturn) {
         List<Cell> possibleBuilds;
         List<ReducedAnswerCell> toReturnMalus;
@@ -104,6 +135,14 @@ public class PreparePayload {
         return new ArrayList<>();
     }
 
+    /**
+     * Prepares the cells the current worker can move to according to the current player's permanent maluses
+     *
+     * @param game   the current game
+     * @param state  the current state
+     * @param timing the current player power's timing
+     * @return the list of the cells the current player can move to
+     */
     private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {
         Player currentPlayer = game.getCurrentPlayer();
         boolean isToReturnOnlyDefault = toReturn.stream()
@@ -191,6 +230,14 @@ public class PreparePayload {
         return new ArrayList<>(set);
     }
 
+    /**
+     * Prepares the cells the current worker can build on according to the current player's god, maluses and action performed
+     *
+     * @param game   the current game
+     * @param state  the current state
+     * @param timing the current player power's timing
+     * @return the list of the cells the current player can build on
+     */
     public static List<ReducedAnswerCell> preparePayloadBuild(Game game, Timing timing, State state) {
         List<Cell> possibleBuilds;
         List<ReducedAnswerCell> tempList = new ArrayList<>();
@@ -207,6 +254,12 @@ public class PreparePayload {
         return PreparePayload.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
+    /**
+     * Prepares the cells the current worker can build on according to the current player's god additional power
+     *
+     * @param game the current game
+     * @return the list of the cells the current player can build on with an additional power
+     */
     public static List<ReducedAnswerCell> preparePayloadBuildAdditional(Game game) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> toReturn = new ArrayList<>();

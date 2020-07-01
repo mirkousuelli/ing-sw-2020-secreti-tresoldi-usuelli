@@ -7,6 +7,9 @@ import it.polimi.ingsw.client.view.gui.GUI;
 
 import javax.swing.*;
 
+/**
+ * Class which allows to run a client-side instance of the project
+ */
 public class Client {
 
     public static void main(String[] args) {

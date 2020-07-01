@@ -19,6 +19,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Class that manages how the {@code ClientModel}'s data are displayed on a command line interface
+ */
 public class CLIPrinter<S> {
 
     private ClientModel<S> clientModel;
@@ -40,9 +43,10 @@ public class CLIPrinter<S> {
             "(______/\\_____|_| |_| \\__)___/|_|   |_|_| |_|_|\n" +
             "                                               \n\n";
 
-    CLIPrinter(ClientModel<S> clientModel) {
-        this.clientModel = clientModel;
-
+    /**
+     * Constructor which initializes the hash maps used to determine the correct data to print according the {@code ClientModel}'s current state
+     */
+    CLIPrinter() {
         stringMap = new EnumMap<>(DemandType.class);
         initialMap = new EnumMap<>(DemandType.class);
         changesMap = new EnumMap<>(UpdatedPartType.class);
@@ -292,15 +296,18 @@ public class CLIPrinter<S> {
         }
     }
 
+    /**
+     * Prints the changes in the {@code ClientModel} done by the last message received from the server
+     */
     boolean printChanges(DemandType demandType) {
         boolean ret;
-        Consumer<String> initlaFunct = initialMap.get(demandType);
+        Consumer<String> initialFunct = initialMap.get(demandType);
         Runnable changesMapFunct = changesMap.get(clientModel.getAnswer().getContext());
 
         if (changesMapFunct != null)
             changesMapFunct.run();
-        else if (initlaFunct != null)
-            initlaFunct.accept(stringMap.get(demandType));
+        else if (initialFunct != null)
+            initialFunct.accept(stringMap.get(demandType));
 
         synchronized (clientModel.lock) {
             ret = clientModel.isYourTurn();

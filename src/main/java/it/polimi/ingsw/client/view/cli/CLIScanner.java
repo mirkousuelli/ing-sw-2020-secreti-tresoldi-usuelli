@@ -16,6 +16,9 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that manages how the input received from a command line interface
+ */
 public class CLIScanner<S> {
 
     private ClientModel<S> clientModel;
@@ -42,19 +45,20 @@ public class CLIScanner<S> {
 
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
-    CLIScanner(CLIPrinter<S> out, ClientModel<S> clientModel) {
+    /**
+     * Constructor which initializes the hash maps used to determine if the data read from the command line is correct according the {@code ClientModel}'s current state
+     *
+     * @param out an instance of {@code CLIPrinter} to print to the command line when needed
+     */
+    CLIScanner(CLIPrinter<S> out) {
         in = new BufferedReader(new InputStreamReader(System.in));
         this.out = out;
-        this.clientModel = clientModel;
 
         messageMap = new EnumMap<>(DemandType.class);
         toRepeatMap = new EnumMap<>(DemandType.class);
         indexMap = new EnumMap<>(DemandType.class);
         toUsePowerMap = new EnumMap<>(DemandType.class);
         payloadMap = new EnumMap<>(DemandType.class);
-
-        if (clientModel != null)
-            initializeMaps();
     }
 
     private void initializeMaps() {
@@ -115,6 +119,13 @@ public class CLIScanner<S> {
 
 
     /*---------------------------------------------------READER-------------------------------------------------------*/
+
+    /**
+     * Creates a message to be sent to the server according to the user's requests
+     *
+     * @param currentState the {@code ClientModel}'s current state
+     * @return the message to send to the server
+     */
     Demand<S> requestInput(DemandType currentState) {
         boolean toRepeat;
         boolean toUsePower;
@@ -163,6 +174,11 @@ public class CLIScanner<S> {
         return generateDemand(toUsePower, i, payload, payloadList, currentState);
     }
 
+    /**
+     * Reads the input from the command line interface
+     *
+     * @return the string read from the command line interface
+     */
     String readLine() {
         String value;
 

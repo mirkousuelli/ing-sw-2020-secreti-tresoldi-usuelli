@@ -23,10 +23,6 @@ import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.storage.GameMemory;
 import it.polimi.ingsw.server.network.Lobby;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Class that represents the state where the current player changes and the win conditions are checked
  */
