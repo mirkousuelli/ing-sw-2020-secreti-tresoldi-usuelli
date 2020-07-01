@@ -19,7 +19,7 @@ We implemented all the requirements listed for a maximum assessment of 30L, as i
 - Model = 95%
 
 ### Testing
-We made 178 tests for both model and controller, the latter has been tested also through stubs; in order to run them successfully:
+We made 183 tests for both model and controller, the latter has been tested also through stubs; in order to run them successfully:
 ```shell
 mvn test
 ```
