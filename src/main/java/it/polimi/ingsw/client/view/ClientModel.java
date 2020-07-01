@@ -87,15 +87,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                             answerTemp = clientConnection.getFirstAnswer();
                             setAnswer(answerTemp);
 
-                            LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
                                 updateModel();
                                 setChanged(true);
                                 lockAnswer.notifyAll();
-                                LOGGER.info("updated!");
-                                LOGGER.info(() -> "prev: " + prevState);
-                                LOGGER.info(() -> "curr: " + currentState);
-                                LOGGER.info(() -> "next: " + nextState);
                             }
                         }
                     } catch (InterruptedException e) {

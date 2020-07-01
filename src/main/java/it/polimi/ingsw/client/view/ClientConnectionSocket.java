@@ -82,12 +82,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 LOGGER.info("Server ko!!!");
                                 System.exit(1);
                             } else {
-                                LOGGER.info("Queueing...");
                                 synchronized (buffer) {
                                     buffer.add(temp);
-                                    LOGGER.info("Queued!");
                                     buffer.notifyAll();
-                                    LOGGER.info("READ");
                                 }
                             }
                         }
@@ -114,13 +111,10 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                             synchronized (buffer) {
                                 if (hasAnswer()) {
                                     buffer.notifyAll();
-                                    LOGGER.info("WRITE");
                                 }
                             }
 
-                            LOGGER.info("Sending...");
                             send(demand);
-                            LOGGER.info("Sent!");
                         }
                     } catch (Exception e) {
                         if (isActive())
@@ -149,11 +143,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
                                 while (!hasAnswer()) buffer.wait();
                             }
 
-                            LOGGER.info("Consuming...");
                             synchronized (lockAnswer) {
                                 setChanged(true);
                                 lockAnswer.notifyAll();
-                                LOGGER.info("Consumed!");
                             }
                         }
                     } catch (InterruptedException e) {

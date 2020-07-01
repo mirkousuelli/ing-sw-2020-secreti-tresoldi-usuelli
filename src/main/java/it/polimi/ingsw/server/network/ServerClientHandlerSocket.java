@@ -303,7 +303,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 } while (isActive());
             } catch (InterruptedException e) {
                 if (isActive())
-                    LOGGER.log(Level.INFO, e, () -> "asyncReadFromSocketThread: Failed to receive!");
+                    LOGGER.log(Level.SEVERE, e, () -> "asyncReadFromSocketThread: Failed to receive!");
                 setActive(false);
                 Thread.currentThread().interrupt();
             } finally {
@@ -338,7 +338,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 }
             } catch (InterruptedException e) {
                 if (isActive())
-                    LOGGER.log(Level.INFO, e, () -> "notifierThread: Failed to receive!");
+                    LOGGER.log(Level.SEVERE, e, () -> "notifierThread: Failed to receive!");
                 setActive(false);
                 Thread.currentThread().interrupt();
             } finally {
@@ -361,7 +361,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 }
             } catch (InterruptedException e) {
                 if (isActive())
-                    LOGGER.log(Level.INFO, e, () -> "watchDogThread: Failed to receive!");
+                    LOGGER.log(Level.SEVERE, e, () -> "watchDogThread: Failed to receive!");
                 setActive(false);
                 Thread.currentThread().interrupt();
             }

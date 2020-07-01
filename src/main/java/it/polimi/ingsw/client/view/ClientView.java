@@ -90,9 +90,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
                             clientModel.setChanged(false);
                             setAnswer(clientModel.getAnswer());
 
-                            LOGGER.info("Receiving...");
                             synchronized (lockAnswer) {
-                                LOGGER.info("Received!");
                                 update();
                             }
                         }
