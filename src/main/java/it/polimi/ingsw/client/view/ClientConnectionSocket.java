@@ -25,9 +25,8 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
      *
      * @param ip   server's ip
      * @param port server's port
-     *
      * @throws IOException the exception thrown when the client connection cannot open the socket
-     * */
+     */
     ClientConnectionSocket(String ip, int port) throws IOException {
         super();
         socket = new Socket(ip, port);

@@ -12,9 +12,9 @@ import java.util.List;
 public class GodParser {
     private final String XMLFILE = "/xml/gods.xml";
 
-    private SAXParserFactory factory;
-    private SAXParser parser;
-    private GodHandler handler;
+    private final SAXParserFactory factory;
+    private final SAXParser parser;
+    private final GodHandler handler;
 
     public GodParser(Deck deck) throws ParserConfigurationException, SAXException {
         factory = SAXParserFactory.newInstance();
@@ -23,7 +23,7 @@ public class GodParser {
     }
 
     public void parseCards(List<God> gods) {
-        try{
+        try {
             Collections.sort(gods);
             handler.setGods(gods);
             parser.parse(this.getClass().getResource(XMLFILE).toURI().toString(), handler);

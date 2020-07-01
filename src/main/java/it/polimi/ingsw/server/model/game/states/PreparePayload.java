@@ -29,7 +29,7 @@ public class PreparePayload {
 
     /**
      * Private constructor that must not be called
-     * */
+     */
     private PreparePayload() throws UnsupportedOperationException {
         //PreparePayload is a static class, so its constructor must be private!
         throw new UnsupportedOperationException("PreparePayload's constructor must not be called!");
@@ -38,12 +38,11 @@ public class PreparePayload {
     /**
      * Prepares the cells the current worker can move to according to the current player's god, maluses and action performed
      *
-     * @param game the current game
-     * @param state the current state
+     * @param game   the current game
+     * @param state  the current state
      * @param timing the current player power's timing
-     *
      * @return the list of the cells the current player can move to
-     * */
+     */
     public static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state) {
         if (game == null || timing == null || state == null) return new ArrayList<>();
 

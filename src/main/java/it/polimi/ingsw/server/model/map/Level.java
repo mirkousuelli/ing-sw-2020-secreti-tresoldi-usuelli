@@ -26,7 +26,7 @@ public enum Level implements ILevel {
          */
         @Override
         public Level buildDown() {
-           return this;
+            return this;
         }
     },
 

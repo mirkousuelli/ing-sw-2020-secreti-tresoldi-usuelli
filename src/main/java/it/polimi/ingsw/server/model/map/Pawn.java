@@ -32,7 +32,7 @@ public abstract class Pawn implements Cell {
      *
      * @param currCell the block where the pawn is added
      */
-    public Pawn (Block currCell) {
+    public Pawn(Block currCell) {
         this.currCell = currCell;
         this.currCell.addPawn(this);
     }
@@ -53,7 +53,7 @@ public abstract class Pawn implements Cell {
 
     @Override
     public Level getLevel() {
-       return this.currCell.getLevel();
+        return this.currCell.getLevel();
     }
 
     @Override

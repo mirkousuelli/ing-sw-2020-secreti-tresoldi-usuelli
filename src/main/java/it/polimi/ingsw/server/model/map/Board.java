@@ -49,7 +49,7 @@ public class Board implements Cloneable {
         }
     }
 
-    public Cell getCell(int x, int y){
+    public Cell getCell(int x, int y) {
         if ((x >= 0 && x < 5) && (y >= 0 && y < 5)) {
             return this.map[x][y];
         }

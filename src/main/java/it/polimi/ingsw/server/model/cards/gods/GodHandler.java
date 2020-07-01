@@ -17,7 +17,7 @@ import java.util.List;
 
 public class GodHandler extends DefaultHandler {
 
-    private Deck deck;
+    private final Deck deck;
     private List<God> godsList;
     private God currGod;
     private God readGod;
@@ -216,7 +216,7 @@ public class GodHandler extends DefaultHandler {
 
         if (name) {
             currCard.setName(str);
-            name  = false;
+            name = false;
         } else if (description) {
             currCard.setDescription(str);
             description = false;

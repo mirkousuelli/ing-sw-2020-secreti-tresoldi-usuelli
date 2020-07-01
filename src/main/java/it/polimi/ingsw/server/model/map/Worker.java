@@ -36,7 +36,7 @@ public class Worker extends Pawn {
     /**
      * Constructor of the worker, re-calling its super class Pawn
      *
-     * @param id the number that identifies the worker
+     * @param id  the number that identifies the worker
      * @param pos the block where the worker is placed
      */
     public Worker(int id, Block pos) {

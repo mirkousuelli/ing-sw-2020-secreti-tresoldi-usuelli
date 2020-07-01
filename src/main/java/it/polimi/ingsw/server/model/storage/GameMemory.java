@@ -291,7 +291,7 @@ public class GameMemory {
             while (!currentPlayer.getNickName().equals(playerNode.item(i).getChildNodes().item(NICKNAME).getTextContent())) {
                 i++;
             }
-            ((Element)playerNode.item(i)).setAttribute("state", state.toString());
+            ((Element) playerNode.item(i)).setAttribute("state", state.toString());
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
             e.printStackTrace();
@@ -517,13 +517,12 @@ public class GameMemory {
                 Node cellNode = cells.item(i);
                 int x = Integer.parseInt(cellNode.getChildNodes().item(X).getTextContent());
                 int y = Integer.parseInt(cellNode.getChildNodes().item(Y).getTextContent());
-                Block cell = (Block) game.getBoard().getCell(x ,y);
+                Block cell = (Block) game.getBoard().getCell(x, y);
 
                 cell.setLevel((Level) ILevel.parseString(cellNode.getChildNodes().item(LEVEL).getTextContent()));
                 cell.setPreviousLevel((Level) ILevel.parseString(cellNode.getChildNodes().item(PREV).getTextContent()));
             }
-        }
-        catch (SAXException | IOException | ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
 

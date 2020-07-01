@@ -15,7 +15,7 @@ public class CLI<S> extends ClientView<S> {
 
     /**
      * Constructor which initializes the cli by defining a printer and a scanner of the command line
-     * */
+     */
     public CLI() {
         super();
         out = new CLIPrinter<>();

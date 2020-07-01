@@ -23,7 +23,7 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
 
     /**
      * Constructor which initializes the client view
-     * */
+     */
     protected ClientView() {
         super();
         lockFree = new Object();

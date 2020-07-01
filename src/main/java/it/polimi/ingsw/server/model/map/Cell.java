@@ -16,15 +16,21 @@ package it.polimi.ingsw.server.model.map;
  */
 public interface Cell {
     int getX();
+
     int getY();
+
     Level getLevel();
 
     void setX(int newX);
+
     void setY(int newY);
+
     void setLevel(Level newLevel);
 
     boolean isWalkable();
+
     boolean isComplete();
+
     boolean isFree();
 
     /**
