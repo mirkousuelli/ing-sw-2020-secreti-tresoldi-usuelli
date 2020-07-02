@@ -776,4 +776,41 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                         : b
                 );
     }
+
+
+    @Override
+    protected void paintComponent(Graphics gr){
+        super.paintComponent(gr);
+
+        Font f = new Font("SansSerif", Font.BOLD, 20);
+        gr.setFont(f);
+        gr.setColor(Color.WHITE);
+
+        GUI gui = ((ManagerPanel) panels).getGui();
+
+        if((gui.getClientModel().isYourTurn())) {
+            if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("askAdditionalPower")) {
+
+                if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")){
+                    gr.drawString("BUILD", 115, 80);
+                    return;
+                }
+            }
+
+            else if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("placeWorkers")) {
+                gr.drawString("PLACE WORKERS", 55, 80);
+                return;
+            }
+
+            else if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("chooseWorker")) {
+                gr.drawString("CHOOSE WORKER", 50, 80);
+                return;
+            }
+
+            else {
+                gr.drawString(gui.getClientModel().getCurrentState().toString().toUpperCase(), 115, 80);
+            }
+        }
+    }
+
 }
