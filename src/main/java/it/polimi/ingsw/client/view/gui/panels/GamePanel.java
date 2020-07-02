@@ -45,6 +45,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JButton powerButton;
     private JButton endTurnButton;
 
+    private List<ReducedAnswerCell> oldUpdate;
+
     /**
      * Constructor of the panel where the actual game is played. The map is created and also the sections containing
      * the cards of the player and of the opponent(s)
@@ -77,6 +79,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         game.getJMap().setGamePanel(this);
         game.getJMap().setManagerPanel((ManagerPanel) panels);
+
+        oldUpdate = new ArrayList<>();
     }
 
     /**
@@ -206,7 +210,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which switch on the power button.
      *
-     * @param active {@true} it active, {@false} if not active
+     * @param active {@code true} it active, {@code false} if not active
      */
     private void activePowerButton(boolean active) {
         powerButton.setEnabled(true);
@@ -319,14 +323,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private void setPossibleUsePowerBuild(List<JCell> where) {
         game.getJMap().setPossibleUsePowerBuild(where);
         activePowerButton(true);
-    }
-
-    /**
-     * Method which displays possible malus cells
-     */
-    private void setPossibleMalus(List<JCell> where) {
-        game.getJMap().setPossibleMalus(where);
-        cardButton.applyNormal();
     }
 
     /**
@@ -525,6 +521,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     cardButton.applyNormal();
                     game.getJMap().hidePowerCells();
                     powerButton.setName("on");
+                    endTurnButton.setEnabled(true);
                     break;
 
                 case "on":
@@ -532,6 +529,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     cardButton.applyPower();
                     game.getJMap().showPowerCells();
                     powerButton.setName("off");
+                    endTurnButton.setEnabled(false);
                     break;
 
                 case "endTurn":
@@ -540,13 +538,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     endTurnButton.setEnabled(false);
                     hidePowerButton();
                     removeDecorations();
-
-                    if (cardButton.getName().equals("off")) {
-                        activePowerButton(true);
-                        cardButton.applyNormal();
-                        game.getJMap().hidePowerCells();
-                        powerButton.setName("on");
-                    }
 
                     gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("n"));
                     break;
@@ -570,6 +561,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case DEFEAT:
+                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
+
                 if (gui.getClientModel().isEnded()) {
                     mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
                     ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
@@ -587,7 +580,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     validate();
                     repaint();
                     if (gui.getClientModel().isYourTurn())
-                        updateCells();
+                        updateCells(updatedCells);
                 }
                 break;
 
@@ -611,11 +604,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 if (!gui.getClientModel().isYourTurn())
                     updateMove();
                 else
-                    updateCells();
+                    updateCells(updatedCells);
                 break;
 
             case ERROR:
-                updateCells();
+                updateCells(oldUpdate);
                 break;
 
             default:
@@ -628,12 +621,12 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which updates cells status.
      */
-    private void updateCells() {
+    private void updateCells(List<ReducedAnswerCell> updatedCells) {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState = gui.getClientModel().getCurrentState();
-        List<ReducedAnswerCell> updatedCells;
+        oldUpdate = updatedCells;
 
         switch (currentState) {
             case PLACE_WORKERS:
@@ -648,7 +641,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case BUILD:
             case ASK_ADDITIONAL_POWER:
             case ADDITIONAL_POWER:
-                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
                 setJCellLAction(updatedCells, currentState);
                 break;
 
@@ -759,7 +751,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Predicate which controls if is not the same worker cell
      *
-     * @return {@true} if it is the same cell, if not {@false}
+     * @return {@code true} if it is the same cell, if not {@code false}
      */
     private boolean isNotSameCell(JCell jCell, ReducedWorker reducedWorker) {
         if (jCell == null) return false;

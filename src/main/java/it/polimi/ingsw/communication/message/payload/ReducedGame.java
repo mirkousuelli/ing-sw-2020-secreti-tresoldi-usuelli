@@ -3,6 +3,7 @@ package it.polimi.ingsw.communication.message.payload;
 import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.game.Game;
+import it.polimi.ingsw.server.model.game.State;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Board;
 import it.polimi.ingsw.server.model.map.Cell;
@@ -43,6 +44,11 @@ public class ReducedGame {
         reducedPlayerList = new ArrayList<>(lobby.getReducedPlayerList());
         reducedWorkerList = new ArrayList<>();
         currentState = DemandType.parseString(lobby.getGame().getState().getName());
+
+        if (currentState != null && currentState.equals(DemandType.ADDITIONAL_POWER)) {
+            loadedGame.setState(State.ASK_ADDITIONAL_POWER);
+            currentState = DemandType.ASK_ADDITIONAL_POWER;
+        }
 
 
         for (int i = 0; i < 5; i++) {

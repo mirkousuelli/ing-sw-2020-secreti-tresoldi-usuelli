@@ -6,6 +6,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedPlayer;
 import it.polimi.ingsw.server.model.cards.powers.BuildPower;
 import it.polimi.ingsw.server.model.cards.powers.MovePower;
 import it.polimi.ingsw.server.model.cards.powers.Power;
+import it.polimi.ingsw.server.model.cards.powers.tags.Effect;
 import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.GameState;
@@ -57,6 +58,7 @@ public class AdditionalPower implements GameState {
         if (chosenCell == null || !game.isActionCorrect(chosenCell))
             return returnError();
 
+        prevState = updatePrevState(prevState);
 
         if (prevState.equals(State.MOVE)) //if it's an additional move power
             returnContent = movePower(); //then
@@ -162,5 +164,19 @@ public class AdditionalPower implements GameState {
             return returnError(); //then report error
 
         return returnContent;
+    }
+
+    private State updatePrevState(State prevState) {
+        State toReturn = prevState;
+
+        if (toReturn == null || (!toReturn.equals(State.MOVE) && !toReturn.equals(State.BUILD))) {
+            if (game.getCurrentPlayer().getCard().getPower(0).getEffect().equals(Effect.BUILD))
+                game.setPrevState(State.BUILD);
+            else
+                game.setPrevState(State.MOVE);
+            toReturn = game.getPrevState();
+        }
+
+        return toReturn;
     }
 }

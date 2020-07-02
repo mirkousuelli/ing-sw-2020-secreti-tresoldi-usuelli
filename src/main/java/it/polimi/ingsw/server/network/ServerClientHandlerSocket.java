@@ -555,9 +555,6 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         if (loadedGame.getState() == null) return payload;
 
         switch (loadedGame.getState().getName()) {
-            case "chooseWorker":
-                break;
-
             case "move":
                 payload = PreparePayload.preparePayloadMove(loadedGame, Timing.DEFAULT, State.CHOOSE_WORKER);
                 break;
@@ -567,13 +564,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
                 break;
 
             case "additionalPower":
-                if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
-                    payload = PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.MOVE);
-                else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
-                    payload = PreparePayload.preparePayloadBuild(loadedGame, Timing.ADDITIONAL, State.BUILD);
-                break;
-
             case "askAdditionalPower":
+                loadedGame.setState(State.ASK_ADDITIONAL_POWER);
                 if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.MOVE))
                     payload = PreparePayload.mergeReducedAnswerCellList(PreparePayload.preparePayloadMove(loadedGame, Timing.ADDITIONAL, State.ADDITIONAL_POWER), PreparePayload.preparePayloadBuild(loadedGame, Timing.DEFAULT, State.MOVE));
                 else if (lobby.getGame().getPlayer(name).getCard().getPower(0).getEffect().equals(Effect.BUILD))
