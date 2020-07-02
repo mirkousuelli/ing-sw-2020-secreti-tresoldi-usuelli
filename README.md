@@ -45,7 +45,7 @@ mvn package
 ```shell
 java -jar target/GC15-client-jar-with-dependencies.jar
 ```
-  ***Commands***
+  - ***Commands***
     - Move: **move (x,y)**
     - Build: **build (x,y)**
     - Active Power: **usePower (x,y)**
