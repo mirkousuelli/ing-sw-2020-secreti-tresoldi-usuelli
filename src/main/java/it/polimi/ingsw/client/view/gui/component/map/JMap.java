@@ -362,7 +362,17 @@ public class JMap extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Method that fetches the next cell and is used for Minotaur power that pushes opponent's worker to the next cell
+     *
+     * @param from the cell where the worker (that is using Minotaur's power) comes from
+     * @param to   the cell where the worker (that is using Minotaur's power) moves to
+     * @param m    the slope
+     * @param q    the intercept
+     * @return the new cell where the worker is pushed
+     */
     private JCell fetchNextCell(JCell from, JCell to, float m, float q) {
+
         int newX;
 
         if (from.getXCoordinate() < to.getXCoordinate())
