@@ -272,7 +272,7 @@ public class Board implements Cloneable {
                         }
                     }
                 } else if (direction == MalusLevel.SAME) {
-                    copy = new ArrayList<>(toReturn);
+                    //copy = new ArrayList<>(toReturn);
 
                     for (Cell around : this.getAround(workerLocation)) {
                         // checking level difference
@@ -282,9 +282,9 @@ public class Board implements Cloneable {
                         }
                     }
 
-                    if (toReturn.isEmpty()) {
+                    /*if (toReturn.isEmpty()) {
                         toReturn = copy;
-                    }
+                    }*/
                 }
             }
         }

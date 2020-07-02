@@ -52,52 +52,29 @@ public class PreparePayload {
     private static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state, boolean currentWorker) {
         List<ReducedAnswerCell> toReturn;
         List<ReducedAnswerCell> toReturnWithPersonalMalus;
-        List<ReducedAnswerCell> payload;
 
         Player currentPlayer = game.getCurrentPlayer();
         Worker worker = currentPlayer.getCurrentWorker();
         Cell workerLocation = worker.getLocation();
 
         List<Malus> maluses = currentPlayer.getMalusList();
-        boolean personalMalus = false;
 
         toReturn = PreparePayload.preparePayloadMoveBasic(game, timing, state); //possible and special moves
         toReturnWithPersonalMalus = PreparePayload.preparePayloadMovePersonalMalus(game, state, toReturn); //remove cell blocked by a personal malus
-        if (!toReturnWithPersonalMalus.isEmpty()) {
-            personalMalus = true;
+        if (!toReturnWithPersonalMalus.isEmpty())
             toReturn = toReturnWithPersonalMalus;
-            maluses = maluses.stream()
-                    .filter(malus -> !malus.equals(currentPlayer.getCard().getPower(0).getPersonalMalus()))
-                    .collect(Collectors.toList());
-        }
+
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //add changed cell by a move action
 
-        if (!maluses.isEmpty() || !personalMalus) {
+        if (!maluses.isEmpty() && (currentPlayer.getCard().getPower(0).getPersonalMalus() == null || ((game.getState().getName().equals("chooseWorker") || game.getState().getName().equals("move")) && maluses.contains(currentPlayer.getCard().getPower(0).getPersonalMalus())))) {
             for (ReducedAnswerCell c : toReturn) {
                 if (!ActivePower.verifyMalus(maluses, workerLocation, game.getBoard().getCell(c.getX(), c.getY()))) //if a malus (personal or not) is active on a cell
                     c.resetAction(); //then remove every possible action on that cell
             }
         }
 
-        if (currentWorker) {
-            payload = toReturn;
+        if (currentWorker)
             toReturn = PreparePayload.preparePayloadMovePermanentMalus(game, timing, state, toReturn); //verify if a permanent "If possible" malus is active
-            if (personalMalus && game.getState().getName().equals("chooseWorker") && !payload.equals(toReturn)) {
-                toReturn.forEach(rac -> {
-                    if (payload.stream()
-                            .filter(r -> rac.getX() == r.getX() && rac.getY() == r.getY())
-                            .anyMatch(r -> r.getActionList().contains(ReducedAction.USEPOWER))) {
-                        if (rac.getAction(0).equals(ReducedAction.DEFAULT))
-                            rac.replaceDefaultAction(ReducedAction.USEPOWER);
-                        else {
-                            List<ReducedAction> reducedActions = rac.getActionList();
-                            reducedActions.add(ReducedAction.USEPOWER);
-                            rac.setActionList(reducedActions);
-                        }
-                    }
-                });
-            }
-        }
 
         return PreparePayload.removeSurroundedCells(game, toReturn); //it will prevent the player to block himself
     }
@@ -159,8 +136,13 @@ public class PreparePayload {
      */
     private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {
         Player currentPlayer = game.getCurrentPlayer();
+
         boolean isToReturnOnlyDefault = toReturn.stream()
                 .allMatch(rac -> rac.getAction(0).equals(ReducedAction.DEFAULT));
+
+        if (state.equals(State.CHOOSE_WORKER) && toReturn.stream().noneMatch(rac -> rac.getActionList().contains(ReducedAction.MOVE)))
+            isToReturnOnlyDefault = true;
+
         List<Malus> permanentMoveMaluses = currentPlayer.getMalusList().stream()
                 .filter(m -> m.getMalusType().equals(MalusType.MOVE))
                 .filter(Malus::isPermanent)
