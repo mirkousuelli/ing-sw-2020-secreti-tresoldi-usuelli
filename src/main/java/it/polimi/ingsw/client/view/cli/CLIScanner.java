@@ -43,6 +43,8 @@ public class CLIScanner<S> {
     private final Map<DemandType, Predicate<String>> toUsePowerMap;
     private final Map<DemandType, Function<String, S>> payloadMap;
 
+    private final Set<String> regexes;
+
     private static final Logger LOGGER = Logger.getLogger(CLIScanner.class.getName());
 
     /**
@@ -59,6 +61,8 @@ public class CLIScanner<S> {
         indexMap = new EnumMap<>(DemandType.class);
         toUsePowerMap = new EnumMap<>(DemandType.class);
         payloadMap = new EnumMap<>(DemandType.class);
+
+        regexes = new HashSet<>();
     }
 
     /**
@@ -113,6 +117,9 @@ public class CLIScanner<S> {
         payloadMap.put(DemandType.ASK_ADDITIONAL_POWER, this::parseString);
         payloadMap.put(DemandType.ADDITIONAL_POWER, this::parseCommand);
         payloadMap.put(DemandType.NEW_GAME, this::parseString);
+
+        regexes.add(",");
+        regexes.add("\\.");
     }
 
     void setClientModel(ClientModel<S> clientModel) {
@@ -453,11 +460,23 @@ public class CLIScanner<S> {
     }
 
     private List<Integer> stringToInt(String string) {
+        List<Integer> coordinates = new ArrayList<>();
+
+        for (String regex : regexes) {
+            coordinates = stringToIntRegex(string, regex);
+            if (!coordinates.isEmpty())
+                break;
+        }
+
+        return coordinates;
+    }
+
+    private List<Integer> stringToIntRegex(String string, String regex) {
         if (string.length() != 3) return new ArrayList<>();
 
         List<Integer> ret = new ArrayList<>();
 
-        String[] input = string.split(",");
+        String[] input = string.split(regex);
 
         if (input.length != 2) return new ArrayList<>();
         if (Arrays.stream(input).anyMatch(i -> i.length() != 1)) return new ArrayList<>();

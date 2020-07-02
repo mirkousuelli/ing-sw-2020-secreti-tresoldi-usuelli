@@ -41,6 +41,7 @@ public class CLI<S> extends ClientView<S> {
                 break;
 
             case DEFEAT:
+                out.printLineSeparators();
                 out.printEnd(answerTemp.getHeader().toString());
                 if (clientModel.isEnded())
                     System.exit(1);
@@ -50,20 +51,24 @@ public class CLI<S> extends ClientView<S> {
 
             case CLOSE:
             case VICTORY:
+                out.printLineSeparators();
                 out.printEnd(answerTemp.getHeader().toString());
                 isYourTurn = true;
                 break;
 
             case SUCCESS:
+                out.printLineSeparators();
                 out.printSuccess();
                 isYourTurn = out.printChanges(clientModel.getCurrentState());
                 break;
 
             case CHANGE_TURN:
+                out.printLineSeparators();
                 out.printCurrentPlayer();
                 break;
 
             case RELOAD:
+                out.printLineSeparators();
                 out.printReload();
                 out.printChanges(clientModel.getCurrentState());
                 break;

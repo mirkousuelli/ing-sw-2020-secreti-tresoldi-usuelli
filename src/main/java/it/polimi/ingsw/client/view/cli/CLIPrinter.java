@@ -324,7 +324,11 @@ public class CLIPrinter<S> {
      * Method that prints a message advising the player that a game has been reloaded
      */
     void printReload() {
-        out.println(RELOAD);
+        out.print(RELOAD);
+    }
+
+    void printLineSeparators() {
+        printString("----------------------------------------------------------------------------------------------\n\n");
     }
 
     /**
