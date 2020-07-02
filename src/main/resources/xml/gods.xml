@@ -228,7 +228,7 @@
     <!-- - - -  - - - - - - - - - - - - - - - - - PERSEPHONE - - - - - - - - - - - - - - - - - - - - - - - - -->
     <god id="PERSEPHONE">
         <name>Persephone</name>
-        <description>If possible, at least one Worker must move up this turn</description>
+        <description> (During your opponent's turn) If possible, at least one Worker must move up this turn</description>
         <player>3</player>
         <power>
             <!-- what -->
