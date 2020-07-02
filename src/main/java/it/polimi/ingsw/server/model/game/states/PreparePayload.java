@@ -231,6 +231,7 @@ public class PreparePayload {
      */
     private static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
         List<ReducedAnswerCell> ret = new ArrayList<>();
+        List<Malus> oneTurnMalusList = game.getCurrentPlayer().removeOneTurnRemainingMaluses();
         Cell c;
 
         for (ReducedAnswerCell rac : toReturn) {
@@ -239,7 +240,14 @@ public class PreparePayload {
                 ret.add(rac);
         }
 
-        List<ReducedAction> reducedActions = ret.stream().map(ReducedAnswerCell::getActionList).flatMap(List::stream).distinct().collect(Collectors.toList());
+        oneTurnMalusList.forEach(game.getCurrentPlayer()::addMalus);
+
+        List<ReducedAction> reducedActions = ret.stream()
+                .map(ReducedAnswerCell::getActionList)
+                .flatMap(List::stream)
+                .distinct()
+                .collect(Collectors.toList());
+
         if (reducedActions.contains(ReducedAction.USEPOWER) && !reducedActions.contains(ReducedAction.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null)
             return new ArrayList<>();
 

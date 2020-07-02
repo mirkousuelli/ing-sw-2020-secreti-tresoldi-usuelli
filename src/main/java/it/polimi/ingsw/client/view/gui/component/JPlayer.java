@@ -251,8 +251,12 @@ public class JPlayer extends JButton implements ActionListener {
      * and sets his card to null
      */
     void clean() {
-        ((JBlockDecorator) femaleWorker.getLocation()).removeWorker();
-        ((JBlockDecorator) maleWorker.getLocation()).removeWorker();
+        if (femaleWorker != null && femaleWorker.getLocation() != null)
+            ((JBlockDecorator) femaleWorker.getLocation()).removeWorker();
+
+        if (maleWorker != null && maleWorker.getLocation() != null)
+            ((JBlockDecorator) maleWorker.getLocation()).removeWorker();
+
         femaleWorker = null;
         maleWorker = null;
 

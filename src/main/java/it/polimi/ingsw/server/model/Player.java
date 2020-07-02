@@ -17,6 +17,7 @@ import it.polimi.ingsw.server.model.map.Worker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class that represents a player
@@ -165,6 +166,16 @@ public class Player {
      */
     public void removeMalus() {
         malusList.removeIf(m -> !m.isPermanent() && m.getNumberOfTurns() <= m.getNumberOfTurnsUsed());
+    }
+
+    public List<Malus> removeOneTurnRemainingMaluses() {
+        List<Malus> oneTurnMalusList = malusList.stream()
+                .filter(m -> m.getNumberOfTurns() - m.getNumberOfTurnsUsed() == 1)
+                .collect(Collectors.toList());
+
+        malusList.removeAll(oneTurnMalusList);
+
+        return oneTurnMalusList;
     }
 
     /**

@@ -301,8 +301,12 @@ public class Game extends Observable<Answer> {
      * @param player the nickname of the player to remove
      */
     public void removePlayer(String player) {
-        if (players.removeIf(p -> p.nickName.equals(player)) && currentPlayer > players.size() - 1)
-            currentPlayer--;
+        if (players.removeIf(p -> p.nickName.equals(player))) {
+            if (currentPlayer == 1)
+                currentPlayer = 0;
+            else
+                currentPlayer = 1;
+        }
     }
 
     /**
@@ -321,6 +325,8 @@ public class Game extends Observable<Answer> {
     }
 
     public boolean isActionCorrect(Cell chosenCell) {
+        if (request == null) return true;
+
         String action = request.getDemand().getHeader().toString();
         if (action.equals("additionalPower"))
             action = "usePower";

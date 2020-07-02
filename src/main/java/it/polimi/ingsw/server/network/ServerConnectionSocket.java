@@ -19,10 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -142,6 +139,10 @@ public class ServerConnectionSocket {
 
         return isReloaded;
     }
+
+    boolean isInPendingConnection(ServerClientHandlerSocket player) {
+        return pendingPlayers.containsValue(player);
+    }
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
@@ -219,13 +220,17 @@ public class ServerConnectionSocket {
         Lobby lobbyToSave;
 
         if (lobby != null) {
-            if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)))
+            State gameState = State.parseString(lobby.getGame().getState().getName());
+            if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)) && gameState != null && gameState.ordinal() >= State.CHOOSE_WORKER.ordinal())
                 GameMemory.save(lobby.getGame(), Lobby.BACKUP_PATH);
-            lobby.clean();
+            lobby.setReloaded(true);
             lobby = null;
         }
 
         if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) return;
+
+        if (lobby != null)
+            lobby.clean();
 
         lobbyToSave = loadLobby(Lobby.BACKUP_PATH);
         if (lobbyToSave == null) return;
@@ -378,10 +383,15 @@ public class ServerConnectionSocket {
             }
         } else {
             System.out.println("CCCCCCC");
+            connectedPlayers.values().forEach(p -> lobby.deletePlayerConnection(p));
             moveAndLoadBackUpLobby(); //load lobbies if there at least one to load
             connectedPlayers.remove(disconnectedPlayer.getName()); //delete the disconnected player
 
-            for (ServerClientHandlerSocket serverClientHandler : connectedPlayers.values()) { //there was an unexpected disconnection, stop the match for all the players in game
+            List<ServerClientHandlerSocket> playersToAlert = connectedPlayers.values().stream()
+                    .filter(serverClientHandlerSocket -> !pendingPlayers.containsValue(serverClientHandlerSocket))
+                    .collect(Collectors.toList());
+
+            for (ServerClientHandlerSocket serverClientHandler : playersToAlert) { //there was an unexpected disconnection, stop the match for all the players in game
                 serverClientHandler.setIsToRestart(true);
                 serverClientHandler.send(new Answer<>(AnswerType.CLOSE));
                 waitRestart(serverClientHandler);

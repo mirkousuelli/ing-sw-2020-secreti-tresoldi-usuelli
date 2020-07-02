@@ -120,6 +120,16 @@ public class Lobby {
      * @param player the player connection that is removed
      */
     void deletePlayer(ServerClientHandler player) {
+        deletePlayerConnection(player);
+        game.removePlayer(player.getName());
+    }
+
+    /**
+     * Method that removes players connection from the server
+     *
+     * @param player the player connection that is removed
+     */
+    void deletePlayerConnection(ServerClientHandler player) {
         if (!playingConnection.containsKey(player)) return;
 
         View playerToRemove = playingConnection.get(player);
@@ -127,7 +137,6 @@ public class Lobby {
         playerToRemove.removeObserver(controller);
         game.removeObserver(playerToRemove);
 
-        game.removePlayer(playerToRemove.getPlayer());
         playerViewList.remove(playerToRemove);
 
         playingConnection.remove(player);

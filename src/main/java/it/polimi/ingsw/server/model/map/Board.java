@@ -242,7 +242,7 @@ public class Board implements Cloneable {
     public List<Cell> getPossibleMoves(Player player) {
         Cell workerLocation = player.getCurrentWorker().getLocation();
         List<Cell> toReturn = getAround(workerLocation);
-        List<Cell> copy;
+        //List<Cell> copy;
 
         // checking for around cell higher than allowed
         for (Cell around : getAround(workerLocation)) {

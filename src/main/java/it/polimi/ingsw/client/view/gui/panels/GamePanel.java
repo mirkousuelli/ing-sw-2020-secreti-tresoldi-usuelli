@@ -19,7 +19,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -541,6 +540,14 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     endTurnButton.setEnabled(false);
                     hidePowerButton();
                     removeDecorations();
+
+                    if (cardButton.getName().equals("off")) {
+                        activePowerButton(true);
+                        cardButton.applyNormal();
+                        game.getJMap().hidePowerCells();
+                        powerButton.setName("on");
+                    }
+
                     gui.generateDemand(DemandType.ASK_ADDITIONAL_POWER, new ReducedMessage("n"));
                     break;
 
