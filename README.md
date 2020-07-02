@@ -6,7 +6,7 @@
 Java implementation of the board game called Santorini edited by Cranio Creations.
 
 ## What we have done
-We implemented all the requirements listed for a maximum assessment of 30L, as indicated in the requirements.
+We implemented all the requirements listed for a maximum assessment of 30L, as indicated in the requirements:
 1) :books: Complete rules
 2) :video_game: CLI
 3) :palm_tree: GUI
@@ -16,7 +16,8 @@ We implemented all the requirements listed for a maximum assessment of 30L, as i
 
 ## Line Coverage
 - Controller = 100%
-- Model = 95%
+- Model = 95% <br >
+More details listed in jacoco (deliveries/jacoco)
 
 ### Testing
 We made 183 tests for both model and controller, the latter has been tested also through stubs; in order to run them successfully:
@@ -31,11 +32,11 @@ mvn clean
 mvn package
 ```
 - **Server**
-  - Default port (1337):
+  - **Default port** (1337):
   ```shell
   java -jar target/GC15-server-jar-with-dependencies.jar
   ```
-  - Chosen port:
+  - **Chosen port**:
   ```shell
   java -jar target/GC15-server-jar-with-dependencies.jar -p <port_num>
   ```
@@ -51,7 +52,9 @@ mvn package
     - Active Power: **usePower (x,y)**
   
 - **Client GUI**<br />
-double click on **target/GC15-client-jar-with-dependencies.jar** icon.
+Double click on **target/GC15-client-jar-with-dependencies.jar** icon. <br >
+
+**NB.** If port and ip are not inserted, then they will be set to localhost ip and port 1337 by default.
 
 ## Students
 - Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
