@@ -68,6 +68,12 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     }
 
     /*------------------------------------------------------THREAD----------------------------------------------------*/
+
+    /**
+     * Method that defines an asynchronous read from the connection
+     *
+     * @return the thread that is reading
+     */
     private Thread asyncReadFromConnection() {
         Thread t = new Thread(
                 () -> {
@@ -180,6 +186,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         additionalPower();
     }
 
+    /**
+     * Method that allows the player to use his God power when it is an additional move/build
+     */
     private void additionalPower() {
         if (additionalPowerUsed || player.getCard() == null || !player.getCard().isAdditionalPower()) {
             if (currentState.equals(DemandType.MOVE)) //reset additionalPowerUsed
@@ -197,6 +206,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that resets all attributes of this class to default values
+     */
     private void clearAll() {
         prevState = DemandType.CONNECT;
         currentState = DemandType.NEW_GAME;
@@ -215,6 +227,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         workers.clear();
     }
 
+    /**
+     * Method that, during the user's turn, updates the current state
+     */
     private void updateCurrentState() {
         if (isYourTurn()) {
             if (!isReloaded) {
@@ -231,10 +246,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             currentState = DemandType.CONNECT;
     }
 
+    /**
+     * Method that update the state with the next one
+     */
     private synchronized void updateNextState() {
         nextState = DemandType.getNextState(currentState, player.isCreator());
     }
 
+    /**
+     * Method that permit the game to be reloaded
+     */
     private synchronized void reloadGame() {
         ReducedGame reducedGame = ((ReducedGame) getAnswer().getPayload());
 
@@ -266,6 +287,10 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         isReloaded = true;
     }
 
+    /**
+     * Method that removes from the game the player that lost. If in the game there are still two players the game can
+     * continue with just these players
+     */
     private synchronized void defeat() {
         String playerToRemove = ((ReducedPlayer) getAnswer().getPayload()).getNickname();
         if (playerToRemove.equals(player.getNickname())) //if it is your defeat
@@ -281,6 +306,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that changes the current player and sets the next state to {@code choose_worker}
+     */
     private synchronized void changeTurn() {
         updateCurrentPlayer();
         additionalPowerUsed = true;
@@ -292,6 +320,9 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             nextState = DemandType.CHOOSE_WORKER;
     }
 
+    /**
+     * Method that updates the current player when the turn is changed
+     */
     private synchronized void updateCurrentPlayer() {
         if (!currentPlayer.equals(((ReducedPlayer) getAnswer().getPayload()).getNickname())) {
             prevPlayer = currentPlayer;
@@ -299,6 +330,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that updates the objects passed as parameter
+     *
+     * @param answerTemp the objects to update
+     */
     private synchronized void updateReduceObjects(Answer<S> answerTemp) {
         if (isInitializing)
             updateReducedObjectsInitialize(answerTemp);
@@ -306,6 +342,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
             updateReduceObjectsInGame(answerTemp);
     }
 
+    /**
+     * Method that updates the objects at the beginning of the game, after the connection or the start of the game
+     *
+     * @param answerTemp the objects to update
+     */
     private synchronized void updateReducedObjectsInitialize(Answer<S> answerTemp) {
         switch (currentState) {
             case CONNECT:
@@ -342,6 +383,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that updates the objects during the game, controlling the type of the objects to update
+     *
+     * @param answer the objects to update
+     */
     private synchronized void updateReduceObjectsInGame(Answer<S> answer) {
         switch (answer.getContext()) {
             case GOD:
@@ -400,6 +446,11 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that updates the board with the given cells, that represents the one that have changed
+     *
+     * @param cells
+     */
     private synchronized void updateReducedBoard(List<ReducedAnswerCell> cells) {
         for (ReducedAnswerCell c : cells) {
             reducedBoard[c.getX()][c.getY()] = c;

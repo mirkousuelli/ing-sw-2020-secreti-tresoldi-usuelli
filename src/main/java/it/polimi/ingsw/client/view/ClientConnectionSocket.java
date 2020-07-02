@@ -58,7 +58,12 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return ret;
     }
 
-    private void send(Demand demand) throws IOException {
+    /**
+     * Method that sends the demand to the active player
+     *
+     * @param demand the demand that is sent
+     */
+    private void send(Demand demand) {
         if (isActive()) {
             synchronized (file.lockSend) {
                 file.send(demand);
@@ -66,6 +71,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that defines an asynchronous read from the socket
+     *
+     * @return the thread that is reading
+     */
     private Thread asyncReadFromSocket() {
         Thread t = new Thread(
                 () -> {
@@ -95,6 +105,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return t;
     }
 
+    /**
+     * Method that defines an asynchronous write to the socket
+     *
+     * @return the thread that is writing
+     */
     private Thread asyncWriteToSocket() {
         Thread t = new Thread(
                 () -> {
@@ -128,6 +143,11 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         return t;
     }
 
+    /**
+     * Method that allows the current user to make some action, and if it's not his turn he has to wait
+     *
+     * @return the thread that handles this
+     */
     private Thread consumerThread() {
         Thread t = new Thread(
                 () -> {
@@ -176,6 +196,9 @@ public class ClientConnectionSocket<S> extends SantoriniRunnable<S> {
         closeConnection();
     }
 
+    /**
+     * Method that closes the connection, when possible. If it can not a message of error is sent
+     */
     private synchronized void closeConnection() {
         try {
             socket.close();

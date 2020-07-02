@@ -19,7 +19,7 @@ public class JBlockDecorator extends JCell {
      * Constructor of the JBlockDecorator. It sets decoration and the worker to null and the cell to the given one.
      *
      *
-     * @param origin
+     * @param origin the origin cell
      */
     public JBlockDecorator(JCell origin) {
         super(origin.getXCoordinate(), origin.getYCoordinate());

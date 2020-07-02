@@ -78,6 +78,11 @@ public abstract class ClientView<S> extends SantoriniRunnable<S> {
         }
     }
 
+    /**
+     * Method that defines an asynchronous read from the model (from where the actual functioning of the game comes from)
+     *
+     * @return the thread that is reading
+     */
     protected Thread asyncReadFromModel() {
         Thread t = new Thread(
                 () -> {

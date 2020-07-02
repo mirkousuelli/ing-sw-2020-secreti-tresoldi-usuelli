@@ -24,7 +24,7 @@ public interface ServerClientHandler {
     void asyncSend(Answer message);
 
     /**
-     * Method tha defines a synchronous sending type of answer
+     * Method that defines a synchronous sending type of answer
      *
      * @param message server answer
      */
