@@ -788,28 +788,34 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         GUI gui = ((ManagerPanel) panels).getGui();
 
         if((gui.getClientModel().isYourTurn())) {
-            if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("askAdditionalPower")) {
+            switch (gui.getClientModel().getCurrentState().toString()){
+                
+                case "askAdditionalPower":
+                    if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")){
+                        gr.drawString("BUILD", 505, 48);
+                        break;
+                    }
 
-                if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")){
-                    gr.drawString("BUILD", 115, 80);
-                    return;
-                }
-            }
+                case "placeWorkers":
+                    gr.drawString("PLACE WORKERS", 445, 48);
+                    break;
 
-            else if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("placeWorkers")) {
-                gr.drawString("PLACE WORKERS", 55, 80);
-                return;
-            }
+                case "chooseWorker":
+                    gr.drawString("CHOOSE WORKER", 450, 48);
+                    break;
 
-            else if(gui.getClientModel().getCurrentState().toString().equalsIgnoreCase("chooseWorker")) {
-                gr.drawString("CHOOSE WORKER", 50, 80);
-                return;
-            }
+                case "move":
+                    gr.drawString("MOVE", 505, 48);
+                    break;
 
-            else {
-                gr.drawString(gui.getClientModel().getCurrentState().toString().toUpperCase(), 115, 80);
+                case "build":
+                    gr.drawString("BUILD", 505, 48);
+                    break;
+
+                default:
+                    break;
+
             }
         }
     }
-
 }
