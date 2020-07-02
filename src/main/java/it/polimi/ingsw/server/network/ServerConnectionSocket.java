@@ -364,25 +364,18 @@ public class ServerConnectionSocket {
         if (connectedPlayers.size() <= 1) return; //safety check
 
         if (lobby.getNumberOfPlayers() > 0 && connectedPlayers.size() > lobby.getGame().getNumPlayers()) { //a player (disconnectedPlayer) has been defeated but the are other players remaining (more than one)
-            System.out.println("AAAAA");
             updateLobbyHashCode();
             deletePlayer(disconnectedPlayer); //delete the disconnected player
             lobby.setNumberOfPlayers(lobby.getNumberOfPlayers() - 1);
         } else if (lobby.getNumberOfPlayers() == -1) { //creator disconnects before selecting the number of players (only new games not reloaded ones)
-            System.out.println("BBBBBB");
             deletePlayer(disconnectedPlayer); //delete the disconnected player
             if (disconnectedPlayer.isCreator()) {
                 ServerClientHandlerSocket newCreator = new ArrayList<>(connectedPlayers.values()).get(0);
 
-                newCreator.setCreator(true);
-                newCreator.setIsToRestart(true);
-                newCreator.send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.PLAYER));
-                waitRestart(newCreator);
-                newCreator.setOkToRestart(false);
+                deletePlayer(newCreator);
                 newCreator.callWatchDog(true); //restart the game for the new creator (other possible players in wait can remain in wait)
             }
         } else {
-            System.out.println("CCCCCCC");
             connectedPlayers.values().forEach(p -> lobby.deletePlayerConnection(p));
             moveAndLoadBackUpLobby(); //load lobbies if there at least one to load
             connectedPlayers.remove(disconnectedPlayer.getName()); //delete the disconnected player
@@ -443,6 +436,9 @@ public class ServerConnectionSocket {
             return true; //toRepeat, 'player' is already in a lobby which is not the current one --> change name or exit client-side
         }
 
+        if (lobby != null && connectedPlayers.values().stream().noneMatch(ServerClientHandlerSocket::isCreator))
+            player.setCreator(true);
+
         if (!loadedLobbyMap.isEmpty() || lobby != null) { //if some lobbies where loaded, maybe 'player' is in one of them
             if (lobby != null) { //if 'player' isn't the first one to connect (which means another player loaded a lobby or created a new one)
                 if (lobby.isReloaded()) { //if lobby is reloaded
@@ -470,7 +466,7 @@ public class ServerConnectionSocket {
             startMatch();
 
         if (!lobby.isReloaded())
-            player.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, player.isCreator()))); //connection successful
+            player.send(new Answer<>(AnswerType.SUCCESS, UpdatedPartType.PLAYER, new ReducedPlayer(name, player.isCreator()))); //connection successful
         else if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)) &&
                 (lobby.getGame().getState().getName().equals("move") ||
                         lobby.getGame().getState().getName().equals("build") ||

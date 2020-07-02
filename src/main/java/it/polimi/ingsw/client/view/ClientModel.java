@@ -359,6 +359,16 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
                 break;
 
             case START:
+                if (answerTemp.getContext() != null && answerTemp.getContext().equals(UpdatedPartType.PLAYER)) {
+                    player.setCreator(((ReducedPlayer) answerTemp.getPayload()).isCreator());
+
+                    if (player.isCreator()) {
+                        currentState = DemandType.CREATE_GAME;
+                        currentPlayer = player.getNickname();
+                    }
+                    return;
+                }
+
                 currentPlayer = ((List<ReducedPlayer>) answerTemp.getPayload()).get(0).getNickname(); //Hp: first one is the chosen one
                 opponents = ((List<ReducedPlayer>) answerTemp.getPayload());
 
