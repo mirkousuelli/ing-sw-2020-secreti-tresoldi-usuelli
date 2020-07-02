@@ -147,7 +147,7 @@ public class ServerConnectionSocket {
 
     /*-------------------------------------------------LOBBY----------------------------------------------------------*/
     private synchronized void loadLobbies() {
-        int numOfLobby = 0;
+        int numOfLobby;
 
         loadedLobbyMap.clear();
         loadedLobbyPathMap.clear();
@@ -156,8 +156,9 @@ public class ServerConnectionSocket {
 
         try (Stream<Path> files = Files.list(Paths.get(LOBBY_DIR))) {
             numOfLobby = (int) files.count();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Got an IOException, couldn't count lobbies", e);
+        } catch (Exception e) {
+            LOGGER.info("Got an IOException, couldn't count lobbies");
+            return;
         }
 
         numOfLobbies = numOfLobby;
@@ -190,7 +191,7 @@ public class ServerConnectionSocket {
         try {
             if (Files.exists(Paths.get(path))) {
                 loadedGame = GameMemory.load(path);
-                if (loadedGame.getState().getName().equals(State.VICTORY.toString())) {
+                if (loadedGame != null && loadedGame.getState().getName().equals(State.VICTORY.toString())) {
                     loadedGame = null;
                     if (path.equals(Lobby.BACKUP_PATH))
                         Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
@@ -199,7 +200,8 @@ public class ServerConnectionSocket {
                 }
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Cannot load backup", e);
+            LOGGER.info(() -> "Cannot load " + path);
+            return null;
         }
 
         if (loadedGame != null) {
