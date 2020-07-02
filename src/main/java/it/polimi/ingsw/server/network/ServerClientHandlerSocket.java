@@ -218,12 +218,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     @Override
     public void send(Answer message) {
         synchronized (file.lockSend) {
-            try {
-                file.send(message);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Got an IOException", e);
+            file.send(message);
             }
-        }
 
         if (isToRestart() && isConnected()) {
             synchronized (lockRestart) {
