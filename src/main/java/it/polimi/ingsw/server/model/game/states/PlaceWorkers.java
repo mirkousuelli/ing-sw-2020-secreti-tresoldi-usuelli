@@ -60,6 +60,11 @@ public class PlaceWorkers implements GameState {
         returnContent.setAnswerType(AnswerType.ERROR);
         returnContent.setState(State.PLACE_WORKERS);
 
+        //safety check
+        if (workersLocations.size() != 2) return returnContent;
+        if (workersLocations.get(0).getX() == workersLocations.get(1).getX() && workersLocations.get(0).getY() == workersLocations.get(1).getY())
+            return returnContent;
+
 
         for (ReducedWorker c : workersLocations) {
             chosenCell = (Block) game.getBoard().getCell(c.getX(), c.getY());

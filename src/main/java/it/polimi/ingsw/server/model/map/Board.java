@@ -218,7 +218,7 @@ public class Board implements Cloneable {
                 .map(Power::getConstraints)
                 .anyMatch(Constraints::isUnderItself);
 
-        if (areThereUnderItselfBuildPower)
+        if (areThereUnderItselfBuildPower && player.getCurrentWorker().getLocation().getLevel().toInt() < 3)
             walkableAround.add(player.getCurrentWorker().getLocation());
 
         activePowerList.forEach(bp ->

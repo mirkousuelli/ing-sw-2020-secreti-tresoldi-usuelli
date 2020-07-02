@@ -239,6 +239,10 @@ public class PreparePayload {
                 ret.add(rac);
         }
 
+        List<ReducedAction> reducedActions = ret.stream().map(ReducedAnswerCell::getActionList).flatMap(List::stream).distinct().collect(Collectors.toList());
+        if (reducedActions.contains(ReducedAction.USEPOWER) && !reducedActions.contains(ReducedAction.MOVE) && game.getCurrentPlayer().getCard().getPower(0).getPersonalMalus() != null)
+            return new ArrayList<>();
+
         return ret;
     }
 

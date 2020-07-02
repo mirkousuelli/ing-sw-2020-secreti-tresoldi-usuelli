@@ -350,13 +350,13 @@ public class JMap extends JPanel implements ActionListener {
             return fetchNextCell(from, to, m, q);
         } else { //x = k (vertical line)
             int y;
-            if (from.getYCoordinate() > to.getYCoordinate())
-                y = to.getYCoordinate() - 1;
-            else
+            if (from.getYCoordinate() < to.getYCoordinate())
                 y = to.getYCoordinate() + 1;
+            else
+                y = to.getYCoordinate() - 1;
 
             if (y >= 0 && y <= 4)
-                return getCell(to.getX(), y);
+                return getCell(to.getXCoordinate(), y);
             else
                 return null;
         }
