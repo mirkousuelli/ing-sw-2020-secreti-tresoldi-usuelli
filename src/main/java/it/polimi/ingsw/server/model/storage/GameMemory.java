@@ -434,69 +434,6 @@ public class GameMemory {
     }
 
     /**
-     * Method that saves the player, with its workers and eventual maluses active
-     *
-     * @param player the player that is saved
-     * @param path the path where to save
-     */
-    public static void save(Player player, String path) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setIgnoringElementContentWhitespace(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(path);
-
-            Node gameNode = doc.getDocumentElement();
-            Node lobbyNode = gameNode.getChildNodes().item(LOBBY);
-
-            int i = 0;
-            while (!(lobbyNode.getChildNodes().item(i).getChildNodes().item(NICKNAME).getTextContent().equals(player.getNickName()))) {
-                i++;
-            }
-
-            Node playerNode = lobbyNode.getChildNodes().item(i);
-            Node pawnsNode = playerNode.getChildNodes().item(PAWNS);
-
-            for (int j = 0; j < player.getWorkers().size(); j++) {
-                Node workerNode = pawnsNode.getChildNodes().item(j);
-                Worker worker = player.getWorkers().get(j);
-
-                workerNode.getAttributes().getNamedItem("current").setTextContent(player.getCurrentWorker().equals(worker) ? "true" : "false");
-                workerNode.getAttributes().getNamedItem("gender").setTextContent(worker.isMale() ? "male" : "female");
-                workerNode.getChildNodes().item(X).setTextContent(String.valueOf(worker.getX()));
-                workerNode.getChildNodes().item(Y).setTextContent(String.valueOf(worker.getY()));
-            }
-
-            if (!player.getMalusList().isEmpty()) {
-                Node malusListNode = playerNode.getChildNodes().item(MALUS);
-                for (int k = 0; k < player.getMalusList().size(); k++) {
-                    NodeList malusNode = malusListNode.getChildNodes();
-                    Node typeNode = malusNode.item(TYPE);
-                    Node forbiddenNode = malusNode.item(DIRECTION);
-                    Malus malus = player.getMalusList().get(k);
-
-                    malusListNode.getAttributes().getNamedItem("permanent").setTextContent(malus.isPermanent() ? "true" : "false");
-                    typeNode.setTextContent(malus.getMalusType().toString());
-
-                    if (!malus.isPermanent()) {
-                        Node numTurnNode = malusNode.item(NUMTURN);
-                        numTurnNode.setTextContent(String.valueOf(malus.getNumberOfTurns()));
-                    }
-
-                    for (int l = 0; l < malus.getDirection().size(); l++) {
-                        Node directionNode = forbiddenNode.getChildNodes().item(l);
-                        directionNode.setTextContent(malus.getDirection().get(l).toString());
-                    }
-                }
-            }
-
-            GameMemory.write(doc, path);
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
-            LOGGER.info(() -> "couldn't save " + path);
-        }
-    }
-
-    /**
      * Method that allows the game to be loaded back: it sets all the previously saved pieces of information, allowing
      * the game to continue from where it was saved last
      *
