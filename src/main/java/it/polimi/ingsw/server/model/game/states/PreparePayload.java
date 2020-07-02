@@ -66,7 +66,7 @@ public class PreparePayload {
 
         toReturn = PreparePayload.mergeReducedAnswerCellList(toReturn, PreparePayload.addChangedCells(game, State.CHOOSE_WORKER)); //add changed cell by a move action
 
-        if (!maluses.isEmpty() && (currentPlayer.getCard().getPower(0).getPersonalMalus() == null || ((game.getState().getName().equals("chooseWorker") || game.getState().getName().equals("move")) && maluses.contains(currentPlayer.getCard().getPower(0).getPersonalMalus())))) {
+        if (!maluses.isEmpty() && (currentPlayer.getCard().getPower(0).getPersonalMalus() == null || (game.getState().getName().equals("move") && maluses.contains(currentPlayer.getCard().getPower(0).getPersonalMalus())))) {
             for (ReducedAnswerCell c : toReturn) {
                 if (!ActivePower.verifyMalus(maluses, workerLocation, game.getBoard().getCell(c.getX(), c.getY()))) //if a malus (personal or not) is active on a cell
                     c.resetAction(); //then remove every possible action on that cell
