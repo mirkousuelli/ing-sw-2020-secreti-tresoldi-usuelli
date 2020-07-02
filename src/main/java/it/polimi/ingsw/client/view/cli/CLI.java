@@ -110,7 +110,8 @@ public class CLI<S> extends ClientView<S> {
                 if (((ReducedMessage) demand.getPayload()).getMessage().equals("y")) {
                     createDemand(new Demand<>(DemandType.NEW_GAME, (S) "close"));
                     becomeFree();
-                }
+                } else
+                    System.exit(1);
                 return;
 
             default:
