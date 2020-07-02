@@ -122,7 +122,7 @@ public class ChangeTurn implements GameState {
             currentPlayer.removeMalus();
 
             //save
-            GameMemory.save(currentPlayer, Lobby.BACKUP_PATH);
+            GameMemory.save(game.getPlayerList(), Lobby.BACKUP_PATH);
         }
     }
 

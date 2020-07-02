@@ -19,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -106,7 +109,7 @@ public class ChangeTurnTest {
     }
 
     @Test
-    void removeMalusTest() throws ParserConfigurationException, SAXException {
+    void removeMalusTest() throws ParserConfigurationException, SAXException, IOException {
         /*@function
          * it checks that a non permanent malus is removed when it has expired
          */
@@ -141,6 +144,11 @@ public class ChangeTurnTest {
 
         p2.initializeWorkerPosition(1, worker1Player2);
         p3.initializeWorkerPosition(1, worker1Player3);
+
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(1, 0))));
+        game.gameEngine();
 
         //usePower that adds a personal malus
         game.setState(State.MOVE);
@@ -180,7 +188,7 @@ public class ChangeTurnTest {
 
         //build correct
         game.setState(State.BUILD);
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn1.getX(), cellToBuildOn1.getY()))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(cellToBuildOn1.getX(), cellToBuildOn1.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 
@@ -197,6 +205,11 @@ public class ChangeTurnTest {
         Block cellToMoveTo2 = (Block) board.getCell(1, 1);
         game.setCurrentPlayer(p1);
 
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 1))));
+        game.gameEngine();
+
         //move up correct (malus has expired)
         game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(cellToMoveTo2.getX(), cellToMoveTo2.getY()))));
@@ -211,7 +224,7 @@ public class ChangeTurnTest {
 
         //build correct
         game.setState(State.BUILD);
-        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(cellToBuildOn2.getX(), cellToBuildOn2.getY()))));
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.BUILD, new ReducedDemandCell(cellToBuildOn2.getX(), cellToBuildOn2.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         returnContent = game.gameEngine();
 

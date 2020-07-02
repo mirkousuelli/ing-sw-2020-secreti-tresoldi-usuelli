@@ -211,6 +211,8 @@ public class JMap extends JPanel implements ActionListener {
         if (src.getName().equals("cell")) {
             if (activeCells.contains(src) || powerCells.contains(src)) {
                 JCellStatus status = ((JBlockDecorator) src).getDecoration();
+                if (status == null) return;
+
                 if (!status.equals(JCellStatus.NONE) && !status.equals(JCellStatus.MALUS)) {
                     for (JCell cell : activeCells)
                         ((JBlockDecorator) cell).clean();
@@ -275,6 +277,8 @@ public class JMap extends JPanel implements ActionListener {
     }
 
     private JCell lineEqTwoPoints(JCell from, JCell to) {
+        if (from == null) return null;
+        if (to == null) return null;
         if (to.getXCoordinate() == from.getXCoordinate() && to.getYCoordinate() == from.getYCoordinate())
             return null; //from and to cannot be the same cell!
 
@@ -284,10 +288,16 @@ public class JMap extends JPanel implements ActionListener {
 
             return fetchNextCell(from, to, m, q);
         } else { //x = k (vertical line)
+            int y;
             if (from.getYCoordinate() > to.getYCoordinate())
-                return getCell(to.getXCoordinate(), to.getYCoordinate() - 1);
+                y = to.getYCoordinate() - 1;
             else
-                return getCell(to.getXCoordinate(), to.getYCoordinate() + 1);
+                y = to.getYCoordinate() + 1;
+
+            if (y >= 0 && y <= 4)
+                return getCell(to.getX(), y);
+            else
+                return null;
         }
     }
 

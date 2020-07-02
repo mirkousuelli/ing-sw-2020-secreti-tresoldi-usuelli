@@ -220,7 +220,7 @@ public abstract class ActivePower<S> extends Power<S> {
      * @param maluses        list of maluses
      * @param workerLocation the location of the worker
      * @param cellToUse      the cell that gets checked
-     * @return {@code true} if the chosen cell has a malus active on it, {@code false} otherwise
+     * @return {@code false} if the chosen cell has a malus active on it, {@code true} otherwise
      */
     public static boolean verifyMalus(List<Malus> maluses, Cell workerLocation, Cell cellToUse) {
         List<Malus> malusesFiltered;

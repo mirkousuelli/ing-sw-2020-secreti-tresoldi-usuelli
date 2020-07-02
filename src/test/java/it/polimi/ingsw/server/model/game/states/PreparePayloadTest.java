@@ -24,6 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -460,7 +463,7 @@ public class PreparePayloadTest {
         List<ReducedAnswerCell> payload = (List<ReducedAnswerCell>) returnContent.getPayload();
 
         assertEquals(5, payload.size());
-        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count());
+        assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, worker1Player1.getX(), worker1Player1.getY(), ReducedAction.DEFAULT)).count()); //1,0
         assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn1.getX(), cellToBuildOn1.getY(), ReducedAction.USEPOWER, ReducedAction.MOVE)).count());
         assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn2.getX(), cellToBuildOn2.getY(), ReducedAction.USEPOWER)).count());
         assertEquals(1, payload.stream().filter(rac -> checkReducedAnswerCell(rac, cellToBuildOn3.getX(), cellToBuildOn3.getY(), ReducedAction.USEPOWER, ReducedAction.MOVE)).count());
@@ -495,7 +498,7 @@ public class PreparePayloadTest {
     }
 
     @Test
-    void preparePayloadMovingWithMinotaurTest() throws ParserConfigurationException, SAXException {
+    void preparePayloadMovingWithMinotaurTest() throws ParserConfigurationException, SAXException, IOException {
         /*@function
          * it checks that if the player has Minotaur as God, he can move to an occupied cell and the opponent's worker is pushed back (if possible)
          */
@@ -548,9 +551,12 @@ public class PreparePayloadTest {
         p3.initializeWorkerPosition(1, worker1Player3);
         p3.initializeWorkerPosition(2, worker2Player3);
 
-        //set state
-        game.setState(State.MOVE);
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(0, 0))));
+        game.gameEngine();
 
+        game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(worker1Player2.getX(), worker1Player2.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
@@ -572,9 +578,12 @@ public class PreparePayloadTest {
         assertEquals(newPos1, p2.getCurrentWorker().getLocation());
 
 
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(1, 1))));
+        game.gameEngine();
 
-
-
+        game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(newPos1.getX(), newPos1.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
@@ -600,6 +609,12 @@ public class PreparePayloadTest {
         assertEquals(newPos2, p2.getCurrentWorker().getLocation());
 
 
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(2, 2))));
+        game.gameEngine();
+
+        game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(newPos2.getX(), newPos2.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
@@ -683,7 +698,7 @@ public class PreparePayloadTest {
         completeTower1.setPreviousLevel(Level.MIDDLE);
         completeTower1.setLevel(Level.TOP);
 
-
+        game.setAllowedActions(PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.ADDITIONAL_POWER, new ReducedDemandCell(completeTower1.getX(), completeTower1.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
 

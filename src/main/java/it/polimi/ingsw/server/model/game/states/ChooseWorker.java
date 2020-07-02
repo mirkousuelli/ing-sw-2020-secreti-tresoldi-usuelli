@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 public class ChooseWorker implements GameState {
 
     private final Game game;
+    private List<ReducedAnswerCell> payload;
     private static final Logger LOGGER = Logger.getLogger(ChooseWorker.class.getName());
 
     /**
@@ -48,6 +49,7 @@ public class ChooseWorker implements GameState {
      */
     public ChooseWorker(Game game) {
         this.game = game;
+        payload = null;
     }
 
     /**
@@ -69,11 +71,19 @@ public class ChooseWorker implements GameState {
      * @return {@code true} if the chosen worker can be moved, {@code false} otherwise
      */
     private boolean isWorkerAbleToMove(Worker worker) {
-        List<Cell> around = game.getBoard().getAround(worker.getLocation());
+        game.getCurrentPlayer().setCurrentWorker(worker);
+        List<ReducedAnswerCell> allowed = PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.CHOOSE_WORKER);
 
-        return around.stream()
-                .filter(Cell::isWalkable)
-                .anyMatch(cell -> cell.getLevel().toInt() - worker.getLocation().getLevel().toInt() <= 1);
+        boolean result = allowed.stream()
+                .map(ReducedAnswerCell::getActionList)
+                .flatMap(List::stream)
+                .anyMatch(rac -> !rac.equals(ReducedAction.DEFAULT));
+
+        ReducedDemandCell workerCell = (ReducedDemandCell) game.getRequest().getDemand().getPayload();
+        if (result && workerCell.getX() == worker.getX() && workerCell.getY() == worker.getY())
+            payload = allowed;
+
+        return result;
     }
 
     @Override
@@ -99,6 +109,7 @@ public class ChooseWorker implements GameState {
 
         ReducedDemandCell cell = ((ReducedDemandCell) game.getRequest().getDemand().getPayload());
         Cell chosenWorker = game.getBoard().getCell(cell.getX(), cell.getY());
+        game.resetAllowedAction();
 
         if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) {
             try {

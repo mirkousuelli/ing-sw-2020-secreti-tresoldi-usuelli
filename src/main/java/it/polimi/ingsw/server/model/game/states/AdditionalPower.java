@@ -50,11 +50,11 @@ public class AdditionalPower implements GameState {
         ReturnContent returnContent;
 
         ReducedDemandCell response = (ReducedDemandCell) game.getRequest().getDemand().getPayload();
-        Cell c = game.getBoard().getCell(response.getX(), response.getY());
+        Cell chosenCell = game.getBoard().getCell(response.getX(), response.getY());
         State prevState = game.getPrevState();
 
         //validate input
-        if (c == null)
+        if (chosenCell == null || !game.isActionCorrect(chosenCell))
             return returnError();
 
 
@@ -101,7 +101,7 @@ public class AdditionalPower implements GameState {
         Cell c = game.getBoard().getCell(response.getX(), response.getY());
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-        if (!Move.isPresentAtLeastOneCellToMoveTo(game, c)) // if the current worker is not movable
+        if (c == null || !Move.isPresentAtLeastOneCellToMoveTo(game, c)) // if the current worker is not movable
             return returnError(); //report error
 
 
@@ -142,7 +142,7 @@ public class AdditionalPower implements GameState {
         Cell c = game.getBoard().getCell(response.getX(), response.getY());
         Power p = game.getCurrentPlayer().getCard().getPower(0);
 
-        if (c.isComplete()) //if the chosen cell cannot be built up
+        if (c == null || c.isComplete()) //if the chosen cell cannot be built up
             return returnError(); //then report error
 
 

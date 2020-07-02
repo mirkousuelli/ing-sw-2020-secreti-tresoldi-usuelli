@@ -99,7 +99,7 @@ public class ServerConnectionSocket {
     }
 
     /*-------------------------------------------------GETTER---------------------------------------------------------*/
-    private int getLobbyPlayerListHashCode(Lobby lobby) {
+    private synchronized int getLobbyPlayerListHashCode(Lobby lobby) {
         return lobby.getGame().getPlayerList().stream()
                 .map(Player::getNickName)
                 .collect(Collectors.toList())
@@ -119,7 +119,7 @@ public class ServerConnectionSocket {
 
 
     /*-------------------------------------------------PREDICATE------------------------------------------------------*/
-    private Lobby isPlayerInALobby(String name) {
+    private synchronized Lobby isPlayerInALobby(String name) {
         return loadedLobbyMap.values().stream()
                 .filter(l -> l.isPresentInGame(name))
                 .reduce(null, (lobby1, lobby2) -> lobby1 != null
@@ -146,7 +146,7 @@ public class ServerConnectionSocket {
 
 
     /*-------------------------------------------------LOBBY----------------------------------------------------------*/
-    private void loadLobbies() {
+    private synchronized void loadLobbies() {
         int numOfLobby = 0;
 
         loadedLobbyMap.clear();
@@ -179,11 +179,11 @@ public class ServerConnectionSocket {
     /**
      * Method that load all the previous lobbies in order to recover a past match saved
      */
-    private Lobby loadLobby(int i) {
+    private synchronized Lobby loadLobby(int i) {
         return loadLobby(LOBBY_NAME + i + EXTENSION);
     }
 
-    private Lobby loadLobby(String path) {
+    private synchronized Lobby loadLobby(String path) {
         Game loadedGame = null;
         Lobby loadedLobby = null;
 
@@ -211,7 +211,7 @@ public class ServerConnectionSocket {
         return loadedLobby;
     }
 
-    private void moveAndLoadBackUpLobby() {
+    private synchronized void moveAndLoadBackUpLobby() {
         int lobbyHashCode;
         int index;
         Lobby lobbyToSave;
@@ -243,7 +243,7 @@ public class ServerConnectionSocket {
         updateBackup(index);
     }
 
-    private void updateBackup(int index) {
+    private synchronized void updateBackup(int index) {
         try {
             if (!Files.exists(Paths.get(Lobby.BACKUP_PATH))) return;
 
@@ -259,7 +259,7 @@ public class ServerConnectionSocket {
         }
     }
 
-    private void updateLobbyHashCode() {
+    private synchronized void updateLobbyHashCode() {
         int newLobbyHashCode = getLobbyPlayerListHashCode(lobby);
         int oldLobbyHashCode = lobby.getReducedPlayerList().stream()
                 .map(ReducedPlayer::getNickname)
@@ -273,7 +273,7 @@ public class ServerConnectionSocket {
         loadedLobbyPathMap.remove(oldLobbyHashCode);
     }
 
-    private void removeAndShiftLobbies(int indexToRemove) {
+    private synchronized void removeAndShiftLobbies(int indexToRemove) {
         int i = indexToRemove + 1;
         try {
             while (Files.exists(Paths.get(LOBBY_NAME + i + EXTENSION))) {
@@ -297,7 +297,7 @@ public class ServerConnectionSocket {
     /**
      * Method that starts the game
      */
-    private void startMatch() {
+    private synchronized void startMatch() {
         AtomicInteger i = new AtomicInteger();
         alreadyNewGame = false;
 
@@ -332,7 +332,7 @@ public class ServerConnectionSocket {
      *
      * @return {@code true} if the game can start, {@code false} otherwise
      */
-    boolean canStart() {
+    synchronized boolean canStart() {
         int waitingConnectionSize;
         int numOfPl;
 
@@ -346,13 +346,13 @@ public class ServerConnectionSocket {
 
         if (numOfPl == -1) return false;
 
-        return waitingConnectionSize == numOfPl;
+        return waitingConnectionSize >= numOfPl;
     }
 
     /**
      * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
      */
-    void suddenDisconnection(ServerClientHandlerSocket disconnectedPlayer) {
+    synchronized void suddenDisconnection(ServerClientHandlerSocket disconnectedPlayer) {
         if (closeIfItIsTooLateToPlayAgain(disconnectedPlayer)) return;
         if (connectedPlayers.size() <= 1) return; //safety check
 
@@ -393,7 +393,7 @@ public class ServerConnectionSocket {
         }
     }
 
-    void deletePlayer(ServerClientHandlerSocket player) {
+    synchronized void deletePlayer(ServerClientHandlerSocket player) {
         synchronized (connectedPlayers) {
             connectedPlayers.remove(player.getName());
             lobby.deletePlayer(player);
@@ -422,6 +422,8 @@ public class ServerConnectionSocket {
             resetLobby();
             alreadyNewGame = false;
         }
+
+        pendingPlayers.remove(name, player);
 
         Lobby otherLobby = isPlayerInALobby(name);
         if (lobby != null && otherLobby != null && !lobby.isReloaded() && !lobby.equals(otherLobby)) {
@@ -457,9 +459,12 @@ public class ServerConnectionSocket {
 
         if (!lobby.isReloaded())
             player.send(new Answer<>(AnswerType.SUCCESS, new ReducedPlayer(name, player.isCreator()))); //connection successful
-        else if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)) && (!lobby.getGame().getState().getName().equals("chooseWorker")))
+        else if (!Files.exists(Paths.get(Lobby.BACKUP_PATH)) &&
+                (lobby.getGame().getState().getName().equals("move") ||
+                        lobby.getGame().getState().getName().equals("build") ||
+                        lobby.getGame().getState().getName().equals("askAdditionalPower") ||
+                        lobby.getGame().getState().getName().equals("additionalPower")))
             GameMemory.save(lobby.getGame(), Lobby.BACKUP_PATH);
-
 
         return false; //not toRepeat
     }
@@ -527,10 +532,11 @@ public class ServerConnectionSocket {
      *
      * @param player first player connection as creator
      */
-    private void createLobby(ServerClientHandlerSocket player) {
+    private synchronized void createLobby(ServerClientHandlerSocket player) {
         try {
             lobby = new Lobby();
             player.setCreator(true);
+            lobby.setReloaded(false);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Cannot create a lobby!", e);
             player.closeSocket();
@@ -553,7 +559,9 @@ public class ServerConnectionSocket {
     synchronized boolean newGame(ServerClientHandlerSocket player, Demand demand) {
         if (demand == null) return false;
 
-        String response = ((ReducedMessage) demand.getPayload()).getMessage();
+        String response = demand.getPayload().toString().equals("close")
+                ? "close"
+                : ((ReducedMessage) demand.getPayload()).getMessage();
 
         if (closeIfItIsTooLateToPlayAgain(player))
             return false; //not toRepeat because it has to stop
@@ -577,7 +585,7 @@ public class ServerConnectionSocket {
     /**
      * Method that cleans the lobby and resets it
      */
-    private void resetLobby() {
+    private synchronized void resetLobby() {
         if (!alreadyNewGame) {
             int lobbyHashCode = getLobbyPlayerListHashCode(lobby);
             int indexToRemove = loadedLobbyPathMap.get(lobbyHashCode);
@@ -601,12 +609,12 @@ public class ServerConnectionSocket {
         }
     }
 
-    private void closeConnection(ServerClientHandlerSocket player) {
+    private synchronized void closeConnection(ServerClientHandlerSocket player) {
         player.setLoggingOut(true); //so it won't disconnect the others
         player.closeSocket();
     }
 
-    private void waitRestart(ServerClientHandlerSocket newCreator) {
+    private synchronized void waitRestart(ServerClientHandlerSocket newCreator) {
         synchronized (newCreator.lockRestart) {
             try {
                 while (!newCreator.isOkToRestart()) newCreator.lockRestart.wait();
@@ -618,7 +626,7 @@ public class ServerConnectionSocket {
         }
     }
 
-    private boolean closeIfItIsTooLateToPlayAgain(ServerClientHandlerSocket player) {
+    private synchronized boolean closeIfItIsTooLateToPlayAgain(ServerClientHandlerSocket player) {
         if (lobby != null && pendingPlayers.containsValue(player) && !alreadyNewGame) {
             pendingPlayers.remove(player.getName());
             if (connectedPlayers.containsKey(player.getName())) {
@@ -630,7 +638,7 @@ public class ServerConnectionSocket {
         return false; //it is not too late
     }
 
-    void removeFromPending(ServerClientHandlerSocket player) {
+    synchronized void removeFromPending(ServerClientHandlerSocket player) {
         pendingPlayers.remove(player.getName());
     }
     /*----------------------------------------------------------------------------------------------------------------*/

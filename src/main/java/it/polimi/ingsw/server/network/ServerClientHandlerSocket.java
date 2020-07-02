@@ -251,7 +251,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
         if (demand == null) {
             setActive(false);
             callWatchDog(false);
-        } else if (demand.getPayload() != null && demand.getPayload().toString().equals("close")) {
+        } else if (demand.getPayload() != null && demand.getPayload().toString().equals("close") && !server.getLobby().getGame().getState().getName().equals("victory")) {
             setActive(false);
             callWatchDog(true);
         }
@@ -382,6 +382,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
             do {
                 setActive(isConnected());
+                setCreator(false);
                 CountDownLatch countDownLatch = new CountDownLatch(2);
 
                 readerThread = new Thread(asyncReadFromSocket(countDownLatch));
@@ -584,6 +585,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
             default:
                 break;
         }
+
+        loadedGame.setAllowedActions(payload);
 
         return payload;
     }

@@ -65,7 +65,7 @@ public class Build implements GameState {
                 return true;
         }
 
-        return false;
+        return game.isActionCorrect(chosenCell);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class Build implements GameState {
 
 
         //validate input
-        if (cellToBuildUp == null || cellToBuildUp.isComplete())
+        if (cellToBuildUp == null || cellToBuildUp.isComplete() || !game.isActionCorrect(cellToBuildUp))
             return returnError();
 
         if (game.getRequest().getDemand().getHeader().equals(DemandType.USE_POWER)) //if it is asked to use a power

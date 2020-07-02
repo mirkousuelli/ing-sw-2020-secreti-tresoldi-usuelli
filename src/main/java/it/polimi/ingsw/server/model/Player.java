@@ -149,11 +149,10 @@ public class Player {
      * @param malusPlayer the Malus that is added to the malus list of the player
      */
     public void addMalus(Malus malusPlayer) {
-        Malus found = malusList.stream()
-                .filter(m -> m.equals(malusPlayer))
-                .reduce(null, (m1, m2) -> m1 != null ? m1 : m2);
+        boolean alreadyExist = malusList.stream()
+                .anyMatch(m -> m.equals(malusPlayer));
 
-        if (found == null)
+        if (!alreadyExist)
             malusList.add(malusPlayer);
     }
 

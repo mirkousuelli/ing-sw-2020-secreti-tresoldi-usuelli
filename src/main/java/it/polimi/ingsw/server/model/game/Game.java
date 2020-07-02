@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model.game;
 import it.polimi.ingsw.communication.message.Answer;
 import it.polimi.ingsw.communication.message.header.AnswerType;
 import it.polimi.ingsw.communication.message.header.UpdatedPartType;
+import it.polimi.ingsw.communication.message.payload.ReducedAction;
+import it.polimi.ingsw.communication.message.payload.ReducedAnswerCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.Card;
@@ -42,6 +44,8 @@ public class Game extends Observable<Answer> {
     private ActionToPerform request;
     private int starter;
 
+    private List<ReducedAnswerCell> allowedActions;
+
     /**
      * Constructor of the player, initializing his elements
      *
@@ -57,6 +61,7 @@ public class Game extends Observable<Answer> {
         this.players = new ArrayList<>();
         this.state = new Start(this);
         prevState = null;
+        allowedActions = new ArrayList<>();
 
         starter = -1;
     }
@@ -100,6 +105,18 @@ public class Game extends Observable<Answer> {
 
     public int getNumPlayers() {
         return this.numPlayers;
+    }
+
+    public List<ReducedAnswerCell> getAllowedActions() {
+        return allowedActions;
+    }
+
+    public void setAllowedActions(List<ReducedAnswerCell> allowedActions) {
+        this.allowedActions = allowedActions;
+    }
+
+    public void resetAllowedAction() {
+        allowedActions.clear();
     }
 
     /**
@@ -300,6 +317,18 @@ public class Game extends Observable<Answer> {
         currentPlayer = 0;
         starter = -1;
         players.forEach(Player::reset);
+        resetAllowedAction();
+    }
+
+    public boolean isActionCorrect(Cell chosenCell) {
+        String action = request.getDemand().getHeader().toString();
+        if (action.equals("additionalPower"))
+            action = "usePower";
+
+        String finalAction = action;
+        return allowedActions.stream()
+                .filter(rac -> rac.getX() == chosenCell.getX() && rac.getY() == chosenCell.getY())
+                .anyMatch(rac -> rac.getActionList().contains(ReducedAction.parseString(finalAction)));
     }
 
     /**
@@ -323,8 +352,11 @@ public class Game extends Observable<Answer> {
                     notify(new Answer<>(rc.getAnswerType(), rc.getPayload()));
             }
 
-            if (returnContent.getPayload() != null && (rc == null || !rc.getAnswerType().equals(AnswerType.VICTORY)))
+            if (returnContent.getPayload() != null && (rc == null || !rc.getAnswerType().equals(AnswerType.VICTORY))) {
+                if (returnContent.getAnswerType().equals(AnswerType.SUCCESS) && (state.getName().equals("chooseWorker") || state.getName().equals("move") || state.getName().equals("build") || state.getName().equals("additionalPower") || state.getName().equals("askAdditionalPower")))
+                    setAllowedActions((List<ReducedAnswerCell>) returnContent.getPayload());
                 notify(new Answer<>(returnContent.getAnswerType(), UpdatedPartType.parseString(returnContent.getState().toString()), returnContent.getPayload()));
+            }
         }
 
         if (rc != null && (rc.getAnswerType().equals(AnswerType.ERROR) || rc.getAnswerType().equals(AnswerType.VICTORY)))

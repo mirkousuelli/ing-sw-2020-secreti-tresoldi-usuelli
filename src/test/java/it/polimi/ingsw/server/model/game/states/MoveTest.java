@@ -22,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,6 +67,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -111,6 +115,7 @@ public class MoveTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -316,6 +321,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.APOLLO);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -367,6 +373,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -392,7 +399,7 @@ ________________________________________________________________________________
 
     // ATHENA: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn.
     @Test
-    void movingWithAthenaMalusActiveTest() throws ParserConfigurationException, SAXException {
+    void movingWithAthenaMalusActiveTest() throws ParserConfigurationException, SAXException, IOException {
         /*@function
          * it checks that if Athena's Malus is active, the other players cannot move up during their turn
          */
@@ -424,8 +431,12 @@ ________________________________________________________________________________
         p2.initializeWorkerPosition(1, w1p2);
         p2.setCurrentWorker(p2.getWorkers().get(0));
 
-        game.setState(State.MOVE);
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(1, 1))));
+        game.gameEngine();
 
+        game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -478,6 +489,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.MINOTAUR);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(3, 3))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -525,6 +537,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.PAN);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -571,6 +584,8 @@ ________________________________________________________________________________
 
         game.setState(State.MOVE);
 
+        game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(1, 1))));
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p2.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 0))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -623,6 +638,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.TRITON);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(0, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent rc = game.gameEngine();
@@ -656,7 +672,7 @@ ________________________________________________________________________________
     }
 
     @Test
-    void persephoneVsPrometheusTest() throws ParserConfigurationException, SAXException {
+    void persephoneVsPrometheusTest() throws ParserConfigurationException, SAXException, IOException {
         //set game
         Game game = new Game();
         Board board = game.getBoard();
@@ -679,10 +695,6 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.PROMETHEUS);
 
-
-        //set game state
-        game.setState(State.MOVE);
-
         //initialize state
         Block worker1Player1 = (Block) board.getCell(4, 4);
         Block worker2Player1 = (Block) board.getCell(2, 2);
@@ -702,6 +714,12 @@ ________________________________________________________________________________
         //set cells' level
         bottomTower1.setLevel(Level.BOTTOM);
 
+        Files.deleteIfExists(Paths.get(Lobby.BACKUP_PATH));
+        game.setState(State.CHOOSE_WORKER);
+        game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.CHOOSE_WORKER, new ReducedDemandCell(4, 4))));
+        game.gameEngine();
+
+        game.setState(State.MOVE);
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(bottomTower1.getX(), bottomTower1.getY()))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
@@ -761,6 +779,7 @@ ________________________________________________________________________________
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.DEFAULT, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.MOVE, new ReducedDemandCell(1, 1))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();

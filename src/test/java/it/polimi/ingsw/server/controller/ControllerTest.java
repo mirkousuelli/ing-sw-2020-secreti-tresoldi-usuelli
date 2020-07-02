@@ -6,8 +6,10 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.State;
+import it.polimi.ingsw.server.model.game.states.PreparePayload;
 import it.polimi.ingsw.server.model.map.Block;
 import it.polimi.ingsw.server.model.map.Level;
 import it.polimi.ingsw.server.model.storage.GameMemory;
@@ -58,6 +60,7 @@ class ControllerTest {
 
         GameMemory.save(game, Lobby.BACKUP_PATH);
 
+        game.setAllowedActions(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
         player1View.processMessage(new Demand<>(DemandType.BUILD, new ReducedDemandCell(1, 1)));
 
         assertEquals(player1, game.getCurrentPlayer());

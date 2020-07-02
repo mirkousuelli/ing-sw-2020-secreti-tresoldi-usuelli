@@ -136,7 +136,12 @@ public class Move implements GameState {
         if (remainingCellsToMove.isEmpty()) return false;
         if (currentPlayerMalusList.isEmpty()) return true;
 
-        return remainingCellsToMove.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.get(0).isPermanent();
+        boolean result = remainingCellsToMove.stream().anyMatch(c -> ActivePower.verifyMalus(currentPlayerMalusList, cellToMoveTo, c)) || currentPlayerMalusList.stream().anyMatch(Malus::isPermanent);
+
+        if (!result)
+            return game.isActionCorrect(cellToMoveTo);
+        else
+            return true;
     }
 
     @Override
@@ -164,7 +169,7 @@ public class Move implements GameState {
         Cell cellToMoveTo = game.getBoard().getCell(cell.getX(), cell.getY());
 
         //validate input
-        if (cellToMoveTo == null)
+        if (cellToMoveTo == null || !game.isActionCorrect(cellToMoveTo))
             return returnError();
 
 

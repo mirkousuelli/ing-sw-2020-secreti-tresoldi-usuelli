@@ -8,6 +8,7 @@ import it.polimi.ingsw.communication.message.payload.ReducedDemandCell;
 import it.polimi.ingsw.server.model.ActionToPerform;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.cards.gods.God;
+import it.polimi.ingsw.server.model.cards.powers.tags.Timing;
 import it.polimi.ingsw.server.model.game.Game;
 import it.polimi.ingsw.server.model.game.ReturnContent;
 import it.polimi.ingsw.server.model.game.State;
@@ -92,6 +93,7 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.HESTIA);
 
+        game.setAllowedActions(PreparePayload.preparePayloadBuild(game, Timing.ADDITIONAL, State.BUILD));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -170,6 +172,7 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
@@ -209,6 +212,7 @@ public class AdditionalPowerTest {
         game.setCurrentPlayer(p1);
         game.assignCard(God.ARTEMIS);
 
+        game.setAllowedActions(PreparePayload.preparePayloadMove(game, Timing.ADDITIONAL, State.MOVE));
         game.setRequest(new ActionToPerform<>(p1.nickName, new Demand<>(DemandType.USE_POWER, new ReducedDemandCell(1, 2))));
         GameMemory.save(game, Lobby.BACKUP_PATH);
         ReturnContent returnContent = game.gameEngine();
