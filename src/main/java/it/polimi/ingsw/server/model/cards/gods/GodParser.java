@@ -9,6 +9,11 @@ import javax.xml.parsers.SAXParserFactory;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class that parses the Gods, given the XML file containing the list of Gods.
+ * <p>
+ * It contains a handler of {@link GodHandler} type
+ */
 public class GodParser {
     private final String XMLFILE = "/xml/gods.xml";
 
@@ -16,6 +21,13 @@ public class GodParser {
     private final SAXParser parser;
     private final GodHandler handler;
 
+    /**
+     * Constructor of the parser, which creates SAXParserFactory, SAXParserFactory and GodHandler objects
+     *
+     * @param deck the deck containing the cards
+     * @throws ParserConfigurationException if there was a serious configuration error
+     * @throws SAXException if the XML parser causes a basic error or a warning
+     */
     public GodParser(Deck deck) throws ParserConfigurationException, SAXException {
         factory = SAXParserFactory.newInstance();
         parser = factory.newSAXParser();

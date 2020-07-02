@@ -14,9 +14,18 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that represents the decoder which has to decode the message
+ */
 public class DecoderXML {
     private static final Logger LOGGER = Logger.getLogger(DecoderXML.class.getName());
 
+    /**
+     * Method that decodes the message
+     *
+     * @param in the object input stream that deserializes objects
+     * @return the deserialized message
+     */
     public static Message decode(ObjectInputStream in) {
         String xmlString;
 

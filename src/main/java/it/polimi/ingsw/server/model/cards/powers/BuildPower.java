@@ -21,7 +21,7 @@ import it.polimi.ingsw.server.model.map.Worker;
 import java.util.List;
 
 /**
- * Class that represents a build power
+ * Class that represents a build power.
  * <p>
  * It extends {@link ActivePower}
  */

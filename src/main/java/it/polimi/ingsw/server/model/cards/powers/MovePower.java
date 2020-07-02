@@ -163,6 +163,15 @@ public class MovePower<S> extends ActivePower<S> {
         }
     }
 
+    /**
+     * Method that fetches the nex cell and is used for Minotaur power that pushes opponent's worker to the next cell
+     *
+     * @param from the cell where the worker (that is using Minotaur's power) comes from
+     * @param to   the cell where the worker (that is using Minotaur's power) moves to
+     * @param m    the slope
+     * @param q    the intercept
+     * @return the new cell where the worker is pushed
+     */
     private static Cell fetchNextCell(Cell from, Cell to, float m, float q) {
         int newX;
 

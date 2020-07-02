@@ -68,20 +68,36 @@ public class CLIPrinter<S> {
         this.clientModel = clientModel;
     }
 
+    /**
+     * Method that prints Santorini's logo
+     */
     void printLogo() {
         out.println(LOGO);
     }
 
+    /**
+     * Method that prints the selected message
+     *
+     * @param message the message to print
+     */
     void printString(String message) {
         out.print(message);
     }
 
+    /**
+     * Method that prints the given message, the logo of the game and the opponents' name on the command line
+     *
+     * @param message the message to print
+     */
     void printStart(String message) {
         out.println(message);
         printLogo();
         printOpponents();
     }
 
+    /**
+     * Method that prints the board in a 5x5 matrix
+     */
     private void printBoard() {
         ReducedAnswerCell[][] board;
         List<ReducedPlayer> opponents;
@@ -106,6 +122,12 @@ public class CLIPrinter<S> {
         printOpponents();
     }
 
+    /**
+     * Method that prints the given cell with its current level, where is represented by a number between 0 and 4
+     *
+     * @param cell      the cell to print
+     * @param opponents the list of opponents
+     */
     private void printCell(ReducedAnswerCell cell, List<ReducedPlayer> opponents) {
         if (!cell.isFree()) {
             out.print(opponents.stream()
@@ -121,6 +143,9 @@ public class CLIPrinter<S> {
 
     }
 
+    /**
+     * Method that prints opponents' nickname, followed by the player's one
+     */
     private void printOpponents() {
         List<ReducedPlayer> opponents;
         ReducedPlayer player;
@@ -147,6 +172,9 @@ public class CLIPrinter<S> {
         out.println("You: " + Color.parseString(player.getColor()) + player.getNickname() + Color.RESET + "\n");
     }
 
+    /**
+     * Method that prints the available Gods
+     */
     private void printAvailableGods() {
         List<ReducedCard> deck;
 
@@ -169,6 +197,9 @@ public class CLIPrinter<S> {
         );
     }
 
+    /**
+     * Method that prints the God(s) that belongs to the opponent(s), followed by the one owned by the player
+     */
     private void printGods() {
         List<ReducedPlayer> playerList;
 
@@ -193,6 +224,9 @@ public class CLIPrinter<S> {
         printYourCard();
     }
 
+    /**
+     * Method that prints the card that the player has
+     */
     private void printYourCard() {
         God god;
         String color;
@@ -205,6 +239,9 @@ public class CLIPrinter<S> {
         out.print("Your card: " + color + god + Color.RESET + "\n");
     }
 
+    /**
+     * Method that prints the possible actions that the player can make
+     */
     private void printPossibleActions() {
         ReducedAnswerCell[][] reducedBoard;
 
@@ -240,6 +277,9 @@ public class CLIPrinter<S> {
         }
     }
 
+    /**
+     * Method that prints both all possible actions and the Gods (with the corresponding owner)
+     */
     private void printAll() {
         printBoard();
         if (clientModel.isYourTurn() && !clientModel.isReloaded() && !clientModel.getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))
@@ -247,6 +287,9 @@ public class CLIPrinter<S> {
         printGods();
     }
 
+    /**
+     * Method that prints a message telling a player that it is his turn (during player's turn)
+     */
     void printCurrentPlayer() {
         boolean isYourTurn = false;
         ReducedPlayer currentPlayer;
@@ -263,18 +306,33 @@ public class CLIPrinter<S> {
             printString(Color.RESET + Color.parseString(currentPlayer.getColor()) + currentPlayer.getNickname() + Color.RESET + " is the current player!\n");
     }
 
+    /**
+     * Method that prints a message of error
+     */
     void printError() {
         out.println("Error, try again");
     }
 
+    /**
+     * Method that prints a message of success
+     */
     void printSuccess() {
         out.println("Done!");
     }
 
+    /**
+     * Method that prints a message advising the player that a game has been reloaded
+     */
     void printReload() {
         out.println(RELOAD);
     }
 
+    /**
+     * Method that prints the end of the game: it can be a message of win or defeat if the game ended, or it tells that
+     * the game has been successfully saved (if a player disconnected from the game)
+     *
+     * @param context the context that change the type of message that is print
+     */
     void printEnd(String context) {
         switch (context.toLowerCase()) {
             case "victory":

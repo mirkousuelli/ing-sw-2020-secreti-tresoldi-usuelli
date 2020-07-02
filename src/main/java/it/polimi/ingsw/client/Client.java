@@ -12,6 +12,12 @@ import javax.swing.*;
  */
 public class Client {
 
+    /**
+     * Main method that runs the GUI or the CLI: if the person runs the jar via command line then the game will
+     * start in CLI, if he opens it through double click on the file it will start in GUI
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         final SantoriniRunnable[] clientView = new ClientView[1];
 

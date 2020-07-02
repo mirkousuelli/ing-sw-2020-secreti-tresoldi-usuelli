@@ -10,9 +10,18 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that represents the encoder which has to encode the message that is being sent
+ */
 public class EncoderXML {
     private static final Logger LOGGER = Logger.getLogger(EncoderXML.class.getName());
 
+    /**
+     * Method that encodes the given message
+     *
+     * @param msg the message to encode
+     * @param out the object output stream that serializes objects
+     */
     public static void encode(Message msg, ObjectOutputStream out) {
         OutputStream memStream = new ByteArrayOutputStream();
         XMLEncoder encoder = new XMLEncoder(memStream);

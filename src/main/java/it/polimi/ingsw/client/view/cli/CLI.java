@@ -8,7 +8,9 @@ import it.polimi.ingsw.communication.message.header.DemandType;
 import it.polimi.ingsw.communication.message.payload.ReducedMessage;
 
 /**
- * Class which communicates which the client via a command line interface
+ * Class which communicates which the client via a command line interface.
+ * <p>
+ * It contains a scanner and a printer
  */
 public class CLI<S> extends ClientView<S> {
 
@@ -127,6 +129,9 @@ public class CLI<S> extends ClientView<S> {
         read.join();
     }
 
+    /**
+     * Method that sends the initial request to the player, who has to insert his nickname, server's ip and server's port
+     */
     private void initialRequest() {
         out.printString("Insert your name:\n");
         String name = in.readLine();

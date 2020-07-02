@@ -49,8 +49,8 @@ public class Game extends Observable<Answer> {
     /**
      * Constructor of the player, initializing his elements
      *
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     * @throws ParserConfigurationException if there was a serious configuration error
+     * @throws SAXException if the XML parser causes a basic error or a warning
      */
     public Game() throws ParserConfigurationException, SAXException {
 

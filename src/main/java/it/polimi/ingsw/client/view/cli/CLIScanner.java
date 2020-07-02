@@ -61,6 +61,9 @@ public class CLIScanner<S> {
         payloadMap = new EnumMap<>(DemandType.class);
     }
 
+    /**
+     * Method that initializes maps accordingly with the type of demand made by the player
+     */
     private void initializeMaps() {
         messageMap.put(DemandType.CONNECT, CONNECT);
         messageMap.put(DemandType.CREATE_GAME, CREATE_GAME);
@@ -192,6 +195,13 @@ public class CLIScanner<S> {
         return value;
     }
 
+    /**
+     * Method that controls if the action is to repeat
+     *
+     * @param currentState the current state
+     * @param value        the value to check
+     * @return {@code true} if the action must be repeated, {@code false} if not
+     */
     private boolean repeat(DemandType currentState, String value) {
         boolean toRepeat = false;
         Predicate<String> toRepeatFunction;
@@ -203,6 +213,13 @@ public class CLIScanner<S> {
         return toRepeat;
     }
 
+    /**
+     * Method that controls if the power can be used
+     *
+     * @param currentState the current state
+     * @param value        the value to check
+     * @return {@code true} if the power can be used, {@code false} if not
+     */
     private boolean power(DemandType currentState, String value) {
         boolean toUsePower = false;
         Predicate<String> powerFunction;
@@ -214,6 +231,13 @@ public class CLIScanner<S> {
         return toUsePower;
     }
 
+    /**
+     * Method that returns the payload for the action
+     *
+     * @param currentState the current state
+     * @param value        the value to check
+     * @return the payload for the action
+     */
     private S payload(DemandType currentState, String value) {
         S payload = null;
         Function<String, S> payloadFunction;
@@ -225,6 +249,13 @@ public class CLIScanner<S> {
         return payload;
     }
 
+    /**
+     * Method that controls if the given index is in the index map
+     *
+     * @param currentState the current state
+     * @param i            the index to check
+     * @return {@code true} if the index is in the index map, {@code false} if not
+     */
     private boolean index(DemandType currentState, int i) {
         boolean toIncrementIndex = false;
         IntPredicate indexFunction;
@@ -236,6 +267,16 @@ public class CLIScanner<S> {
         return toIncrementIndex;
     }
 
+    /**
+     * Method that generates the demand given the following information
+     *
+     * @param toUsePower   tells if the power can be used
+     * @param i            the index to check
+     * @param payload      the payload
+     * @param payloadList  the list of payloads
+     * @param currentState the current state
+     * @return the demand that is generated
+     */
     private Demand<S> generateDemand(boolean toUsePower, int i, S payload, List<S> payloadList, DemandType currentState) {
         if (toUsePower)
             return new Demand<>(DemandType.USE_POWER, payload);
@@ -283,6 +324,13 @@ public class CLIScanner<S> {
 
 
     /*---------------------------------------------------CHECKER------------------------------------------------------*/
+
+    /**
+     * Method that controls if the given God's name is present in the deck
+     *
+     * @param godString the name of the God to check
+     * @return {@code false} if the God is present in the deck, {@code true} otherwise
+     */
     private boolean checkGod(String godString) {
         List<ReducedCard> deck;
         God god = God.parseString(godString);
@@ -296,6 +344,12 @@ public class CLIScanner<S> {
                 .noneMatch(g -> g.getGod().equals(god));
     }
 
+    /**
+     * Method that controls if the given worker's name is present in a cell of the board
+     *
+     * @param workerString the name of the worker to check
+     * @return {@code false} if the worker exists, {@code true} otherwise
+     */
     private boolean checkWorker(String workerString) {
         ReducedAnswerCell workerCell = getReducedCell(workerString);
 
@@ -306,6 +360,12 @@ public class CLIScanner<S> {
                 .noneMatch(w -> w.getX() == workerCell.getX() && w.getY() == workerCell.getY());
     }
 
+    /**
+     * Method that controls if the given player's name is present in the game (as opponent)
+     *
+     * @param player the name of the player to check
+     * @return {@code false} if the player is an opponent in the game, {@code true} otherwise
+     */
     private boolean checkPlayer(String player) {
         for (ReducedPlayer p : clientModel.getOpponents()) {
             if (p.getNickname().equals(player))
@@ -315,12 +375,25 @@ public class CLIScanner<S> {
         return !clientModel.getPlayer().getNickname().equals(player);
     }
 
+    /**
+     * Method that controls if the given cell is present in the game (which means it is not null)
+     *
+     * @param cellString the name of the cell to check
+     * @return {@code false} if the cell is not null, {@code true} otherwise
+     */
     private boolean checkCell(String cellString) {
         ReducedAnswerCell cell = getReducedCell(cellString);
 
         return cell == null;
     }
 
+    /**
+     * Method that tells if the player has to repeat the insertion of the action: this can happen if he writes a wrong
+     * command, like by not inserting the cell
+     *
+     * @param string the string inserted
+     * @return {@code true} if the user has to re-insert the action to make, {@code false} otherwise
+     */
     private boolean isToRepeat(String string) {
         String[] input = string.split(" ");
 
@@ -349,6 +422,13 @@ public class CLIScanner<S> {
         return true;
     }
 
+    /**
+     * Method that tells if the player has to use his God power
+     *
+     * @param string the string inserted
+     * @return {@code true} if the user has to insert the power and the cell where to use it (for example if he
+     *  previously inserted a cell that isn't in the possible actions), {@code false} otherwise
+     */
     private boolean isToUsePower(String string) {
         String[] input = string.split(" ");
 
@@ -392,6 +472,12 @@ public class CLIScanner<S> {
     /*----------------------------------------------------------------------------------------------------------------*/
 
 
+    /**
+     * Method that skips the additional power and proceed to the correct state: if the previous one was {@code move}
+     * then it goes to {@code build}, if it was {@code build} then it goes to {@code choose_worker}
+     *
+     * @param value the string inserted by the user
+     */
     private void skipAdditionalPower(String value) {
         if (!(clientModel.getCurrentState().equals(DemandType.ASK_ADDITIONAL_POWER))) return;
         if (!value.equals("n")) return;
@@ -402,6 +488,9 @@ public class CLIScanner<S> {
             clientModel.setNextState(DemandType.CHOOSE_WORKER);
     }
 
+    /**
+     * Method that skips to {@code build} if the previous state was {@code move}
+     */
     private void skipToBuild() {
         if (!clientModel.getCurrentState().equals(DemandType.ADDITIONAL_POWER)) return;
 
@@ -409,12 +498,23 @@ public class CLIScanner<S> {
             clientModel.setNextState(DemandType.BUILD);
     }
 
+    /**
+     * Method that sets the nickname of the player to the given one
+     *
+     * @param value the nickname to give to the player
+     */
     private void changeNickname(String value) {
         if (!clientModel.getCurrentState().equals(DemandType.CONNECT)) return;
 
         clientModel.getPlayer().setNickname(value);
     }
 
+    /**
+     * Method that allows the player to stay in the current state
+     *
+     * @param currentState the current state
+     * @param toUsePower   tells if there is a power to use
+     */
     private void stayInCurrentState(DemandType currentState, boolean toUsePower) {
         if (!currentState.equals(DemandType.MOVE) && !currentState.equals(DemandType.BUILD) && !currentState.equals(DemandType.ADDITIONAL_POWER))
             return;

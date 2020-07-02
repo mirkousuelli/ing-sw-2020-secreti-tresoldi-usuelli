@@ -34,6 +34,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class that permits the write, save and load of a game: it is used to allow the feature of persistence
+ */
 public class GameMemory {
     /* game */
     private static final int LOBBY = 0;
@@ -56,6 +59,15 @@ public class GameMemory {
     private static final int LEVEL = 2;
     private static final int PREV = 3;
 
+    /**
+     * Method that allows to write on the chosen document
+     *
+     * @param doc  the document where to write
+     * @param path the string to write
+     * @throws TransformerException an exceptional condition that occurred during the transformation process
+     * @throws FileNotFoundException signals that an attempt to open the file has failed
+     * @throws URISyntaxException indicates that a string could not be parsed as a URI reference
+     */
     private static void write(Document doc, String path) throws TransformerException, FileNotFoundException, URISyntaxException {
         Transformer tr = TransformerFactory.newInstance().newTransformer();
         tr.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -74,6 +86,13 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the current game: all elements of the game are saved, like the board (with the correct level of
+     * every cell and eventual pawn on it), the current state, the current player and eventual maluses active
+     *
+     * @param game the game that is saved
+     * @param path the path where to save
+     */
     public static void save(Game game, String path) {
 
         try {
@@ -188,6 +207,12 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the given block, with information about its current and previous level
+     *
+     * @param block the block that is saved
+     * @param path the path where to save
+     */
     public static void save(Block block, String path) {
         try {
             int x = block.getX();
@@ -215,6 +240,13 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the current worker and its corresponding player
+     *
+     * @param worker the worker that is saved
+     * @param player the name of the player
+     * @param path   the path where to save
+     */
     public static void save(Worker worker, Player player, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -244,6 +276,12 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the current state
+     *
+     * @param state the state that is saved
+     * @param path the path where to save
+     */
     public static void save(GameState state, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -268,6 +306,13 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the current player and the state
+     *
+     * @param currentPlayer the current player
+     * @param state         the state
+     * @param path          the path where to save
+     */
     public static void save(Player currentPlayer, State state, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -298,6 +343,12 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the list of players, with information about their workers and eventual maluses active
+     *
+     * @param players the list of players that is saved
+     * @param path the path where to save
+     */
     public static void save(List<Player> players, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -379,6 +430,12 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that saves the player, with its workers and eventual maluses active
+     *
+     * @param player the player that is saved
+     * @param path the path where to save
+     */
     public static void save(Player player, String path) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -436,6 +493,15 @@ public class GameMemory {
         }
     }
 
+    /**
+     * Method that allows the game to be loaded back: it sets all the previously saved pieces of information, allowing
+     * the game to continue from where it was saved last
+     *
+     * @param path the path where the file to load is located
+     * @return the saved game
+     * @throws ParserConfigurationException indicates a serious configuration error
+     * @throws SAXException a basic error or warning information
+     */
     public static Game load(String path) throws ParserConfigurationException, SAXException {
         Game game = new Game();
         String currentPlayer = "";

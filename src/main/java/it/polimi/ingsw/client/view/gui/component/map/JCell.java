@@ -14,6 +14,12 @@ public abstract class JCell extends JButton {
     protected static final int DIMENSION = 80;
     protected JCellStatus status;
 
+    /**
+     * Constructor of the cell
+     *
+     * @param x x-coordinate of the cell
+     * @param y y-coordinate og the cell
+     */
     JCell(int x, int y) {
         super();
         this.x_coo = x;

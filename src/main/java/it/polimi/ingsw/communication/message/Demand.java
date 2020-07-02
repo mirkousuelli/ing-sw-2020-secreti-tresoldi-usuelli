@@ -15,14 +15,30 @@ import it.polimi.ingsw.communication.message.payload.ReducedMessage;
  */
 public class Demand<S> extends Message<DemandType, S> {
 
+    /**
+     * Constructor of the demand, containing header and payload
+     *
+     * @param header  the header of the demand
+     * @param payload the payload of the demand
+     */
     public Demand(DemandType header, S payload) {
         super(header, payload);
     }
 
+    /**
+     * Constructor of the demand, containing just the header
+     *
+     * @param header the header of the demand
+     */
     public Demand(DemandType header) {
         this(header, (S) new ReducedMessage("null"));
     }
 
+    /**
+     * Constructor of the demand, containing the message
+     *
+     * @param msg the message corresponding to the demand
+     */
     public Demand(Demand<S> msg) {
         super(msg.getHeader(), msg.getPayload());
     }

@@ -38,7 +38,7 @@ public abstract class ActivePower<S> extends Power<S> {
     private static final Map<MalusLevel, BiPredicate<Cell, Cell>> malusLevelMap = new EnumMap<>(MalusLevel.class);
 
     /**
-     * Constructor of the active power that recalls its super class
+     * Constructor of the active power that recalls its super class.
      * <p>
      * It creates a map of constraints
      */

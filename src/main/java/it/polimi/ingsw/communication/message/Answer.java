@@ -18,23 +18,52 @@ public class Answer<S> extends Message<AnswerType, S> {
 
     protected UpdatedPartType context;
 
+    /**
+     * Constructor of the answer, given the header, the context and the payload
+     *
+     * @param header  the header of the answer
+     * @param context the context representing what part has been updated
+     * @param payload the payload of the answer
+     */
     public Answer(AnswerType header, UpdatedPartType context, S payload) {
         super(header, payload);
         this.context = context;
     }
 
+    /**
+     * Constructor of the answer, given the header and the context
+     *
+     * @param header  the header of the answer
+     * @param context the context representing what part has been updated
+     */
     public Answer(AnswerType header, UpdatedPartType context) {
         this(header, context, (S) new ReducedMessage("null"));
     }
 
+    /**
+     * Constructor of the answer, given just the header
+     *
+     * @param header  the header of the answer
+     */
     public Answer(AnswerType header) {
         this(header, null, (S) new ReducedMessage("null"));
     }
 
+    /**
+     * Constructor of the answer, given the header and the payload
+     *
+     * @param header  the header of the answer
+     * @param payload payload of the answer
+     */
     public Answer(AnswerType header, S payload) {
         this(header, null, payload);
     }
 
+    /**
+     * Constructor of the answer, given the message
+     *
+     * @param msg the message of the answer
+     */
     public Answer(Answer<S> msg) {
         super(msg.getHeader(), msg.getPayload());
         this.context = msg.getContext();

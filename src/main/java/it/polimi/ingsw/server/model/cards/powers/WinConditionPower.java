@@ -14,17 +14,17 @@ import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.WinType;
 import it.polimi.ingsw.server.model.game.Game;
 
 /**
- * Class that represents a win condition power
+ * Class that represents a win condition power.
  * <p>
- * It extends the class {@link Power}
+ * It extends the class {@link Power}.
  * <p>
  * The only two Gods that have an additional win condition are Chronus, that allows the player to win if there are
- * at least five complete towers, and Pan, that is activated when a player's worker moves down two or more levels
- * Every other God has just the regular win condition
+ * at least five complete towers, and Pan, that is activated when a player's worker moves down two or more levels.
+ * Every other God has just the regular win condition.
  *
  * <p>
  * This new win conditions do not replace the regular one (that is moving up to a third level), but they are just
- * added as an additional win condition: if a player, for example, has Chronus as God, he can both win by moving
+ * added as an additional win condition: if a player, for example, has Chronus as God, he can either win by moving
  * to a third level or by having five complete towers built on the board
  */
 public class WinConditionPower<S> extends Power<S> {

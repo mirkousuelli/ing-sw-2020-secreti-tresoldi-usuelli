@@ -15,6 +15,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
 
+/**
+ * Class that handles the Gods, starting from the deck containing a list of them
+ */
 public class GodHandler extends DefaultHandler {
 
     private final Deck deck;
@@ -33,6 +36,11 @@ public class GodHandler extends DefaultHandler {
     private boolean personal;
     private boolean player;
 
+    /**
+     * Constructor of the handler, starting from the deck containing the list of Gods
+     *
+     * @param deck the deck containing the list of Gods
+     */
     public GodHandler(Deck deck) {
         super();
 
@@ -56,9 +64,20 @@ public class GodHandler extends DefaultHandler {
         this.readGod = this.currGod;
     }
 
+    /**
+     * Method that receives notification of the beginning of an element.
+     * <p>
+     * The Parser will invoke this method at the beginning of every element in the XML document
+     *
+     * @param uri        the namespace URI, or the empty string if the element has no Namespace URI
+     * @param localName  the local name (without prefix)
+     * @param qName      the qualified name (with prefix)
+     * @param attributes the attributes attached to the element. If there are no attributes, it shall be an empty
+     *                   attributes object.
+     */
     @Override
     public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
+                             Attributes attributes) {
 
         if (qName.equalsIgnoreCase("GOD")) {
 
@@ -194,8 +213,15 @@ public class GodHandler extends DefaultHandler {
 
     }
 
+    /**
+     * Method that receives notification of the end of an element
+     *
+     * @param uri        the namespace URI, or the empty string if the element has no Namespace URI
+     * @param localName  the local name (without prefix)
+     * @param qName      the qualified name (with prefix)
+     */
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         if (qName.equalsIgnoreCase("GOD") && readGod.equals(currGod)) {
             this.deck.addCard(currCard);
             indexGod += 1;
@@ -209,8 +235,15 @@ public class GodHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * Receive notification of ignorable whitespace in element content.
+     *
+     * @param ch the whitespace characters
+     * @param start the start position in the character array
+     * @param length the number of characters to use from the character array
+     */
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) {
 
         String str = new String(ch, start, length);
 

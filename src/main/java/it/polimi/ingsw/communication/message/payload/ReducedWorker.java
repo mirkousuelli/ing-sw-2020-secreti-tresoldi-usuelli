@@ -21,18 +21,32 @@ public class ReducedWorker {
      * Constructor of the reduced worker, which is initialised starting from its the regular version
      *
      * @param worker the worker that the reduced version is obtained from
-     * @param player the player that owns this worker
+     * @param player the name of player that owns this worker
      */
     public ReducedWorker(Worker worker, String player) {
         this(player, worker.getX(), worker.getY(), worker.isMale());
         id = worker.getId();
     }
 
+    /**
+     * Constructor of the reduced worker, which is initialised starting from its the regular version
+     *
+     * @param worker the worker that the reduced version is obtained from
+     * @param player the player that owns this worker
+     */
     public ReducedWorker(Worker worker, Player player) {
         this(worker, player.nickName);
         isCurrent = worker.equals(player.getCurrentWorker());
     }
 
+    /**
+     * Constructor of the reduced worker, which is initialised starting its owner, its coordinates and its gender
+     *
+     * @param owner  the nickname of the owner
+     * @param x      x-coordinate
+     * @param y      y-coordinate
+     * @param gender this worker's gender
+     */
     public ReducedWorker(String owner, int x, int y, boolean gender) {
         this.owner = owner;
         id = 0;

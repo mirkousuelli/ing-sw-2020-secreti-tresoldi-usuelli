@@ -43,5 +43,8 @@ public interface Cell {
         return (cellToUse.getX() == 0 || cellToUse.getY() == 0 || cellToUse.getX() == 4 || cellToUse.getY() == 4);
     }
 
+    /**
+     * Class that cleans this cell (it is developed by its subclasses)
+     */
     void clean();
 }

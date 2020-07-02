@@ -49,6 +49,15 @@ public class PreparePayload {
         return PreparePayload.preparePayloadMove(game, timing, state, true);
     }
 
+    /**
+     * Prepares the cells the current worker can move to
+     *
+     * @param game          the current game
+     * @param state         the current state
+     * @param timing        the current player power's timing
+     * @param currentWorker information if the worker is the current one
+     * @return the list of the cells the current player can move to
+     */
     private static List<ReducedAnswerCell> preparePayloadMove(Game game, Timing timing, State state, boolean currentWorker) {
         List<ReducedAnswerCell> toReturn;
         List<ReducedAnswerCell> toReturnWithPersonalMalus;
@@ -170,6 +179,13 @@ public class PreparePayload {
         return toReturn;
     }
 
+    /**
+     * Method that merges (the reduced version of) the cells contained in the two lists
+     *
+     * @param toReturn the first list of cells
+     * @param tempList the second list of cells
+     * @return a list of cells which is the outcome of the merge
+     */
     public static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, List<ReducedAnswerCell> tempList) {
         boolean found;
         List<ReducedAnswerCell> ret = new ArrayList<>(toReturn);
@@ -191,6 +207,14 @@ public class PreparePayload {
         return ret;
     }
 
+    /**
+     * Method that adds the cell passed as parameter to the list of cells
+     *
+     * @param toReturn the list of cells
+     * @param temp     the cell to add to the list
+     * @return a list of cells which is the outcome of the merge: it contains the list of cells with the addition of
+     * the chosen cell
+     */
     static List<ReducedAnswerCell> mergeReducedAnswerCellList(List<ReducedAnswerCell> toReturn, ReducedAnswerCell temp) {
         List<ReducedAnswerCell> tempList = new ArrayList<>();
         tempList.add(temp);
@@ -198,6 +222,13 @@ public class PreparePayload {
         return PreparePayload.mergeReducedAnswerCellList(toReturn, tempList);
     }
 
+    /**
+     * Method that removes the surrounded cells from the list of cells passed as parameter
+     *
+     * @param game     the current game
+     * @param toReturn the list of cells where to remove surrounded ones
+     * @return the updated list of cells
+     */
     private static List<ReducedAnswerCell> removeSurroundedCells(Game game, List<ReducedAnswerCell> toReturn) {
         List<ReducedAnswerCell> ret = new ArrayList<>();
         Cell c;
@@ -211,6 +242,13 @@ public class PreparePayload {
         return ret;
     }
 
+    /**
+     * Method that unites two lists of actions, returning a single list containing all the elements of both
+     *
+     * @param list1 the first list of actions
+     * @param list2 the second list of actions
+     * @return the updated list containing every element of both lists
+     */
     private static List<ReducedAction> unionActions(List<ReducedAction> list1, List<ReducedAction> list2) {
         Set<ReducedAction> set = new HashSet<>();
 
@@ -265,6 +303,13 @@ public class PreparePayload {
         return toReturn;
     }
 
+    /**
+     * Method that adds changed cells to the game
+     *
+     * @param game  the current game
+     * @param state the current state
+     * @return list of cells where there is a possible action
+     */
     static List<ReducedAnswerCell> addChangedCells(Game game, State state) {
         ReducedAnswerCell temp;
         List<ReducedAnswerCell> tempList = new ArrayList<>();

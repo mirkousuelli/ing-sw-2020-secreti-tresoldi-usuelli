@@ -13,6 +13,12 @@ public abstract class Message<H, P> {
     private H header;
     private P payload;
 
+    /**
+     * Constructor of the message, which contains a header and a payload
+     *
+     * @param header  the header of the message
+     * @param payload the payload of the message
+     */
     public Message(H header, P payload) {
         this.header = header;
         this.payload = payload;
