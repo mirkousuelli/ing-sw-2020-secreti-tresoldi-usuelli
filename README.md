@@ -42,9 +42,9 @@ mvn package
   where <num_port> stands for the socket port which both server and clients will use for the connection.
 
 - **Client CLI**
-```shell
-java -jar target/GC15-client-jar-with-dependencies.jar
-```
+  ```shell
+  java -jar target/GC15-client-jar-with-dependencies.jar
+  ```
   - ***Commands***
     - Move: **move (x,y)**
     - Build: **build (x,y)**
