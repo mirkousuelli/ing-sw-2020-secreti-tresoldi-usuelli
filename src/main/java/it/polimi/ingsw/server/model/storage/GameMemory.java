@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Class that permits the write, save and load of a game: it is used to allow the feature of persistence
@@ -59,6 +60,8 @@ public class GameMemory {
     private static final int LEVEL = 2;
     private static final int PREV = 3;
 
+    private static final Logger LOGGER = Logger.getLogger(GameMemory.class.getName());
+
     /**
      * Method that allows to write on the chosen document
      *
@@ -82,7 +85,7 @@ public class GameMemory {
         try {
             streamResult.getOutputStream().close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't write " + path);
         }
     }
 
@@ -203,7 +206,7 @@ public class GameMemory {
             doc.appendChild(gameNode);
             GameMemory.write(doc, path);
         } catch (ParserConfigurationException | TransformerException | FileNotFoundException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -236,7 +239,7 @@ public class GameMemory {
             factory.setIgnoringElementContentWhitespace(false);
             GameMemory.write(doc, path);
         } catch (ParserConfigurationException | TransformerException | IOException | SAXException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -302,7 +305,7 @@ public class GameMemory {
             }
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -339,7 +342,7 @@ public class GameMemory {
             ((Element) playerNode.item(i)).setAttribute("state", state.toString());
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -426,7 +429,7 @@ public class GameMemory {
             gameNode.appendChild(boardNode);
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -489,7 +492,7 @@ public class GameMemory {
 
             GameMemory.write(doc, path);
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException | URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't save " + path);
         }
     }
 
@@ -589,7 +592,8 @@ public class GameMemory {
                 cell.setPreviousLevel((Level) ILevel.parseString(cellNode.getChildNodes().item(PREV).getTextContent()));
             }
         } catch (SAXException | IOException | ParserConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.info(() -> "couldn't load " + path);
+            return null;
         }
 
         return game;

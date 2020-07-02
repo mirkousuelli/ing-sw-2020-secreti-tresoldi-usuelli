@@ -8,6 +8,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that parses the Gods, given the XML file containing the list of Gods.
@@ -20,6 +22,8 @@ public class GodParser {
     private final SAXParserFactory factory;
     private final SAXParser parser;
     private final GodHandler handler;
+
+    private static final Logger LOGGER = Logger.getLogger(GodParser.class.getName());
 
     /**
      * Constructor of the parser, which creates SAXParserFactory, SAXParserFactory and GodHandler objects
@@ -40,7 +44,7 @@ public class GodParser {
             handler.setGods(gods);
             parser.parse(this.getClass().getResource(XMLFILE).toURI().toString(), handler);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "couldn't load gods");
         }
     }
 }
