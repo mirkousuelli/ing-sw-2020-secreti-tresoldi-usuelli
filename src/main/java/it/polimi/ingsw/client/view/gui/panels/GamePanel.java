@@ -789,7 +789,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         if((gui.getClientModel().isYourTurn())) {
             switch (gui.getClientModel().getCurrentState().toString()){
-                
+
                 case "askAdditionalPower":
                     if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")){
                         gr.drawString("BUILD", 505, 48);

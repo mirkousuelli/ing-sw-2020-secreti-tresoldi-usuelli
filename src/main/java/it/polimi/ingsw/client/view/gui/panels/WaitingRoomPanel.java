@@ -11,7 +11,6 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 

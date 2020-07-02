@@ -10,7 +10,6 @@ import it.polimi.ingsw.server.model.cards.powers.tags.effecttype.WinType;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusLevel;
 import it.polimi.ingsw.server.model.cards.powers.tags.malus.MalusType;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
