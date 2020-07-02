@@ -31,7 +31,7 @@ mvn clean
 mvn package
 ```
 - **Server**
-  - Default port:
+  - Default port (1337):
   ```shell
   java -jar target/GC15-server-jar-with-dependencies.jar
   ```
