@@ -8,7 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
+/**
+ * Class that represents the panel where the Challenger has to decide how many players will be in his game
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -18,12 +24,22 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
 
     private static final int BUTTON_SIZE = 250;
 
+    /**
+     * Constructor of the panel where the challenger has to click on the button corresponding to the number of players
+     * he wants to play with
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public NumPlayerPanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
         create2PlayerButton();
         create3PlayerButton();
     }
 
+    /**
+     * Function which display the 2 players choice button in the middle of the screen.
+     */
     private void create2PlayerButton() {
         _2playersButton = new JButton(BackgroundPanel.getScaledImage(
                 new ImageIcon(this.getClass().getResource("/img/buttons/2_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));
@@ -34,6 +50,9 @@ public class NumPlayerPanel extends SantoriniPanel implements ActionListener {
         add(_2playersButton);
     }
 
+    /**
+     * Function which display the 3 players choice button in the middle of the screen.
+     */
     private void create3PlayerButton() {
         _3playersButton = new JButton(BackgroundPanel.getScaledImage(
                 new ImageIcon(this.getClass().getResource("/img/buttons/3_player_button.png")), BUTTON_SIZE, BUTTON_SIZE));

@@ -3,6 +3,11 @@ package it.polimi.ingsw.client.view.gui.component.map;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Abstract class that represents the cell and is developed deeper by {@link JBlock} and {@link JBlockDecorator}
+ * <p>
+ * It contains its coordinates, dimension and status.
+ */
 public abstract class JCell extends JButton {
     protected final int x_coo;
     protected final int y_coo;
@@ -45,6 +50,9 @@ public abstract class JCell extends JButton {
         return this.y_coo;
     }
 
+    /**
+     * Method that clears this cell by setting its status back to {@code NONE}
+     */
     void clear() {
         status = JCellStatus.NONE;
 

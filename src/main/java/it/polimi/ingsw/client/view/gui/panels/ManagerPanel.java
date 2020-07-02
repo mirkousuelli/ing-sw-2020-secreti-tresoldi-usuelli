@@ -14,10 +14,16 @@ import it.polimi.ingsw.server.model.map.Level;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the panel that handles all panels from their index.
+ * <p>
+ * It contains the current panel, the game that is being played and the player
+ */
 public class ManagerPanel extends JPanel {
 
     private final CardLayout cardLayout;
@@ -27,6 +33,12 @@ public class ManagerPanel extends JPanel {
     private JGame game;
     private JPlayer clientPlayer;
 
+    /**
+     * Constructor of the ManagerPanel, which creates the starting panel and then adds the one for nickname;
+     * it is based on the card layout in order to manage panels sequences.
+     *
+     * @param gui the interface that is used
+     */
     public ManagerPanel(GUI gui) {
         this.gui = gui;
         cardLayout = new CardLayout();
@@ -56,6 +68,12 @@ public class ManagerPanel extends JPanel {
         this.clientPlayer = clientPlayer;
     }
 
+    /**
+     * Method that adds the given panel
+     *
+     * @param comp the component that is added
+     * @return the component with the added panel
+     */
     public Component addPanel(Component comp) {
         currentPanel = (SantoriniPanel) comp;
         return this.add(comp);
@@ -65,24 +83,25 @@ public class ManagerPanel extends JPanel {
         return currentPanel;
     }
 
+    /**
+     * Method that allows a game to be reloaded.
+     * <p>
+     * It sets the players, the cards, the board and the workers, then proceeding to play the game
+     */
     public void reload() {
         game = new JGame();
 
-        //players
         WaitingRoomPanel.setUpJPlayers(this);
         game.setCurrentPlayer(gui.getClientModel().getCurrentPlayer().getNickname());
 
-        //cards
         ChooseGodPanel.setGods(this);
 
-        //board
         updateBuild(Arrays.stream(gui.getClientModel().getReducedBoard())
                 .flatMap(Arrays::stream)
                 .filter(rac -> !rac.getLevel().equals(Level.GROUND))
                 .collect(Collectors.toList())
         );
 
-        //workers
         game.getPlayerList().forEach(
                 jPlayer -> updateWorkers(jPlayer,
                         Arrays.stream(gui.getClientModel().getReducedBoard())
@@ -101,11 +120,16 @@ public class ManagerPanel extends JPanel {
         }
         addPanel(new GamePanel(cardLayout, this));
 
-        //start
         cardLayout.next(this);
         gui.free();
     }
 
+    /**
+     * Method which updates each block thanks to the list passed as parameters, being aware of the current level and
+     * the previous one for every block and managing the decorator pattern.
+     *
+     * @param reducedAnswerCellList   blocks to be loaded
+     */
     private void updateBuild(List<ReducedAnswerCell> reducedAnswerCellList) {
         reducedAnswerCellList.forEach(reducedAnswerCell -> {
             JCell cell = game.getJMap().getCell(reducedAnswerCell.getX(), reducedAnswerCell.getY());
@@ -123,6 +147,12 @@ public class ManagerPanel extends JPanel {
         });
     }
 
+    /**
+     * Method which loads workers' position, one player at a time.
+     *
+     * @param jPlayer   player selected
+     * @param reducedAnswerCellList workers' cell
+     */
     private void updateWorkers(JPlayer jPlayer, List<ReducedAnswerCell> reducedAnswerCellList) {
         reducedAnswerCellList.forEach(updatedCell -> {
             JCell jCellWorker = game.getJMap().getCell(updatedCell.getX(), updatedCell.getY());
@@ -145,6 +175,11 @@ public class ManagerPanel extends JPanel {
 
     }
 
+    /**
+     * Method that controls if there was a disconnection and in that case sets the background so saved
+     *
+     * @return {@code true} if a player disconnected from the game, {@code false} otherwise
+     */
     boolean evalDisconnection() {
         boolean isClosed = gui.getAnswer().getHeader().equals(AnswerType.CLOSE);
 
@@ -156,6 +191,10 @@ public class ManagerPanel extends JPanel {
         return isClosed;
     }
 
+    /**
+     * Method that cleans the panels, setting the JPlayer to null, cleaning the game and removing all components from
+     * the container. In the end it validates and repaints this component.
+     */
     void clean() {
         clientPlayer = null;
         game.clean();

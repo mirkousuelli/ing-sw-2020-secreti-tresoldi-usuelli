@@ -15,6 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the Map in the GUI.
+ * <p>
+ * It contains its dimension, a matrix of cells, information about the current worker and the current player.
+ * It also has a {@code gamePanel} and {@code gamePanelButton}
+ */
 public class JMap extends JPanel implements ActionListener {
 
     public static final int DIM = 5;
@@ -30,6 +36,9 @@ public class JMap extends JPanel implements ActionListener {
     private GamePanel gamePanel;
     private ManagerPanel managerPanel;
 
+    /**
+     * Constructor of the map, setting all of its attributes to default
+     */
     public JMap() {
         super(new GridBagLayout());
 
@@ -120,18 +129,40 @@ public class JMap extends JPanel implements ActionListener {
         setAround(where, JCellStatus.MALUS);
     }
 
+    /**
+     * Method that moves the current worker to the given cell
+     *
+     * @param where the cell where the worker is moved
+     */
     public void moveWorker(JCell where) {
         moveWorker(currentWorker, where);
     }
 
+    /**
+     * Method that moves the given worker to the chosen cell
+     *
+     * @param worker the worker that is moved
+     * @param where  the cell where the worker is moved to
+     */
     public void moveWorker(JWorker worker, JCell where) {
         worker.setLocation(where);
     }
 
+    /**
+     * Method that allows the current worker to switch its position with the worker in the chosen cell
+     *
+     * @param where the cell where the worker wants to move
+     */
     public void switchWorkers(JCell where) {
         switchWorkers(currentWorker, where);
     }
 
+    /**
+     * Method that allows the given worker to switch its position with the worker in the chosen cell
+     *
+     * @param currWorker the worker that uses switch
+     * @param nextCell the cell where the opponent worker (that is switched) was located
+     */
     public void switchWorkers(JWorker currWorker, JCell nextCell) {
         if (((JBlockDecorator) nextCell).isFree())
             moveWorker(currWorker, nextCell);
@@ -147,6 +178,10 @@ public class JMap extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Method that shows the cells where the player can use his God power. It also removes eventual cells where a malus
+     * is active
+     */
     public void showPowerCells() {
         for (JCell cell : activeCells)
             if (!((JBlockDecorator) cell).getDecoration().equals(JCellStatus.MALUS))
@@ -159,6 +194,9 @@ public class JMap extends JPanel implements ActionListener {
         validate();
     }
 
+    /**
+     * Method that hides the cells where the player may have used the power (or because he doesn't want to)
+     */
     public void hidePowerCells() {
         for (JCell cell : powerCells)
             ((JBlockDecorator) cell).removeDecoration();
@@ -171,6 +209,11 @@ public class JMap extends JPanel implements ActionListener {
         validate();
     }
 
+    /**
+     * Method that removes the given decoration from the map
+     *
+     * @param jCellStatus the decoration that is removed
+     */
     public void removeDecoration(JCellStatus jCellStatus) {
         Arrays.stream(cellButton)
                 .flatMap(Arrays::stream)
@@ -262,6 +305,12 @@ public class JMap extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Method that allows the given worker to push an opponent's worker that is located on the chosen cell
+     *
+     * @param worker the worker to make the push with
+     * @param where  the cell where the opponent's worker is placed
+     */
     public void pushWorker(JWorker worker, JCell where) {
         JWorker jWorkerToPush = ((JBlockDecorator) where).getJWorker();
 
@@ -272,10 +321,22 @@ public class JMap extends JPanel implements ActionListener {
         switchWorkers(worker, where);
     }
 
+    /**
+     * Method that allows the current worker to push an opponent's worker that is located on the chosen cell
+     *
+     * @param where the cell where the opponent's worker is placed
+     */
     public void pushWorker(JCell where) {
         pushWorker(currentWorker, where);
     }
 
+    /**
+     * Method that locates the cell where the worker is pushed after an opponent used Minotaur power
+     *
+     * @param from the cell where the opponent's worker comes from
+     * @param to   the cell where the opponent's worker moved to
+     * @return the cell where the worker is pushed to
+     */
     private JCell lineEqTwoPoints(JCell from, JCell to) {
         if (from == null) return null;
         if (to == null) return null;
@@ -312,6 +373,9 @@ public class JMap extends JPanel implements ActionListener {
         return getCell(newX, (int) (m * newX + q));
     }
 
+    /**
+     * Method that cleans the map, by setting all of his attributes back to default and removing the game panel.
+     */
     public void clean() {
         Arrays.stream(cellButton)
                 .flatMap(Arrays::stream)

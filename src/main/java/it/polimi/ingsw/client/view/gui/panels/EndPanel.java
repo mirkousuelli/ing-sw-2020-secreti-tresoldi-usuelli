@@ -8,7 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
+/**
+ * Class that represents the panel where the game is paused, either because someone won or because someone closed
+ * the application
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class EndPanel extends SantoriniPanel implements ActionListener {
 
     private static final String EXTENSION = ".png";
@@ -24,6 +31,14 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
 
     private static final int BUTTON_SIZE = 150;
 
+    /**
+     * Constructor of the end panel, which can be for a victory, a defeat, or a save (when a player quits the game, that
+     * can later be reloaded)
+     *
+     * @param type       the type of end panel
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     EndPanel(String type, CardLayout panelIndex, JPanel panels) {
         super(type + EXTENSION, panelIndex, panels);
         this.type = type + EXTENSION;
@@ -32,6 +47,9 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         createQuitButton();
     }
 
+    /**
+     * Function which creates the play again button.
+     */
     private void createPlayAgainButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -61,6 +79,9 @@ public class EndPanel extends SantoriniPanel implements ActionListener {
         repaint();
     }
 
+    /**
+     * Function which creates the quit button
+     */
     private void createQuitButton() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;

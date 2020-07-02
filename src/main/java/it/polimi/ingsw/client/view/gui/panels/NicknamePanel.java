@@ -9,7 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
+/**
+ * Class that represents the panel that is shown after the player started the game. It contains the fields where he has
+ * to insert his nickname, server IP and port.
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -24,6 +31,13 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
 
     private boolean error = false;
 
+    /**
+     * Constructor of the panel where the player has to fill the fields in order to be able to play.
+     * The nickname is unique, so two different players cannot have the same nickname.
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     */
     public NicknamePanel(CardLayout panelIndex, JPanel panels) {
         super(imgPath, panelIndex, panels);
 
@@ -36,6 +50,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         stand.repaint();
     }
 
+    /**
+     * Function which prints out if the name already exists after having received the answer from the server.
+     */
     private void createErrorMessage() {
         GridBagConstraints a = new GridBagConstraints();
         a.gridx = 0;
@@ -49,6 +66,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         errorMessage.setVisible(false);
     }
 
+    /**
+     * Function which creates the main label in the center of the monitor in order to make the initial form available.
+     */
     private void createWaitStand() {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/labels/stand.png"));
         Image img = icon.getImage().getScaledInstance(540, 540, Image.SCALE_SMOOTH);
@@ -60,6 +80,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         add(stand, new GridBagConstraints());
     }
 
+    /**
+     * Function which defines above the main label displaying the stand, the initial form to be compiled.
+     */
     private void createFormat() {
         GridBagConstraints a = new GridBagConstraints();
         a.gridx = 0;
@@ -95,6 +118,10 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         stand.add(serverPort, d);
     }
 
+    /**
+     * Function which creates the button used to send the previous compiled form in order to get connected with the
+     * the server.
+     */
     private void createSendButton() {
         GridBagConstraints c = new GridBagConstraints();
 
@@ -168,6 +195,9 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         }
     }
 
+    /**
+     * Function used to avoid null string pointer in lambda expressions.
+     */
     private String parseName(String name) {
         if (name == null)
             return "";
@@ -175,6 +205,11 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
             return name;
     }
 
+    /**
+     * Function which check ip address semantic and if void, set as localhost
+     *
+     * @param address   server's ip chosen
+     */
     private String parseAddress(String address) {
         if (address == null) return "";
         if (address.equals("")) return "127.0.0.1";
@@ -200,6 +235,11 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
         return address;
     }
 
+    /**
+     * Function which parse the socket port and if void it is set has 1337 by default
+     *
+     * @param portString   server's port
+     */
     private Integer parsePort(String portString) {
         if (portString == null) return null;
         if (portString.equals("")) return 1337;

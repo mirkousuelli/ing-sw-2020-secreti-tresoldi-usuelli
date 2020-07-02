@@ -3,11 +3,21 @@ package it.polimi.ingsw.client.view.gui.component.map;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Class that represents the decorator in the GUI.
+ * <p>
+ * It contains its dimension, decoration and component
+ */
 public class JDecorator {
     public static final int DIMENSION = 80;
     private JCellStatus decoration;
     private final JLabel component;
 
+    /**
+     * Constructor of the JDecorator given the status of the cell
+     *
+     * @param decoration the decoration of the decorator
+     */
     public JDecorator(JCellStatus decoration) {
         this.decoration = decoration;
         component = new JLabel();
@@ -54,11 +64,19 @@ public class JDecorator {
         }
     }
 
+    /**
+     * Method that adds the given component over the decorator
+     *
+     * @param component the component that is added
+     */
     public void addOver(JLabel component) {
         this.component.add(component, new GridBagConstraints());
         this.component.revalidate();
     }
 
+    /**
+     * Method that removes any component from the decorator
+     */
     public void removeOver() {
         component.removeAll();
         component.revalidate();

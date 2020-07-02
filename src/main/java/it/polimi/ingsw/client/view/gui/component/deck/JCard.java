@@ -5,6 +5,11 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Class that represents the Card in the GUI.
+ * <p>
+ * It contains its size and the God
+ */
 public class JCard extends JLabel {
 
     private static final int SIZE_X = 170; //190;
@@ -19,6 +24,11 @@ public class JCard extends JLabel {
     private God god;
     private String path;
 
+    /**
+     * Constructor of the card, given the God
+     *
+     * @param god the God that the card is based on
+     */
     public JCard(God god) {
         this.god = god;
         path = root + this.god.toString().toLowerCase() + card;
@@ -34,6 +44,9 @@ public class JCard extends JLabel {
         setName("card");
     }
 
+    /**
+     * Constructor of the card
+     */
     public JCard() {
         path = root + retro;
 
@@ -51,6 +64,9 @@ public class JCard extends JLabel {
         validate();
     }
 
+    /**
+     * Method that displays the card when the power is active (the card will have yellow lights on his board)
+     */
     public void applyPower() {
         path = root + god.toString().toLowerCase() + power;
 
@@ -77,6 +93,9 @@ public class JCard extends JLabel {
         validate();
     }
 
+    /**
+     * Method that returns the card to the normal visual (for example after the power is turned off)
+     */
     public void applyNormal() {
         path = root + god.toString().toLowerCase() + card;
 

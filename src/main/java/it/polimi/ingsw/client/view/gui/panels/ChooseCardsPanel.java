@@ -11,6 +11,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Class that represents the panel where the Challenger has to pick the cards that will be used during the game
+ * <p>
+ * It extends {@link SantoriniPanel}
+ */
 public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
 
     private static final String imgPath = "menu.png";
@@ -30,6 +35,17 @@ public class ChooseCardsPanel extends SantoriniPanel implements ActionListener {
     private JCard retro;
     private JLabel text;
 
+    /**
+     * Constructor of the panel where the Challenger picks the cards that will be used during the game: the number of
+     * total card selected has to be equal to the number of players in the game.
+     * <p>
+     * The player, before sending the deck with the cards, can pick or remove cards at any time. By clicking on each card
+     * he can also see its special power.
+     *
+     * @param panelIndex the index of the panel
+     * @param panels     the panels used
+     * @param deck       the deck which is made from the chosen cards
+     */
     public ChooseCardsPanel(CardLayout panelIndex, JPanel panels, JDeck deck) {
         super(imgPath, panelIndex, panels);
 

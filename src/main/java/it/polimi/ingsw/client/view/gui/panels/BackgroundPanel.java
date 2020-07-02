@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Interface that represents the panel for the background and contains its dimensions (width and height).
+ * <p>
+ * It is implemented by the {@link SantoriniPanel}
+ */
 interface BackgroundPanel {
     String BACKGROUND = "/img/background/";
     int WIDTH = 1067;

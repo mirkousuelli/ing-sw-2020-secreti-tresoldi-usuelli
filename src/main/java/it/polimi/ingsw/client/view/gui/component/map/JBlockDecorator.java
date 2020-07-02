@@ -2,12 +2,25 @@ package it.polimi.ingsw.client.view.gui.component.map;
 
 import it.polimi.ingsw.client.view.gui.component.JWorker;
 
+/**
+ * Class that represents the block decorator in the GUI.
+ * <p>
+ * It contains the cell, the decorator and the worker.
+ * <p>
+ * It extends {@link JCell}
+ */
 public class JBlockDecorator extends JCell {
 
     private final JCell origin;
     private JDecorator decoration;
     private JWorker worker;
 
+    /**
+     * Constructor of the JBlockDecorator. It sets decoration and the worker to null and the cell to the given one.
+     *
+     *
+     * @param origin
+     */
     public JBlockDecorator(JCell origin) {
         super(origin.getXCoordinate(), origin.getYCoordinate());
 
@@ -18,6 +31,12 @@ public class JBlockDecorator extends JCell {
         this.setStatus(this.origin.getStatus());
     }
 
+    /**
+     * Method that adds the given decoration to the block. It removes all components from this and then adds the given
+     * decoration.
+     *
+     * @param decoration the type of decoration added to the cell
+     */
     public void addDecoration(JCellStatus decoration) {
         removeAll();
         this.decoration = new JDecorator(decoration);
@@ -27,6 +46,9 @@ public class JBlockDecorator extends JCell {
             this.decoration.addOver(worker.getPawn().getComponent());
     }
 
+    /**
+     * Method that removes decoration from the block decorator
+     */
     public void removeDecoration() {
         removeAll();
         this.decoration = null;
@@ -45,6 +67,11 @@ public class JBlockDecorator extends JCell {
         return this.decoration.getDecoration();
     }
 
+    /**
+     * Method that adds the given worker to the block decorator
+     *
+     * @param worker the worker that is added
+     */
     public void addWorker(JWorker worker) {
         this.worker = worker;
 
@@ -57,6 +84,9 @@ public class JBlockDecorator extends JCell {
         repaint();
     }
 
+    /**
+     * Method that removes eventual worker from the block decorator
+     */
     public void removeWorker() {
         if (decoration != null)
             this.decoration.removeOver();
@@ -84,6 +114,9 @@ public class JBlockDecorator extends JCell {
         return this.origin;
     }
 
+    /**
+     * Method that builds the correct block on top of the block decorator. When it is top it adds a dome
+     */
     public void buildUp() {
         if (((JBlock) this.origin).isTop()) {
             this.addDecoration(JCellStatus.DOME);
@@ -93,6 +126,9 @@ public class JBlockDecorator extends JCell {
         }
     }
 
+    /**
+     * Method that removes any decoration from the block decorator.
+     */
     public void clean() {
         if (decoration != null) {
             JCellStatus curr = decoration.getDecoration();

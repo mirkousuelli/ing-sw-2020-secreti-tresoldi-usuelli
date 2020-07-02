@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.cards.gods.God;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Class that represents the mini version of the God in the GUI. It is used when players pick their card from the deck.
+ */
 public class JMini extends JButton {
 
     private static final int SIZE_X = 65;
@@ -20,6 +23,11 @@ public class JMini extends JButton {
     private final String path;
     private final God god;
 
+    /**
+     * Constructor of the mini version of the God, given the God itself
+     *
+     * @param god the God that the mini version is obtained from
+     */
     public JMini(God god) {
         super();
 
@@ -45,6 +53,9 @@ public class JMini extends JButton {
         return this.path;
     }
 
+    /**
+     * Method that sets this God as the active one
+     */
     public void active() {
         active = true;
 
@@ -57,6 +68,9 @@ public class JMini extends JButton {
         repaint();
     }
 
+    /**
+     * Method that sets this God as non active anymore
+     */
     public void disactive() {
         active = false;
 
