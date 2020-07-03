@@ -634,6 +634,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
             case CHOOSE_WORKER:
                 game.getCurrentPlayer().chooseWorker();
+                map.validate();
+                map.repaint();
                 break;
 
             case MOVE:
