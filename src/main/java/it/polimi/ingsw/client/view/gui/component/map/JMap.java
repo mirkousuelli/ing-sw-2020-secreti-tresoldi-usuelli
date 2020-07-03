@@ -161,7 +161,7 @@ public class JMap extends JPanel implements ActionListener {
      * Method that allows the given worker to switch its position with the worker in the chosen cell
      *
      * @param currWorker the worker that uses switch
-     * @param nextCell the cell where the opponent worker (that is switched) was located
+     * @param nextCell   the cell where the opponent worker (that is switched) was located
      */
     public void switchWorkers(JWorker currWorker, JCell nextCell) {
         if (((JBlockDecorator) nextCell).isFree())

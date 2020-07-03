@@ -17,7 +17,7 @@ public abstract class View extends Observable<ActionToPerformView> implements Ob
      * Initializes an instance of this class by setting the player's name
      *
      * @param player the player's name
-     * */
+     */
     protected View(String player) {
         this.player = player;
     }
@@ -30,7 +30,7 @@ public abstract class View extends Observable<ActionToPerformView> implements Ob
      * Notifies to the {@code Controller} the message received from to user
      *
      * @param demand the user's message
-     * */
+     */
     public void processMessage(Demand demand) {
         notify(new ActionToPerformView(player, demand, this));
     }
@@ -39,7 +39,7 @@ public abstract class View extends Observable<ActionToPerformView> implements Ob
      * Shows the user the answer of the server to a certain action previously requested by the user itself
      *
      * @param answer the server's answer
-     * */
+     */
     protected abstract void showAnswer(Answer answer);
 
     @Override

@@ -207,7 +207,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Function which check ip address semantic and if void, set as localhost
      *
-     * @param address   server's ip chosen
+     * @param address server's ip chosen
      */
     private String parseAddress(String address) {
         if (address == null) return "";
@@ -237,7 +237,7 @@ public class NicknamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Function which parse the socket port and if void it is set has 1337 by default
      *
-     * @param portString   server's port
+     * @param portString server's port
      */
     private Integer parsePort(String portString) {
         if (portString == null) return null;

@@ -30,7 +30,7 @@ public class GodParser {
      *
      * @param deck the deck containing the cards
      * @throws ParserConfigurationException if there was a serious configuration error
-     * @throws SAXException if the XML parser causes a basic error or a warning
+     * @throws SAXException                 if the XML parser causes a basic error or a warning
      */
     public GodParser(Deck deck) throws ParserConfigurationException, SAXException {
         factory = SAXParserFactory.newInstance();

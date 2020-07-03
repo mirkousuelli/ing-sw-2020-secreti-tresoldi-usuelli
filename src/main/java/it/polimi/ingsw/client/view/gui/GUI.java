@@ -66,7 +66,7 @@ public class GUI<S> extends ClientView<S> {
      * the port that is used
      *
      * @param name nickname of the person that sends the initial request
-     * @param ip the ip of the player
+     * @param ip   the ip of the player
      * @param port the port used
      */
     public void initialRequest(String name, String ip, int port) {
@@ -86,7 +86,7 @@ public class GUI<S> extends ClientView<S> {
      * Method that generates the demand with the given type and payload
      *
      * @param demandType type of the demand
-     * @param payload the content that is sent with the demand
+     * @param payload    the content that is sent with the demand
      */
     public void generateDemand(DemandType demandType, S payload) {
         createDemand(new Demand<>(demandType, payload));

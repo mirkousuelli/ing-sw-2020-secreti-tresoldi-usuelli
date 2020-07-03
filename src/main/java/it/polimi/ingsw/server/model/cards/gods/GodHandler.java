@@ -215,9 +215,9 @@ public class GodHandler extends DefaultHandler {
     /**
      * Method that receives notification of the end of an element
      *
-     * @param uri        the namespace URI, or the empty string if the element has no Namespace URI
-     * @param localName  the local name (without prefix)
-     * @param qName      the qualified name (with prefix)
+     * @param uri       the namespace URI, or the empty string if the element has no Namespace URI
+     * @param localName the local name (without prefix)
+     * @param qName     the qualified name (with prefix)
      */
     @Override
     public void endElement(String uri, String localName, String qName) {
@@ -237,8 +237,8 @@ public class GodHandler extends DefaultHandler {
     /**
      * Receive notification of ignorable whitespace in element content.
      *
-     * @param ch the whitespace characters
-     * @param start the start position in the character array
+     * @param ch     the whitespace characters
+     * @param start  the start position in the character array
      * @param length the number of characters to use from the character array
      */
     @Override

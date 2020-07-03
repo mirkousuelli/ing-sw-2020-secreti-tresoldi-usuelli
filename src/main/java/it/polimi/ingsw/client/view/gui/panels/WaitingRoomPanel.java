@@ -116,7 +116,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
     /**
      * Constructor which initializes the client connection by creating a socket connection to the server
      *
-     * @param mg   manager panel which handle the panel sequence
+     * @param mg manager panel which handle the panel sequence
      */
     static void setUpJPlayers(ManagerPanel mg) {
         GUI gui = mg.getGui();
@@ -140,7 +140,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
     /**
      * Parser which make corresponds color string to its own int identifier
      *
-     * @param color   string denoting color
+     * @param color string denoting color
      */
     private static int toColorIndex(String color) {
         switch (color) {

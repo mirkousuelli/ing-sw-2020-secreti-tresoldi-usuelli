@@ -434,7 +434,7 @@ public class CLIScanner<S> {
      *
      * @param string the string inserted
      * @return {@code true} if the user has to insert the power and the cell where to use it (for example if he
-     *  previously inserted a cell that isn't in the possible actions), {@code false} otherwise
+     * previously inserted a cell that isn't in the possible actions), {@code false} otherwise
      */
     private boolean isToUsePower(String string) {
         String[] input = string.split(" ");
