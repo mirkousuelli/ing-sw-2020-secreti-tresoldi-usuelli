@@ -274,8 +274,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
      * Method used to create opponents section through an identifier; the maximum number of opponent is 2, thus it fits
      * the screen both in 2 players and 3 players
      *
-     * @param player   opponent player
-     * @param i sequential identifier
+     * @param player opponent player
+     * @param i      sequential identifier
      */
     private void createEnemySection(JPlayer player, int i) {
         GridBagConstraints c = new GridBagConstraints();
@@ -295,6 +295,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which displays possible move cells
+     *
+     * @param where the list of cells to set as possible moves
      */
     private void setPossibleMove(List<JCell> where) {
         game.getJMap().setPossibleMove(where);
@@ -303,6 +305,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which displays possible build cells
+     *
+     * @param where the list of cells to set as possible builds
      */
     private void setPossibleBuild(List<JCell> where) {
         game.getJMap().setPossibleBuild(where);
@@ -311,6 +315,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which displays possible use power cells about move
+     *
+     * @param where the list of cells to set as possible move powers
      */
     private void setPossibleUsePowerMove(List<JCell> where) {
         game.getJMap().setPossibleUsePowerMove(where);
@@ -319,6 +325,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which displays possible use power cells about build
+     *
+     * @param where the list of cells to set as possible build powers
      */
     private void setPossibleUsePowerBuild(List<JCell> where) {
         game.getJMap().setPossibleUsePowerBuild(where);
@@ -386,8 +394,9 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which generates the demand to the server after having selected the power cell
      *
-     * @param numOfAdditional   number of power repetition usage
-     * @param status type of cell status
+     * @param numOfAdditional number of power repetition usage
+     * @param status          type of cell status
+     * @return the type of demand
      */
     private DemandType usePowerStatus(int numOfAdditional, JCellStatus status) {
         ManagerPanel mg = (ManagerPanel) panels;
@@ -461,8 +470,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which defines cells (passed through a list) their status as a set.
      *
-     * @param reducedAnswerCellList   cell to be colored with their states
-     * @param currentState type of state
+     * @param reducedAnswerCellList cell to be colored with their states
+     * @param currentState          type of state
      */
     private void setJCellLAction(List<ReducedAnswerCell> reducedAnswerCellList, DemandType currentState) {
         GUI gui = ((ManagerPanel) panels).getGui();
@@ -620,6 +629,8 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which updates cells status.
+     *
+     * @param updatedCells the updated list of cells
      */
     private void updateCells(List<ReducedAnswerCell> updatedCells) {
         ManagerPanel mg = (ManagerPanel) panels;
@@ -653,7 +664,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which updates workers' cells
      *
-     * @param updatedCells   workers' cells
+     * @param updatedCells workers' cells
      */
     private void updateWorkers(List<ReducedAnswerCell> updatedCells) {
         ManagerPanel mg = (ManagerPanel) panels;
@@ -704,6 +715,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             repaint();
         }
     }
+
     /**
      * Method which updates workers move above the map.
      */
@@ -728,7 +740,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     /**
-     * Method which make the proper worker move inside the map.
+     * Method which makes the proper worker move inside the map
+     *
+     * @param p       the player that the worker belongs to
+     * @param jWorker the worker to move
      */
     private void moveJWorker(ReducedPlayer p, JWorker jWorker) {
         ManagerPanel mg = (ManagerPanel) panels;
@@ -749,8 +764,10 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     }
 
     /**
-     * Predicate which controls if is not the same worker cell
+     * Predicate which controls if the given cell is not the same where the worker is located
      *
+     * @param jCell         the cell to control
+     * @param reducedWorker the worker to control
      * @return {@code true} if it is the same cell, if not {@code false}
      */
     private boolean isNotSameCell(JCell jCell, ReducedWorker reducedWorker) {
@@ -759,13 +776,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
         return jCell.getXCoordinate() != reducedWorker.getX() || jCell.getYCoordinate() != reducedWorker.getY();
     }
 
-    /**
-     * Method which gets the player's worker through its id
-     *
-     * @param player current player
-     * @param workers list of player's workers
-     * @param workerId worker's id
-     */
+
     private ReducedWorker getWorkerWithId(ReducedPlayer player, List<ReducedWorker> workers, int workerId) {
         return workers.stream()
                 .filter(w -> w.getOwner().equals(player.getNickname()))
@@ -778,7 +789,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
 
     @Override
-    protected void paintComponent(Graphics gr){
+    protected void paintComponent(Graphics gr) {
         super.paintComponent(gr);
 
         Font f = new Font("SansSerif", Font.BOLD, 20);
@@ -787,11 +798,11 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         GUI gui = ((ManagerPanel) panels).getGui();
 
-        if((gui.getClientModel().isYourTurn())) {
-            switch (gui.getClientModel().getCurrentState().toString()){
+        if ((gui.getClientModel().isYourTurn())) {
+            switch (gui.getClientModel().getCurrentState().toString()) {
 
                 case "askAdditionalPower":
-                    if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")){
+                    if (gui.getClientModel().getPrevState().toString().equalsIgnoreCase("move")) {
                         gr.drawString("BUILD", 505, 48);
                         break;
                     }

@@ -113,8 +113,9 @@ public class PreparePayload {
     /**
      * Prepares the cells the current worker can move to according to the current player's personal malus
      *
-     * @param game  the current game
-     * @param state the current state
+     * @param game     the current game
+     * @param state    the current state
+     * @param toReturn the list of cells that is returned
      * @return the list of the cells the current player can move to
      */
     private static List<ReducedAnswerCell> preparePayloadMovePersonalMalus(Game game, State state, List<ReducedAnswerCell> toReturn) {
@@ -138,9 +139,10 @@ public class PreparePayload {
     /**
      * Prepares the cells the current worker can move to according to the current player's permanent maluses
      *
-     * @param game   the current game
-     * @param state  the current state
-     * @param timing the current player power's timing
+     * @param game     the current game
+     * @param state    the current state
+     * @param timing   the current player power's timing
+     * @param toReturn the list of cells that is returned
      * @return the list of the cells the current player can move to
      */
     private static List<ReducedAnswerCell> preparePayloadMovePermanentMalus(Game game, Timing timing, State state, List<ReducedAnswerCell> toReturn) {

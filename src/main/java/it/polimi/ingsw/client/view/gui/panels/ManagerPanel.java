@@ -127,7 +127,7 @@ public class ManagerPanel extends JPanel {
      * Method which updates each block thanks to the list passed as parameters, being aware of the current level and
      * the previous one for every block and managing the decorator pattern.
      *
-     * @param reducedAnswerCellList   blocks to be loaded
+     * @param reducedAnswerCellList blocks to be loaded
      */
     private void updateBuild(List<ReducedAnswerCell> reducedAnswerCellList) {
         reducedAnswerCellList.forEach(reducedAnswerCell -> {
@@ -149,7 +149,7 @@ public class ManagerPanel extends JPanel {
     /**
      * Method which loads workers' position, one player at a time.
      *
-     * @param jPlayer   player selected
+     * @param jPlayer               player selected
      * @param reducedAnswerCellList workers' cell
      */
     private void updateWorkers(JPlayer jPlayer, List<ReducedAnswerCell> reducedAnswerCellList) {

@@ -43,7 +43,7 @@ public class Answer<S> extends Message<AnswerType, S> {
     /**
      * Constructor of the answer, given just the header
      *
-     * @param header  the header of the answer
+     * @param header the header of the answer
      */
     public Answer(AnswerType header) {
         this(header, null, (S) new ReducedMessage("null"));

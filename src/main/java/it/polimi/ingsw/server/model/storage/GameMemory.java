@@ -67,9 +67,9 @@ public class GameMemory {
      *
      * @param doc  the document where to write
      * @param path the string to write
-     * @throws TransformerException an exceptional condition that occurred during the transformation process
+     * @throws TransformerException  an exceptional condition that occurred during the transformation process
      * @throws FileNotFoundException signals that an attempt to open the file has failed
-     * @throws URISyntaxException indicates that a string could not be parsed as a URI reference
+     * @throws URISyntaxException    indicates that a string could not be parsed as a URI reference
      */
     private static void write(Document doc, String path) throws TransformerException, FileNotFoundException, URISyntaxException {
         Transformer tr = TransformerFactory.newInstance().newTransformer();
@@ -214,7 +214,7 @@ public class GameMemory {
      * Method that saves the given block, with information about its current and previous level
      *
      * @param block the block that is saved
-     * @param path the path where to save
+     * @param path  the path where to save
      */
     public static void save(Block block, String path) {
         try {
@@ -283,7 +283,7 @@ public class GameMemory {
      * Method that saves the current state
      *
      * @param state the state that is saved
-     * @param path the path where to save
+     * @param path  the path where to save
      */
     public static void save(GameState state, String path) {
         try {
@@ -350,7 +350,7 @@ public class GameMemory {
      * Method that saves the list of players, with information about their workers and eventual maluses active
      *
      * @param players the list of players that is saved
-     * @param path the path where to save
+     * @param path    the path where to save
      */
     public static void save(List<Player> players, String path) {
         try {
@@ -440,7 +440,7 @@ public class GameMemory {
      * @param path the path where the file to load is located
      * @return the saved game
      * @throws ParserConfigurationException indicates a serious configuration error
-     * @throws SAXException a basic error or warning information
+     * @throws SAXException                 a basic error or warning information
      */
     public static Game load(String path) throws ParserConfigurationException, SAXException {
         Game game = new Game();

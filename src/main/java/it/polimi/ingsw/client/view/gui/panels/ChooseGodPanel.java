@@ -188,8 +188,8 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which updates the main panel in the center with the new god selected.
      *
-     * @param deck   deck including available cards
-     * @param god current god
+     * @param deck deck including available cards
+     * @param god  current god
      */
     private void setChoice(JDeck deck, JGod god) {
         GridBagConstraints c = new GridBagConstraints();
@@ -230,7 +230,7 @@ public class ChooseGodPanel extends SantoriniPanel implements ActionListener {
     /**
      * Method which updates the deck after one card has been removed because chosen.
      *
-     * @param godToRemove   chosen god to be removed from the deck
+     * @param godToRemove chosen god to be removed from the deck
      */
     private void updateDeck(God godToRemove) {
         boolean found = false;

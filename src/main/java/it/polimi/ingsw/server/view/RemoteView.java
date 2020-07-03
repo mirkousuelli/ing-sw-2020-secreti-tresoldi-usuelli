@@ -17,7 +17,7 @@ public class RemoteView extends View {
 
     /**
      * Private class that communicates with {@code ServerClientHandler} with an Observer pattern
-     * */
+     */
     private class MessageReceiver implements Observer<Demand> {
 
         private final Logger logger = Logger.getLogger(MessageReceiver.class.getName());
@@ -39,7 +39,7 @@ public class RemoteView extends View {
      *
      * @param player              the player's name
      * @param serverClientHandler the player's socket handler
-     * */
+     */
     public RemoteView(String player, ServerClientHandler serverClientHandler) {
         super(player);
         this.serverClientHandler = serverClientHandler;
