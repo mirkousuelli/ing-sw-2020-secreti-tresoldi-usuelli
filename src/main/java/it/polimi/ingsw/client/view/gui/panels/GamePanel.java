@@ -45,8 +45,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
     private JButton powerButton;
     private JButton endTurnButton;
 
-    private List<ReducedAnswerCell> oldUpdate;
-
     /**
      * Constructor of the panel where the actual game is played. The map is created and also the sections containing
      * the cards of the player and of the opponent(s)
@@ -79,8 +77,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
         game.getJMap().setGamePanel(this);
         game.getJMap().setManagerPanel((ManagerPanel) panels);
-
-        oldUpdate = new ArrayList<>();
     }
 
     /**
@@ -570,8 +566,6 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 break;
 
             case DEFEAT:
-                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
-
                 if (gui.getClientModel().isEnded()) {
                     mg.addPanel(new EndPanel(answerType.toString(), panelIndex, panels));
                     ((EndPanel) mg.getCurrentPanel()).disablePLayAgainButton();
@@ -589,7 +583,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                     validate();
                     repaint();
                     if (gui.getClientModel().isYourTurn())
-                        updateCells(updatedCells);
+                        updateCells();
                 }
                 break;
 
@@ -613,11 +607,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
                 if (!gui.getClientModel().isYourTurn())
                     updateMove();
                 else
-                    updateCells(updatedCells);
-                break;
-
-            case ERROR:
-                updateCells(oldUpdate);
+                    updateCells();
                 break;
 
             default:
@@ -629,15 +619,13 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
 
     /**
      * Method which updates cells status.
-     *
-     * @param updatedCells the updated list of cells
      */
-    private void updateCells(List<ReducedAnswerCell> updatedCells) {
+    private void updateCells() {
         ManagerPanel mg = (ManagerPanel) panels;
         GUI gui = mg.getGui();
         JMap map = game.getJMap();
         DemandType currentState = gui.getClientModel().getCurrentState();
-        oldUpdate = updatedCells;
+        List<ReducedAnswerCell> updatedCells;
 
         switch (currentState) {
             case PLACE_WORKERS:
@@ -652,6 +640,7 @@ public class GamePanel extends SantoriniPanel implements ActionListener {
             case BUILD:
             case ASK_ADDITIONAL_POWER:
             case ADDITIONAL_POWER:
+                updatedCells = (List<ReducedAnswerCell>) gui.getAnswer().getPayload();
                 setJCellLAction(updatedCells, currentState);
                 break;
 
