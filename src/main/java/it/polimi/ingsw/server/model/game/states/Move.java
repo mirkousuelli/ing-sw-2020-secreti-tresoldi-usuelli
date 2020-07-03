@@ -318,6 +318,12 @@ public class Move implements GameState {
             returnContent.setPayload(PreparePayload.preparePayloadBuild(game, Timing.DEFAULT, State.MOVE));
         }
 
+        if (Move.reachedThirdLevel(game)) { //if the current worker reached the third level
+            returnContent.setAnswerType(AnswerType.VICTORY); //go to victory because the current player has won
+            returnContent.setState(State.VICTORY);
+            returnContent.setPayload(new ReducedPlayer(game.getCurrentPlayer().getNickName()));
+        }
+
         //save
         GameMemory.save((Block) cellToMoveTo, Lobby.BACKUP_PATH);
 

@@ -376,6 +376,7 @@ public class ServerConnectionSocket {
                 newCreator.callWatchDog(true); //restart the game for the new creator (other possible players in wait can remain in wait)
             }
         } else {
+            if (alreadyNewGame) return;
             connectedPlayers.values().forEach(p -> lobby.deletePlayerConnection(p));
             moveAndLoadBackUpLobby(); //load lobbies if there at least one to load
             connectedPlayers.remove(disconnectedPlayer.getName()); //delete the disconnected player
