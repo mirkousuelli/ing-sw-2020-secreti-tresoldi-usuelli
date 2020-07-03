@@ -3,7 +3,7 @@
 
 ![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
 
-Java implementation of the board game called Santorini edited by Cranio Creations.
+Java implementation of the board game called Santorini, edited by Cranio Creations.
 
 ## What we have done
 We implemented all the requirements listed for a maximum assessment of 30L, as indicated in the requirements:
@@ -11,7 +11,7 @@ We implemented all the requirements listed for a maximum assessment of 30L, as i
 2) :video_game: CLI
 3) :palm_tree: GUI
 4) :satellite: Socket
-5) :trident: Advanced gods
+5) :trident: Advanced Gods
 6) :floppy_disk: Persistence
 
 ## Line Coverage
@@ -31,6 +31,11 @@ Generate jar files (client and server) through maven by executing the following 
 mvn clean
 mvn package
 ```
+
+
+**NB.** The following commands to run jar files only work if they are generated through maven.
+If the user wants to use the ones in 'deliveries' folder the path has to change accordingly.
+
 - **Server**
   - **Default port** (1337):
   ```shell
@@ -40,7 +45,7 @@ mvn package
   ```shell
   java -jar target/GC15-server-jar-with-dependencies.jar -p <port_num>
   ```
-  where <num_port> stands for the socket port which both server and clients will use for the connection.
+  where <port_num> stands for the socket port which both server and clients will use for the connection.
 
 - **Client CLI**
   ```shell
@@ -54,7 +59,6 @@ mvn package
 - **Client GUI**<br />
 Double click on **target/GC15-client-jar-with-dependencies.jar** icon. <br >
 
-**NB.** If port and ip are not inserted, then they will be set to localhost ip and port 1337 by default.
 
 ## Students
 - Riccardo Secreti (matr. 889417)   :   @RiccardoSecreti
