@@ -82,7 +82,7 @@ public class JGame {
     /**
      * Method that removes the player (with his workers) from the list of players in the game
      *
-     * @param playerName
+     * @param playerName the player's name
      */
     public void removePlayer(String playerName) {
         JPlayer playerToRemove = getPlayer(playerName);

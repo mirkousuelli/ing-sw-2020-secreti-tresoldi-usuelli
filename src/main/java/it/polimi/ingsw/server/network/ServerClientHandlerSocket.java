@@ -54,6 +54,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
      *
      * @param socket server socket for the client handling
      * @param server server main socket
+     * @throws IOException the exception thrown when there is an I/O exception
      */
     public ServerClientHandlerSocket(Socket socket, ServerConnectionSocket server) throws IOException {
         this.socket = socket;
@@ -290,6 +291,7 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /**
      * Method which starts running a thread for the reading task
      *
+     * @param countDownLatch the countDownLatch to synchronize the threads
      * @return {@code Thread} reading thread
      */
     private Runnable asyncReadFromSocket(CountDownLatch countDownLatch) {
@@ -313,6 +315,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
     /**
      * Method that starts running a notifier thread for the controller side in order to support
      * the reading thread
+     *
+     * @param countDownLatch the countDownLatch to synchronize the threads
      *
      * @return {@code Thread} new notifier thread
      */
@@ -508,6 +512,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     /**
      * Method that handles the waiting for the game to have the correct number of players in it
+     *
+     * @throws InterruptedException the exception thrown when the current thread is interrupted
      */
     private void waitNumberOfPlayers() throws InterruptedException {
         Lobby lobby = server.getLobby();
@@ -524,6 +530,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     /**
      * Method which defines the reloaded beginning from a previous match still being played by the same players
+     *
+     * @throws InterruptedException the exception thrown when the current thread is interrupted
      */
     private void reloadStart() throws InterruptedException {
         ReducedGame reducedGame;
@@ -623,6 +631,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     /**
      * Method which stops the server in waiting status
+     *
+     * @throws InterruptedException the exception thrown when the current thread is interrupted
      */
     private void waitStart() throws InterruptedException {
         synchronized (server) {
@@ -652,6 +662,8 @@ public class ServerClientHandlerSocket extends Observable<Demand> implements Ser
 
     /**
      * Method that creates a new game after the proper demand is received
+     *
+     * @param demand the user's request
      */
     private void newGame(Demand demand) {
         boolean toRepeat = false;

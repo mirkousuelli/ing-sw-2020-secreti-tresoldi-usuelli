@@ -127,6 +127,8 @@ public class ServerConnectionSocket {
 
     /**
      * Method that says if the lobby has been reloaded from a previous storage
+     *
+     * @return if the lobby is reloaded or not
      */
     boolean isLobbyReloaded() {
         if (lobby == null) return false;
@@ -180,6 +182,9 @@ public class ServerConnectionSocket {
 
     /**
      * Method that load all the previous lobbies in order to recover a past match saved
+     *
+     * @param i the number of the lobby to load
+     * @return the loaded lobby
      */
     private synchronized Lobby loadLobby(int i) {
         return loadLobby(LOBBY_NAME + i + EXTENSION);
@@ -358,6 +363,8 @@ public class ServerConnectionSocket {
 
     /**
      * Method which manages a sudden disconnection case in order to correctly save the game in that scenario
+     *
+     * @param disconnectedPlayer the player who was defeated or closed the socket connection whith his {@code ServerClientHanlderSocket}
      */
     synchronized void suddenDisconnection(ServerClientHandlerSocket disconnectedPlayer) {
         if (closeIfItIsTooLateToPlayAgain(disconnectedPlayer)) return;

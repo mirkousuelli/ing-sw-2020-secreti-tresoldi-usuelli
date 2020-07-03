@@ -41,6 +41,9 @@ public class Lobby {
 
     /**
      * Constructor which creates the game and set up persistence feature
+     *
+     * @throws ParserConfigurationException the exception thrown when {@code GodParser} cannot parse the gods
+     * @throws SAXException                 the exception thrown when {@code GodParser} cannot parse the gods
      */
     Lobby() throws ParserConfigurationException, SAXException {
         this(new Game());

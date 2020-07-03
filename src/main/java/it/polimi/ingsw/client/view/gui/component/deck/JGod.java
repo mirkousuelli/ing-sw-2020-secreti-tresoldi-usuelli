@@ -18,7 +18,7 @@ public class JGod {
      * Constructor of the JGod given the regular version of the God, and creates the corresponding card with its
      * mini version.
      *
-     * @param god
+     * @param god the god to initialize
      */
     public JGod(God god) {
         card = new JCard(god);

@@ -86,6 +86,8 @@ public class CLI<S> extends ClientView<S> {
 
     /**
      * Performs the input operations with the user and generates the message to send to the server
+     *
+     * @param answerTempType the answer's {@code AnswerType} receive from the server
      */
     private void startUI(AnswerType answerTempType) {
         if (clientModel.getCurrentState().equals(DemandType.START)) return;

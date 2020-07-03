@@ -360,6 +360,9 @@ public class CLIPrinter<S> {
 
     /**
      * Prints the changes in the {@code ClientModel} done by the last message received from the server
+     *
+     * @param demandType the current state of the {@code ClientModel}
+     * @return if it is the turn of the player
      */
     boolean printChanges(DemandType demandType) {
         boolean ret;
