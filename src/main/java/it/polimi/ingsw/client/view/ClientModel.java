@@ -459,7 +459,7 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
     /**
      * Method that updates the board with the given cells, that represents the one that have changed
      *
-     * @param cells
+     * @param cells the list of cells that are updated
      */
     private synchronized void updateReducedBoard(List<ReducedAnswerCell> cells) {
         for (ReducedAnswerCell c : cells) {
@@ -601,6 +601,8 @@ public class ClientModel<S> extends SantoriniRunnable<S> {
      *
      * @param x cell's row
      * @param y cell's column
+     * @return {@code true} if the coordinates belong to a cell on the board (which means that both coordinates must be
+     * between 0 and 5), {@code false} otherwise
      */
     public boolean checkCell(int x, int y) {
         return x < 0 || x > 4 || y < 0 || y > 4;

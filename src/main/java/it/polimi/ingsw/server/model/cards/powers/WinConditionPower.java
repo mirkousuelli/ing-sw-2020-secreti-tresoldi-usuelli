@@ -39,6 +39,7 @@ public class WinConditionPower<S> extends Power<S> {
     /**
      * Method that checks if any additional win condition is verified
      *
+     * @param game the current game
      * @return {@code true} if any win condition is verified, {@code false} if not
      */
     public boolean usePower(Game game) {

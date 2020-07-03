@@ -128,6 +128,8 @@ public class ChangeTurn implements GameState {
 
     /**
      * Method that saves the game, with the current state as ChooseWorker
+     *
+     * @param state the current state that is saved
      */
     private void save(State state) {
         if (game.getPrevState() != null && !game.getPrevState().equals(State.START) &&

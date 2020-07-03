@@ -141,6 +141,7 @@ public class WaitingRoomPanel extends SantoriniPanel {
      * Parser which make corresponds color string to its own int identifier
      *
      * @param color string denoting color
+     * @return the index of the color
      */
     private static int toColorIndex(String color) {
         switch (color) {
