@@ -1,7 +1,7 @@
 # Final project in Software Engineering 2019/2020
 ### Santorini, GC15 - Computer Science Engineering BSc, Politecnico di Milano.
 
-![Santorini board game](https://www.playbazar.it/11316-large/santorini.jpg)
+![Santorini board game](https://i.ytimg.com/vi/Ks8Dta-hKeI/maxresdefault.jpg)
 
 Java implementation of the board game called Santorini, edited by Cranio Creations.
 
